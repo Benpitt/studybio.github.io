@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Study Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                        <span>🎓</span>
+                        <span>Study Hub</span>
+                    </a>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                        <a href="progress.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
+                        <a href="about.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">About</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12 animate-slide-in">
+            <div class="text-8xl mb-6">🎓</div>
+            <h1 class="text-5xl font-bold text-white mb-4">About This Project</h1>
+            <p class="text-xl text-blue-200">Your personal study companion, powered by AI</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="space-y-8">
+            <!-- What is this? -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
+                <h2 class="text-3xl font-bold text-white mb-4 flex items-center">
+                    <span class="text-4xl mr-3">💡</span>
+                    What is this?
+                </h2>
+                <p class="text-white/80 text-lg leading-relaxed mb-4">
+                    Ben's Study Hub is a comprehensive, AI-powered learning platform designed to help students master their coursework through adaptive learning techniques, gamification, and spaced repetition.
+                </p>
+                <p class="text-white/80 text-lg leading-relaxed">
+                    Currently featuring Biology Quiz 2, with plans to expand to Chemistry, Mathematics, and more subjects in the future.
+                </p>
+            </div>
+
+            <!-- Features -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 animate-slide-in" style="animation-delay: 0.2s; opacity: 0;">
+                <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                    <span class="text-4xl mr-3">✨</span>
+                    Key Features
+                </h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl p-4 border border-blue-500/30">
+                        <div class="text-3xl mb-2">🎴</div>
+                        <div class="text-white font-bold mb-1">Smart Flashcards</div>
+                        <div class="text-white/70 text-sm">Spaced repetition algorithm adapts to your learning</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-500/20 to-teal-500/20 rounded-xl p-4 border border-green-500/30">
+                        <div class="text-3xl mb-2">📝</div>
+                        <div class="text-white font-bold mb-1">Practice Tests</div>
+                        <div class="text-white/70 text-sm">Adaptive feedback identifies weak areas</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-4 border border-purple-500/30">
+                        <div class="text-3xl mb-2">🎮</div>
+                        <div class="text-white font-bold mb-1">Learning Games</div>
+                        <div class="text-white/70 text-sm">Matching, speed challenges, and more</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-xl p-4 border border-orange-500/30">
+                        <div class="text-3xl mb-2">📊</div>
+                        <div class="text-white font-bold mb-1">Progress Tracking</div>
+                        <div class="text-white/70 text-sm">Detailed analytics and insights</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 animate-slide-in" style="animation-delay: 0.3s; opacity: 0;">
+                <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                    <span class="text-4xl mr-3">⚙️</span>
+                    Built With
+                </h2>
+                <div class="flex flex-wrap gap-3">
+                    <span class="bg-blue-500/20 text-blue-200 px-4 py-2 rounded-full border border-blue-500/30 font-semibold">React</span>
+                    <span class="bg-cyan-500/20 text-cyan-200 px-4 py-2 rounded-full border border-cyan-500/30 font-semibold">Tailwind CSS</span>
+                    <span class="bg-purple-500/20 text-purple-200 px-4 py-2 rounded-full border border-purple-500/30 font-semibold">LocalStorage API</span>
+                    <span class="bg-pink-500/20 text-pink-200 px-4 py-2 rounded-full border border-pink-500/30 font-semibold">HTML5</span>
+                    <span class="bg-green-500/20 text-green-200 px-4 py-2 rounded-full border border-green-500/30 font-semibold">JavaScript</span>
+                    <span class="bg-orange-500/20 text-orange-200 px-4 py-2 rounded-full border border-orange-500/30 font-semibold">GitHub Pages</span>
+                </div>
+            </div>
+
+            <!-- Creator -->
+            <div class="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-white animate-slide-in" style="animation-delay: 0.4s; opacity: 0;">
+                <h2 class="text-3xl font-bold mb-6 flex items-center">
+                    <span class="text-4xl mr-3">👨‍🎓</span>
+                    About the Creator
+                </h2>
+                <p class="text-white/90 text-lg leading-relaxed mb-4">
+                    Created by <span class="font-bold">Ben Hocquet</span>, a student passionate about using technology to enhance learning. This project combines modern web development with educational psychology principles to create an effective study tool.
+                </p>
+                <p class="text-white/90 text-lg leading-relaxed">
+                    Built with the help of <span class="font-bold">Claude AI (Anthropic)</span>, demonstrating the power of human-AI collaboration in creating educational resources.
+                </p>
+            </div>
+
+            <!-- Future Plans -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 animate-slide-in" style="animation-delay: 0.5s; opacity: 0;">
+                <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                    <span class="text-4xl mr-3">🚀</span>
+                    Coming Soon
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span class="text-white/80 text-lg">Chemistry study guides</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                        <span class="text-white/80 text-lg">Mathematics practice problems</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <span class="text-white/80 text-lg">Custom note-taking system</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-pink-400 rounded-full"></div>
+                        <span class="text-white/80 text-lg">Collaborative study features</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-orange-400 rounded-full"></div>
+                        <span class="text-white/80 text-lg">Mobile app version</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid md:grid-cols-3 gap-6 animate-slide-in" style="animation-delay: 0.6s; opacity: 0;">
+                <div class="bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 text-center text-white">
+                    <div class="text-5xl font-bold mb-2">69+</div>
+                    <div class="text-lg font-semibold">Questions</div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-center text-white">
+                    <div class="text-5xl font-bold mb-2">9</div>
+                    <div class="text-lg font-semibold">Study Modes</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-center text-white">
+                    <div class="text-5xl font-bold mb-2">100%</div>
+                    <div class="text-lg font-semibold">Free Forever</div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="text-center animate-slide-in" style="animation-delay: 0.7s; opacity: 0;">
+                <a href="dashboard.html" class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-2xl font-bold text-xl hover:shadow-2xl transform hover:scale-105 transition-all">
+                    Start Studying Now →
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

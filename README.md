@@ -6,36 +6,13 @@ Your personal study sanctuary with adaptive learning, spaced repetition, and gam
 
 ```
 your-repo/
-├── index.html              # Landing page (hero entrance)
+├── index.html              # Landing page 
 ├── dashboard.html          # Main hub with subjects and stats
 ├── biology-quiz2.html      # Biology Quiz 2 study app (rename from biology-quiz2-master-final.html)
 ├── progress.html           # Detailed progress tracking
 ├── about.html              # About page
 └── README.md               # This file
 ```
-
-## 🚀 Setup Instructions
-
-### Step 1: Download All Files
-Download these 5 files from the outputs:
-1. `index.html` - Landing page
-2. `dashboard.html` - Dashboard
-3. `biology-quiz2-master-final.html` - **RENAME THIS to `biology-quiz2.html`**
-4. `progress.html` - Progress page
-5. `about.html` - About page
-
-### Step 2: Upload to GitHub
-1. Go to your GitHub repository
-2. Click "Add file" → "Upload files"
-3. **IMPORTANT:** Rename `biology-quiz2-master-final.html` to `biology-quiz2.html` before uploading
-4. Upload all 5 files
-5. Commit changes
-
-### Step 3: Wait & Visit
-1. Wait 1-2 minutes for GitHub Pages to build
-2. Visit: `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME`
-3. Your complete study site is live! 🎉
-
 ## 🎨 Page Flow
 
 ```

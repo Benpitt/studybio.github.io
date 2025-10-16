@@ -3,1111 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biology Quiz 2 Master Guide</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Ben's Bio and Other Stuff Too</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-slide-in {
-            animation: slideIn 0.3s ease-out;
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        .animate-pulse-custom {
-            animation: pulse 2s infinite;
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
         }
-        .flip-card {
-            perspective: 1000px;
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
         }
-        .flip-card-inner {
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
         }
-        .flip-card.flipped .flip-card-inner {
-            transform: rotateY(180deg);
+        .animate-slide-down {
+            animation: slideDown 0.8s ease-out forwards;
         }
-        .flip-card-front, .flip-card-back {
-            backface-visibility: hidden;
+        .gradient-text {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .flip-card-back {
-            transform: rotateY(180deg);
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        @keyframes particle-float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
         }
     </style>
 </head>
-<body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        function BiologyMasterApp() {
-            const [mode, setMode] = useState('menu');
-            const [currentQuestion, setCurrentQuestion] = useState(0);
-            const [showAnswer, setShowAnswer] = useState(false);
-            const [selectedTopic, setSelectedTopic] = useState('all');
-            const [testQuestions, setTestQuestions] = useState([]);
-            const [testAnswers, setTestAnswers] = useState({});
-            const [testSubmitted, setTestSubmitted] = useState(false);
-            const [mistakeBank, setMistakeBank] = useState([]);
-            const [studyStreak, setStudyStreak] = useState(0);
-            const [weakTopics, setWeakTopics] = useState([]);
-            const [topicStats, setTopicStats] = useState({});
-            const [currentComp, setCurrentComp] = useState(0);
-            const [quizBuilderTopics, setQuizBuilderTopics] = useState([]);
+<body class="overflow-hidden">
+    <div class="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 relative">
+        <!-- Animated Particles -->
+        <div id="particles" class="absolute inset-0 overflow-hidden"></div>
+        
+        <!-- Main Content -->
+        <div class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+            <!-- Logo/Icon -->
+            <div class="animate-float mb-8 animate-fade-in" style="animation-delay: 0.2s; opacity: 0;">
+                <div class="text-9xl">🎓</div>
+            </div>
             
-            // Spaced repetition state
-            const [cardDifficulty, setCardDifficulty] = useState({});
-            const [cardHistory, setCardHistory] = useState({});
-            const [shuffledQuestions, setShuffledQuestions] = useState([]);
+            <!-- Main Title -->
+            <h1 class="text-5xl md:text-7xl font-bold text-white text-center mb-4 animate-fade-in" style="animation-delay: 0.4s; opacity: 0;">
+                Ben's Bio
+            </h1>
+            <h2 class="text-3xl md:text-5xl font-bold gradient-text text-center mb-8 animate-fade-in" style="animation-delay: 0.6s; opacity: 0;">
+                and other stuff too
+            </h2>
             
-            // Matching game state
-            const [matchPairs, setMatchPairs] = useState([]);
-            const [selectedMatch, setSelectedMatch] = useState(null);
-            const [matchedPairs, setMatchedPairs] = useState([]);
-            const [matchScore, setMatchScore] = useState(0);
-            const [matchAttempts, setMatchAttempts] = useState(0);
+            <!-- Subtitle -->
+            <p class="text-xl md:text-2xl text-blue-200 text-center mb-12 max-w-2xl animate-fade-in" style="animation-delay: 0.8s; opacity: 0;">
+                Your personal study sanctuary. Master every subject with adaptive learning, spaced repetition, and gamified practice.
+            </p>
             
-            // Speed challenge state
-            const [speedQuestions, setSpeedQuestions] = useState([]);
-            const [speedCurrent, setSpeedCurrent] = useState(0);
-            const [speedScore, setSpeedScore] = useState(0);
-            const [speedTime, setSpeedTime] = useState(60);
-            const [speedActive, setSpeedActive] = useState(false);
+            <!-- Enter Button -->
+            <a href="dashboard.html" class="group relative animate-fade-in" style="animation-delay: 1s; opacity: 0;">
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse-glow"></div>
+                <button class="relative px-12 py-6 bg-white rounded-2xl leading-none flex items-center space-x-6 transform transition-all duration-300 group-hover:scale-110">
+                    <span class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        Enter
+                    </span>
+                    <span class="text-3xl transform transition-transform duration-300 group-hover:translate-x-2">
+                        →
+                    </span>
+                </button>
+            </a>
+            
+            <!-- Features Preview -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 text-center animate-fade-in" style="animation-delay: 1.2s; opacity: 0;">
+                <div class="text-white/80 hover:text-white transition-colors">
+                    <div class="text-4xl mb-2">🎴</div>
+                    <div class="text-sm font-semibold">Smart Flashcards</div>
+                </div>
+                <div class="text-white/80 hover:text-white transition-colors">
+                    <div class="text-4xl mb-2">📊</div>
+                    <div class="text-sm font-semibold">Progress Tracking</div>
+                </div>
+                <div class="text-white/80 hover:text-white transition-colors">
+                    <div class="text-4xl mb-2">🎮</div>
+                    <div class="text-sm font-semibold">Learning Games</div>
+                </div>
+                <div class="text-white/80 hover:text-white transition-colors">
+                    <div class="text-4xl mb-2">🏆</div>
+                    <div class="text-sm font-semibold">Achievements</div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="absolute bottom-8 text-center text-white/60 text-sm animate-fade-in" style="animation-delay: 1.4s; opacity: 0;">
+                <p>Built with ❤️ by Ben Hocquet & Claude AI</p>
+            </div>
+        </div>
+    </div>
 
-            // QUESTION BANK
-            const questionBank = [
-                // Carbohydrates
-                { id: 1, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "What is the monomer of carbohydrates?", options: ["Amino acids", "Monosaccharides", "Nucleotides", "Fatty acids"], correct: 1, explanation: "Monosaccharides (simple sugars like glucose) are the monomers of carbohydrates.", shortAnswer: "Monosaccharides" },
-                { id: 2, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "What type of bond connects monosaccharides together?", options: ["Peptide bond", "Glycosidic bond", "Hydrogen bond", "Ester bond"], correct: 1, explanation: "Glycosidic bonds form between monosaccharides through dehydration synthesis.", shortAnswer: "Glycosidic bond" },
-                { id: 3, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Which is a DIsaccharide?", options: ["Glucose", "Sucrose", "Starch", "Cellulose"], correct: 1, explanation: "Sucrose (table sugar) is made of 2 monosaccharides: glucose + fructose.", shortAnswer: "Sucrose" },
-                { id: 4, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Which polysaccharide is the main storage form in ANIMALS?", options: ["Starch", "Cellulose", "Glycogen", "Chitin"], correct: 2, explanation: "Glycogen is stored in liver and muscles, highly branched for quick energy access.", shortAnswer: "Glycogen" },
-                { id: 5, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Which polysaccharide provides structural support in plant cell walls?", options: ["Starch", "Glycogen", "Cellulose", "Sucrose"], correct: 2, explanation: "Cellulose has unbranched chains with H-bonds, making it strong for structure.", shortAnswer: "Cellulose" },
-                { id: 6, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "What elements are in carbohydrates?", options: ["C, H, O, N", "C, H, O", "C, H, O, P", "C, H, N"], correct: 1, explanation: "Carbohydrates contain Carbon, Hydrogen, and Oxygen in a 1:2:1 ratio (CH₂O)n", shortAnswer: "C, H, O" },
-                { id: 7, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Starch is the main storage carbohydrate in:", options: ["Animals", "Plants", "Bacteria", "Fungi"], correct: 1, explanation: "Plants store glucose as starch. Animals use glycogen.", shortAnswer: "Plants" },
-                { id: 8, topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Glycogen is highly branched for:", options: ["Structure", "Quick energy access", "Water resistance", "Enzyme binding"], correct: 1, explanation: "Branching allows many enzymes to break it down simultaneously for fast energy release.", shortAnswer: "Quick energy access" },
-                
-                // Proteins
-                { id: 9, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What is the monomer of proteins?", options: ["Monosaccharides", "Amino acids", "Nucleotides", "Fatty acids"], correct: 1, explanation: "There are 20 different amino acids that combine to make proteins.", shortAnswer: "Amino acids" },
-                { id: 10, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What bond connects amino acids?", options: ["Glycosidic", "Peptide", "Ester", "Phosphodiester"], correct: 1, explanation: "Peptide bonds form between the amino group of one aa and carboxyl of another.", shortAnswer: "Peptide bond" },
-                { id: 11, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "How many amino acids are in a TRIpeptide?", options: ["1", "2", "3", "4"], correct: 2, explanation: "Tri = 3. A tripeptide has 3 amino acids connected by 2 peptide bonds.", shortAnswer: "3" },
-                { id: 12, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What are the 3 parts of every amino acid?", options: ["Sugar, phosphate, base", "Amino group, carboxyl group, R group", "Glycerol and fatty acids", "Carbon rings"], correct: 1, explanation: "All amino acids have: NH₂ (amino), COOH (carboxyl), and R group (variable).", shortAnswer: "Amino, carboxyl, R group" },
-                { id: 13, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What maintains SECONDARY protein structure?", options: ["Peptide bonds", "Hydrogen bonds", "Ionic bonds", "Disulfide bridges"], correct: 1, explanation: "H-bonds between backbone atoms create α-helices and β-sheets.", shortAnswer: "Hydrogen bonds" },
-                { id: 14, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "Which level is just the sequence of amino acids?", options: ["Primary", "Secondary", "Tertiary", "Quaternary"], correct: 0, explanation: "Primary structure is the linear sequence, determined by DNA.", shortAnswer: "Primary" },
-                { id: 15, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What elements are in proteins?", options: ["C, H, O", "C, H, O, N", "C, H, O, N, S", "C, H, O, P"], correct: 2, explanation: "Proteins have C, H, O, N, and some have S (sulfur) in certain amino acids.", shortAnswer: "C, H, O, N, S" },
-                { id: 16, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "Tertiary structure is stabilized by:", options: ["Peptide bonds only", "R group interactions", "Only H-bonds", "Glycosidic bonds"], correct: 1, explanation: "Tertiary structure involves R group interactions (H-bonds, ionic, disulfide bridges, hydrophobic).", shortAnswer: "R group interactions" },
-                { id: 17, topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "Quaternary structure involves:", options: ["One polypeptide", "Multiple polypeptides", "Only amino acids", "Carbohydrates"], correct: 1, explanation: "Quaternary structure is multiple polypeptide chains working together (e.g., hemoglobin).", shortAnswer: "Multiple polypeptides" },
-                
-                // Lipids
-                { id: 18, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "What are the subunits of lipids?", options: ["Amino acids", "Nucleotides", "Fatty acids and glycerol", "Monosaccharides"], correct: 2, explanation: "Lipids are made from fatty acids and glycerol (not true polymers).", shortAnswer: "Fatty acids and glycerol" },
-                { id: 19, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "A triglyceride is made of:", options: ["Glycerol + 1 fatty acid", "Glycerol + 2 fatty acids", "Glycerol + 3 fatty acids", "4 carbon rings"], correct: 2, explanation: "Tri = 3. Triglycerides have 1 glycerol + 3 fatty acids.", shortAnswer: "Glycerol + 3 fatty acids" },
-                { id: 20, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "A phospholipid is made of:", options: ["Glycerol + 3 fatty acids", "Glycerol + 2 fatty acids + phosphate", "4 carbon rings", "Glycerol + 1 fatty acid"], correct: 1, explanation: "Phospholipids form cell membranes: glycerol + 2 fatty acids + phosphate group.", shortAnswer: "Glycerol + 2 fatty acids + phosphate" },
-                { id: 21, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "What is the structure of a steroid?", options: ["Long fatty acid chains", "4 fused carbon rings", "Amino acid chain", "Sugar ring"], correct: 1, explanation: "Steroids like cholesterol and hormones have 4 fused rings.", shortAnswer: "4 fused carbon rings" },
-                { id: 22, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Unsaturated fatty acids have:", options: ["No double bonds", "One or more C=C double bonds", "Only single bonds", "Peptide bonds"], correct: 1, explanation: "Unsaturated = has double bonds, creates kinks, liquid at room temp.", shortAnswer: "C=C double bonds" },
-                { id: 23, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Saturated fats are:", options: ["Liquid at room temp", "Solid at room temp", "Always healthy", "Found only in plants"], correct: 1, explanation: "Saturated (no double bonds) = straight chains = solid (like butter).", shortAnswer: "Solid at room temp" },
-                { id: 24, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Which lipid makes up cell membranes?", options: ["Triglycerides", "Phospholipids", "Steroids", "Waxes"], correct: 1, explanation: "Phospholipids form bilayers with hydrophilic heads out, hydrophobic tails in.", shortAnswer: "Phospholipids" },
-                { id: 25, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Which part of a phospholipid is hydrophobic?", options: ["Phosphate head", "Fatty acid tails", "Entire molecule", "Glycerol"], correct: 1, explanation: "Fatty acid tails are nonpolar (hydrophobic), phosphate head is polar.", shortAnswer: "Fatty acid tails" },
-                { id: 26, topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Lipids store more energy than carbs because:", options: ["They're bigger", "More C-H bonds", "They're hydrophobic", "They're polymers"], correct: 1, explanation: "C-H bonds store lots of energy. Lipids have many C-H bonds.", shortAnswer: "More C-H bonds" },
-                
-                // Nucleic Acids
-                { id: 27, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What is the monomer of nucleic acids?", options: ["Amino acids", "Monosaccharides", "Nucleotides", "Fatty acids"], correct: 2, explanation: "Nucleotides are the building blocks of DNA and RNA.", shortAnswer: "Nucleotides" },
-                { id: 28, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What are the 3 parts of a nucleotide?", options: ["Amino, carboxyl, R group", "Sugar, phosphate, nitrogenous base", "Glycerol and fatty acids", "Carbon rings"], correct: 1, explanation: "Every nucleotide has: 5-carbon sugar, phosphate group, and base.", shortAnswer: "Sugar, phosphate, base" },
-                { id: 29, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What sugar is in DNA?", options: ["Ribose", "Deoxyribose", "Glucose", "Fructose"], correct: 1, explanation: "DNA has DEOXYribose (lacks an OH group on 2' carbon).", shortAnswer: "Deoxyribose" },
-                { id: 30, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What sugar is in RNA?", options: ["Ribose", "Deoxyribose", "Glucose", "Sucrose"], correct: 0, explanation: "RNA has ribose (has an OH group on 2' carbon).", shortAnswer: "Ribose" },
-                { id: 31, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "Which base is in RNA but NOT DNA?", options: ["Adenine", "Uracil", "Guanine", "Cytosine"], correct: 1, explanation: "RNA has Uracil instead of Thymine. DNA: A-T-G-C, RNA: A-U-G-C", shortAnswer: "Uracil" },
-                { id: 32, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "How many H-bonds between A and T?", options: ["1", "2", "3", "4"], correct: 1, explanation: "A-T pairs with 2 hydrogen bonds. G-C has 3 hydrogen bonds.", shortAnswer: "2" },
-                { id: 33, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "How many H-bonds between G and C?", options: ["1", "2", "3", "4"], correct: 2, explanation: "G-C pairs with 3 hydrogen bonds (stronger than A-T).", shortAnswer: "3" },
-                { id: 34, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "DNA is ___ stranded, RNA is ___ stranded.", options: ["Single, single", "Double, double", "Double, single", "Single, double"], correct: 2, explanation: "DNA is double helix, RNA is single strand.", shortAnswer: "Double, single" },
-                { id: 35, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What elements are in nucleic acids?", options: ["C, H, O", "C, H, O, N", "C, H, O, N, P", "C, H, O, S"], correct: 2, explanation: "Nucleic acids have C, H, O, N, and P (phosphorus in phosphate group).", shortAnswer: "C, H, O, N, P" },
-                { id: 36, topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "DNA stores information in:", options: ["Sugar sequence", "Phosphate groups", "Base sequence", "H-bonds"], correct: 2, explanation: "The sequence of bases (A, T, G, C) stores genetic information.", shortAnswer: "Base sequence" },
-                
-                // Reactions
-                { id: 37, topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "Dehydration synthesis does what?", options: ["Adds water to break bonds", "Removes water to make bonds", "Adds polymers", "Breaks monomers"], correct: 1, explanation: "Dehydration synthesis REMOVES H₂O to BUILD polymers from monomers.", shortAnswer: "Removes water to make bonds" },
-                { id: 38, topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "Hydrolysis does what?", options: ["Removes water", "Adds water to break bonds", "Makes polymers", "Removes polymers"], correct: 1, explanation: "Hydrolysis ADDS H₂O to BREAK polymers into monomers (like digestion).", shortAnswer: "Adds water to break bonds" },
-                { id: 39, topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "When 2 glucose molecules join, what is released?", options: ["CO₂", "O₂", "H₂O", "ATP"], correct: 2, explanation: "Dehydration synthesis releases water when forming glycosidic bonds.", shortAnswer: "H₂O" },
-                { id: 40, topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "During protein digestion, what is added?", options: ["Water", "Amino acids", "Peptide bonds", "Energy"], correct: 0, explanation: "Hydrolysis adds water to break peptide bonds, releasing amino acids.", shortAnswer: "Water" },
-                
-                // Atomic Structure
-                { id: 41, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "Atomic number tells you the number of:", options: ["Neutrons", "Protons", "Electrons", "Ions"], correct: 1, explanation: "Atomic number = number of protons (defines the element).", shortAnswer: "Protons" },
-                { id: 42, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "Mass number = ", options: ["Protons only", "Neutrons only", "Protons + Neutrons", "Protons + Electrons"], correct: 2, explanation: "Mass number is the total of protons and neutrons in the nucleus.", shortAnswer: "Protons + Neutrons" },
-                { id: 43, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "To find neutrons:", options: ["Atomic number only", "Mass - Atomic number", "Atomic + Mass", "Electrons only"], correct: 1, explanation: "Neutrons = Mass number - Atomic number", shortAnswer: "Mass - Atomic number" },
-                { id: 44, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "In a neutral atom, protons = ", options: ["Neutrons", "Electrons", "Mass number", "Ions"], correct: 1, explanation: "Neutral atoms have equal protons (+) and electrons (-).", shortAnswer: "Electrons" },
-                { id: 45, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "An ion with 3+ charge has:", options: ["3 extra protons", "3 fewer protons", "3 extra electrons", "3 fewer electrons"], correct: 3, explanation: "Positive charge = lost electrons. 3+ means lost 3 electrons.", shortAnswer: "3 fewer electrons" },
-                { id: 46, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "An ion with 2- charge has:", options: ["2 extra protons", "2 fewer protons", "2 extra electrons", "2 fewer electrons"], correct: 2, explanation: "Negative charge = gained electrons. 2- means gained 2 electrons.", shortAnswer: "2 extra electrons" },
-                { id: 47, topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "Isotopes differ in number of:", options: ["Protons", "Electrons", "Neutrons", "All of these"], correct: 2, explanation: "Isotopes are same element (same protons) but different neutrons.", shortAnswer: "Neutrons" },
-                
-                // Water & Polarity
-                { id: 48, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Water is a ___ molecule.", options: ["Nonpolar", "Polar", "Ionic", "Neutral"], correct: 1, explanation: "Water is polar: oxygen is δ- and hydrogens are δ+.", shortAnswer: "Polar" },
-                { id: 49, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "In water, which atom is δ- (partially negative)?", options: ["Hydrogen", "Oxygen", "Both equally", "Neither"], correct: 1, explanation: "Oxygen is more electronegative, pulls electrons, becomes δ-.", shortAnswer: "Oxygen" },
-                { id: 50, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Hydrogen bonds form between:", options: ["Two H atoms", "H and O in same molecule", "H of one molecule and O of another", "O and O"], correct: 2, explanation: "H-bonds form BETWEEN molecules: δ+ H attracted to δ- O.", shortAnswer: "H and O of different molecules" },
-                { id: 51, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Which can form hydrogen bonds?", options: ["CH₄ (methane)", "H₂O (water)", "CO₂", "O₂"], correct: 1, explanation: "Water is polar with H bonded to O, can form H-bonds.", shortAnswer: "H₂O" },
-                { id: 52, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Hydrophilic means:", options: ["Water-fearing", "Water-loving", "No charge", "Nonpolar"], correct: 1, explanation: "Hydrophilic = water-loving, dissolves in water, polar.", shortAnswer: "Water-loving" },
-                { id: 53, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Hydrophobic means:", options: ["Water-loving", "Water-fearing", "Positive charge", "Dissolves easily"], correct: 1, explanation: "Hydrophobic = water-fearing, doesn't dissolve, nonpolar (like oils).", shortAnswer: "Water-fearing" },
-                { id: 54, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Which is hydrophobic?", options: ["Salt", "Sugar", "Fatty acid tails", "Amino acids"], correct: 2, explanation: "Fatty acid tails are nonpolar (C-H bonds), hydrophobic.", shortAnswer: "Fatty acid tails" },
-                { id: 55, topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Polar molecules dissolve in:", options: ["Oil", "Water", "Nonpolar solvents", "Nothing"], correct: 1, explanation: "Like dissolves like: polar dissolves in polar (water).", shortAnswer: "Water" },
-                
-                // Data Analysis
-                { id: 56, topic: 'Data Analysis', subtopic: 'Data Types', type: 'mc', question: "Qualitative data is:", options: ["Numerical measurements", "Descriptive observations", "Always graphed", "Always percentages"], correct: 1, explanation: "Qualitative = descriptive (colors, textures, yes/no).", shortAnswer: "Descriptive observations" },
-                { id: 57, topic: 'Data Analysis', subtopic: 'Data Types', type: 'mc', question: "Quantitative data is:", options: ["Descriptive only", "Numerical measurements", "Never graphed", "Always percentages"], correct: 1, explanation: "Quantitative = numbers you can measure (height, time, mass).", shortAnswer: "Numerical measurements" },
-                { id: 58, topic: 'Data Analysis', subtopic: 'Graphing', type: 'mc', question: "Best graph for showing change over time:", options: ["Pie chart", "Line graph", "Bar graph", "Scatter plot"], correct: 1, explanation: "Line graphs show trends/changes over time.", shortAnswer: "Line graph" },
-                { id: 59, topic: 'Data Analysis', subtopic: 'Graphing', type: 'mc', question: "Best graph for comparing categories:", options: ["Line graph", "Bar graph", "Pie chart", "Histogram"], correct: 1, explanation: "Bar graphs compare different categories or groups.", shortAnswer: "Bar graph" },
-                { id: 60, topic: 'Data Analysis', subtopic: 'Graphing', type: 'mc', question: "What should every graph have?", options: ["Title only", "Labeled axes only", "Title and labeled axes", "Colors"], correct: 2, explanation: "Graphs MUST have: title and labeled axes with units.", shortAnswer: "Title and labeled axes" },
-                { id: 61, topic: 'Data Analysis', subtopic: 'Statistics', type: 'mc', question: "The mean is:", options: ["Middle value", "Most common", "Average", "Range"], correct: 2, explanation: "Mean = average = sum of all values ÷ number of values.", shortAnswer: "Average" },
-                { id: 62, topic: 'Data Analysis', subtopic: 'Statistics', type: 'mc', question: "The median is:", options: ["Average", "Middle value when ordered", "Most frequent", "Highest value"], correct: 1, explanation: "Median = middle number when data is arranged in order.", shortAnswer: "Middle value" },
-                { id: 63, topic: 'Data Analysis', subtopic: 'Statistics', type: 'mc', question: "The mode is:", options: ["Average", "Middle value", "Most frequent value", "Lowest value"], correct: 2, explanation: "Mode = value that appears most often in the data.", shortAnswer: "Most frequent value" },
-                
-                // Experimental Design
-                { id: 64, topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "Independent variable is:", options: ["What you measure", "What you change on purpose", "What stays the same", "The result"], correct: 1, explanation: "Independent = what experimenter changes/manipulates.", shortAnswer: "What you change" },
-                { id: 65, topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "Dependent variable is:", options: ["What you change", "What you measure", "What stays constant", "The hypothesis"], correct: 1, explanation: "Dependent = what you measure/observe, depends on independent variable.", shortAnswer: "What you measure" },
-                { id: 66, topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "Control variables are:", options: ["Changed each trial", "Never measured", "Kept constant", "The results"], correct: 2, explanation: "Controls = kept the same so they don't affect results.", shortAnswer: "Kept constant" },
-                { id: 67, topic: 'Experimental Design', subtopic: 'Hypothesis', type: 'mc', question: "A good hypothesis:", options: ["Is always correct", "Is testable", "Has no variables", "Is very complex"], correct: 1, explanation: "Hypotheses must be testable with experiments.", shortAnswer: "Is testable" },
-                { id: 68, topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "In 'How does temperature affect enzyme activity?', temperature is:", options: ["Dependent variable", "Independent variable", "Control", "Hypothesis"], correct: 1, explanation: "Temperature is what you change (independent).", shortAnswer: "Independent variable" },
-                { id: 69, topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "In 'How does pH affect reaction rate?', reaction rate is:", options: ["Independent variable", "Dependent variable", "Control", "Constant"], correct: 1, explanation: "Reaction rate is what you measure (dependent).", shortAnswer: "Dependent variable" }
-            ];
-
-            const comparisons = [
-                {
-                    title: "DNA vs RNA",
-                    items: ["DNA", "RNA"],
-                    aspects: [
-                        { name: "Sugar", values: ["Deoxyribose", "Ribose"] },
-                        { name: "Bases", values: ["A, T, G, C", "A, U, G, C"] },
-                        { name: "Structure", values: ["Double-stranded", "Single-stranded"] },
-                        { name: "Location", values: ["Nucleus", "Nucleus & cytoplasm"] },
-                        { name: "Function", values: ["Store genetic info", "Transfer genetic info"] },
-                        { name: "Stability", values: ["More stable", "Less stable"] }
-                    ]
-                },
-                {
-                    title: "Starch vs Glycogen vs Cellulose",
-                    items: ["Starch", "Glycogen", "Cellulose"],
-                    aspects: [
-                        { name: "Found in", values: ["Plants", "Animals", "Plant cell walls"] },
-                        { name: "Function", values: ["Energy storage", "Energy storage", "Structural support"] },
-                        { name: "Structure", values: ["Branched & unbranched", "Highly branched", "Unbranched with H-bonds"] },
-                        { name: "Digestible by humans", values: ["Yes", "Yes", "No"] }
-                    ]
-                },
-                {
-                    title: "Saturated vs Unsaturated Fatty Acids",
-                    items: ["Saturated", "Unsaturated"],
-                    aspects: [
-                        { name: "Double bonds", values: ["None (C-C only)", "One or more C=C"] },
-                        { name: "Shape", values: ["Straight chains", "Kinked chains"] },
-                        { name: "State at room temp", values: ["Solid", "Liquid"] },
-                        { name: "Examples", values: ["Butter, lard", "Vegetable oils"] },
-                        { name: "Packing", values: ["Pack tightly", "Don't pack well"] }
-                    ]
-                },
-                {
-                    title: "Dehydration Synthesis vs Hydrolysis",
-                    items: ["Dehydration Synthesis", "Hydrolysis"],
-                    aspects: [
-                        { name: "Water", values: ["Removes H₂O", "Adds H₂O"] },
-                        { name: "Result", values: ["Builds polymers", "Breaks polymers"] },
-                        { name: "Type", values: ["Anabolic (building)", "Catabolic (breaking)"] },
-                        { name: "Example", values: ["Making proteins", "Digesting proteins"] },
-                        { name: "Energy", values: ["Requires energy", "Releases energy"] }
-                    ]
-                },
-                {
-                    title: "Triglycerides vs Phospholipids vs Steroids",
-                    items: ["Triglycerides", "Phospholipids", "Steroids"],
-                    aspects: [
-                        { name: "Structure", values: ["Glycerol + 3 fatty acids", "Glycerol + 2 fatty acids + phosphate", "4 fused carbon rings"] },
-                        { name: "Main function", values: ["Energy storage", "Cell membranes", "Hormones"] },
-                        { name: "Polarity", values: ["Completely hydrophobic", "Amphipathic (both)", "Mostly hydrophobic"] },
-                        { name: "Examples", values: ["Fats, oils", "Membrane lipids", "Cholesterol, testosterone"] }
-                    ]
-                },
-                {
-                    title: "Protein Structure Levels",
-                    items: ["Primary", "Secondary", "Tertiary", "Quaternary"],
-                    aspects: [
-                        { name: "Definition", values: ["Amino acid sequence", "α-helix & β-sheet", "3D shape of one chain", "Multiple chains together"] },
-                        { name: "Bonds/Forces", values: ["Peptide bonds", "Hydrogen bonds", "R group interactions", "All types"] },
-                        { name: "Example", values: ["Linear chain", "Spiral or pleated", "Folded protein", "Hemoglobin (4 chains)"] }
-                    ]
-                }
-            ];
-
-            const topics = ['all', 'Biological Molecules', 'Atomic Structure', 'Water & Polarity', 'Data Analysis', 'Experimental Design'];
-
-            const getFilteredQuestions = () => {
-                if (selectedTopic === 'all') return questionBank;
-                return questionBank.filter(q => q.topic === selectedTopic);
-            };
-
-            // Spaced repetition algorithm
-            const getWeightedQuestions = () => {
-                const questions = getFilteredQuestions();
-                const weighted = [];
-                
-                questions.forEach(q => {
-                    const difficulty = cardDifficulty[q.id] || 'medium';
-                    const weight = difficulty === 'hard' ? 5 : difficulty === 'medium' ? 2 : 1;
-                    for (let i = 0; i < weight; i++) {
-                        weighted.push(q);
-                    }
-                });
-                
-                return weighted.sort(() => Math.random() - 0.5);
-            };
-
-            const markCardDifficulty = (cardId, difficulty) => {
-                const newDiff = {...cardDifficulty, [cardId]: difficulty};
-                setCardDifficulty(newDiff);
-                localStorage.setItem('cardDifficulty', JSON.stringify(newDiff));
-                
-                const newHistory = {...cardHistory, [cardId]: [...(cardHistory[cardId] || []), { date: Date.now(), difficulty }]};
-                setCardHistory(newHistory);
-                localStorage.setItem('cardHistory', JSON.stringify(newHistory));
-            };
-
-            const initTest = (numQuestions = 20) => {
-                let questions;
-                if (quizBuilderTopics.length > 0) {
-                    questions = questionBank.filter(q => quizBuilderTopics.includes(q.topic));
-                    questions = [...questions].sort(() => Math.random() - 0.5).slice(0, Math.min(numQuestions, questions.length));
-                } else {
-                    questions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, numQuestions);
-                }
-                setTestQuestions(questions);
-                setTestAnswers({});
-                setTestSubmitted(false);
-            };
-
-            const analyzeMistakes = (mistakes) => {
-                const topicCount = {};
-                mistakes.forEach(m => {
-                    topicCount[m.topic] = (topicCount[m.topic] || 0) + 1;
-                });
-                const weak = Object.entries(topicCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 3)
-                    .map(([topic]) => topic);
-                setWeakTopics(weak);
-                
-                const newStats = {...topicStats};
-                testQuestions.forEach((q, idx) => {
-                    const topic = q.topic;
-                    if (!newStats[topic]) newStats[topic] = { correct: 0, total: 0 };
-                    newStats[topic].total++;
-                    if (testAnswers[idx] === q.correct) newStats[topic].correct++;
-                });
-                setTopicStats(newStats);
-                localStorage.setItem('topicStats', JSON.stringify(newStats));
-            };
-
-            const initMatchGame = () => {
-                const selected = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 6);
-                const pairs = [];
-                selected.forEach(q => {
-                    pairs.push({ id: q.id + '-q', type: 'question', text: q.question, pairId: q.id });
-                    pairs.push({ id: q.id + '-a', type: 'answer', text: q.shortAnswer, pairId: q.id });
-                });
-                setMatchPairs(pairs.sort(() => Math.random() - 0.5));
-                setSelectedMatch(null);
-                setMatchedPairs([]);
-                setMatchScore(0);
-                setMatchAttempts(0);
-            };
-
-            const initSpeedChallenge = () => {
-                const questions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 20);
-                setSpeedQuestions(questions);
-                setSpeedCurrent(0);
-                setSpeedScore(0);
-                setSpeedTime(60);
-                setSpeedActive(true);
-            };
-
-            useEffect(() => {
-                const lastVisit = localStorage.getItem('lastVisit');
-                const today = new Date().toDateString();
-                if (lastVisit === today) {
-                    const streak = parseInt(localStorage.getItem('studyStreak') || '0');
-                    setStudyStreak(streak);
-                } else if (lastVisit) {
-                    const yesterday = new Date(Date.now() - 86400000).toDateString();
-                    if (lastVisit === yesterday) {
-                        const newStreak = parseInt(localStorage.getItem('studyStreak') || '0') + 1;
-                        setStudyStreak(newStreak);
-                        localStorage.setItem('studyStreak', newStreak);
-                    } else {
-                        setStudyStreak(1);
-                        localStorage.setItem('studyStreak', '1');
-                    }
-                } else {
-                    setStudyStreak(1);
-                    localStorage.setItem('studyStreak', '1');
-                }
-                localStorage.setItem('lastVisit', today);
-
-                const savedMistakes = localStorage.getItem('mistakeBank');
-                if (savedMistakes) setMistakeBank(JSON.parse(savedMistakes));
-
-                const savedStats = localStorage.getItem('topicStats');
-                if (savedStats) setTopicStats(JSON.parse(savedStats));
-
-                const savedDiff = localStorage.getItem('cardDifficulty');
-                if (savedDiff) setCardDifficulty(JSON.parse(savedDiff));
-
-                const savedHistory = localStorage.getItem('cardHistory');
-                if (savedHistory) setCardHistory(JSON.parse(savedHistory));
-            }, []);
-
-            useEffect(() => {
-                if (testSubmitted && testQuestions.length > 0) {
-                    const mistakes = [];
-                    testQuestions.forEach((q, idx) => {
-                        if (testAnswers[idx] !== q.correct) {
-                            mistakes.push({
-                                question: q.question,
-                                yourAnswer: q.options[testAnswers[idx]] || 'Not answered',
-                                correctAnswer: q.options[q.correct],
-                                explanation: q.explanation,
-                                topic: q.topic,
-                                subtopic: q.subtopic
-                            });
-                        }
-                    });
-                    
-                    if (mistakes.length > 0) {
-                        const allMistakes = [...mistakeBank, ...mistakes];
-                        setMistakeBank(allMistakes);
-                        localStorage.setItem('mistakeBank', JSON.stringify(allMistakes));
-                        analyzeMistakes(mistakes);
-                    } else {
-                        analyzeMistakes([]);
-                    }
-                }
-            }, [testSubmitted]);
-
-            useEffect(() => {
-                if (mode === 'flashcards') {
-                    const weighted = getWeightedQuestions();
-                    setShuffledQuestions(weighted);
-                    setCurrentQuestion(0);
-                    setShowAnswer(false);
-                }
-            }, [mode, selectedTopic]);
-
-            useEffect(() => {
-                if (speedActive && speedTime > 0) {
-                    const timer = setTimeout(() => setSpeedTime(speedTime - 1), 1000);
-                    return () => clearTimeout(timer);
-                }
-                if (speedTime === 0) setSpeedActive(false);
-            }, [speedActive, speedTime]);
-
-            // MENU
-            if (mode === 'menu') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-4">
-                        <div className="max-w-7xl mx-auto">
-                            <div className="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 mb-6 animate-slide-in">
-                                <div className="flex items-center justify-between mb-6">
-                                    <div>
-                                        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                                            📚 Biology Quiz 2 Master Guide
-                                        </h1>
-                                        <p className="text-gray-600 text-lg">Ben Hocquet with the help of Claude AI</p>
-                                    </div>
-                                    <div className="text-center bg-gradient-to-r from-orange-100 to-red-100 p-4 rounded-2xl">
-                                        <div className="text-4xl mb-2 animate-pulse-custom">🔥</div>
-                                        <div className="text-3xl font-bold text-orange-600">{studyStreak}</div>
-                                        <div className="text-sm text-gray-600 font-semibold">Day Streak</div>
-                                    </div>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm text-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-2xl border-2 border-blue-200">
-                                    <div className="flex items-center gap-2"><span className="text-green-500">✓</span> 69 Questions</div>
-                                    <div className="flex items-center gap-2"><span className="text-green-500">✓</span> Spaced Repetition</div>
-                                    <div className="flex items-center gap-2"><span className="text-green-500">✓</span> Adaptive Learning</div>
-                                    <div className="flex items-center gap-2"><span className="text-green-500">✓</span> Progress Tracking</div>
-                                    <div className="flex items-center gap-2"><span className="text-green-500">✓</span> Gamified Learning</div>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                <button onClick={() => setMode('flashcards')} className="group bg-gradient-to-br from-blue-500 to-cyan-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎴</div>
-                                    <div className="text-2xl mb-2">Smart Flashcards</div>
-                                    <div className="text-sm opacity-90">Spaced repetition + confidence tracking</div>
-                                </button>
-                                
-                                <button onClick={() => { setMode('practice'); initTest(20); }} className="group bg-gradient-to-br from-green-500 to-teal-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📝</div>
-                                    <div className="text-2xl mb-2">Practice Test</div>
-                                    <div className="text-sm opacity-90">Adaptive feedback & recommendations</div>
-                                </button>
-
-                                <button onClick={() => setMode('quizbuilder')} className="group bg-gradient-to-br from-purple-500 to-pink-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎯</div>
-                                    <div className="text-2xl mb-2">Quiz Builder</div>
-                                    <div className="text-sm opacity-90">Build custom topic quizzes</div>
-                                </button>
-
-                                <button onClick={() => { setMode('match'); initMatchGame(); }} className="group bg-gradient-to-br from-yellow-500 to-orange-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎮</div>
-                                    <div className="text-2xl mb-2">Matching Game</div>
-                                    <div className="text-sm opacity-90">Match questions to answers</div>
-                                </button>
-
-                                <button onClick={() => { setMode('speed'); initSpeedChallenge(); }} className="group bg-gradient-to-br from-red-500 to-pink-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
-                                    <div className="text-2xl mb-2">Speed Challenge</div>
-                                    <div className="text-sm opacity-90">60 seconds rapid fire</div>
-                                </button>
-
-                                <button onClick={() => setMode('compare')} className="group bg-gradient-to-br from-indigo-500 to-purple-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚖️</div>
-                                    <div className="text-2xl mb-2">Compare & Contrast</div>
-                                    <div className="text-sm opacity-90">6 comparison tables</div>
-                                </button>
-
-                                <button onClick={() => setMode('mistakes')} className="group bg-gradient-to-br from-orange-500 to-red-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">❌</div>
-                                    <div className="text-2xl mb-2">Mistake Bank</div>
-                                    <div className="text-sm opacity-90">{mistakeBank.length} errors saved</div>
-                                </button>
-
-                                <button onClick={() => setMode('progress')} className="group bg-gradient-to-br from-teal-500 to-green-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📊</div>
-                                    <div className="text-2xl mb-2">Progress Dashboard</div>
-                                    <div className="text-sm opacity-90">Track your stats</div>
-                                </button>
-
-                                <button onClick={() => setMode('review')} className="group bg-gradient-to-br from-cyan-500 to-blue-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                                    <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📖</div>
-                                    <div className="text-2xl mb-2">Quick Reference</div>
-                                    <div className="text-sm opacity-90">Complete review guide</div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
+    <script>
+        // Create animated particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4'];
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 10 + 5 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animation = `particle-float ${Math.random() * 10 + 15}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.opacity = '0.3';
+                container.appendChild(particle);
             }
-
-            // SMART FLASHCARDS WITH SPACED REPETITION
-            if (mode === 'flashcards') {
-                if (shuffledQuestions.length === 0) return null;
-                const q = shuffledQuestions[currentQuestion];
-                const difficulty = cardDifficulty[q.id] || 'medium';
-
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4">
-                        <div className="max-w-5xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">← Menu</button>
-                                <select value={selectedTopic} onChange={(e) => { setSelectedTopic(e.target.value); setCurrentQuestion(0); setShowAnswer(false); }} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">
-                                    {topics.map(t => <option key={t} value={t}>{t === 'all' ? 'All Topics (Randomized)' : t}</option>)}
-                                </select>
-                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">{currentQuestion + 1} / {shuffledQuestions.length}</div>
-                            </div>
-
-                            <div className="bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl p-8 min-h-[450px] animate-slide-in">
-                                <div className="flex justify-between items-center mb-6">
-                                    <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-bold">{q.topic}</span>
-                                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${
-                                        difficulty === 'hard' ? 'bg-red-100 text-red-800' :
-                                        difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                                        'bg-yellow-100 text-yellow-800'
-                                    }`}>
-                                        {difficulty === 'hard' ? '🔴 Hard' : difficulty === 'easy' ? '🟢 Easy' : '🟡 Medium'}
-                                    </span>
-                                </div>
-                                
-                                {!showAnswer ? (
-                                    <div className="flex flex-col items-center justify-center h-full">
-                                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">{q.question}</h2>
-                                        <button onClick={() => setShowAnswer(true)} className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
-                                            Show Answer →
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        <h2 className="text-2xl font-bold text-gray-800">{q.question}</h2>
-                                        {q.options && (
-                                            <div className="space-y-2 mb-4">
-                                                {q.options.map((opt, idx) => (
-                                                    <div key={idx} className={`p-4 rounded-xl transition-all ${idx === q.correct ? 'bg-green-100 border-2 border-green-500 font-semibold' : 'bg-gray-100'}`}>
-                                                        {String.fromCharCode(65 + idx)}. {opt} {idx === q.correct && '✅'}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-500 p-6 rounded-lg">
-                                            <p className="text-lg text-gray-800">{q.explanation}</p>
-                                        </div>
-
-                                        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-xl border-2 border-yellow-300">
-                                            <p className="text-center font-bold text-gray-800 mb-4">How well do you know this?</p>
-                                            <div className="flex gap-3 justify-center">
-                                                <button
-                                                    onClick={() => {
-                                                        markCardDifficulty(q.id, 'hard');
-                                                        setCurrentQuestion((currentQuestion + 1) % shuffledQuestions.length);
-                                                        setShowAnswer(false);
-                                                    }}
-                                                    className="flex-1 bg-red-500 text-white px-6 py-4 rounded-xl font-bold hover:bg-red-600 transition-all transform hover:scale-105"
-                                                >
-                                                    😰 Hard<br/><span className="text-sm font-normal">Need more practice</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        markCardDifficulty(q.id, 'medium');
-                                                        setCurrentQuestion((currentQuestion + 1) % shuffledQuestions.length);
-                                                        setShowAnswer(false);
-                                                    }}
-                                                    className="flex-1 bg-yellow-500 text-white px-6 py-4 rounded-xl font-bold hover:bg-yellow-600 transition-all transform hover:scale-105"
-                                                >
-                                                    😐 Medium<br/><span className="text-sm font-normal">Getting there</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        markCardDifficulty(q.id, 'easy');
-                                                        setCurrentQuestion((currentQuestion + 1) % shuffledQuestions.length);
-                                                        setShowAnswer(false);
-                                                    }}
-                                                    className="flex-1 bg-green-500 text-white px-6 py-4 rounded-xl font-bold hover:bg-green-600 transition-all transform hover:scale-105"
-                                                >
-                                                    😊 Easy<br/><span className="text-sm font-normal">I know this!</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="flex justify-between mt-6">
-                                <button onClick={() => { setCurrentQuestion((currentQuestion - 1 + shuffledQuestions.length) % shuffledQuestions.length); setShowAnswer(false); }} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">← Previous</button>
-                                <button onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
-                                    {showAnswer ? 'Hide Answer' : 'Show Answer'}
-                                </button>
-                                <button onClick={() => { setCurrentQuestion((currentQuestion + 1) % shuffledQuestions.length); setShowAnswer(false); }} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">Next →</button>
-                            </div>
-
-                            <div className="mt-6 bg-white/90 backdrop-blur p-4 rounded-xl text-center text-sm text-gray-700 shadow-lg">
-                                <p className="font-semibold mb-2">💡 Spaced Repetition Active!</p>
-                                <p>Cards marked "Hard" appear 5x more often. Cards marked "Easy" appear less frequently.</p>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // PRACTICE TEST (same as before but with better UI)
-            if (mode === 'practice') {
-                if (testQuestions.length === 0) return null;
-
-                let correct = 0;
-                const mistakes = [];
-                let percentage = 0;
-
-                if (testSubmitted) {
-                    testQuestions.forEach((q, idx) => {
-                        if (testAnswers[idx] === q.correct) {
-                            correct++;
-                        } else {
-                            mistakes.push({
-                                question: q.question,
-                                yourAnswer: q.options[testAnswers[idx]] || 'Not answered',
-                                correctAnswer: q.options[q.correct],
-                                explanation: q.explanation,
-                                topic: q.topic,
-                                subtopic: q.subtopic
-                            });
-                        }
-                    });
-                    percentage = Math.round((correct / testQuestions.length) * 100);
-                }
-
-                if (testSubmitted) {
-                    return (
-                        <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
-                            <div className="max-w-4xl mx-auto">
-                                <div className="bg-white rounded-3xl shadow-2xl p-8 animate-slide-in">
-                                    <div className="text-center mb-8">
-                                        <div className="text-7xl mb-4">{percentage >= 90 ? '🏆' : percentage >= 70 ? '🎉' : percentage >= 50 ? '📚' : '💪'}</div>
-                                        <h2 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4">Test Complete!</h2>
-                                        <p className="text-4xl font-bold text-gray-700 mb-2">{correct}/{testQuestions.length}</p>
-                                        <p className={`text-2xl font-semibold ${percentage >= 70 ? 'text-green-600' : 'text-orange-600'}`}>{percentage}%</p>
-                                    </div>
-
-                                    {weakTopics.length > 0 && (
-                                        <div className="mb-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-500 p-6 rounded-xl shadow-lg">
-                                            <h3 className="text-xl font-bold text-yellow-800 mb-3">📊 Adaptive Recommendations:</h3>
-                                            <p className="text-gray-700 mb-3 font-semibold">Focus your study on these topics:</p>
-                                            <div className="flex flex-wrap gap-2 mb-4">
-                                                {weakTopics.map(topic => (
-                                                    <span key={topic} className="bg-yellow-200 text-yellow-900 px-4 py-2 rounded-full font-bold shadow">{topic}</span>
-                                                ))}
-                                            </div>
-                                            <button onClick={() => { setQuizBuilderTopics(weakTopics); setMode('quizbuilder'); }} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg transform hover:scale-105 transition-all">
-                                                Practice These Topics →
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {mistakes.length > 0 && (
-                                        <div className="mb-8">
-                                            <h3 className="text-2xl font-bold text-gray-800 mb-4">Review Wrong Answers:</h3>
-                                            <div className="space-y-4 max-h-96 overflow-y-auto">
-                                                {mistakes.map((item, idx) => (
-                                                    <div key={idx} className="bg-red-50 border-l-4 border-red-500 p-5 rounded-xl shadow">
-                                                        <p className="font-bold text-gray-800 mb-2 text-lg">{item.question}</p>
-                                                        <p className="text-sm text-red-700 mb-1">❌ Your answer: <span className="font-semibold">{item.yourAnswer}</span></p>
-                                                        <p className="text-sm text-green-700 font-semibold mb-2">✅ Correct: {item.correctAnswer}</p>
-                                                        <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded-lg">{item.explanation}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="flex gap-4">
-                                        <button onClick={() => setMode('menu')} className="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transform hover:scale-105 transition-all">
-                                            Back to Menu
-                                        </button>
-                                        <button onClick={() => initTest(20)} className="flex-1 bg-gradient-to-r from-green-500 to-teal-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transform hover:scale-105 transition-all">
-                                            New Test
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                }
-
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">← Menu</button>
-                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-bold shadow-lg">{testQuestions.length} Questions</div>
-                            </div>
-
-                            <div className="bg-white rounded-3xl shadow-2xl p-8 animate-slide-in">
-                                <div className="space-y-8">
-                                    {testQuestions.map((q, qIdx) => (
-                                        <div key={qIdx} className="border-b-2 border-gray-200 pb-6 last:border-0">
-                                            <div className="flex items-start gap-3 mb-4">
-                                                <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">{qIdx + 1}</span>
-                                                <p className="font-bold text-gray-800 text-lg flex-1">{q.question}</p>
-                                            </div>
-                                            <div className="space-y-2 ml-11">
-                                                {q.options.map((opt, optIdx) => (
-                                                    <button
-                                                        key={optIdx}
-                                                        onClick={() => setTestAnswers({...testAnswers, [qIdx]: optIdx})}
-                                                        className={`w-full text-left p-4 rounded-xl transition-all font-semibold ${
-                                                            testAnswers[qIdx] === optIdx
-                                                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
-                                                                : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                                                        }`}
-                                                    >
-                                                        {String.fromCharCode(65 + optIdx)}. {opt}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <button
-                                    onClick={() => setTestSubmitted(true)}
-                                    disabled={Object.keys(testAnswers).length < testQuestions.length}
-                                    className="w-full mt-8 bg-gradient-to-r from-green-500 to-teal-500 text-white py-5 rounded-xl font-bold text-xl disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-2xl transform hover:scale-105 transition-all"
-                                >
-                                    Submit Test ({Object.keys(testAnswers).length}/{testQuestions.length} answered)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // MATCHING GAME
-            if (mode === 'match') {
-                const handleMatchClick = (item) => {
-                    if (matchedPairs.includes(item.pairId)) return;
-                    
-                    if (!selectedMatch) {
-                        setSelectedMatch(item);
-                    } else {
-                        setMatchAttempts(matchAttempts + 1);
-                        if (selectedMatch.pairId === item.pairId && selectedMatch.id !== item.id) {
-                            setMatchedPairs([...matchedPairs, item.pairId]);
-                            setMatchScore(matchScore + 1);
-                            setSelectedMatch(null);
-                        } else {
-                            setTimeout(() => setSelectedMatch(null), 500);
-                        }
-                    }
-                };
-
-                const allMatched = matchedPairs.length === 6;
-
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">← Menu</button>
-                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-bold shadow-lg">
-                                    Score: {matchScore}/6 | Attempts: {matchAttempts}
-                                </div>
-                                <button onClick={initMatchGame} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">
-                                    🔄 New Game
-                                </button>
-                            </div>
-
-                            {allMatched && (
-                                <div className="bg-white rounded-3xl shadow-2xl p-8 mb-6 text-center animate-slide-in">
-                                    <div className="text-6xl mb-4">🎉</div>
-                                    <h2 className="text-4xl font-bold text-gray-800 mb-2">Perfect!</h2>
-                                    <p className="text-xl text-gray-600">You matched all pairs in {matchAttempts} attempts!</p>
-                                    <button onClick={initMatchGame} className="mt-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transform hover:scale-105 transition-all">
-                                        Play Again
-                                    </button>
-                                </div>
-                            )}
-
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                {matchPairs.map(item => {
-                                    const isMatched = matchedPairs.includes(item.pairId);
-                                    const isSelected = selectedMatch?.id === item.id;
-                                    
-                                    return (
-                                        <button
-                                            key={item.id}
-                                            onClick={() => handleMatchClick(item)}
-                                            disabled={isMatched}
-                                            className={`p-6 rounded-2xl font-semibold text-left min-h-[120px] transition-all transform hover:scale-105 ${
-                                                isMatched ? 'bg-green-200 text-green-800 opacity-50 cursor-not-allowed' :
-                                                isSelected ? 'bg-blue-500 text-white shadow-2xl scale-110' :
-                                                item.type === 'question' ? 'bg-white hover:bg-blue-50 text-gray-800' :
-                                                'bg-orange-100 hover:bg-orange-200 text-gray-800'
-                                            }`}
-                                        >
-                                            <div className="text-xs font-bold mb-2 opacity-70">
-                                                {item.type === 'question' ? '❓ QUESTION' : '💡 ANSWER'}
-                                            </div>
-                                            <div className="text-sm">{item.text}</div>
-                                            {isMatched && <div className="text-2xl mt-2">✅</div>}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // SPEED CHALLENGE
-            if (mode === 'speed') {
-                if (!speedActive && speedCurrent > 0) {
-                    return (
-                        <div className="min-h-screen bg-gradient-to-br from-red-400 to-pink-500 p-4 flex items-center justify-center">
-                            <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center animate-slide-in">
-                                <div className="text-6xl mb-4">⏰</div>
-                                <h2 className="text-4xl font-bold text-gray-800 mb-4">Time's Up!</h2>
-                                <p className="text-3xl text-gray-600 mb-2">Final Score: {speedScore}/{speedCurrent}</p>
-                                <p className="text-xl text-gray-500 mb-6">{Math.round((speedScore/speedCurrent)*100)}% Correct</p>
-                                <div className="flex gap-4">
-                                    <button onClick={() => setMode('menu')} className="flex-1 bg-gray-600 text-white py-4 rounded-xl font-bold hover:shadow-lg transform hover:scale-105 transition-all">
-                                        Menu
-                                    </button>
-                                    <button onClick={initSpeedChallenge} className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-4 rounded-xl font-bold hover:shadow-lg transform hover:scale-105 transition-all">
-                                        Play Again
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                }
-
-                const q = speedQuestions[speedCurrent];
-
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-red-400 to-pink-500 p-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => { setSpeedActive(false); setMode('menu'); }} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all shadow-lg">
-                                    ← Exit
-                                </button>
-                                <div className="bg-white/90 backdrop-blur px-8 py-4 rounded-xl font-bold text-3xl shadow-lg text-red-600">
-                                    {speedTime}s
-                                </div>
-                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-bold shadow-lg">
-                                    {speedScore}/{speedCurrent}
-                                </div>
-                            </div>
-
-                            <div className="bg-white rounded-3xl shadow-2xl p-8 animate-slide-in">
-                                <h3 className="text-3xl font-bold text-gray-800 mb-6">{q.question}</h3>
-                                <div className="space-y-3">
-                                    {q.options.map((opt, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => {
-                                                if (idx === q.correct) setSpeedScore(speedScore + 1);
-                                                if (speedCurrent < speedQuestions.length - 1) {
-                                                    setSpeedCurrent(speedCurrent + 1);
-                                                } else {
-                                                    setSpeedActive(false);
-                                                }
-                                            }}
-                                            className="w-full text-left p-5 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 hover:from-red-400 hover:to-pink-400 hover:text-white font-bold text-lg transition-all transform hover:scale-105 shadow"
-                                        >
-                                            {String.fromCharCode(65 + idx)}. {opt}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // Other modes continue... (compare, mistakes, progress, review, quizbuilder)
-            // Due to length, I'll add abbreviated versions
-
-            if (mode === 'compare') {
-                const comp = comparisons[currentComp];
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-indigo-400 to-purple-500 p-4">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">← Menu</button>
-                                <h2 className="text-2xl font-bold text-white">{comp.title}</h2>
-                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">{currentComp + 1}/{comparisons.length}</div>
-                            </div>
-                            <div className="bg-white rounded-3xl shadow-2xl p-8 overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="border-b-2 border-gray-300">
-                                            <th className="text-left p-4 font-bold">Feature</th>
-                                            {comp.items.map((item, idx) => (
-                                                <th key={idx} className={`text-left p-4 font-bold ${['text-blue-600', 'text-purple-600', 'text-green-600', 'text-orange-600'][idx]}`}>{item}</th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {comp.aspects.map((aspect, idx) => (
-                                            <tr key={idx} className="border-b">
-                                                <td className="p-4 font-semibold">{aspect.name}</td>
-                                                {aspect.values.map((val, vIdx) => (
-                                                    <td key={vIdx} className={`p-4 ${['bg-blue-50', 'bg-purple-50', 'bg-green-50', 'bg-orange-50'][vIdx]}`}>{val}</td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="flex justify-between mt-6">
-                                <button onClick={() => setCurrentComp(Math.max(0, currentComp - 1))} disabled={currentComp === 0} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold disabled:opacity-50 shadow-lg">← Prev</button>
-                                <button onClick={() => setCurrentComp(Math.min(comparisons.length - 1, currentComp + 1))} disabled={currentComp === comparisons.length - 1} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold disabled:opacity-50 shadow-lg">Next →</button>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // MISTAKE BANK
-            if (mode === 'mistakes') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">← Menu</button>
-                                <h2 className="text-2xl font-bold text-white">Mistake Bank</h2>
-                                <button onClick={() => { setMistakeBank([]); localStorage.removeItem('mistakeBank'); }} className="bg-white/90 backdrop-blur text-red-700 px-6 py-3 rounded-xl font-semibold shadow-lg">Clear All</button>
-                            </div>
-                            <div className="bg-white rounded-3xl shadow-2xl p-8">
-                                {mistakeBank.length === 0 ? (
-                                    <div className="text-center py-12">
-                                        <div className="text-7xl mb-4">🎉</div>
-                                        <h3 className="text-3xl font-bold text-gray-800 mb-2">No Mistakes Yet!</h3>
-                                        <p className="text-gray-600 text-lg">Take a practice test to start tracking errors.</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4 max-h-[600px] overflow-y-auto">
-                                        {mistakeBank.map((item, idx) => (
-                                            <div key={idx} className="bg-red-50 border-l-4 border-red-500 p-5 rounded-xl shadow">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <p className="font-bold text-gray-800 flex-1">{item.question}</p>
-                                                    <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-xs font-bold ml-3">{item.topic}</span>
-                                                </div>
-                                                <p className="text-sm text-red-700 mb-1">❌ Your: {item.yourAnswer}</p>
-                                                <p className="text-sm text-green-700 font-semibold mb-2">✅ Correct: {item.correctAnswer}</p>
-                                                <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded-lg">{item.explanation}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // PROGRESS DASHBOARD
-            if (mode === 'progress') {
-                const allTopics = ['Biological Molecules', 'Atomic Structure', 'Water & Polarity', 'Data Analysis', 'Experimental Design'];
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-teal-400 to-green-500 p-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">← Menu</button>
-                                <h2 className="text-2xl font-bold text-white">Progress Dashboard</h2>
-                                <div></div>
-                            </div>
-                            <div className="bg-white rounded-3xl shadow-2xl p-8">
-                                <div className="grid md:grid-cols-3 gap-6 mb-8">
-                                    <div className="bg-gradient-to-br from-orange-100 to-red-100 p-6 rounded-2xl text-center">
-                                        <div className="text-5xl mb-2">🔥</div>
-                                        <div className="text-4xl font-bold text-gray-800">{studyStreak}</div>
-                                        <div className="text-gray-600 font-semibold">Day Streak</div>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-red-100 to-pink-100 p-6 rounded-2xl text-center">
-                                        <div className="text-5xl mb-2">❌</div>
-                                        <div className="text-4xl font-bold text-gray-800">{mistakeBank.length}</div>
-                                        <div className="text-gray-600 font-semibold">Mistakes</div>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-blue-100 to-purple-100 p-6 rounded-2xl text-center">
-                                        <div className="text-5xl mb-2">🎴</div>
-                                        <div className="text-4xl font-bold text-gray-800">{Object.keys(cardHistory).length}</div>
-                                        <div className="text-gray-600 font-semibold">Cards Reviewed</div>
-                                    </div>
-                                </div>
-                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Topic Performance</h3>
-                                <div className="space-y-4">
-                                    {allTopics.map(topic => {
-                                        const stats = topicStats[topic] || { correct: 0, total: 0 };
-                                        const percentage = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
-                                        return (
-                                            <div key={topic} className="border-b-2 border-gray-200 pb-4">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className="font-bold text-gray-800">{topic}</span>
-                                                    <span className="text-gray-600 font-semibold">{stats.correct}/{stats.total} ({percentage}%)</span>
-                                                </div>
-                                                <div className="w-full bg-gray-200 rounded-full h-5">
-                                                    <div className={`h-5 rounded-full transition-all ${percentage >= 80 ? 'bg-green-500' : percentage >= 60 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{width: `${percentage}%`}}></div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // QUIZ BUILDER
-            if (mode === 'quizbuilder') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">← Menu</button>
-                                <h2 className="text-2xl font-bold text-white">Quiz Builder</h2>
-                                <div></div>
-                            </div>
-                            <div className="bg-white rounded-3xl shadow-2xl p-8">
-                                <h3 className="text-2xl font-bold text-gray-800 mb-6">Select Topics for Your Custom Quiz:</h3>
-                                <div className="space-y-3 mb-8">
-                                    {topics.filter(t => t !== 'all').map(topic => (
-                                        <button
-                                            key={topic}
-                                            onClick={() => {
-                                                if (quizBuilderTopics.includes(topic)) {
-                                                    setQuizBuilderTopics(quizBuilderTopics.filter(t => t !== topic));
-                                                } else {
-                                                    setQuizBuilderTopics([...quizBuilderTopics, topic]);
-                                                }
-                                            }}
-                                            className={`w-full p-5 rounded-xl text-left font-bold text-lg transition-all transform hover:scale-105 ${
-                                                quizBuilderTopics.includes(topic)
-                                                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                                            }`}
-                                        >
-                                            {topic} {quizBuilderTopics.includes(topic) && '✓'}
-                                        </button>
-                                    ))}
-                                </div>
-                                <button
-                                    onClick={() => { setMode('practice'); initTest(15); }}
-                                    disabled={quizBuilderTopics.length === 0}
-                                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-5 rounded-xl font-bold text-xl disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-2xl transform hover:scale-105 transition-all"
-                                >
-                                    Start Custom Quiz ({quizBuilderTopics.length} topics)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            // REVIEW
-            if (mode === 'review') {
-                return (
-                    <div className="min-h-screen bg-gradient-to-br from-cyan-400 to-blue-500 p-4">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold shadow-lg">← Menu</button>
-                                <h2 className="text-2xl font-bold text-white">Quick Reference</h2>
-                                <div></div>
-                            </div>
-                            <div className="bg-white rounded-2xl shadow-xl p-8">
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl">
-                                        <h4 className="text-2xl font-bold text-blue-800 mb-3">🍞 Carbohydrates</h4>
-                                        <p className="mb-2"><strong>Monomer:</strong> Monosaccharides</p>
-                                        <p className="mb-2"><strong>Bond:</strong> Glycosidic</p>
-                                        <p className="mb-2"><strong>Examples:</strong> Glucose, starch, glycogen, cellulose</p>
-                                        <p><strong>Elements:</strong> C, H, O (1:2:1)</p>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl">
-                                        <h4 className="text-2xl font-bold text-purple-800 mb-3">🧬 Proteins</h4>
-                                        <p className="mb-2"><strong>Monomer:</strong> Amino acids</p>
-                                        <p className="mb-2"><strong>Bond:</strong> Peptide</p>
-                                        <p className="mb-2"><strong>Structure:</strong> NH₂-C-COOH + R</p>
-                                        <p><strong>Elements:</strong> C, H, O, N, S</p>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl">
-                                        <h4 className="text-2xl font-bold text-green-800 mb-3">🧬 Nucleic Acids</h4>
-                                        <p className="mb-2"><strong>Monomer:</strong> Nucleotides</p>
-                                        <p className="mb-2"><strong>DNA:</strong> Deoxyribose, A-T-G-C, double</p>
-                                        <p className="mb-2"><strong>RNA:</strong> Ribose, A-U-G-C, single</p>
-                                        <p><strong>Elements:</strong> C, H, O, N, P</p>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-2xl">
-                                        <h4 className="text-2xl font-bold text-yellow-800 mb-3">💧 Lipids</h4>
-                                        <p className="mb-2"><strong>Subunits:</strong> Fatty acids & glycerol</p>
-                                        <p className="mb-2"><strong>Types:</strong> Triglycerides, phospholipids, steroids</p>
-                                        <p className="mb-2"><strong>Saturated:</strong> No C=C, solid</p>
-                                        <p><strong>Unsaturated:</strong> Has C=C, liquid</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            return null;
         }
-
-        ReactDOM.render(<BiologyMasterApp />, document.getElementById('root'));
+        
+        createParticles();
+        
+        // Prevent back button from breaking experience
+        window.history.pushState(null, '', window.location.href);
+        window.onpopstate = function() {
+            window.history.pushState(null, '', window.location.href);
+        };
     </script>
 </body>
 </html>

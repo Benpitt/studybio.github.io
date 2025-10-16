@@ -1,6 +1,5 @@
-# 🎓 Ben's Study Hub - Complete Website
+# Ben's Studying - Complete Website
 
-Your personal study sanctuary with adaptive learning, spaced repetition, and gamified practice!
 
 ## 📁 File Structure
 
@@ -26,7 +25,6 @@ biology-quiz2.html (Study App)
 ## ✨ Features
 
 ### 🏠 Landing Page (index.html)
-- Animated hero section
 - Floating particles
 - Smooth entrance animation
 - Feature preview
@@ -193,19 +191,5 @@ Edit the `questionBank` array in `biology-quiz2.html`
 ## 📝 License
 
 Free to use for personal education. Built with ❤️ for learning.
-
----
-
-## 🚀 Quick Start Checklist
-
-- [ ] Downloaded all 5 files
-- [ ] Renamed `biology-quiz2-master-final.html` to `biology-quiz2.html`
-- [ ] Uploaded to GitHub
-- [ ] Waited 2 minutes
-- [ ] Tested landing page
-- [ ] Tested navigation
-- [ ] Took a practice quiz
-- [ ] Checked progress page
-- [ ] Shared with friends! 🎉
 
 **Need help?** Review this README or check the code comments!

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Flashcards - Académie</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function Navigation() {
+            return (
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>Académie</span>
+                                </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="custom-flashcards.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Custom Flashcards</a>
+                                    <a href="assignments.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
+                                    <a href="progress.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function CustomFlashcardsApp() {
+            const [mode, setMode] = useState('menu');
+            const [flashcards, setFlashcards] = useState([]);
+            const [currentCard, setCurrentCard] = useState(0);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [cardDifficulty, setCardDifficulty] = useState({});
+            const [shuffledCards, setShuffledCards] = useState([]);
+            
+            const [newQuestion, setNewQuestion] = useState('');
+            const [newAnswer, setNewAnswer] = useState('');
+            const [editingId, setEditingId] = useState(null);
+
+            const [matchPairs, setMatchPairs] = useState([]);
+            const [selectedMatch, setSelectedMatch] = useState(null);
+            const [matchedPairs, setMatchedPairs] = useState([]);
+            const [matchScore, setMatchScore] = useState(0);
+            const [matchAttempts, setMatchAttempts] = useState(0);
+
+            useEffect(() => {
+                const saved = localStorage.getItem('customFlashcards');
+                if (saved) setFlashcards(JSON.parse(saved));
+                
+                const savedDiff = localStorage.getItem('customCardDifficulty');
+                if (savedDiff) setCardDifficulty(JSON.parse(savedDiff));
+            }, []);
+
+            useEffect(() => {
+                if (mode === 'study' && flashcards.length > 0) {
+                    const weighted = [];
+                    flashcards.forEach(card => {
+                        const difficulty = cardDifficulty[card.id] || 'medium';
+                        const weight = difficulty === 'hard' ? 5 : difficulty === 'medium' ? 2 : 1;
+                        for (let i = 0; i < weight; i++) {
+                            weighted.push(card);
+                        }
+                    });
+                    setShuffledCards(weighted.sort(() => Math.random() - 0.5));
+                    setCurrentCard(0);
+                    setShowAnswer(false);
+                }
+            }, [mode, flashcards]);
+
+            const saveFlashcards = (cards) => {
+                setFlashcards(cards);
+                localStorage.setItem('customFlashcards', JSON.stringify(cards));
+            };
+
+            const addCard = () => {
+                if (newQuestion.trim() && newAnswer.trim()) {
+                    const newCard = {
+                        id: Date.now(),
+                        question: newQuestion.trim(),
+                        answer: newAnswer.trim(),
+                        created: new Date().toISOString()
+                    };
+                    saveFlashcards([...flashcards, newCard]);
+                    setNewQuestion('');
+                    setNewAnswer('');
+                }
+            };
+
+            const deleteCard = (id) => {
+                saveFlashcards(flashcards.filter(c => c.id !== id));
+            };
+
+            const editCard = (card) => {
+                setEditingId(card.id);
+                setNewQuestion(card.question);
+                setNewAnswer(card.answer);
+            };
+
+            const updateCard = () => {
+                if (newQuestion.trim() && newAnswer.trim()) {
+                    saveFlashcards(flashcards.map(c => 
+                        c.id === editingId 
+                            ? { ...c, question: newQuestion.trim(), answer: newAnswer.trim() }
+                            : c
+                    ));
+                    setEditingId(null);
+                    setNewQuestion('');
+                    setNewAnswer('');
+                }
+            };
+
+            const markCardDifficulty = (cardId, difficulty) => {
+                const newDiff = {...cardDifficulty, [cardId]: difficulty};
+                setCardDifficulty(newDiff);
+                localStorage.setItem('customCardDifficulty', JSON.stringify(newDiff));
+            };
+
+            const initMatchGame = () => {
+                const selected = [...flashcards].sort(() => Math.random() - 0.5).slice(0, Math.min(6, flashcards.length));
+                const pairs = [];
+                selected.forEach(card => {
+                    pairs.push({ id: card.id + '-q', type: 'question', text: card.question, pairId: card.id });
+                    pairs.push({ id: card.id + '-a', type: 'answer', text: card.answer, pairId: card.id });
+                });
+                setMatchPairs(pairs.sort(() => Math.random() - 0.5));
+                setSelectedMatch(null);
+                setMatchedPairs([]);
+                setMatchScore(0);
+                setMatchAttempts(0);
+            };
+
+            const handleMatchClick = (item) => {
+                if (matchedPairs.includes(item.pairId)) return;
+                
+                if (!selectedMatch) {
+                    setSelectedMatch(item);
+                } else {
+                    setMatchAttempts(matchAttempts + 1);
+                    if (selectedMatch.pairId === item.pairId && selectedMatch.id !== item.id) {
+                        setMatchedPairs([...matchedPairs, item.pairId]);
+                        setMatchScore(matchScore + 1);
+                        setSelectedMatch(null);
+                    } else {
+                        setTimeout(() => setSelectedMatch(null), 500);
+                    }
+                }
+            };
+
+            if (mode === 'menu') {
+                return (
+                    <>
+                        <Navigation />
+                        <div className="min-h-screen bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 p-4 pt-20">
+                            <div className="max-w-6xl mx-auto">
+                                <div className="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 mb-6 animate-slide-in">
+                                    <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                                        ✏️ Custom Flashcards
+                                    </h1>
+                                    <p className="text-gray-600 text-lg">Create your own study materials for any subject</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <button onClick={() => setMode('create')} className="group bg-gradient-to-br from-blue-500 to-cyan-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all">
+                                        <div className="text-6xl mb-3">➕</div>
+                                        <div className="text-2xl mb-2">Create Cards</div>
+                                        <div className="text-sm opacity-90">Build your custom deck</div>
+                                    </button>
+
+                                    <button 
+                                        onClick={() => flashcards.length > 0 ? setMode('study') : alert('Create some flashcards first!')} 
+                                        className="group bg-gradient-to-br from-purple-500 to-pink-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all"
+                                    >
+                                        <div className="text-6xl mb-3">🎴</div>
+                                        <div className="text-2xl mb-2">Study Cards</div>
+                                        <div className="text-sm opacity-90">{flashcards.length} cards ready</div>
+                                    </button>
+
+                                    <button 
+                                        onClick={() => flashcards.length >= 6 ? (initMatchGame(), setMode('match')) : alert('Need at least 6 cards for matching game!')} 
+                                        className="group bg-gradient-to-br from-orange-500 to-red-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all"
+                                    >
+                                        <div className="text-6xl mb-3">🎮</div>
+                                        <div className="text-2xl mb-2">Matching Game</div>
+                                        <div className="text-sm opacity-90">Match pairs to win</div>
+                                    </button>
+
+                                    <button onClick={() => setMode('manage')} className="group bg-gradient-to-br from-green-500 to-teal-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all">
+                                        <div className="text-6xl mb-3">📚</div>
+                                        <div className="text-2xl mb-2">Manage Cards</div>
+                                        <div className="text-sm opacity-90">Edit or delete cards</div>
+                                    </button>
+                                </div>
+
+                                <div className="text-center">
+                                    <a href="dashboard.html" className="inline-block bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-white transition-all">
+                                        ← Back to Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                );
+            }
+
+            if (mode === 'create') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-cyan-500 p-4 pt-20">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold">← Back</button>
+                                <h2 className="text-3xl font-bold text-white">Create Flashcards</h2>
+                                <div className="w-32"></div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8 mb-6">
+                                <div className="mb-6">
+                                    <label className="block text-gray-700 font-bold mb-2">Question / Front</label>
+                                    <textarea value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)} placeholder="Enter your question..." className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-lg" rows="3" />
+                                </div>
+                                <div className="mb-6">
+                                    <label className="block text-gray-700 font-bold mb-2">Answer / Back</label>
+                                    <textarea value={newAnswer} onChange={(e) => setNewAnswer(e.target.value)} placeholder="Enter the answer..." className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-lg" rows="3" />
+                                </div>
+                                <button onClick={editingId ? updateCard : addCard} disabled={!newQuestion.trim() || !newAnswer.trim()} className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-4 rounded-xl font-bold text-xl disabled:opacity-50 hover:shadow-lg transform hover:scale-105 transition-all">
+                                    {editingId ? '✏️ Update Card' : '➕ Add Card'}
+                                </button>
+                                {editingId && (
+                                    <button onClick={() => { setEditingId(null); setNewQuestion(''); setNewAnswer(''); }} className="w-full mt-2 bg-gray-500 text-white py-3 rounded-xl font-semibold">Cancel</button>
+                                )}
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Cards ({flashcards.length})</h3>
+                                {flashcards.length === 0 ? (
+                                    <p className="text-gray-500 text-center py-8">No cards yet. Create your first one above!</p>
+                                ) : (
+                                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                                        {flashcards.map(card => (
+                                            <div key={card.id} className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border-2 border-blue-200">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1">
+                                                        <p className="font-bold text-gray-800 mb-1">Q: {card.question}</p>
+                                                        <p className="text-gray-600">A: {card.answer}</p>
+                                                    </div>
+                                                    <div className="flex space-x-2 ml-4">
+                                                        <button onClick={() => editCard(card)} className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-semibold">✏️</button>
+                                                        <button onClick={() => deleteCard(card.id)} className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-semibold">🗑️</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'study') {
+                if (shuffledCards.length === 0) return null;
+                const card = shuffledCards[currentCard];
+                const difficulty = cardDifficulty[card.id] || 'medium';
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-4 pt-20">
+                        <div className="max-w-5xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold">← Menu</button>
+                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-semibold">{currentCard + 1} / {shuffledCards.length}</div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8 min-h-[450px]">
+                                <div className="flex justify-between items-center mb-6">
+                                    <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-bold">Custom Cards</span>
+                                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${difficulty === 'hard' ? 'bg-red-100 text-red-800' : difficulty === 'easy' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                        {difficulty === 'hard' ? '🔴 Hard' : difficulty === 'easy' ? '🟢 Easy' : '🟡 Medium'}
+                                    </span>
+                                </div>
+
+                                {!showAnswer ? (
+                                    <div className="flex flex-col items-center justify-center h-full min-h-[300px]">
+                                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">{card.question}</h2>
+                                        <button onClick={() => setShowAnswer(true)} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl text-lg font-semibold">Show Answer →</button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <h2 className="text-2xl font-bold text-gray-800">Q: {card.question}</h2>
+                                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-l-4 border-purple-500 p-6 rounded-lg">
+                                            <p className="text-xl text-gray-800 font-semibold">A: {card.answer}</p>
+                                        </div>
+                                        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-xl border-2 border-yellow-300">
+                                            <p className="text-center font-bold text-gray-800 mb-4">How well do you know this?</p>
+                                            <div className="flex gap-3">
+                                                <button onClick={() => { markCardDifficulty(card.id, 'hard'); setCurrentCard((currentCard + 1) % shuffledCards.length); setShowAnswer(false); }} className="flex-1 bg-red-500 text-white px-6 py-4 rounded-xl font-bold">😰 Hard</button>
+                                                <button onClick={() => { markCardDifficulty(card.id, 'medium'); setCurrentCard((currentCard + 1) % shuffledCards.length); setShowAnswer(false); }} className="flex-1 bg-yellow-500 text-white px-6 py-4 rounded-xl font-bold">😐 Medium</button>
+                                                <button onClick={() => { markCardDifficulty(card.id, 'easy'); setCurrentCard((currentCard + 1) % shuffledCards.length); setShowAnswer(false); }} className="flex-1 bg-green-500 text-white px-6 py-4 rounded-xl font-bold">😊 Easy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'match') {
+                const allMatched = matchedPairs.length === Math.min(6, flashcards.length);
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4 pt-20">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold">← Menu</button>
+                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-xl font-bold">Score: {matchScore}/{Math.min(6, flashcards.length)} | Attempts: {matchAttempts}</div>
+                                <button onClick={initMatchGame} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold">🔄 New</button>
+                            </div>
+
+                            {allMatched && (
+                                <div className="bg-white rounded-3xl shadow-2xl p-8 mb-6 text-center">
+                                    <div className="text-6xl mb-4">🎉</div>
+                                    <h2 className="text-4xl font-bold text-gray-800 mb-2">Perfect!</h2>
+                                    <p className="text-xl text-gray-600">You matched all pairs in {matchAttempts} attempts!</p>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {matchPairs.map(item => {
+                                    const isMatched = matchedPairs.includes(item.pairId);
+                                    const isSelected = selectedMatch?.id === item.id;
+                                    
+                                    return (
+                                        <button key={item.id} onClick={() => handleMatchClick(item)} disabled={isMatched} className={`p-6 rounded-2xl font-semibold text-left min-h-[120px] transition-all ${isMatched ? 'bg-green-200 opacity-50' : isSelected ? 'bg-blue-500 text-white scale-110' : item.type === 'question' ? 'bg-white hover:bg-blue-50' : 'bg-orange-100 hover:bg-orange-200'}`}>
+                                            <div className="text-xs font-bold mb-2 opacity-70">{item.type === 'question' ? '❓ QUESTION' : '💡 ANSWER'}</div>
+                                            <div className="text-sm">{item.text}</div>
+                                            {isMatched && <div className="text-2xl mt-2">✅</div>}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'manage') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-400 to-teal-500 p-4 pt-20">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white/90 backdrop-blur text-gray-700 px-6 py-3 rounded-xl font-semibold">← Back</button>
+                                <h2 className="text-3xl font-bold text-white">Manage Cards</h2>
+                                <div className="w-32"></div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">All Cards ({flashcards.length})</h3>
+                                {flashcards.length === 0 ? (
+                                    <p className="text-gray-500 text-center py-8">No cards yet. Create some first!</p>
+                                ) : (
+                                    <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                                        {flashcards.map(card => (
+                                            <div key={card.id} className="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-xl border-2 border-green-200">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1">
+                                                        <p className="font-bold text-gray-800 mb-1">Q: {card.question}</p>
+                                                        <p className="text-gray-600 mb-2">A: {card.answer}</p>
+                                                        <p className="text-xs text-gray-400">Created: {new Date(card.created).toLocaleDateString()}</p>
+                                                    </div>
+                                                    <div className="flex space-x-2 ml-4">
+                                                        <button onClick={() => { setMode('create'); editCard(card); }} className="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">Edit</button>
+                                                        <button onClick={() => {if(confirm('Delete?')) deleteCard(card.id)}} className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<CustomFlashcardsApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

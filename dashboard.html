@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Study Hub</title>
+    <title>Dashboard - Académie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes slideIn {
@@ -39,17 +39,17 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 min-h-screen">
-    <!-- Navigation Bar -->
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50 animate-slide-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
                     <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
                         <span>🎓</span>
-                        <span>Study Hub</span>
+                        <span>Académie</span>
                     </a>
                     <div class="hidden md:flex space-x-4">
                         <a href="dashboard.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Dashboard</a>
+                        <a href="assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
                         <a href="progress.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
                         <a href="about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
                     </div>
@@ -65,13 +65,11 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Welcome Section -->
         <div class="mb-8 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 class="text-5xl font-bold text-white mb-2">Welcome back, Ben! 👋</h1>
+            <h1 id="greeting" class="text-5xl font-bold text-white mb-2">Welcome! 👋</h1>
             <p class="text-xl text-blue-200">Ready to crush some studying?</p>
         </div>
 
-        <!-- Quick Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.2s; opacity: 0;">
                 <div class="text-5xl mb-2">🔥</div>
@@ -95,9 +93,7 @@
             </div>
         </div>
 
-        <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column: Subjects -->
             <div class="lg:col-span-2 space-y-6">
                 <div class="animate-slide-in" style="animation-delay: 0.6s; opacity: 0;">
                     <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
@@ -105,7 +101,6 @@
                         <span class="ml-3">Your Subjects</span>
                     </h2>
 
-                    <!-- Biology Card - ACTIVE -->
                     <a href="biology-quiz2.html" class="block mb-6">
                         <div class="bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl p-8 card-hover relative overflow-hidden group">
                             <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
@@ -120,15 +115,8 @@
                                 <h3 class="text-4xl font-bold text-white mb-2">Biology</h3>
                                 <p class="text-2xl text-blue-100 mb-4">Quiz 2 Master Guide</p>
                                 <p class="text-white/80 mb-6">69 questions • Spaced repetition • 9 study modes</p>
-                                <div class="flex items-center space-x-4">
-                                    <div class="bg-white/20 backdrop-blur rounded-lg px-4 py-2">
-                                        <div class="text-xs text-white/80">Progress</div>
-                                        <div class="text-xl font-bold text-white">85%</div>
-                                    </div>
-                                    <div class="bg-white/20 backdrop-blur rounded-lg px-4 py-2">
-                                        <div class="text-xs text-white/80">Last Study</div>
-                                        <div class="text-xl font-bold text-white">Today</div>
-                                    </div>
+                                <div id="bio-progress" class="flex items-center space-x-4 mb-6">
+                                    <!-- Will be populated by JS -->
                                 </div>
                                 <div class="mt-6 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-blue-100 transition-colors">
                                     <span>Continue Studying</span>
@@ -138,7 +126,27 @@
                         </div>
                     </a>
 
-                    <!-- Chemistry Card - COMING SOON -->
+                    <a href="custom-flashcards.html" class="block mb-6">
+                        <div class="bg-gradient-to-br from-pink-600 to-orange-600 rounded-3xl p-8 card-hover relative overflow-hidden group">
+                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="text-7xl">✏️</div>
+                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
+                                        CREATE YOUR OWN
+                                    </div>
+                                </div>
+                                <h3 class="text-4xl font-bold text-white mb-2">Custom Flashcards</h3>
+                                <p class="text-2xl text-pink-100 mb-4">Build Your Own Study Sets</p>
+                                <p class="text-white/80 mb-6">Create flashcards for any subject • Works with matching game • Spaced repetition</p>
+                                <div class="mt-6 bg-white text-pink-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-pink-100 transition-colors">
+                                    <span>Create Flashcards</span>
+                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
                     <div class="bg-gradient-to-br from-green-600/50 to-teal-600/50 rounded-3xl p-8 relative overflow-hidden mb-6 opacity-60">
                         <div class="absolute inset-0 backdrop-blur-sm"></div>
                         <div class="relative z-10">
@@ -154,7 +162,6 @@
                         </div>
                     </div>
 
-                    <!-- Math Card - COMING SOON -->
                     <div class="bg-gradient-to-br from-orange-600/50 to-red-600/50 rounded-3xl p-8 relative overflow-hidden opacity-60">
                         <div class="absolute inset-0 backdrop-blur-sm"></div>
                         <div class="relative z-10">
@@ -172,79 +179,36 @@
                 </div>
             </div>
 
-            <!-- Right Column: Activity & Achievements -->
             <div class="space-y-6">
-                <!-- Today's Goal -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.7s; opacity: 0;">
-                    <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
-                        <span>🎯</span>
-                        <span class="ml-2">Today's Goal</span>
-                    </h3>
-                    <p class="text-white/80 mb-4">Review 20 flashcards</p>
-                    <div class="bg-white/10 rounded-full h-4 overflow-hidden">
-                        <div id="goal-progress" class="bg-gradient-to-r from-green-400 to-teal-400 h-full rounded-full transition-all duration-1000" style="width: 60%"></div>
-                    </div>
-                    <p class="text-white/60 text-sm mt-2">12 / 20 cards</p>
+                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.7s; opacity: 0;">
+                    <!-- Will be populated by JS -->
                 </div>
 
-                <!-- Achievements -->
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.8s; opacity: 0;">
                     <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
                         <span>🏆</span>
-                        <span class="ml-2">Achievements</span>
+                        <span class="ml-2">Recent Achievements</span>
                     </h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3 p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-500/30">
-                            <div class="text-4xl">🔥</div>
-                            <div>
-                                <div class="font-bold text-white">Week Warrior</div>
-                                <div class="text-xs text-white/70">7 day streak!</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl border border-blue-500/30">
-                            <div class="text-4xl">📚</div>
-                            <div>
-                                <div class="font-bold text-white">Century Club</div>
-                                <div class="text-xs text-white/70">100+ cards reviewed</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3 p-3 bg-white/5 rounded-xl border border-white/10 opacity-50">
-                            <div class="text-4xl grayscale">🎓</div>
-                            <div>
-                                <div class="font-bold text-white/70">Master Scholar</div>
-                                <div class="text-xs text-white/50">Complete all quizzes</div>
-                            </div>
+                    <div id="achievements-list" class="space-y-3">
+                        <div class="text-center py-8 text-white/60">
+                            <div class="text-5xl mb-2">🎯</div>
+                            <p>Complete a quiz to unlock achievements!</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.9s; opacity: 0;">
                     <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
                         <span>📈</span>
                         <span class="ml-2">Recent Activity</span>
                     </h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-white/80">Biology Practice Test</span>
-                            <span class="text-green-400 font-bold">85%</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-white/80">Flashcards Review</span>
-                            <span class="text-blue-400 font-bold">25 cards</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-white/80">Matching Game</span>
-                            <span class="text-purple-400 font-bold">6/6</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-white/80">Speed Challenge</span>
-                            <span class="text-orange-400 font-bold">18/20</span>
+                    <div id="recent-activity" class="space-y-3">
+                        <div class="text-center py-8 text-white/60">
+                            <p>Your activity will appear here</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 card-hover animate-slide-in" style="animation-delay: 1s; opacity: 0;">
                     <h3 class="text-2xl font-bold text-white mb-4">🚀 Quick Start</h3>
                     <div class="space-y-2">
@@ -253,6 +217,12 @@
                         </a>
                         <a href="biology-quiz2.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
                             🎴 Review Flashcards
+                        </a>
+                        <a href="custom-flashcards.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
+                            ✏️ Create Flashcards
+                        </a>
+                        <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
+                            ✅ Manage Tasks
                         </a>
                         <a href="progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
                             📊 View Progress
@@ -264,17 +234,54 @@
     </div>
 
     <script>
-        // Load stats from localStorage
+        // 15 Dynamic greetings based on time of day
+        const greetings = [
+            { hour: 0, text: "Burning the midnight oil" },
+            { hour: 1, text: "Late night study session" },
+            { hour: 2, text: "Still going strong" },
+            { hour: 3, text: "Dedication level: legendary" },
+            { hour: 4, text: "Early bird catches the A+" },
+            { hour: 5, text: "Rise and grind" },
+            { hour: 6, text: "Good morning" },
+            { hour: 7, text: "Morning motivation time" },
+            { hour: 8, text: "Let's start the day strong" },
+            { hour: 9, text: "Good morning" },
+            { hour: 10, text: "Mid-morning momentum" },
+            { hour: 11, text: "Almost lunch time" },
+            { hour: 12, text: "Afternoon, let's do this" },
+            { hour: 13, text: "Perfect study time" },
+            { hour: 14, text: "Afternoon focus mode" },
+            { hour: 15, text: "Peak performance hours" },
+            { hour: 16, text: "After-school excellence" },
+            { hour: 17, text: "Evening study session" },
+            { hour: 18, text: "Dinner break soon" },
+            { hour: 19, text: "Prime study time" },
+            { hour: 20, text: "Evening grind" },
+            { hour: 21, text: "Night owl mode activated" },
+            { hour: 22, text: "Late night, bright mind" },
+            { hour: 23, text: "Almost midnight warrior" }
+        ];
+
+        function getGreeting() {
+            const hour = new Date().getHours();
+            const userName = localStorage.getItem('userName') || 'Student';
+            const greeting = greetings.find(g => g.hour === hour) || greetings[12];
+            return `${greeting.text}, ${userName}! 👋`;
+        }
+
         function loadStats() {
-            const streak = localStorage.getItem('studyStreak') || '7';
+            const streak = parseInt(localStorage.getItem('studyStreak') || '0');
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
+            const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
             
+            document.getElementById('greeting').textContent = getGreeting();
             document.getElementById('streak').textContent = streak;
             document.getElementById('stat-streak').textContent = streak;
-            document.getElementById('stat-cards').textContent = Object.keys(cardHistory).length;
             
-            // Calculate quizzes taken and accuracy
+            const totalCards = Object.keys(cardHistory).length + customCards.length;
+            document.getElementById('stat-cards').textContent = totalCards;
+            
             let totalTests = 0;
             let totalCorrect = 0;
             let totalQuestions = 0;
@@ -289,15 +296,72 @@
             document.getElementById('stat-accuracy').textContent = totalQuestions > 0 
                 ? Math.round((totalCorrect / totalQuestions) * 100) 
                 : 0;
+
+            // Bio progress
+            const bioStats = topicStats['Biological Molecules'] || { correct: 0, total: 0 };
+            const bioProgress = bioStats.total > 0 ? Math.round((bioStats.correct / bioStats.total) * 100) : 0;
+            const bioContainer = document.getElementById('bio-progress');
+            if (bioStats.total > 0) {
+                bioContainer.innerHTML = `
+                    <div class="bg-white/20 backdrop-blur rounded-lg px-4 py-2">
+                        <div class="text-xs text-white/80">Progress</div>
+                        <div class="text-xl font-bold text-white">${bioProgress}%</div>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur rounded-lg px-4 py-2">
+                        <div class="text-xs text-white/80">Completed</div>
+                        <div class="text-xl font-bold text-white">${bioStats.correct}/${bioStats.total}</div>
+                    </div>
+                `;
+            }
+
+            // Goal card
+            const goal = totalCards > 0 ? Math.min(100, Math.round((totalCards / 20) * 100)) : 0;
+            const goalCard = document.getElementById('goal-card');
+            goalCard.innerHTML = `
+                <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
+                    <span>🎯</span>
+                    <span class="ml-2">Today's Goal</span>
+                </h3>
+                <p class="text-white/80 mb-4">${totalCards > 0 ? 'Keep reviewing!' : 'Review 20 flashcards'}</p>
+                <div class="bg-white/10 rounded-full h-4 overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-400 to-teal-400 h-full rounded-full transition-all duration-1000" style="width: ${goal}%"></div>
+                </div>
+                <p class="text-white/60 text-sm mt-2">${totalCards} / 20 cards</p>
+            `;
+
+            // Achievements
+            loadAchievements(streak, totalCards, totalTests, totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0);
+        }
+
+        function loadAchievements(streak, cards, quizzes, accuracy) {
+            const achievements = [];
+            const container = document.getElementById('achievements-list');
+            
+            if (streak >= 1) achievements.push({ emoji: '🔥', name: 'First Day', desc: 'Study streak started!' });
+            if (streak >= 7) achievements.push({ emoji: '📅', name: 'Week Warrior', desc: '7 day streak!' });
+            if (streak >= 30) achievements.push({ emoji: '📆', name: 'Monthly Master', desc: '30 day streak!' });
+            if (cards >= 10) achievements.push({ emoji: '🎴', name: 'Getting Started', desc: '10+ cards reviewed' });
+            if (cards >= 50) achievements.push({ emoji: '📚', name: 'Half Century', desc: '50+ cards reviewed' });
+            if (cards >= 100) achievements.push({ emoji: '💯', name: 'Century Club', desc: '100+ cards!' });
+            if (quizzes >= 1) achievements.push({ emoji: '📝', name: 'Test Taker', desc: 'First quiz complete' });
+            if (quizzes >= 5) achievements.push({ emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes done' });
+            if (accuracy >= 90) achievements.push({ emoji: '⭐', name: 'Perfectionist', desc: '90%+ accuracy' });
+            if (accuracy >= 80) achievements.push({ emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy' });
+            
+            if (achievements.length > 0) {
+                container.innerHTML = achievements.slice(0, 3).map(a => `
+                    <div class="flex items-center space-x-3 p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-500/30">
+                        <div class="text-4xl">${a.emoji}</div>
+                        <div>
+                            <div class="font-bold text-white">${a.name}</div>
+                            <div class="text-xs text-white/70">${a.desc}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
         
         loadStats();
-        
-        // Animate progress bar on load
-        setTimeout(() => {
-            const progressBar = document.getElementById('goal-progress');
-            progressBar.style.width = '60%';
-        }, 500);
     </script>
 </body>
 </html>

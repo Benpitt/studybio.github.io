@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progress - Study Hub</title>
+    <title>Progress - Académie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes slideIn {
@@ -28,17 +28,17 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 min-h-screen">
-    <!-- Navigation Bar -->
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
                     <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
                         <span>🎓</span>
-                        <span>Study Hub</span>
+                        <span>Académie</span>
                     </a>
                     <div class="hidden md:flex space-x-4">
                         <a href="dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                        <a href="assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
                         <a href="progress.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Progress</a>
                         <a href="about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
                     </div>
@@ -48,13 +48,11 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
         <div class="mb-8 animate-slide-in">
             <h1 class="text-5xl font-bold text-white mb-2">📊 Your Progress</h1>
             <p class="text-xl text-blue-200">Track your learning journey and celebrate milestones</p>
         </div>
 
-        <!-- Key Metrics -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
                 <div class="flex items-center justify-between mb-4">
@@ -62,7 +60,7 @@
                     <div class="text-3xl font-bold"><span id="total-streak">0</span></div>
                 </div>
                 <div class="text-lg font-semibold">Current Streak</div>
-                <div class="text-sm text-orange-100 mt-1">Best: <span id="best-streak">0</span> days</div>
+                <div class="text-sm text-orange-100 mt-1">Days in a row</div>
             </div>
 
             <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.2s; opacity: 0;">
@@ -80,7 +78,7 @@
                     <div class="text-3xl font-bold"><span id="total-quizzes">0</span></div>
                 </div>
                 <div class="text-lg font-semibold">Practice Tests</div>
-                <div class="text-sm text-green-100 mt-1">Completed successfully</div>
+                <div class="text-sm text-green-100 mt-1">Completed</div>
             </div>
 
             <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.4s; opacity: 0;">
@@ -94,9 +92,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Study Calendar -->
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.5s; opacity: 0;">
                     <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
                         <span>📅</span>
@@ -119,7 +115,7 @@
                         </div>
                         <div class="flex items-center space-x-2">
                             <div class="w-4 h-4 bg-white/20 rounded"></div>
-                            <span class="text-white/80">Missed</span>
+                            <span class="text-white/80">No activity</span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <div class="w-4 h-4 bg-blue-500 rounded"></div>
@@ -128,141 +124,54 @@
                     </div>
                 </div>
 
-                <!-- Topic Performance -->
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.6s; opacity: 0;">
                     <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
                         <span>📈</span>
                         <span class="ml-2">Topic Mastery</span>
                     </h2>
-                    <div id="topic-performance" class="space-y-4"></div>
+                    <div id="topic-performance"></div>
                 </div>
 
-                <!-- Recent Achievements -->
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.7s; opacity: 0;">
                     <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
                         <span>🏆</span>
-                        <span class="ml-2">Recent Achievements</span>
+                        <span class="ml-2">Achievements Unlocked</span>
                     </h2>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl p-4 text-center">
-                            <div class="text-5xl mb-2">🔥</div>
-                            <div class="text-white font-bold text-sm">Week Warrior</div>
-                            <div class="text-white/80 text-xs">7 day streak</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl p-4 text-center">
-                            <div class="text-5xl mb-2">📚</div>
-                            <div class="text-white font-bold text-sm">Century Club</div>
-                            <div class="text-white/80 text-xs">100+ cards</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-green-500 to-teal-500 rounded-xl p-4 text-center">
-                            <div class="text-5xl mb-2">🎯</div>
-                            <div class="text-white font-bold text-sm">Ace</div>
-                            <div class="text-white/80 text-xs">90%+ score</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-4 text-center">
-                            <div class="text-5xl mb-2">⚡</div>
-                            <div class="text-white font-bold text-sm">Speed Demon</div>
-                            <div class="text-white/80 text-xs">Speed challenge</div>
-                        </div>
-                        <div class="bg-gradient-to-br from-red-500 to-pink-500 rounded-xl p-4 text-center">
-                            <div class="text-5xl mb-2">🎮</div>
-                            <div class="text-white font-bold text-sm">Game Master</div>
-                            <div class="text-white/80 text-xs">Perfect match</div>
-                        </div>
-                        <div class="bg-white/10 rounded-xl p-4 text-center opacity-50">
-                            <div class="text-5xl mb-2 grayscale">🎓</div>
-                            <div class="text-white font-bold text-sm">Scholar</div>
-                            <div class="text-white/80 text-xs">Complete all</div>
-                        </div>
-                    </div>
+                    <div id="achievements-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </div>
             </div>
 
-            <!-- Right Column -->
             <div class="space-y-6">
-                <!-- Study Insights -->
                 <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 animate-slide-in" style="animation-delay: 0.8s; opacity: 0;">
                     <h2 class="text-2xl font-bold text-white mb-4">💡 Study Insights</h2>
-                    <div class="space-y-4">
-                        <div class="bg-white/20 backdrop-blur rounded-xl p-4">
-                            <div class="text-3xl mb-2">🌟</div>
-                            <div class="text-white font-semibold mb-1">Peak Performance</div>
-                            <div class="text-white/80 text-sm">You study best in the evening</div>
-                        </div>
-                        <div class="bg-white/20 backdrop-blur rounded-xl p-4">
-                            <div class="text-3xl mb-2">📊</div>
-                            <div class="text-white font-semibold mb-1">Consistency</div>
-                            <div class="text-white/80 text-sm">5 days this week - keep it up!</div>
-                        </div>
-                        <div class="bg-white/20 backdrop-blur rounded-xl p-4">
-                            <div class="text-3xl mb-2">🎯</div>
-                            <div class="text-white font-semibold mb-1">Focus Area</div>
-                            <div class="text-white/80 text-sm">Review Water & Polarity</div>
-                        </div>
-                    </div>
+                    <div id="insights-container"></div>
                 </div>
 
-                <!-- Weekly Summary -->
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.9s; opacity: 0;">
                     <h2 class="text-2xl font-bold text-white mb-4">📊 This Week</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-sm mb-2">
-                                <span class="text-white/80">Study Time</span>
-                                <span class="text-white font-bold">3h 45m</span>
-                            </div>
-                            <div class="bg-white/20 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-blue-400 to-cyan-400 h-2 rounded-full" style="width: 75%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-2">
-                                <span class="text-white/80">Cards Reviewed</span>
-                                <span class="text-white font-bold">87 / 100</span>
-                            </div>
-                            <div class="bg-white/20 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-green-400 to-teal-400 h-2 rounded-full" style="width: 87%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-2">
-                                <span class="text-white/80">Quizzes</span>
-                                <span class="text-white font-bold">4 / 5</span>
-                            </div>
-                            <div class="bg-white/20 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-purple-400 to-pink-400 h-2 rounded-full" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="weekly-summary"></div>
                 </div>
 
-                <!-- Next Milestone -->
-                <div class="bg-gradient-to-br from-pink-600 to-red-600 rounded-2xl p-6 animate-slide-in" style="animation-delay: 1s; opacity: 0;">
+                <div id="milestone-card" class="bg-gradient-to-br from-pink-600 to-red-600 rounded-2xl p-6 animate-slide-in" style="animation-delay: 1s; opacity: 0;">
                     <h2 class="text-2xl font-bold text-white mb-4">🎯 Next Milestone</h2>
-                    <div class="text-center mb-4">
-                        <div class="text-6xl mb-2">🎓</div>
-                        <div class="text-white font-bold text-lg">Master Scholar</div>
-                        <div class="text-white/80 text-sm">Complete all quiz modes</div>
-                    </div>
-                    <div class="bg-white/20 backdrop-blur rounded-full h-3 mb-2">
-                        <div class="bg-white h-3 rounded-full" style="width: 78%"></div>
-                    </div>
-                    <div class="text-white text-sm text-center">7 / 9 modes complete</div>
+                    <div id="milestone-content"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Load statistics
         function loadStats() {
-            const streak = parseInt(localStorage.getItem('studyStreak') || '7');
+            const streak = parseInt(localStorage.getItem('studyStreak') || '0');
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
+            const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
+            const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
             
             document.getElementById('total-streak').textContent = streak;
-            document.getElementById('best-streak').textContent = Math.max(streak, 12);
-            document.getElementById('total-cards').textContent = Object.keys(cardHistory).length || 150;
+            
+            const totalCards = Object.keys(cardHistory).length + customCards.filter(c => cardHistory[c.id]).length;
+            document.getElementById('total-cards').textContent = totalCards;
             
             let totalTests = 0;
             let totalCorrect = 0;
@@ -274,13 +183,17 @@
                 totalQuestions += stat.total || 0;
             });
             
-            document.getElementById('total-quizzes').textContent = totalTests || 8;
-            document.getElementById('avg-accuracy').textContent = totalQuestions > 0 
-                ? Math.round((totalCorrect / totalQuestions) * 100) 
-                : 85;
+            document.getElementById('total-quizzes').textContent = totalTests;
+            document.getElementById('avg-accuracy').textContent = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+            generateCalendar();
+            generateTopicPerformance(topicStats);
+            generateAchievements(streak, totalCards, totalTests, totalCorrect, totalQuestions);
+            generateInsights(streak, totalCards, totalTests, assignments);
+            generateWeeklySummary(totalCards, totalTests);
+            generateMilestone(totalCards, totalTests, streak);
         }
 
-        // Generate calendar
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
             const today = new Date();
@@ -291,25 +204,30 @@
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             
-            // Add empty cells for days before month starts
+            const lastVisit = localStorage.getItem('lastVisit');
+            const studyDays = new Set();
+            if (lastVisit) {
+                const visitDate = new Date(lastVisit);
+                if (visitDate.getMonth() === currentMonth && visitDate.getFullYear() === currentYear) {
+                    studyDays.add(visitDate.getDate());
+                }
+            }
+            
             for (let i = 0; i < firstDay; i++) {
                 const emptyDay = document.createElement('div');
                 calendar.appendChild(emptyDay);
             }
             
-            // Add days
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day aspect-square flex items-center justify-center rounded-lg text-white font-semibold cursor-pointer';
                 
                 if (day === currentDay) {
                     dayElement.className += ' bg-blue-500 ring-2 ring-white';
-                } else if (day < currentDay) {
-                    // Past days - mark as studied (for demo purposes)
-                    const studied = Math.random() > 0.3;
-                    dayElement.className += studied ? ' bg-green-500/80' : ' bg-white/10';
+                } else if (studyDays.has(day) || day < currentDay) {
+                    dayElement.className += ' bg-green-500/80';
                 } else {
-                    dayElement.className += ' bg-white/5';
+                    dayElement.className += ' bg-white/10';
                 }
                 
                 dayElement.textContent = day;
@@ -317,43 +235,173 @@
             }
         }
 
-        // Generate topic performance
-        function generateTopicPerformance() {
+        function generateTopicPerformance(topicStats) {
             const container = document.getElementById('topic-performance');
-            const topics = [
-                { name: 'Biological Molecules', correct: 45, total: 50, color: 'blue' },
-                { name: 'Atomic Structure', correct: 6, total: 7, color: 'green' },
-                { name: 'Water & Polarity', correct: 5, total: 8, color: 'yellow' },
-                { name: 'Data Analysis', correct: 7, total: 8, color: 'purple' },
-                { name: 'Experimental Design', correct: 5, total: 6, color: 'pink' }
-            ];
+            const topics = ['Biological Molecules', 'Atomic Structure', 'Water & Polarity', 'Data Analysis', 'Experimental Design'];
             
-            const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
+            if (Object.keys(topicStats).length === 0) {
+                container.innerHTML = '<p class="text-white/60 text-center py-8">Complete a quiz to see topic mastery!</p>';
+                return;
+            }
             
-            topics.forEach((topic, index) => {
-                const stats = topicStats[topic.name] || topic;
+            topics.forEach((topicName, index) => {
+                const stats = topicStats[topicName];
+                if (!stats || stats.total === 0) return;
+                
                 const percentage = Math.round((stats.correct / stats.total) * 100);
+                const colors = ['blue', 'green', 'yellow', 'purple', 'pink'];
+                const color = colors[index % colors.length];
                 
                 const div = document.createElement('div');
-                div.className = 'animate-slide-in';
-                div.style.animationDelay = `${0.1 * index}s`;
-                div.style.opacity = '0';
+                div.className = 'mb-4';
                 div.innerHTML = `
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-white font-semibold">${topic.name}</span>
+                        <span class="text-white font-semibold">${topicName}</span>
                         <span class="text-white/80 text-sm">${stats.correct}/${stats.total} (${percentage}%)</span>
                     </div>
                     <div class="bg-white/20 rounded-full h-3 overflow-hidden">
-                        <div class="bg-gradient-to-r from-${topic.color}-400 to-${topic.color}-600 h-3 rounded-full animate-fill" style="width: ${percentage}%"></div>
+                        <div class="bg-gradient-to-r from-${color}-400 to-${color}-600 h-3 rounded-full animate-fill" style="width: ${percentage}%"></div>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
+        function generateAchievements(streak, cards, quizzes, correct, total) {
+            const achievements = [];
+            const container = document.getElementById('achievements-grid');
+            
+            if (streak >= 1) achievements.push({ emoji: '🔥', name: 'First Day', desc: 'Study streak started' });
+            if (streak >= 3) achievements.push({ emoji: '📅', name: '3 Day Streak', desc: '3 days in a row' });
+            if (streak >= 7) achievements.push({ emoji: '🏅', name: 'Week Warrior', desc: '7 day streak' });
+            if (streak >= 14) achievements.push({ emoji: '💪', name: 'Fortnight Fighter', desc: '14 day streak' });
+            if (streak >= 30) achievements.push({ emoji: '📆', name: 'Monthly Master', desc: '30 day streak' });
+            if (streak >= 100) achievements.push({ emoji: '👑', name: 'Century King', desc: '100 day streak' });
+            
+            if (cards >= 10) achievements.push({ emoji: '🎴', name: 'Getting Started', desc: '10+ cards reviewed' });
+            if (cards >= 50) achievements.push({ emoji: '📚', name: 'Half Century', desc: '50+ cards reviewed' });
+            if (cards >= 100) achievements.push({ emoji: '💯', name: 'Century Club', desc: '100+ cards' });
+            if (cards >= 250) achievements.push({ emoji: '🌟', name: 'Super Studier', desc: '250+ cards' });
+            if (cards >= 500) achievements.push({ emoji: '⭐', name: 'Master Reviewer', desc: '500+ cards' });
+            
+            if (quizzes >= 1) achievements.push({ emoji: '📝', name: 'Test Taker', desc: 'First quiz complete' });
+            if (quizzes >= 5) achievements.push({ emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes' });
+            if (quizzes >= 10) achievements.push({ emoji: '🏆', name: 'Quiz Champion', desc: '10+ quizzes' });
+            if (quizzes >= 25) achievements.push({ emoji: '👨‍🎓', name: 'Quiz Expert', desc: '25+ quizzes' });
+            
+            const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+            if (accuracy >= 70) achievements.push({ emoji: '🎯', name: 'Good Start', desc: '70%+ accuracy' });
+            if (accuracy >= 80) achievements.push({ emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy' });
+            if (accuracy >= 90) achievements.push({ emoji: '⭐', name: 'Perfectionist', desc: '90%+ accuracy' });
+            if (accuracy >= 95) achievements.push({ emoji: '💎', name: 'Near Perfect', desc: '95%+ accuracy' });
+            if (accuracy === 100) achievements.push({ emoji: '🏅', name: 'Flawless', desc: '100% accuracy' });
+            
+            if (achievements.length === 0) {
+                container.innerHTML = '<div class="col-span-3 text-center py-8 text-white/60">Complete activities to unlock achievements!</div>';
+                return;
+            }
+            
+            achievements.forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 text-center border border-yellow-500/30';
+                div.innerHTML = `
+                    <div class="text-5xl mb-2">${a.emoji}</div>
+                    <div class="text-white font-bold text-sm">${a.name}</div>
+                    <div class="text-white/80 text-xs">${a.desc}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function generateInsights(streak, cards, quizzes, assignments) {
+            const container = document.getElementById('insights-container');
+            const insights = [];
+            
+            if (streak >= 7) {
+                insights.push({ emoji: '🌟', title: 'Consistency Master', desc: `${streak} day streak - amazing!` });
+            } else if (cards > 0 || quizzes > 0) {
+                insights.push({ emoji: '📈', title: 'Keep Going', desc: 'Build your streak!' });
+            }
+            
+            if (assignments.filter(a => !a.completed).length > 0) {
+                const overdue = assignments.filter(a => !a.completed && a.dueDate && new Date(a.dueDate) < new Date()).length;
+                if (overdue > 0) {
+                    insights.push({ emoji: '🚨', title: 'Attention Needed', desc: `${overdue} overdue task${overdue > 1 ? 's' : ''}` });
+                }
+            }
+            
+            if (cards >= 100) {
+                insights.push({ emoji: '🎴', title: 'Card Master', desc: 'Over 100 cards reviewed!' });
+            }
+            
+            if (insights.length === 0) {
+                insights.push({ emoji: '🎯', title: 'Get Started', desc: 'Start studying to see insights' });
+            }
+            
+            container.innerHTML = insights.map(i => `
+                <div class="bg-white/20 backdrop-blur rounded-xl p-4 mb-4">
+                    <div class="text-3xl mb-2">${i.emoji}</div>
+                    <div class="text-white font-semibold mb-1">${i.title}</div>
+                    <div class="text-white/80 text-sm">${i.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function generateWeeklySummary(cards, quizzes) {
+            const container = document.getElementById('weekly-summary');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-white/80">Cards This Week</span>
+                            <span class="text-white font-bold">${Math.min(cards, 100)}</span>
+                        </div>
+                        <div class="bg-white/20 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-green-400 to-teal-400 h-2 rounded-full" style="width: ${Math.min(cards, 100)}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-white/80">Quizzes</span>
+                            <span class="text-white font-bold">${quizzes}</span>
+                        </div>
+                        <div class="bg-white/20 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-purple-400 to-pink-400 h-2 rounded-full" style="width: ${Math.min(quizzes * 20, 100)}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateMilestone(cards, quizzes, streak) {
+            const container = document.getElementById('milestone-content');
+            let milestone = { emoji: '🎯', name: 'Get Started', desc: 'Complete your first activity', progress: 0, total: 1 };
+            
+            if (cards < 100) {
+                milestone = { emoji: '💯', name: 'Century Club', desc: '100 cards reviewed', progress: cards, total: 100 };
+            } else if (quizzes < 10) {
+                milestone = { emoji: '🏆', name: 'Quiz Champion', desc: '10 quizzes complete', progress: quizzes, total: 10 };
+            } else if (streak < 30) {
+                milestone = { emoji: '📆', name: 'Monthly Master', desc: '30 day streak', progress: streak, total: 30 };
+            } else {
+                milestone = { emoji: '👑', name: 'Legendary', desc: "You've mastered it all!", progress: 100, total: 100 };
+            }
+            
+            const percentage = Math.round((milestone.progress / milestone.total) * 100);
+            container.innerHTML = `
+                <div class="text-center mb-4">
+                    <div class="text-6xl mb-2">${milestone.emoji}</div>
+                    <div class="text-white font-bold text-lg">${milestone.name}</div>
+                    <div class="text-white/80 text-sm">${milestone.desc}</div>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-full h-3 mb-2">
+                    <div class="bg-white h-3 rounded-full" style="width: ${percentage}%"></div>
+                </div>
+                <div class="text-white text-sm text-center">${milestone.progress} / ${milestone.total}</div>
+            `;
+        }
+        
         loadStats();
-        generateCalendar();
-        generateTopicPerformance();
     </script>
 </body>
 </html>

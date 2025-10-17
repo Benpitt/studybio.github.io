@@ -34,10 +34,18 @@
         </div>
     </div>
 
+    <script>
+        console.log('JavaScript is working! Page loaded.');
+    </script>
+
     <script type="module">
+        console.log('Module script started!');
+        
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        console.log('Firebase imports loaded!');
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -51,6 +59,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        console.log('Firebase initialized!', db);
 
         let currentView = 'browse';
         let allDecks = [];
@@ -215,8 +225,22 @@
                 // Add event listeners
                 const uploadBtn = document.getElementById('upload-btn');
                 const mydecksBtn = document.getElementById('mydecks-btn');
-                if (uploadBtn) uploadBtn.onclick = () => { currentView = 'upload'; renderView(); };
-                if (mydecksBtn) mydecksBtn.onclick = () => { currentView = 'mydecks'; renderView(); };
+                console.log('Upload button:', uploadBtn);
+                console.log('Mydecks button:', mydecksBtn);
+                if (uploadBtn) {
+                    uploadBtn.onclick = () => { 
+                        console.log('Upload button clicked!');
+                        currentView = 'upload'; 
+                        renderView(); 
+                    };
+                }
+                if (mydecksBtn) {
+                    mydecksBtn.onclick = () => { 
+                        console.log('Mydecks button clicked!');
+                        currentView = 'mydecks'; 
+                        renderView(); 
+                    };
+                }
                 
             } else if (currentView === 'upload') {
                 const localDecks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');

@@ -167,11 +167,11 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                            <button onclick="window.currentView='upload';window.renderView()" class="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-2xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all">
+                            <button id="upload-btn" class="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-2xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all">
                                 <div class="text-5xl mb-2">📤</div>
                                 Upload Your Deck
                             </button>
-                            <button onclick="window.currentView='mydecks';window.renderView()" class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-2xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all">
+                            <button id="mydecks-btn" class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-2xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all">
                                 <div class="text-5xl mb-2">📚</div>
                                 My Uploads (${myDecks.length})
                             </button>
@@ -211,11 +211,18 @@
                         `}
                     </div>
                 `;
+                
+                // Add event listeners
+                const uploadBtn = document.getElementById('upload-btn');
+                const mydecksBtn = document.getElementById('mydecks-btn');
+                if (uploadBtn) uploadBtn.onclick = () => { currentView = 'upload'; renderView(); };
+                if (mydecksBtn) mydecksBtn.onclick = () => { currentView = 'mydecks'; renderView(); };
+                
             } else if (currentView === 'upload') {
                 const localDecks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
                 app.innerHTML = `
                     <div class="max-w-4xl mx-auto">
-                        <button onclick="window.currentView='browse';window.renderView()" class="mb-6 bg-white/20 text-white px-6 py-3 rounded-xl font-semibold">
+                        <button id="back-btn" class="mb-6 bg-white/20 text-white px-6 py-3 rounded-xl font-semibold">
                             ← Back
                         </button>
 
@@ -253,11 +260,16 @@
                         </div>
                     </div>
                 `;
+                
+                // Add event listeners
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) backBtn.onclick = () => { currentView = 'browse'; renderView(); };
+                
             } else if (currentView === 'mydecks') {
                 const myDecks = allDecks.filter(d => d.authorId === userId);
                 app.innerHTML = `
                     <div class="max-w-7xl mx-auto">
-                        <button onclick="window.currentView='browse';window.renderView()" class="mb-6 bg-white/20 text-white px-6 py-3 rounded-xl font-semibold">
+                        <button id="back-btn-mydecks" class="mb-6 bg-white/20 text-white px-6 py-3 rounded-xl font-semibold">
                             ← Back
                         </button>
                         <div class="mb-8">
@@ -289,6 +301,10 @@
                         `}
                     </div>
                 `;
+                
+                // Add event listener
+                const backBtn = document.getElementById('back-btn-mydecks');
+                if (backBtn) backBtn.onclick = () => { currentView = 'browse'; renderView(); };
             }
         }
 

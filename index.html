@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Académie - Your AI Study Companion</title>
+    
+    <!-- Preconnect to Firebase CDN for faster loading -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes float {
@@ -166,13 +173,20 @@
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
 
-                // Save user info to localStorage for quick access
-                localStorage.setItem('userName', user.displayName);
-                localStorage.setItem('userEmail', user.email);
-                localStorage.setItem('userPhoto', user.photoURL);
-                localStorage.setItem('userId', user.uid);
+                // Save user info immediately
+                const userData = {
+                    userName: user.displayName,
+                    userEmail: user.email,
+                    userPhoto: user.photoURL,
+                    userId: user.uid
+                };
+                
+                localStorage.setItem('userName', userData.userName);
+                localStorage.setItem('userEmail', userData.userEmail);
+                localStorage.setItem('userPhoto', userData.userPhoto);
+                localStorage.setItem('userId', userData.userId);
 
-                // Redirect to dashboard
+                // Redirect immediately - don't wait
                 window.location.href = 'dashboard.html';
 
             } catch (error) {

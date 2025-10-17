@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Académie</title>
+    
+    <!-- Preconnect to Firebase CDN -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes slideIn {
@@ -242,6 +247,14 @@
     </div>
 
     <script type="module">
+        // Show dashboard immediately with cached data - don't wait for Firebase
+        const cachedUser = localStorage.getItem('userName');
+        if (cachedUser) {
+            console.log('Loading dashboard with cached data immediately');
+            showDashboard();
+        }
+
+        // Load Firebase in background
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
@@ -256,12 +269,6 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // Timeout fallback - show page after 3 seconds regardless
-        setTimeout(() => {
-            console.log('Timeout reached - showing page with cached data');
-            showDashboard();
-        }, 3000);
 
         function showDashboard() {
             // Get cached user info from localStorage

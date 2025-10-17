@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Library - Académie</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Firebase imports will be loaded via script
+        let auth, db, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc, updateDoc, increment;
+
+        function Navigation() {
+            return (
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>Académie</span>
+                                </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="community.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Community</a>
+                                    <a href="custom-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">My Flashcards</a>
+                                    <a href="assignments.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function CommunityApp() {
+            const [view, setView] = useState('browse');
+            const [decks, setDecks] = useState([]);
+            const [myDecks, setMyDecks] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [filterSubject, setFilterSubject] = useState('all');
+            const [previewDeck, setPreviewDeck] = useState(null);
+            
+            // Upload state
+            const [uploadTitle, setUploadTitle] = useState('');
+            const [uploadSubject, setUploadSubject] = useState('');
+            const [uploadDescription, setUploadDescription] = useState('');
+            const [selectedLocalDeck, setSelectedLocalDeck] = useState('');
+
+            const userId = localStorage.getItem('userId');
+            const userName = localStorage.getItem('userName') || 'Anonymous';
+            const userEmail = localStorage.getItem('userEmail') || '';
+
+            useEffect(() => {
+                loadFirebase();
+            }, []);
+
+            async function loadFirebase() {
+                try {
+                    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js');
+                    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js');
+                    const { getFirestore, collection: fbCollection, addDoc: fbAddDoc, getDocs: fbGetDocs, query: fbQuery, orderBy: fbOrderBy, deleteDoc: fbDeleteDoc, doc: fbDoc, updateDoc: fbUpdateDoc, increment: fbIncrement } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
+                        authDomain: "academie-9942b.firebaseapp.com",
+                        projectId: "academie-9942b",
+                        storageBucket: "academie-9942b.firebasestorage.app",
+                        messagingSenderId: "1079518919325",
+                        appId: "1:1079518919325:web:745025bdb7b2b23645b274"
+                    };
+
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    collection = fbCollection;
+                    addDoc = fbAddDoc;
+                    getDocs = fbGetDocs;
+                    query = fbQuery;
+                    orderBy = fbOrderBy;
+                    deleteDoc = fbDeleteDoc;
+                    doc = fbDoc;
+                    updateDoc = fbUpdateDoc;
+                    increment = fbIncrement;
+
+                    await loadCommunityDecks();
+                } catch (error) {
+                    console.error('Firebase load error:', error);
+                    setLoading(false);
+                }
+            }
+
+            async function loadCommunityDecks() {
+                try {
+                    const q = query(collection(db, 'communityDecks'), orderBy('created', 'desc'));
+                    const querySnapshot = await getDocs(q);
+                    const loadedDecks = [];
+                    querySnapshot.forEach((doc) => {
+                        loadedDecks.push({ id: doc.id, ...doc.data() });
+                    });
+                    setDecks(loadedDecks);
+                    
+                    // Filter user's decks
+                    const userDecks = loadedDecks.filter(d => d.authorId === userId);
+                    setMyDecks(userDecks);
+                    
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Load decks error:', error);
+                    setLoading(false);
+                }
+            }
+
+            async function uploadDeck() {
+                if (!uploadTitle.trim() || !selectedLocalDeck) {
+                    alert('Please fill in title and select a deck to upload');
+                    return;
+                }
+
+                try {
+                    setLoading(true);
+                    
+                    // Get the selected deck
+                    const customFlashcards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
+                    const deckToUpload = customFlashcards.find(d => d.id === parseInt(selectedLocalDeck));
+                    
+                    if (!deckToUpload && selectedLocalDeck !== 'custom') {
+                        alert('Deck not found');
+                        setLoading(false);
+                        return;
+                    }
+
+                    // Create deck object
+                    const newDeck = {
+                        title: uploadTitle.trim(),
+                        subject: uploadSubject.trim() || 'General',
+                        description: uploadDescription.trim() || 'No description provided',
+                        author: userName,
+                        authorEmail: userEmail,
+                        authorId: userId,
+                        cards: selectedLocalDeck === 'custom' ? customFlashcards.map(c => ({ question: c.question, answer: c.answer })) : [{ question: deckToUpload.question, answer: deckToUpload.answer }],
+                        downloads: 0,
+                        created: new Date().toISOString(),
+                        updated: new Date().toISOString()
+                    };
+
+                    // Upload to Firebase
+                    await addDoc(collection(db, 'communityDecks'), newDeck);
+
+                    alert('Deck uploaded successfully! 🎉');
+                    setUploadTitle('');
+                    setUploadSubject('');
+                    setUploadDescription('');
+                    setSelectedLocalDeck('');
+                    await loadCommunityDecks();
+                    setView('browse');
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Upload failed: ' + error.message);
+                    setLoading(false);
+                }
+            }
+
+            async function downloadDeck(deck) {
+                try {
+                    // Get existing custom flashcards
+                    const customFlashcards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
+                    
+                    // Add downloaded cards to custom flashcards
+                    const newCards = deck.cards.map(card => ({
+                        id: Date.now() + Math.random(),
+                        question: card.question,
+                        answer: card.answer,
+                        created: new Date().toISOString(),
+                        source: 'community',
+                        sourceDeckId: deck.id,
+                        sourceDeckTitle: deck.title,
+                        sourceAuthor: deck.author
+                    }));
+
+                    const updatedFlashcards = [...customFlashcards, ...newCards];
+                    localStorage.setItem('customFlashcards', JSON.stringify(updatedFlashcards));
+
+                    // Increment download count
+                    const deckRef = doc(db, 'communityDecks', deck.id);
+                    await updateDoc(deckRef, {
+                        downloads: increment(1)
+                    });
+
+                    alert(`Downloaded ${deck.cards.length} cards from "${deck.title}"! Check "My Flashcards" to study them.`);
+                    await loadCommunityDecks();
+                } catch (error) {
+                    console.error('Download error:', error);
+                    alert('Download failed: ' + error.message);
+                }
+            }
+
+            async function deleteDeck(deckId) {
+                if (!confirm('Delete this deck? This cannot be undone.')) return;
+                
+                try {
+                    setLoading(true);
+                    await deleteDoc(doc(db, 'communityDecks', deckId));
+                    alert('Deck deleted successfully');
+                    await loadCommunityDecks();
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Delete error:', error);
+                    alert('Delete failed: ' + error.message);
+                    setLoading(false);
+                }
+            }
+
+            const filteredDecks = decks.filter(deck => {
+                const matchesSearch = deck.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                     deck.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                     deck.author.toLowerCase().includes(searchTerm.toLowerCase());
+                const matchesSubject = filterSubject === 'all' || deck.subject.toLowerCase() === filterSubject.toLowerCase();
+                return matchesSearch && matchesSubject;
+            });
+
+            const subjects = ['all', ...new Set(decks.map(d => d.subject))];
+
+            // BROWSE VIEW
+            if (view === 'browse') {
+                return (
+                    <>
+                        <Navigation />
+                        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4 pt-20">
+                            <div className="max-w-7xl mx-auto">
+                                <div className="mb-8 animate-slide-in">
+                                    <h1 className="text-5xl font-bold text-white mb-2">🌍 Community Library</h1>
+                                    <p className="text-xl text-blue-200">Discover and share flashcard decks</p>
+                                </div>
+
+                                {/* Quick Actions */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                                    <button onClick={() => setView('upload')} className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all">
+                                        <div className="text-5xl mb-2">📤</div>
+                                        Upload Your Deck
+                                    </button>
+                                    <button onClick={() => setView('mydecks')} className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all">
+                                        <div className="text-5xl mb-2">📚</div>
+                                        My Uploads ({myDecks.length})
+                                    </button>
+                                    <a href="custom-flashcards.html" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all text-center">
+                                        <div className="text-5xl mb-2">🎴</div>
+                                        My Flashcards
+                                    </a>
+                                </div>
+
+                                {/* Search & Filter */}
+                                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input
+                                            type="text"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            placeholder="Search decks, authors..."
+                                            className="px-4 py-3 rounded-xl bg-white/90 text-gray-800 font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500"
+                                        />
+                                        <select
+                                            value={filterSubject}
+                                            onChange={(e) => setFilterSubject(e.target.value)}
+                                            className="px-4 py-3 rounded-xl bg-white/90 text-gray-800 font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500"
+                                        >
+                                            {subjects.map(s => (
+                                                <option key={s} value={s}>{s === 'all' ? 'All Subjects' : s}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Decks Grid */}
+                                {loading ? (
+                                    <div className="text-center py-16">
+                                        <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-white mb-4"></div>
+                                        <p className="text-white text-xl">Loading decks...</p>
+                                    </div>
+                                ) : filteredDecks.length === 0 ? (
+                                    <div className="text-center py-16 bg-white/10 backdrop-blur rounded-2xl">
+                                        <div className="text-7xl mb-4">📚</div>
+                                        <p className="text-white text-xl mb-4">No decks found</p>
+                                        <button onClick={() => setView('upload')} className="bg-blue-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-600">
+                                            Upload First Deck
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {filteredDecks.map(deck => (
+                                            <div key={deck.id} className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:transform hover:scale-105 transition-all">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <h3 className="text-2xl font-bold text-white">{deck.title}</h3>
+                                                    <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">{deck.subject}</span>
+                                                </div>
+                                                <p className="text-white/80 mb-4 line-clamp-2">{deck.description}</p>
+                                                <div className="flex items-center space-x-2 mb-4 text-white/60 text-sm">
+                                                    <span>👤 {deck.author}</span>
+                                                    <span>•</span>
+                                                    <span>🎴 {deck.cards.length} cards</span>
+                                                </div>
+                                                <div className="flex items-center space-x-2 mb-4 text-white/60 text-sm">
+                                                    <span>📥 {deck.downloads} downloads</span>
+                                                    <span>•</span>
+                                                    <span>{new Date(deck.created).toLocaleDateString()}</span>
+                                                </div>
+                                                <div className="flex space-x-2">
+                                                    <button onClick={() => setPreviewDeck(deck)} className="flex-1 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl font-semibold transition-all">
+                                                        👁️ Preview
+                                                    </button>
+                                                    <button onClick={() => downloadDeck(deck)} className="flex-1 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:shadow-lg transition-all">
+                                                        📥 Download
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Preview Modal */}
+                        {previewDeck && (
+                            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setPreviewDeck(null)}>
+                                <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-8 max-w-4xl w-full max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div>
+                                            <h2 className="text-4xl font-bold text-white mb-2">{previewDeck.title}</h2>
+                                            <p className="text-white/80 mb-2">{previewDeck.description}</p>
+                                            <p className="text-white/60">By {previewDeck.author} • {previewDeck.cards.length} cards</p>
+                                        </div>
+                                        <button onClick={() => setPreviewDeck(null)} className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl font-bold">
+                                            ✕
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3 mb-6">
+                                        {previewDeck.cards.slice(0, 10).map((card, i) => (
+                                            <div key={i} className="bg-white/20 backdrop-blur rounded-xl p-4">
+                                                <p className="text-white font-bold mb-2">Q: {card.question}</p>
+                                                <p className="text-white/80">A: {card.answer}</p>
+                                            </div>
+                                        ))}
+                                        {previewDeck.cards.length > 10 && (
+                                            <p className="text-white/60 text-center">+ {previewDeck.cards.length - 10} more cards</p>
+                                        )}
+                                    </div>
+                                    <button onClick={() => {downloadDeck(previewDeck); setPreviewDeck(null);}} className="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-4 rounded-xl font-bold text-xl hover:shadow-2xl transform hover:scale-105 transition-all">
+                                        📥 Download Deck
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                );
+            }
+
+            // UPLOAD VIEW
+            if (view === 'upload') {
+                const customFlashcards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-900 via-teal-900 to-cyan-900 p-4 pt-20">
+                        <div className="max-w-4xl mx-auto">
+                            <button onClick={() => setView('browse')} className="mb-6 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                                ← Back to Library
+                            </button>
+
+                            <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
+                                <h2 className="text-4xl font-bold text-white mb-6">📤 Upload Flashcard Deck</h2>
+                                
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-white font-bold mb-2">Deck Title *</label>
+                                        <input
+                                            type="text"
+                                            value={uploadTitle}
+                                            onChange={(e) => setUploadTitle(e.target.value)}
+                                            placeholder="e.g., Biology Quiz 2 - Cell Structure"
+                                            className="w-full px-4 py-3 rounded-xl bg-white/90 text-gray-800 font-semibold focus:outline-none focus:ring-4 focus:ring-green-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-white font-bold mb-2">Subject</label>
+                                        <input
+                                            type="text"
+                                            value={uploadSubject}
+                                            onChange={(e) => setUploadSubject(e.target.value)}
+                                            placeholder="e.g., Biology, Chemistry, Math"
+                                            className="w-full px-4 py-3 rounded-xl bg-white/90 text-gray-800 font-semibold focus:outline-none focus:ring-4 focus:ring-green-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-white font-bold mb-2">Description</label>
+                                        <textarea
+                                            value={uploadDescription}
+                                            onChange={(e) => setUploadDescription(e.target.value)}
+                                            placeholder="Describe what this deck covers..."
+                                            rows="3"
+                                            className="w-full px-4 py-3 rounded-xl bg-white/90 text-gray-800 font-semibold focus:outline-none focus:ring-4 focus:ring-green-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-white font-bold mb-2">Select Flashcards to Upload *</label>
+                                        <select
+                                            value={selectedLocalDeck}
+                                            onChange={(e) => setSelectedLocalDeck(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl bg-white/90 text-gray-800 font-semibold focus:outline-none focus:ring-4 focus:ring-green-500"
+                                        >
+                                            <option value="">Choose a deck...</option>
+                                            <option value="custom">All My Custom Flashcards ({customFlashcards.length} cards)</option>
+                                            {customFlashcards.map(card => (
+                                                <option key={card.id} value={card.id}>
+                                                    {card.question.substring(0, 50)}...
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <p className="text-white/60 text-sm mt-2">
+                                            Don't have any? <a href="custom-flashcards.html" className="text-blue-300 hover:underline">Create flashcards first</a>
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-yellow-500/20 border border-yellow-500 rounded-xl p-4">
+                                        <p className="text-white text-sm">
+                                            <strong>📝 Note:</strong> Your name ({userName}) and email will be attached to this deck. Make sure content is appropriate and follows community guidelines.
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        onClick={uploadDeck}
+                                        disabled={loading || !uploadTitle.trim() || !selectedLocalDeck}
+                                        className="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-4 rounded-xl font-bold text-xl disabled:opacity-50 hover:shadow-2xl transform hover:scale-105 transition-all"
+                                    >
+                                        {loading ? 'Uploading...' : '📤 Upload to Community'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // MY DECKS VIEW
+            if (view === 'mydecks') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 p-4 pt-20">
+                        <div className="max-w-7xl mx-auto">
+                            <button onClick={() => setView('browse')} className="mb-6 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                                ← Back to Library
+                            </button>
+
+                            <div className="mb-8">
+                                <h2 className="text-4xl font-bold text-white mb-2">📚 My Uploaded Decks</h2>
+                                <p className="text-xl text-blue-200">Manage your contributions</p>
+                            </div>
+
+                            {myDecks.length === 0 ? (
+                                <div className="text-center py-16 bg-white/10 backdrop-blur rounded-2xl">
+                                    <div className="text-7xl mb-4">📤</div>
+                                    <p className="text-white text-xl mb-4">You haven't uploaded any decks yet</p>
+                                    <button onClick={() => setView('upload')} className="bg-green-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-600">
+                                        Upload Your First Deck
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {myDecks.map(deck => (
+                                        <div key={deck.id} className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                                            <div className="flex items-start justify-between mb-4">
+                                                <h3 className="text-2xl font-bold text-white">{deck.title}</h3>
+                                                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">YOURS</span>
+                                            </div>
+                                            <p className="text-white/80 mb-4">{deck.description}</p>
+                                            <div className="flex items-center space-x-2 mb-4 text-white/60 text-sm">
+                                                <span>🎴 {deck.cards.length} cards</span>
+                                                <span>•</span>
+                                                <span>📥 {deck.downloads} downloads</span>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <button onClick={() => setPreviewDeck(deck)} className="flex-1 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl font-semibold transition-all">
+                                                    👁️ Preview
+                                                </button>
+                                                <button onClick={() => deleteDeck(deck.id)} className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold transition-all">
+                                                    🗑️ Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<CommunityApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

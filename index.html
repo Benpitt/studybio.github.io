@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Académie - Your AI Study Companion</title>
+    <title>studying.works - Your AI Study Companion</title>
     
     <!-- Preconnect to Firebase CDN for faster loading -->
     <link rel="preconnect" href="https://www.gstatic.com">
@@ -48,6 +49,14 @@
     </style>
 </head>
 <body class="overflow-hidden">
+    <script>
+        // Instant check - if logged in, redirect immediately
+        if (localStorage.getItem('userId') && localStorage.getItem('userName')) {
+            console.log('Already logged in (cached) - redirecting immediately');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+    
     <div class="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 relative">
         <div id="particles" class="absolute inset-0 overflow-hidden"></div>
         
@@ -57,7 +66,7 @@
             </div>
             
             <h1 class="text-6xl md:text-8xl font-bold text-white text-center mb-4 animate-fade-in" style="animation-delay: 0.4s; opacity: 0;">
-                Académie
+                studying.works
             </h1>
             
             <p class="text-xl md:text-2xl text-blue-200 text-center mb-12 max-w-3xl px-4 animate-fade-in" style="animation-delay: 0.6s; opacity: 0;">
@@ -160,6 +169,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // User is signed in, redirect to dashboard
+                console.log('Already signed in, redirecting to dashboard');
                 window.location.href = 'dashboard.html';
             }
         });

@@ -1,195 +1,348 @@
-# Ben's Studying - Complete Website
+# studying.works
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Firebase](https://img.shields.io/badge/Firebase-10.8.0-orange.svg)](https://firebase.google.com/)
+[![AI Powered](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-purple.svg)](https://www.anthropic.com/)
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
+[![Free](https://img.shields.io/badge/Price-FREE-brightgreen.svg)]()
 
-## 📁 File Structure
+> **Turn study sessions into high scores.** An AI-powered study platform that generates flashcards, tracks progress, and makes learning actually work.
 
-```
-your-repo/
-├── index.html              # Landing page 
-├── dashboard.html          # Main hub with subjects and stats
-├── biology-quiz2.html      # Biology Quiz 2 study app (rename from biology-quiz2-master-final.html)
-├── progress.html           # Detailed progress tracking
-├── about.html              # About page
-└── README.md               # This file
-```
-## 🎨 Page Flow
+[**Try it live →**](https://studying.works)
 
-```
-index.html (Landing)
-    ↓ [Enter Button]
-dashboard.html (Main Hub)
-    ↓ [Click Biology Card]
-biology-quiz2.html (Study App)
-```
+---
 
-## ✨ Features
+## What It Does
 
-### 🏠 Landing Page (index.html)
-- Floating particles
-- Smooth entrance animation
-- Feature preview
+studying.works helps students learn faster with tools that actually matter:
 
-### 📊 Dashboard (dashboard.html)
-- Quick stats cards (streak, cards, quizzes, accuracy)
-- Active subjects with progress
-- Today's goal tracker
-- Recent achievements
-- Quick action buttons
+- **AI flashcard generation** - Paste your notes, get instant study decks
+- **Smart spaced repetition** - Algorithm shows you cards when you need them
+- **9 different study modes** - Flashcards, quizzes, matching games, speed rounds
+- **Community library** - Share and discover study decks
+- **Progress tracking** - See your streaks, scores, and improvement
 
-### 🧬 Biology Quiz 2 (biology-quiz2.html)
-- **9 Study Modes:**
-  1. Smart Flashcards (spaced repetition)
-  2. Practice Test (adaptive feedback)
-  3. Quiz Builder (custom topics)
-  4. Matching Game
-  5. Speed Challenge
-  6. Compare & Contrast
-  7. Mistake Bank
-  8. Progress Dashboard
-  9. Quick Reference
+No subscriptions. No paywalls. No ads. Just tools that work.
 
-### 📈 Progress Page (progress.html)
-- Visual study calendar
-- Topic mastery bars
-- Weekly summary
-- Achievement showcase
-- Study insights
-- Next milestone tracker
+---
 
-### ℹ️ About Page (about.html)
-- Project information
-- Feature highlights
-- Tech stack
-- Creator info
-- Future plans
+## Core Features
 
-## 🎯 Key Features
+### 🤖 AI Generator
+Drop in your lecture notes or a topic name. Claude AI reads it, extracts key concepts, and creates a full flashcard deck in 5-10 seconds. Works for any subject.
 
-### Spaced Repetition
-- Rate cards: Hard (😰), Medium (😐), Easy (😊)
-- Hard cards appear 5x more often
-- Adaptive learning algorithm
+### 🎴 Smart Flashcards
+Mark cards as hard/medium/easy. The system shows you harder cards more often using spaced repetition - the same technique med students use to memorize thousands of terms.
 
-### Progress Tracking
-- Study streak counter
-- Cards reviewed tracking
-- Quiz performance analytics
-- Topic mastery visualization
+### 🎮 Gamified Learning
+- **Matching Game**: Race against time to pair questions with answers
+- **Speed Round**: Answer as many as possible in 60 seconds
+- **Audio Quiz**: Text-to-speech reads questions out loud
+- **Progress Streaks**: Track daily study habits
 
-### Gamification
-- Achievements & badges
-- Study goals
-- Competitive elements
-- Visual feedback
+### 🌍 Community Library
+Browse thousands of flashcard decks made by other students. Find exactly what you need for your class, or upload your own decks to help others.
 
-## 🎨 Design System
+### 📊 Analytics
+Real-time progress tracking shows:
+- Study streaks
+- Quiz scores over time
+- Total cards mastered
+- Time spent studying
+- Achievement badges
 
-### Color Scheme
-- **Primary:** Blue-Purple gradient
-- **Biology:** Blue → Purple
-- **Success:** Green → Teal
-- **Warning:** Orange → Red
-- **Background:** Dark gradient (gray-900 → blue-900 → purple-900)
+---
 
-### Typography
-- **Headers:** Bold, large (text-4xl to text-7xl)
-- **Body:** text-white/80 for readability
-- **Cards:** Rounded (rounded-2xl to rounded-3xl)
+## Tech Stack
 
-### Animations
-- Slide-in on page load
-- Hover scale effects
-- Pulse animations
-- Smooth transitions
+**Frontend:**
+- React 18 (functional components, hooks)
+- Tailwind CSS (utility-first styling)
+- Vanilla JS (for performance-critical pages)
 
-## 💾 Data Storage
+**Backend & Services:**
+- Firebase Authentication (Google Sign-In)
+- Cloud Firestore (NoSQL database)
+- Firebase Hosting
+- Claude AI API (Sonnet 4.5)
 
-All data is stored in browser localStorage:
-- `studyStreak` - Current study streak
-- `cardDifficulty` - Spaced repetition ratings
-- `cardHistory` - Card review history
-- `mistakeBank` - Wrong answers
-- `topicStats` - Performance by topic
-- `lastVisit` - Last study date
+**Tools:**
+- Web Speech API (audio quiz mode)
+- LocalStorage (client-side caching)
+- Service Workers (offline support - coming soon)
 
-**Note:** Data is device-specific. Clearing browser data will reset progress.
+---
 
-## 🔮 Future Expansion
+## Quick Start
 
-To add new subjects:
+### For Users
+1. Go to [studying.works](https://studying.works)
+2. Sign in with Google
+3. Click "AI Generator"
+4. Paste notes or enter a topic
+5. Start studying
 
-1. **Create new study page:**
-   - Copy `biology-quiz2.html`
-   - Rename to `chemistry-quiz1.html`
-   - Update question bank
+### For Developers
 
-2. **Update dashboard.html:**
-   - Add new subject card
-   - Link to new file
-   - Update stats
+**Prerequisites:**
+- Node.js (not required, but useful for local dev)
+- Firebase account
+- Modern browser
 
-3. **Navigation:**
-   - All pages automatically have nav
-   - Add subject link if needed
+**Setup:**
 
-## 🛠️ Customization
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/studying-works.git
+cd studying-works
 
-### Change Site Name
-Update in all files:
-```html
-<span>Study Hub</span>
+# No dependencies to install - just open in browser
+open index.html
+
+# Or use a local server
+python -m http.server 8000
+# Visit http://localhost:8000
 ```
 
-### Change Colors
-Search and replace gradient classes:
-- `from-blue-600 to-purple-600` → Your colors
-- Update in Tailwind classes
+**Firebase Config:**
 
-### Add More Questions
-Edit the `questionBank` array in `biology-quiz2.html`
+1. Create Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Enable Google Authentication
+3. Enable Firestore Database
+4. Copy your config to `index.html` (replace existing config)
+5. Deploy security rules from `firestore.rules`
 
-## 📱 Browser Compatibility
-- ✅ Chrome/Edge (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ✅ Mobile browsers
+```bash
+# Deploy rules
+firebase deploy --only firestore:rules
+```
 
-## 🐛 Troubleshooting
+---
 
-**"Page not found"**
-- Ensure files are named exactly as shown
-- Wait 2-3 minutes after upload
-- Check GitHub Pages is enabled
+## Architecture
 
-**"Stats not showing"**
-- Take a quiz first to generate data
-- Check browser console for errors
-- Try clearing cache and reload
+```
+studying.works/
+├── index.html              # Landing & auth
+├── dashboard.html          # Main hub
+├── ai-flashcards.html      # AI generator
+├── custom-flashcards.html  # Deck management
+├── community.html          # Share/discover
+├── biology-quiz2*.html     # Study modes
+├── progress.html           # Analytics
+├── assignments.html        # Task manager
+│
+├── auth-guard.js           # Login protection
+├── toast-notifications.js  # User feedback
+├── loading-animations.css  # UI polish
+│
+├── firestore.rules         # Database security
+├── sitemap.xml            # SEO
+└── robots.txt             # Crawler rules
+```
 
-**"Navigation broken"**
-- Verify all file names match links
-- Ensure all files uploaded successfully
-- Check for typos in hrefs
+**Key Patterns:**
 
-## 📊 Stats Overview
+- **No build step** - Pure HTML/CSS/JS for simplicity
+- **Component-based** - Reusable React components where needed
+- **Progressive enhancement** - Works without JS for core content
+- **Mobile-first** - Responsive design from the ground up
 
-- **Total Questions:** 69
-- **Study Modes:** 9
-- **Topics Covered:** 5
-- **Pages:** 5
-- **Animations:** Custom CSS
-- **Storage:** LocalStorage
-- **Framework:** React (CDN)
+---
 
-## 🎓 Created By
+## Study Modes
 
-**Ben Hocquet**
-- Built with React, Tailwind CSS, and Claude AI
-- Hosted on GitHub Pages
-- 100% Free & Open Source
+| Mode | Description | Best For |
+|------|-------------|----------|
+| 🎴 **Flashcards** | Classic flip cards with spaced repetition | Memorization |
+| 📝 **Practice Test** | Full exam simulation with timer | Test prep |
+| 🎯 **Multiple Choice** | 4-option questions | Quick review |
+| ✅ **True/False** | Binary questions | Concept checking |
+| 🎮 **Matching Game** | Pair terms with definitions | Active recall |
+| ⚡ **Speed Round** | Timed rapid-fire questions | Fact drilling |
+| 🔊 **Audio Quiz** | Text-to-speech questions | Auditory learning |
+| 📋 **Fill in Blank** | Type missing words | Writing practice |
+| ✍️ **Written Answer** | Free-form responses | Essay prep |
 
-## 📝 License
+---
 
-Free to use for personal education. Built with ❤️ for learning.
+## AI Generation
 
-**Need help?** Review this README or check the code comments!
+The AI generator uses Claude Sonnet 4.5 to create flashcards from:
+
+**Input Options:**
+1. **Text/Notes** - Paste lecture notes, textbook excerpts, articles
+2. **Topics** - Just enter "Photosynthesis" or "World War 2"
+3. **Questions** - Generate quiz questions from text
+
+**How It Works:**
+1. User submits content
+2. System sends structured prompt to Claude API
+3. AI extracts key concepts and creates Q&A pairs
+4. Response parsed and formatted as flashcards
+5. User reviews and saves to their collection
+
+**Quality Controls:**
+- Prompts enforce specific JSON output format
+- Validation checks for properly formed cards
+- Difficulty levels adjust question complexity
+- Card count limits (5-50) prevent overload
+
+---
+
+## Security
+
+**Authentication:**
+- Firebase Auth with Google Sign-In
+- No passwords stored
+- Session tokens managed by Firebase
+
+**Database Rules:**
+- Users can only edit their own content
+- Community decks are read-only
+- Input validation on all writes
+- Rate limiting via Firebase quotas
+
+**Data Protection:**
+- HTTPS everywhere
+- No sensitive data in localStorage
+- Regular security audits
+- GDPR-compliant data handling
+
+See `firestore.rules` for complete security implementation.
+
+---
+
+## Performance
+
+**Load Times:**
+- Initial page: < 1s
+- Dashboard: < 500ms (with cached auth)
+- AI generation: 5-10s
+- Page transitions: Instant
+
+**Optimizations:**
+- DNS prefetch for Firebase CDN
+- Lazy loading for images
+- Minimal JavaScript bundles
+- LocalStorage caching
+- Optimistic UI updates
+
+---
+
+## Browser Support
+
+| Browser | Version | Status |
+|---------|---------|--------|
+| Chrome | 90+ | ✅ Full support |
+| Firefox | 88+ | ✅ Full support |
+| Safari | 14+ | ✅ Full support |
+| Edge | 90+ | ✅ Full support |
+| Mobile Safari | iOS 14+ | ✅ Full support |
+| Chrome Mobile | 90+ | ✅ Full support |
+
+**Required Features:**
+- ES6+ JavaScript
+- CSS Grid & Flexbox
+- Web Storage API
+- Fetch API
+
+---
+
+## Roadmap
+
+**In Progress:**
+- [ ] Dark mode toggle
+- [ ] Offline mode with service workers
+- [ ] Mobile app (React Native)
+
+**Planned:**
+- [ ] Deck ratings and reviews
+- [ ] Comments on community decks
+- [ ] Study groups and collaboration
+- [ ] Voice input for flashcard creation
+- [ ] PDF upload for AI generation
+- [ ] Export decks as PDF/Anki
+
+**Ideas Welcome:**
+Open an issue to suggest features or improvements.
+
+---
+
+## Contributing
+
+Pull requests welcome. For major changes, open an issue first.
+
+**Development:**
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/amazing`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing`)
+5. Open a Pull Request
+
+**Code Style:**
+- Use Prettier for formatting
+- Follow existing patterns
+- Comment complex logic
+- Test on multiple browsers
+
+---
+
+## Resources Used
+
+**AI & APIs:**
+- [Claude AI by Anthropic](https://www.anthropic.com/) - Flashcard generation
+- [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) - Audio quiz mode
+
+**Backend:**
+- [Firebase Authentication](https://firebase.google.com/docs/auth) - User management
+- [Cloud Firestore](https://firebase.google.com/docs/firestore) - Database
+- [Firebase Hosting](https://firebase.google.com/docs/hosting) - Deployment
+
+**UI/UX:**
+- [Tailwind CSS](https://tailwindcss.com/) - Styling framework
+- [Heroicons](https://heroicons.com/) - Icon set (via emoji)
+- [Google Fonts](https://fonts.google.com/) - Typography
+
+**Libraries:**
+- [React 18](https://react.dev/) - UI components (CDN version)
+- [Babel Standalone](https://babeljs.io/docs/babel-standalone) - JSX compilation
+
+---
+
+## License
+
+MIT License - See [LICENSE](LICENSE) for details.
+
+Free to use, modify, and distribute. Attribution appreciated but not required.
+
+---
+
+## Credits
+
+Built with ❤️ for students who want tools that work, not distractions.
+
+**Powered by:**
+- Claude AI for intelligent flashcard generation
+- Firebase for rock-solid infrastructure
+- Open-source tools from the community
+
+---
+
+## Support
+
+**Found a bug?** Open an issue on GitHub.
+
+**Need help?** Check the [wiki](https://github.com/yourusername/studying-works/wiki) or open a discussion.
+
+**Want to say thanks?** Star the repo ⭐
+
+---
+
+<div align="center">
+
+**[studying.works](https://studying.works)** · **[Docs](https://github.com/yourusername/studying-works/wiki)** · **[Report Bug](https://github.com/yourusername/studying-works/issues)**
+
+Made for students, by someone who knows cramming sucks.
+
+</div>

@@ -8,7 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 min-h-screen">
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900" style="min-height: 100vh; display: flex; flex-direction: column;">
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -26,7 +26,7 @@
         </div>
     </nav>
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="flex: 1;">
         <div class="text-center mb-16">
             <div class="text-8xl mb-6">🎓</div>
             <h1 class="text-6xl font-bold text-white mb-4">studying.works</h1>
@@ -119,10 +119,17 @@
 
     <footer class="bg-black/30 backdrop-blur-lg border-t border-white/10 py-8 mt-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-white/60 mb-2">© 2025 studying.works. All rights reserved.</p>
-            <div class="flex justify-center space-x-6">
+            <p class="text-white/60 mb-4">© 2025 studying.works. All rights reserved.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-6 mb-4">
+                <a href="dashboard.html" class="text-white/80 hover:text-white transition-all font-medium">🎓 Dashboard</a>
+                <a href="ai-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🤖 AI Generator</a>
+                <a href="custom-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🎴 My Flashcards</a>
+                <a href="community.html" class="text-white/80 hover:text-white transition-all font-medium">🌍 Community</a>
+            </div>
+            <div class="flex justify-center space-x-6 text-sm">
                 <a href="terms.html" class="text-white/60 hover:text-white transition-all">Terms of Service</a>
                 <a href="privacy.html" class="text-white/60 hover:text-white transition-all">Privacy Policy</a>
+                <a href="about.html" class="text-white/60 hover:text-white transition-all">About</a>
             </div>
         </div>
     </footer>

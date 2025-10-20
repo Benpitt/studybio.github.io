@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="loading-animations.css">
     <script src="toast-notifications.js"></script>
 </head>
-<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 min-h-screen">
+<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500" style="min-height: 100vh;">
     <script src="auth-guard.js"></script>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -195,20 +195,35 @@
 
             // Validation
             if (mode === 'text' && !text) {
-                toast.error('Please paste some text to generate flashcards from');
+                if (window.toast) {
+                    toast.error('Please paste some text to generate flashcards from');
+                } else {
+                    alert('Please paste some text to generate flashcards from');
+                }
                 return;
             }
             if (mode === 'topic' && !topic) {
-                toast.error('Please enter a topic');
+                if (window.toast) {
+                    toast.error('Please enter a topic');
+                } else {
+                    alert('Please enter a topic');
+                }
                 return;
             }
             if (!deckTitle) {
-                toast.error('Please enter a deck title');
+                if (window.toast) {
+                    toast.error('Please enter a deck title');
+                } else {
+                    alert('Please enter a deck title');
+                }
                 return;
             }
 
             // Show loading
-            const loadingToast = toast.loading('AI is generating your flashcards...');
+            const loadingToast = window.toast ? toast.loading('🤖 AI is generating your flashcards...') : null;
+            if (!window.toast) {
+                console.log('Generating flashcards...');
+            }
             document.getElementById('generate-btn').disabled = true;
             document.getElementById('generate-btn').innerHTML = '<div class="loading-dots text-white"><span></span><span></span><span></span></div>';
 
@@ -288,13 +303,26 @@ Create 10-15 questions in this EXACT JSON format (respond ONLY with valid JSON):
                 displayCards(generatedCards);
 
                 // Remove loading toast
-                loadingToast.remove();
-                toast.success(`Generated ${generatedCards.length} flashcards! 🎉`);
+                if (loadingToast && loadingToast.remove) {
+                    loadingToast.remove();
+                }
+                if (window.toast) {
+                    toast.success(`Generated ${generatedCards.length} flashcards! 🎉`);
+                } else {
+                    console.log(`Generated ${generatedCards.length} flashcards!`);
+                }
 
             } catch (error) {
                 console.error('Generation error:', error);
-                loadingToast.remove();
-                toast.error('Failed to generate flashcards. Please try again.');
+                console.error('Error details:', error.message);
+                if (typeof loadingToast !== 'undefined' && loadingToast.remove) {
+                    loadingToast.remove();
+                }
+                if (window.toast) {
+                    toast.error('Failed to generate flashcards. Please try again.');
+                } else {
+                    alert('Failed to generate flashcards. Error: ' + error.message);
+                }
             } finally {
                 document.getElementById('generate-btn').disabled = false;
                 document.getElementById('generate-btn').innerHTML = '✨ Generate Flashcards with AI';
@@ -343,7 +371,11 @@ Create 10-15 questions in this EXACT JSON format (respond ONLY with valid JSON):
             decks.push(deck);
             localStorage.setItem('flashcardDecks', JSON.stringify(decks));
 
-            toast.success('Deck saved! Redirecting to My Flashcards...');
+            if (window.toast) {
+                toast.success('Deck saved! Redirecting to My Flashcards...');
+            } else {
+                alert('Deck saved! Redirecting to My Flashcards...');
+            }
             setTimeout(() => {
                 window.location.href = 'custom-flashcards.html';
             }, 1500);
@@ -385,7 +417,11 @@ Create 10-15 questions in this EXACT JSON format (respond ONLY with valid JSON):
                 document.getElementById('input-topic').value = example.topic;
             }
             document.getElementById('deck-title').value = example.title;
-            toast.info('Example loaded! Click Generate to try it.');
+            if (window.toast) {
+                toast.info('Example loaded! Click Generate to try it.');
+            } else {
+                console.log('Example loaded!');
+            }
         };
     </script>
 </body>

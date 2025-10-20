@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- VERSION: 2.0 - WITH HUGGING FACE FREE AI - Updated Oct 20, 2025 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -283,44 +284,36 @@
             try {
                 // Prepare prompt
                 let prompt = '';
+                let systemPrompt = 'You are a helpful educational assistant that creates high-quality flashcards. You MUST respond with ONLY valid JSON, no explanations or other text.';
+                
                 if (mode === 'text') {
-                    prompt = `Create flashcards from this text. Generate clear question and answer pairs that test understanding of the key concepts.
+                    prompt = `${systemPrompt}
 
-Text:
+Create 10-15 flashcards from the following text. Each flashcard should have a clear question and a concise answer.
+
+TEXT:
 ${text}
 
-Generate 10-15 flashcards in this EXACT JSON format (respond ONLY with valid JSON, no other text):
-{
-  "cards": [
-    {"question": "Question here?", "answer": "Answer here"},
-    {"question": "Question here?", "answer": "Answer here"}
-  ]
-}`;
+Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
+{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
                 } else if (mode === 'topic') {
-                    prompt = `Create ${numCards} flashcards about: ${topic}
+                    prompt = `${systemPrompt}
 
-Difficulty level: ${difficulty}
+Create ${numCards} flashcards about: ${topic}
+Difficulty: ${difficulty}
 
-Generate flashcards that test understanding of this topic. Make questions clear and answers concise but informative.
+Make questions that test understanding. Keep answers informative but concise.
 
-Respond ONLY with valid JSON in this EXACT format (no other text):
-{
-  "cards": [
-    {"question": "Question here?", "answer": "Answer here"},
-    {"question": "Question here?", "answer": "Answer here"}
-  ]
-}`;
+Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
+{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
                 } else {
-                    prompt = `Generate quiz questions from this text:
+                    prompt = `${systemPrompt}
 
+Generate 10-15 quiz questions from this text:
 ${text}
 
-Create 10-15 questions in this EXACT JSON format (respond ONLY with valid JSON):
-{
-  "cards": [
-    {"question": "Question here?", "answer": "Answer here"}
-  ]
-}`;
+Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
+{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
                 }
 
                 // Call AI API based on provider
@@ -328,28 +321,48 @@ Create 10-15 questions in this EXACT JSON format (respond ONLY with valid JSON):
                 
                 if (provider === 'huggingface') {
                     // Use Hugging Face Inference API (Free!)
+                    // Format prompt for Mistral instruction format
+                    const formattedPrompt = `<s>[INST] ${prompt} [/INST]`;
+                    
                     response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            inputs: prompt,
+                            inputs: formattedPrompt,
                             parameters: {
-                                max_new_tokens: 2000,
-                                temperature: 0.7,
-                                return_full_text: false
+                                max_new_tokens: 2500,
+                                temperature: 0.3,
+                                top_p: 0.9,
+                                return_full_text: false,
+                                do_sample: true
+                            },
+                            options: {
+                                wait_for_model: true
                             }
                         })
                     });
 
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`Hugging Face API Error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+                        const errorText = await response.text();
+                        console.error('Hugging Face Error:', errorText);
+                        throw new Error(`Hugging Face API Error: ${response.status}. The model might be loading, please try again in 20 seconds.`);
                     }
 
                     data = await response.json();
-                    responseText = data[0].generated_text;
+                    console.log('Hugging Face raw response:', data);
+                    
+                    // Handle array response from Hugging Face
+                    if (Array.isArray(data) && data.length > 0) {
+                        responseText = data[0].generated_text;
+                    } else if (data.generated_text) {
+                        responseText = data.generated_text;
+                    } else {
+                        throw new Error('Unexpected response format from Hugging Face');
+                    }
+                    
+                    console.log('Generated text:', responseText);
                     
                 } else {
                     // Use OpenAI API
@@ -387,9 +400,29 @@ Create 10-15 questions in this EXACT JSON format (respond ONLY with valid JSON):
 
                 // Clean up response (remove markdown code blocks if present)
                 responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                
+                // Try to extract JSON if it's embedded in other text
+                let jsonMatch = responseText.match(/\{[\s\S]*"cards"[\s\S]*\}/);
+                if (jsonMatch) {
+                    responseText = jsonMatch[0];
+                }
+                
+                console.log('Cleaned response text:', responseText);
 
                 // Parse JSON
-                const result = JSON.parse(responseText);
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON Parse Error:', parseError);
+                    console.error('Failed to parse:', responseText);
+                    throw new Error('AI generated invalid response. Please try again or switch to OpenAI.');
+                }
+                
+                if (!result.cards || !Array.isArray(result.cards) || result.cards.length === 0) {
+                    throw new Error('AI did not generate any flashcards. Please try again.');
+                }
+                
                 generatedCards = result.cards;
 
                 // Display cards

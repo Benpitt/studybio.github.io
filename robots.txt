@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /about.html
+Allow: /terms.html
+Allow: /privacy.html
+
+# Block private pages
+Disallow: /dashboard.html
+Disallow: /custom-flashcards.html
+Disallow: /community.html
+Disallow: /ai-flashcards.html
+Disallow: /assignments.html
+Disallow: /progress.html
+Disallow: /biology-quiz2*.html
+Disallow: /biochem*.html
+Disallow: /quiz2*.html
+Disallow: /complete-quiz*.html
+
+# Sitemaps
+Sitemap: https://studying.works/sitemap.xml

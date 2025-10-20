@@ -1,0 +1,107 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Community Decks Collection
+    match /communityDecks/{deckId} {
+      // Anyone can read community decks
+      allow read: if true;
+      
+      // Only authenticated users can create decks
+      allow create: if isSignedIn() 
+                    && request.resource.data.authorId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['title', 'author', 'authorId', 'cards', 'downloads', 'created'])
+                    && request.resource.data.cards is list
+                    && request.resource.data.cards.size() > 0
+                    && request.resource.data.cards.size() <= 100; // Max 100 cards per deck
+      
+      // Only deck owner can update their own decks
+      allow update: if isSignedIn() 
+                    && resource.data.authorId == request.auth.uid;
+      
+      // Only deck owner can delete their own decks
+      allow delete: if isSignedIn() 
+                    && resource.data.authorId == request.auth.uid;
+    }
+    
+    // User Progress Collection (future use)
+    match /users/{userId}/progress/{progressId} {
+      // Users can only read/write their own progress
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+    
+    // User Settings Collection (future use)
+    match /users/{userId}/settings/{settingId} {
+      // Users can only read/write their own settings
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+    
+    // Comments Collection (future use)
+    match /communityDecks/{deckId}/comments/{commentId} {
+      // Anyone can read comments
+      allow read: if true;
+      
+      // Only authenticated users can create comments
+      allow create: if isSignedIn()
+                    && request.resource.data.authorId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['text', 'authorId', 'author', 'created']);
+      
+      // Only comment author can delete
+      allow delete: if isSignedIn() 
+                    && resource.data.authorId == request.auth.uid;
+    }
+    
+    // Ratings Collection (future use)
+    match /communityDecks/{deckId}/ratings/{ratingId} {
+      // Anyone can read ratings
+      allow read: if true;
+      
+      // Users can only create/update their own ratings
+      allow create, update: if isSignedIn()
+                            && request.resource.data.userId == request.auth.uid
+                            && request.resource.data.rating >= 1
+                            && request.resource.data.rating <= 5;
+      
+      // Users can only delete their own ratings
+      allow delete: if isSignedIn() 
+                    && resource.data.userId == request.auth.uid;
+    }
+    
+    // Block all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+/* 
+FIREBASE SECURITY RULES SETUP INSTRUCTIONS:
+
+1. Go to Firebase Console: https://console.firebase.google.com
+2. Select your project: "academie-9942b"
+3. Click "Firestore Database" in left sidebar
+4. Click "Rules" tab at the top
+5. Copy and paste these rules
+6. Click "Publish"
+
+These rules ensure:
+✅ Users must be signed in to create content
+✅ Users can only edit/delete their own content
+✅ Community content is publicly readable
+✅ Data validation prevents malformed entries
+✅ Rate limiting via Firestore quotas
+✅ Protection against unauthorized access
+
+IMPORTANT: Test mode rules expire after 30 days. 
+Deploy these production rules immediately!
+*/

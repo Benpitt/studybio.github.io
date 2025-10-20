@@ -319,27 +319,93 @@
             let prompt = '';
             
             if (mode === 'text') {
-                prompt = `Create 10-15 flashcards from the following text. Each flashcard should have a clear question and a concise answer that tests understanding of key concepts.
+                prompt = `You are an expert educational content creator specializing in creating high-quality, pedagogically sound flashcards for students.
 
-TEXT:
+TASK: Generate exactly 12 flashcards from the provided text. Each flashcard must test comprehension, not just recall.
+
+INPUT TEXT:
+"""
 ${text}
+"""
 
-Respond with ONLY valid JSON in this EXACT format (no markdown, no explanations, just the JSON):
-{"cards": [{"question": "What is photosynthesis?", "answer": "The process by which plants convert light energy into chemical energy"}, {"question": "...", "answer": "..."}]}`;
+REQUIREMENTS:
+1. Extract the 12 most important concepts, facts, or relationships from the text
+2. Questions must be clear, specific, and unambiguous
+3. Answers must be concise (1-3 sentences max) but complete
+4. Cover different cognitive levels: definitions, processes, comparisons, applications
+5. Avoid yes/no questions
+6. Use variety: "What", "How", "Why", "Describe", "Explain"
+7. Each card should be self-contained (answerable without other cards)
+
+OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer]"},{"question":"...","answer":"..."}]}
+
+EXAMPLE OUTPUT STRUCTURE:
+{"cards":[{"question":"What is the primary function of mitochondria in eukaryotic cells?","answer":"Mitochondria generate ATP through cellular respiration, serving as the cell's powerhouse by converting glucose and oxygen into usable energy."},{"question":"How does the process of photosynthesis differ from cellular respiration?","answer":"Photosynthesis converts light energy into chemical energy (glucose) using CO2 and water, while cellular respiration breaks down glucose to release energy, producing CO2 and water as byproducts."}]}
+
+CRITICAL: Your response must contain ONLY the JSON object. No explanations, no markdown, no code blocks. Start with { and end with }`;
             } else if (mode === 'topic') {
-                prompt = `Create ${numCards} flashcards about: ${topic}
-Difficulty level: ${difficulty}
+                // Map difficulty to cognitive depth
+                let difficultyInstructions = '';
+                if (difficulty === 'easy') {
+                    difficultyInstructions = 'Focus on: definitions, basic concepts, simple recall. Use straightforward "What is..." questions.';
+                } else if (difficulty === 'medium') {
+                    difficultyInstructions = 'Focus on: explanations, processes, cause-and-effect. Mix recall with comprehension questions.';
+                } else {
+                    difficultyInstructions = 'Focus on: analysis, synthesis, applications, comparisons. Use "How", "Why", "Compare", "Analyze" questions.';
+                }
+                
+                prompt = `You are an expert educational content creator specializing in creating high-quality, pedagogically sound flashcards for students.
 
-Make questions that test understanding of this topic. Keep answers informative but concise.
+TASK: Generate exactly ${numCards} flashcards about "${topic}"
 
-Respond with ONLY valid JSON in this EXACT format (no markdown, no explanations, just the JSON):
-{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
+DIFFICULTY LEVEL: ${difficulty}
+${difficultyInstructions}
+
+REQUIREMENTS:
+1. Cover the most essential concepts, facts, and relationships about this topic
+2. Questions must be clear, specific, and unambiguous - avoid vague phrasing
+3. Answers must be accurate, concise (2-4 sentences), and complete
+4. Progress logically from fundamental concepts to more complex ideas
+5. Include variety: definitions, processes, comparisons, applications, examples
+6. Avoid yes/no questions
+7. Each card must be self-contained and independently answerable
+8. Use academic but accessible language appropriate for the difficulty level
+
+OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer]"},{"question":"...","answer":"..."}]}
+
+EXAMPLE OUTPUT STRUCTURE:
+{"cards":[{"question":"What is Newton's First Law of Motion?","answer":"An object at rest stays at rest and an object in motion stays in motion with the same speed and direction unless acted upon by an unbalanced force. This is also known as the law of inertia."},{"question":"How does inertia relate to an object's mass?","answer":"Inertia is directly proportional to mass. Objects with greater mass have more inertia, meaning they resist changes in their motion more strongly than objects with less mass."}]}
+
+CRITICAL: Your response must contain ONLY the JSON object. No explanations, no markdown formatting, no code blocks, no additional text. Start with { and end with }`;
             } else {
-                prompt = `Generate 10-15 quiz questions from this text:
-${text}
+                // Questions mode
+                prompt = `You are an expert educational content creator specializing in creating high-quality quiz questions for students.
 
-Respond with ONLY valid JSON in this EXACT format (no markdown, no explanations, just the JSON):
-{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
+TASK: Generate exactly 12 quiz questions from the provided text.
+
+INPUT TEXT:
+"""
+${text}
+"""
+
+REQUIREMENTS:
+1. Create questions that test deep understanding, not just surface-level recall
+2. Questions must be answerable based solely on the provided text
+3. Mix question types: factual recall, conceptual understanding, application
+4. Questions should be clear and unambiguous
+5. Answers should be complete but concise (1-3 sentences)
+6. Cover all major topics mentioned in the text
+7. Avoid trick questions or unnecessarily complex phrasing
+
+OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer based on the text]"},{"question":"...","answer":"..."}]}
+
+EXAMPLE OUTPUT STRUCTURE:
+{"cards":[{"question":"According to the text, what role do enzymes play in biological reactions?","answer":"Enzymes act as biological catalysts that speed up chemical reactions in living organisms by lowering the activation energy required for reactions to occur."},{"question":"What factors can affect enzyme activity as described in the passage?","answer":"Temperature, pH, and substrate concentration are the primary factors that influence enzyme activity, with each enzyme having optimal conditions for maximum efficiency."}]}
+
+CRITICAL: Your response must contain ONLY the JSON object. No introductory text, no explanations, no markdown, no code blocks. Start directly with { and end with }`;
             }
             
             return prompt;
@@ -441,39 +507,8 @@ Respond with ONLY valid JSON in this EXACT format (no markdown, no explanations,
             document.getElementById('generate-btn').innerHTML = '<div class="loading-dots text-white"><span></span><span></span><span></span></div>';
 
             try {
-                // Prepare prompt
-                let prompt = '';
-                let systemPrompt = 'You are a helpful educational assistant that creates high-quality flashcards. You MUST respond with ONLY valid JSON, no explanations or other text.';
-                
-                if (mode === 'text') {
-                    prompt = `${systemPrompt}
-
-Create 10-15 flashcards from the following text. Each flashcard should have a clear question and a concise answer.
-
-TEXT:
-${text}
-
-Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
-{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
-                } else if (mode === 'topic') {
-                    prompt = `${systemPrompt}
-
-Create ${numCards} flashcards about: ${topic}
-Difficulty: ${difficulty}
-
-Make questions that test understanding. Keep answers informative but concise.
-
-Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
-{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
-                } else {
-                    prompt = `${systemPrompt}
-
-Generate 10-15 quiz questions from this text:
-${text}
-
-Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
-{"cards": [{"question": "What is...?", "answer": "It is..."}, {"question": "...", "answer": "..."}]}`;
-                }
+                // Generate optimized prompt using the same function as manual mode
+                const prompt = generatePromptText(mode, text, topic, numCards, difficulty);
 
                 // Call AI API based on provider
                 let response, data, responseText;
@@ -599,7 +634,7 @@ Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
                     console.log('Generated text:', responseText);
                     
                 } else {
-                    // Use OpenAI API
+                    // Use OpenAI API with optimized parameters
                     response = await fetch("https://api.openai.com/v1/chat/completions", {
                         method: "POST",
                         headers: {
@@ -611,15 +646,16 @@ Respond with ONLY this JSON format (no markdown, no code blocks, just raw JSON):
                             messages: [
                                 { 
                                     role: "system", 
-                                    content: "You are a helpful assistant that creates educational flashcards. Always respond with valid JSON only, no other text." 
+                                    content: "You are an expert educational content creator. You create pedagogically sound flashcards that test comprehension, not just recall. You ALWAYS respond with ONLY valid JSON in the exact format requested. Never include markdown formatting, code blocks, or explanatory text - ONLY the JSON object." 
                                 },
                                 { 
                                     role: "user", 
                                     content: prompt 
                                 }
                             ],
-                            temperature: 0.7,
-                            max_tokens: 2000
+                            temperature: 0.4,
+                            max_tokens: 3000,
+                            response_format: { type: "json_object" }
                         })
                     });
 

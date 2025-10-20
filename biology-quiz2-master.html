@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Quiz 2 Master Guide</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function CompleteStudyApp() {
+            const [mode, setMode] = useState('menu');
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [selectedTopic, setSelectedTopic] = useState('all');
+            const [testQuestions, setTestQuestions] = useState([]);
+            const [testAnswers, setTestAnswers] = useState({});
+            const [testSubmitted, setTestSubmitted] = useState(false);
+            const [mistakeBank, setMistakeBank] = useState([]);
+            const [studyStreak, setStudyStreak] = useState(0);
+            const [weakTopics, setWeakTopics] = useState([]);
+            const [topicStats, setTopicStats] = useState({});
+            const [currentComp, setCurrentComp] = useState(0);
+            const [quizBuilderTopics, setQuizBuilderTopics] = useState([]);
+
+            // MASSIVE QUESTION BANK
+            const questionBank = [
+                // BIOLOGICAL MOLECULES - Carbohydrates
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "What is the monomer of carbohydrates?", options: ["Amino acids", "Monosaccharides", "Nucleotides", "Fatty acids"], correct: 1, explanation: "Monosaccharides (simple sugars like glucose) are the monomers of carbohydrates." },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "What type of bond connects monosaccharides together?", options: ["Peptide bond", "Glycosidic bond", "Hydrogen bond", "Ester bond"], correct: 1, explanation: "Glycosidic bonds form between monosaccharides through dehydration synthesis." },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Which is a DIsaccharide?", options: ["Glucose", "Sucrose", "Starch", "Cellulose"], correct: 1, explanation: "Sucrose (table sugar) is made of 2 monosaccharides: glucose + fructose." },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Which polysaccharide is the main storage form in ANIMALS?", options: ["Starch", "Cellulose", "Glycogen", "Chitin"], correct: 2, explanation: "Glycogen is stored in liver and muscles, highly branched for quick energy access." },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Which polysaccharide provides structural support in plant cell walls?", options: ["Starch", "Glycogen", "Cellulose", "Sucrose"], correct: 2, explanation: "Cellulose has unbranched chains with H-bonds, making it strong for structure." },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "What elements are in carbohydrates?", options: ["C, H, O, N", "C, H, O", "C, H, O, P", "C, H, N"], correct: 1, explanation: "Carbohydrates contain Carbon, Hydrogen, and Oxygen in a 1:2:1 ratio (CH₂O)n" },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Starch is the main storage carbohydrate in:", options: ["Animals", "Plants", "Bacteria", "Fungi"], correct: 1, explanation: "Plants store glucose as starch. Animals use glycogen." },
+                { topic: 'Biological Molecules', subtopic: 'Carbohydrates', type: 'mc', question: "Glycogen is highly branched for:", options: ["Structure", "Quick energy access", "Water resistance", "Enzyme binding"], correct: 1, explanation: "Branching allows many enzymes to break it down simultaneously for fast energy release." },
+                
+                // BIOLOGICAL MOLECULES - Proteins
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What is the monomer of proteins?", options: ["Monosaccharides", "Amino acids", "Nucleotides", "Fatty acids"], correct: 1, explanation: "There are 20 different amino acids that combine to make proteins." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What bond connects amino acids?", options: ["Glycosidic", "Peptide", "Ester", "Phosphodiester"], correct: 1, explanation: "Peptide bonds form between the amino group of one aa and carboxyl of another." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "How many amino acids are in a TRIpeptide?", options: ["1", "2", "3", "4"], correct: 2, explanation: "Tri = 3. A tripeptide has 3 amino acids connected by 2 peptide bonds." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What are the 3 parts of every amino acid?", options: ["Sugar, phosphate, base", "Amino group, carboxyl group, R group", "Glycerol and fatty acids", "Carbon rings"], correct: 1, explanation: "All amino acids have: NH₂ (amino), COOH (carboxyl), and R group (variable)." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What maintains SECONDARY protein structure?", options: ["Peptide bonds", "Hydrogen bonds", "Ionic bonds", "Disulfide bridges"], correct: 1, explanation: "H-bonds between backbone atoms create α-helices and β-sheets." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "Which level is just the sequence of amino acids?", options: ["Primary", "Secondary", "Tertiary", "Quaternary"], correct: 0, explanation: "Primary structure is the linear sequence, determined by DNA." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "What elements are in proteins?", options: ["C, H, O", "C, H, O, N", "C, H, O, N, S", "C, H, O, P"], correct: 2, explanation: "Proteins have C, H, O, N, and some have S (sulfur) in certain amino acids." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "Tertiary structure is stabilized by:", options: ["Peptide bonds only", "R group interactions", "Only H-bonds", "Glycosidic bonds"], correct: 1, explanation: "Tertiary structure involves R group interactions (H-bonds, ionic, disulfide bridges, hydrophobic)." },
+                { topic: 'Biological Molecules', subtopic: 'Proteins', type: 'mc', question: "Quaternary structure involves:", options: ["One polypeptide", "Multiple polypeptides", "Only amino acids", "Carbohydrates"], correct: 1, explanation: "Quaternary structure is multiple polypeptide chains working together (e.g., hemoglobin)." },
+                
+                // BIOLOGICAL MOLECULES - Lipids
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "What are the subunits of lipids?", options: ["Amino acids", "Nucleotides", "Fatty acids and glycerol", "Monosaccharides"], correct: 2, explanation: "Lipids are made from fatty acids and glycerol (not true polymers)." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "A triglyceride is made of:", options: ["Glycerol + 1 fatty acid", "Glycerol + 2 fatty acids", "Glycerol + 3 fatty acids", "4 carbon rings"], correct: 2, explanation: "Tri = 3. Triglycerides have 1 glycerol + 3 fatty acids." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "A phospholipid is made of:", options: ["Glycerol + 3 fatty acids", "Glycerol + 2 fatty acids + phosphate", "4 carbon rings", "Glycerol + 1 fatty acid"], correct: 1, explanation: "Phospholipids form cell membranes: glycerol + 2 fatty acids + phosphate group." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "What is the structure of a steroid?", options: ["Long fatty acid chains", "4 fused carbon rings", "Amino acid chain", "Sugar ring"], correct: 1, explanation: "Steroids like cholesterol and hormones have 4 fused rings." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Unsaturated fatty acids have:", options: ["No double bonds", "One or more C=C double bonds", "Only single bonds", "Peptide bonds"], correct: 1, explanation: "Unsaturated = has double bonds, creates kinks, liquid at room temp." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Saturated fats are:", options: ["Liquid at room temp", "Solid at room temp", "Always healthy", "Found only in plants"], correct: 1, explanation: "Saturated (no double bonds) = straight chains = solid (like butter)." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Which lipid makes up cell membranes?", options: ["Triglycerides", "Phospholipids", "Steroids", "Waxes"], correct: 1, explanation: "Phospholipids form bilayers with hydrophilic heads out, hydrophobic tails in." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Which part of a phospholipid is hydrophobic?", options: ["Phosphate head", "Fatty acid tails", "Entire molecule", "Glycerol"], correct: 1, explanation: "Fatty acid tails are nonpolar (hydrophobic), phosphate head is polar." },
+                { topic: 'Biological Molecules', subtopic: 'Lipids', type: 'mc', question: "Lipids store more energy than carbs because:", options: ["They're bigger", "More C-H bonds", "They're hydrophobic", "They're polymers"], correct: 1, explanation: "C-H bonds store lots of energy. Lipids have many C-H bonds." },
+                
+                // BIOLOGICAL MOLECULES - Nucleic Acids
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What is the monomer of nucleic acids?", options: ["Amino acids", "Monosaccharides", "Nucleotides", "Fatty acids"], correct: 2, explanation: "Nucleotides are the building blocks of DNA and RNA." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What are the 3 parts of a nucleotide?", options: ["Amino, carboxyl, R group", "Sugar, phosphate, nitrogenous base", "Glycerol and fatty acids", "Carbon rings"], correct: 1, explanation: "Every nucleotide has: 5-carbon sugar, phosphate group, and base." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What sugar is in DNA?", options: ["Ribose", "Deoxyribose", "Glucose", "Fructose"], correct: 1, explanation: "DNA has DEOXYribose (lacks an OH group on 2' carbon)." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What sugar is in RNA?", options: ["Ribose", "Deoxyribose", "Glucose", "Sucrose"], correct: 0, explanation: "RNA has ribose (has an OH group on 2' carbon)." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "Which base is in RNA but NOT DNA?", options: ["Adenine", "Uracil", "Guanine", "Cytosine"], correct: 1, explanation: "RNA has Uracil instead of Thymine. DNA: A-T-G-C, RNA: A-U-G-C" },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "How many H-bonds between A and T?", options: ["1", "2", "3", "4"], correct: 1, explanation: "A-T pairs with 2 hydrogen bonds. G-C has 3 hydrogen bonds." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "How many H-bonds between G and C?", options: ["1", "2", "3", "4"], correct: 2, explanation: "G-C pairs with 3 hydrogen bonds (stronger than A-T)." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "DNA is ___ stranded, RNA is ___ stranded.", options: ["Single, single", "Double, double", "Double, single", "Single, double"], correct: 2, explanation: "DNA is double helix, RNA is single strand." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "What elements are in nucleic acids?", options: ["C, H, O", "C, H, O, N", "C, H, O, N, P", "C, H, O, S"], correct: 2, explanation: "Nucleic acids have C, H, O, N, and P (phosphorus in phosphate group)." },
+                { topic: 'Biological Molecules', subtopic: 'Nucleic Acids', type: 'mc', question: "DNA stores information in:", options: ["Sugar sequence", "Phosphate groups", "Base sequence", "H-bonds"], correct: 2, explanation: "The sequence of bases (A, T, G, C) stores genetic information." },
+                
+                // REACTIONS
+                { topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "Dehydration synthesis does what?", options: ["Adds water to break bonds", "Removes water to make bonds", "Adds polymers", "Breaks monomers"], correct: 1, explanation: "Dehydration synthesis REMOVES H₂O to BUILD polymers from monomers." },
+                { topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "Hydrolysis does what?", options: ["Removes water", "Adds water to break bonds", "Makes polymers", "Removes polymers"], correct: 1, explanation: "Hydrolysis ADDS H₂O to BREAK polymers into monomers (like digestion)." },
+                { topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "When 2 glucose molecules join, what is released?", options: ["CO₂", "O₂", "H₂O", "ATP"], correct: 2, explanation: "Dehydration synthesis releases water when forming glycosidic bonds." },
+                { topic: 'Biological Molecules', subtopic: 'Reactions', type: 'mc', question: "During protein digestion, what is added?", options: ["Water", "Amino acids", "Peptide bonds", "Energy"], correct: 0, explanation: "Hydrolysis adds water to break peptide bonds, releasing amino acids." },
+                
+                // ATOMIC STRUCTURE
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "Atomic number tells you the number of:", options: ["Neutrons", "Protons", "Electrons", "Ions"], correct: 1, explanation: "Atomic number = number of protons (defines the element)." },
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "Mass number = ", options: ["Protons only", "Neutrons only", "Protons + Neutrons", "Protons + Electrons"], correct: 2, explanation: "Mass number is the total of protons and neutrons in the nucleus." },
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "To find neutrons:", options: ["Atomic number only", "Mass - Atomic number", "Atomic + Mass", "Electrons only"], correct: 1, explanation: "Neutrons = Mass number - Atomic number" },
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "In a neutral atom, protons = ", options: ["Neutrons", "Electrons", "Mass number", "Ions"], correct: 1, explanation: "Neutral atoms have equal protons (+) and electrons (-)." },
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "An ion with 3+ charge has:", options: ["3 extra protons", "3 fewer protons", "3 extra electrons", "3 fewer electrons"], correct: 3, explanation: "Positive charge = lost electrons. 3+ means lost 3 electrons." },
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "An ion with 2- charge has:", options: ["2 extra protons", "2 fewer protons", "2 extra electrons", "2 fewer electrons"], correct: 2, explanation: "Negative charge = gained electrons. 2- means gained 2 electrons." },
+                { topic: 'Atomic Structure', subtopic: 'Atoms', type: 'mc', question: "Isotopes differ in number of:", options: ["Protons", "Electrons", "Neutrons", "All of these"], correct: 2, explanation: "Isotopes are same element (same protons) but different neutrons." },
+                
+                // WATER & POLARITY
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Water is a ___ molecule.", options: ["Nonpolar", "Polar", "Ionic", "Neutral"], correct: 1, explanation: "Water is polar: oxygen is δ- and hydrogens are δ+." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "In water, which atom is δ- (partially negative)?", options: ["Hydrogen", "Oxygen", "Both equally", "Neither"], correct: 1, explanation: "Oxygen is more electronegative, pulls electrons, becomes δ-." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Hydrogen bonds form between:", options: ["Two H atoms", "H and O in same molecule", "H of one molecule and O of another", "O and O"], correct: 2, explanation: "H-bonds form BETWEEN molecules: δ+ H attracted to δ- O." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Which can form hydrogen bonds?", options: ["CH₄ (methane)", "H₂O (water)", "CO₂", "O₂"], correct: 1, explanation: "Water is polar with H bonded to O, can form H-bonds." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Hydrophilic means:", options: ["Water-fearing", "Water-loving", "No charge", "Nonpolar"], correct: 1, explanation: "Hydrophilic = water-loving, dissolves in water, polar." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Hydrophobic means:", options: ["Water-loving", "Water-fearing", "Positive charge", "Dissolves easily"], correct: 1, explanation: "Hydrophobic = water-fearing, doesn't dissolve, nonpolar (like oils)." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Which is hydrophobic?", options: ["Salt", "Sugar", "Fatty acid tails", "Amino acids"], correct: 2, explanation: "Fatty acid tails are nonpolar (C-H bonds), hydrophobic." },
+                { topic: 'Water & Polarity', subtopic: 'Polarity', type: 'mc', question: "Polar molecules dissolve in:", options: ["Oil", "Water", "Nonpolar solvents", "Nothing"], correct: 1, explanation: "Like dissolves like: polar dissolves in polar (water)." },
+                
+                // DATA ANALYSIS
+                { topic: 'Data Analysis', subtopic: 'Data Types', type: 'mc', question: "Qualitative data is:", options: ["Numerical measurements", "Descriptive observations", "Always graphed", "Always percentages"], correct: 1, explanation: "Qualitative = descriptive (colors, textures, yes/no)." },
+                { topic: 'Data Analysis', subtopic: 'Data Types', type: 'mc', question: "Quantitative data is:", options: ["Descriptive only", "Numerical measurements", "Never graphed", "Always percentages"], correct: 1, explanation: "Quantitative = numbers you can measure (height, time, mass)." },
+                { topic: 'Data Analysis', subtopic: 'Graphing', type: 'mc', question: "Best graph for showing change over time:", options: ["Pie chart", "Line graph", "Bar graph", "Scatter plot"], correct: 1, explanation: "Line graphs show trends/changes over time." },
+                { topic: 'Data Analysis', subtopic: 'Graphing', type: 'mc', question: "Best graph for comparing categories:", options: ["Line graph", "Bar graph", "Pie chart", "Histogram"], correct: 1, explanation: "Bar graphs compare different categories or groups." },
+                { topic: 'Data Analysis', subtopic: 'Graphing', type: 'mc', question: "What should every graph have?", options: ["Title only", "Labeled axes only", "Title and labeled axes", "Colors"], correct: 2, explanation: "Graphs MUST have: title and labeled axes with units." },
+                { topic: 'Data Analysis', subtopic: 'Statistics', type: 'mc', question: "The mean is:", options: ["Middle value", "Most common", "Average", "Range"], correct: 2, explanation: "Mean = average = sum of all values ÷ number of values." },
+                { topic: 'Data Analysis', subtopic: 'Statistics', type: 'mc', question: "The median is:", options: ["Average", "Middle value when ordered", "Most frequent", "Highest value"], correct: 1, explanation: "Median = middle number when data is arranged in order." },
+                { topic: 'Data Analysis', subtopic: 'Statistics', type: 'mc', question: "The mode is:", options: ["Average", "Middle value", "Most frequent value", "Lowest value"], correct: 2, explanation: "Mode = value that appears most often in the data." },
+                
+                // EXPERIMENTAL DESIGN
+                { topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "Independent variable is:", options: ["What you measure", "What you change on purpose", "What stays the same", "The result"], correct: 1, explanation: "Independent = what experimenter changes/manipulates." },
+                { topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "Dependent variable is:", options: ["What you change", "What you measure", "What stays constant", "The hypothesis"], correct: 1, explanation: "Dependent = what you measure/observe, depends on independent variable." },
+                { topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "Control variables are:", options: ["Changed each trial", "Never measured", "Kept constant", "The results"], correct: 2, explanation: "Controls = kept the same so they don't affect results." },
+                { topic: 'Experimental Design', subtopic: 'Hypothesis', type: 'mc', question: "A good hypothesis:", options: ["Is always correct", "Is testable", "Has no variables", "Is very complex"], correct: 1, explanation: "Hypotheses must be testable with experiments." },
+                { topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "In 'How does temperature affect enzyme activity?', temperature is:", options: ["Dependent variable", "Independent variable", "Control", "Hypothesis"], correct: 1, explanation: "Temperature is what you change (independent)." },
+                { topic: 'Experimental Design', subtopic: 'Variables', type: 'mc', question: "In 'How does pH affect reaction rate?', reaction rate is:", options: ["Independent variable", "Dependent variable", "Control", "Constant"], correct: 1, explanation: "Reaction rate is what you measure (dependent)." }
+            ];
+
+            const comparisons = [
+                {
+                    title: "DNA vs RNA",
+                    items: ["DNA", "RNA"],
+                    aspects: [
+                        { name: "Sugar", values: ["Deoxyribose", "Ribose"] },
+                        { name: "Bases", values: ["A, T, G, C", "A, U, G, C"] },
+                        { name: "Structure", values: ["Double-stranded", "Single-stranded"] },
+                        { name: "Location", values: ["Nucleus", "Nucleus & cytoplasm"] },
+                        { name: "Function", values: ["Store genetic info", "Transfer genetic info"] },
+                        { name: "Stability", values: ["More stable", "Less stable"] }
+                    ]
+                },
+                {
+                    title: "Starch vs Glycogen vs Cellulose",
+                    items: ["Starch", "Glycogen", "Cellulose"],
+                    aspects: [
+                        { name: "Found in", values: ["Plants", "Animals", "Plant cell walls"] },
+                        { name: "Function", values: ["Energy storage", "Energy storage", "Structural support"] },
+                        { name: "Structure", values: ["Branched & unbranched", "Highly branched", "Unbranched with H-bonds"] },
+                        { name: "Digestible by humans", values: ["Yes", "Yes", "No"] }
+                    ]
+                },
+                {
+                    title: "Saturated vs Unsaturated Fatty Acids",
+                    items: ["Saturated", "Unsaturated"],
+                    aspects: [
+                        { name: "Double bonds", values: ["None (C-C only)", "One or more C=C"] },
+                        { name: "Shape", values: ["Straight chains", "Kinked chains"] },
+                        { name: "State at room temp", values: ["Solid", "Liquid"] },
+                        { name: "Examples", values: ["Butter, lard", "Vegetable oils"] },
+                        { name: "Packing", values: ["Pack tightly", "Don't pack well"] }
+                    ]
+                },
+                {
+                    title: "Dehydration Synthesis vs Hydrolysis",
+                    items: ["Dehydration Synthesis", "Hydrolysis"],
+                    aspects: [
+                        { name: "Water", values: ["Removes H₂O", "Adds H₂O"] },
+                        { name: "Result", values: ["Builds polymers", "Breaks polymers"] },
+                        { name: "Type", values: ["Anabolic (building)", "Catabolic (breaking)"] },
+                        { name: "Example", values: ["Making proteins from amino acids", "Digesting proteins to amino acids"] },
+                        { name: "Energy", values: ["Requires energy", "Releases energy"] }
+                    ]
+                },
+                {
+                    title: "Triglycerides vs Phospholipids vs Steroids",
+                    items: ["Triglycerides", "Phospholipids", "Steroids"],
+                    aspects: [
+                        { name: "Structure", values: ["Glycerol + 3 fatty acids", "Glycerol + 2 fatty acids + phosphate", "4 fused carbon rings"] },
+                        { name: "Main function", values: ["Energy storage", "Cell membranes", "Hormones"] },
+                        { name: "Polarity", values: ["Completely hydrophobic", "Amphipathic (both)", "Mostly hydrophobic"] },
+                        { name: "Examples", values: ["Fats, oils", "Membrane lipids", "Cholesterol, testosterone"] }
+                    ]
+                },
+                {
+                    title: "Protein Structure Levels",
+                    items: ["Primary", "Secondary", "Tertiary", "Quaternary"],
+                    aspects: [
+                        { name: "Definition", values: ["Amino acid sequence", "α-helix & β-sheet", "3D shape of one chain", "Multiple chains together"] },
+                        { name: "Bonds/Forces", values: ["Peptide bonds", "Hydrogen bonds", "R group interactions", "All types"] },
+                        { name: "Example", values: ["Linear chain", "Spiral or pleated", "Folded protein", "Hemoglobin (4 chains)"] }
+                    ]
+                }
+            ];
+
+            const topics = ['all', 'Biological Molecules', 'Atomic Structure', 'Water & Polarity', 'Data Analysis', 'Experimental Design'];
+
+            const getFilteredQuestions = () => {
+                if (selectedTopic === 'all') return questionBank;
+                return questionBank.filter(q => q.topic === selectedTopic);
+            };
+
+            const initTest = (numQuestions = 20) => {
+                let questions;
+                if (quizBuilderTopics.length > 0) {
+                    questions = questionBank.filter(q => quizBuilderTopics.includes(q.topic));
+                    questions = [...questions].sort(() => Math.random() - 0.5).slice(0, Math.min(numQuestions, questions.length));
+                } else {
+                    questions = [...questionBank].sort(() => Math.random() - 0.5).slice(0, numQuestions);
+                }
+                setTestQuestions(questions);
+                setTestAnswers({});
+                setTestSubmitted(false);
+            };
+
+            const analyzeMistakes = (mistakes) => {
+                const topicCount = {};
+                mistakes.forEach(m => {
+                    topicCount[m.topic] = (topicCount[m.topic] || 0) + 1;
+                });
+                const weak = Object.entries(topicCount)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(([topic]) => topic);
+                setWeakTopics(weak);
+                
+                // Update topic stats
+                const newStats = {...topicStats};
+                testQuestions.forEach((q, idx) => {
+                    const topic = q.topic;
+                    if (!newStats[topic]) newStats[topic] = { correct: 0, total: 0 };
+                    newStats[topic].total++;
+                    if (testAnswers[idx] === q.correct) newStats[topic].correct++;
+                });
+                setTopicStats(newStats);
+                localStorage.setItem('topicStats', JSON.stringify(newStats));
+            };
+
+            useEffect(() => {
+                const lastVisit = localStorage.getItem('lastVisit');
+                const today = new Date().toDateString();
+                if (lastVisit === today) {
+                    const streak = parseInt(localStorage.getItem('studyStreak') || '0');
+                    setStudyStreak(streak);
+                } else if (lastVisit) {
+                    const yesterday = new Date(Date.now() - 86400000).toDateString();
+                    if (lastVisit === yesterday) {
+                        const newStreak = parseInt(localStorage.getItem('studyStreak') || '0') + 1;
+                        setStudyStreak(newStreak);
+                        localStorage.setItem('studyStreak', newStreak);
+                    } else {
+                        setStudyStreak(1);
+                        localStorage.setItem('studyStreak', '1');
+                    }
+                } else {
+                    setStudyStreak(1);
+                    localStorage.setItem('studyStreak', '1');
+                }
+                localStorage.setItem('lastVisit', today);
+
+                // Load mistake bank
+                const savedMistakes = localStorage.getItem('mistakeBank');
+                if (savedMistakes) setMistakeBank(JSON.parse(savedMistakes));
+
+                // Load topic stats
+                const savedStats = localStorage.getItem('topicStats');
+                if (savedStats) setTopicStats(JSON.parse(savedStats));
+            }, []);
+
+            // Handle test submission
+            useEffect(() => {
+                if (testSubmitted && testQuestions.length > 0) {
+                    const mistakes = [];
+                    testQuestions.forEach((q, idx) => {
+                        if (testAnswers[idx] !== q.correct) {
+                            mistakes.push({
+                                question: q.question,
+                                yourAnswer: q.options[testAnswers[idx]] || 'Not answered',
+                                correctAnswer: q.options[q.correct],
+                                explanation: q.explanation,
+                                topic: q.topic,
+                                subtopic: q.subtopic
+                            });
+                        }
+                    });
+                    
+                    if (mistakes.length > 0) {
+                        const allMistakes = [...mistakeBank, ...mistakes];
+                        setMistakeBank(allMistakes);
+                        localStorage.setItem('mistakeBank', JSON.stringify(allMistakes));
+                        analyzeMistakes(mistakes);
+                    } else {
+                        analyzeMistakes([]);
+                    }
+                }
+            }, [testSubmitted]);
+
+            // MENU
+            if (mode === 'menu') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-4">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="bg-white rounded-3xl shadow-2xl p-8 mb-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div>
+                                        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">📚 Biology Quiz 2 Master Guide</h1>
+                                        <p className="text-gray-600 text-lg">Ben Hocquet with the help of Claude AI</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-4xl mb-2">🔥</div>
+                                        <div className="text-2xl font-bold text-orange-600">{studyStreak}</div>
+                                        <div className="text-sm text-gray-600">Day Streak</div>
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl">
+                                    <div>✓ Biological Molecules</div>
+                                    <div>✓ Atomic Structure</div>
+                                    <div>✓ Water & Polarity</div>
+                                    <div>✓ Data Analysis</div>
+                                    <div>✓ Experimental Design</div>
+                                    <div>✓ {questionBank.length} Questions</div>
+                                    <div>✓ Adaptive Learning</div>
+                                    <div>✓ 7 Study Modes</div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <button onClick={() => setMode('flashcards')} className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">🎴</div>
+                                    <div className="text-xl">Flashcards</div>
+                                    <div className="text-sm opacity-90">Study mode with filters</div>
+                                </button>
+                                
+                                <button onClick={() => { setMode('practice'); initTest(20); }} className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">📝</div>
+                                    <div className="text-xl">Practice Test</div>
+                                    <div className="text-sm opacity-90">20 questions + feedback</div>
+                                </button>
+
+                                <button onClick={() => setMode('quizbuilder')} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">🎯</div>
+                                    <div className="text-xl">Quiz Builder</div>
+                                    <div className="text-sm opacity-90">Custom topic quiz</div>
+                                </button>
+
+                                <button onClick={() => setMode('compare')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">⚖️</div>
+                                    <div className="text-xl">Compare & Contrast</div>
+                                    <div className="text-sm opacity-90">6 comparison tables</div>
+                                </button>
+
+                                <button onClick={() => setMode('mistakes')} className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">❌</div>
+                                    <div className="text-xl">Mistake Bank</div>
+                                    <div className="text-sm opacity-90">{mistakeBank.length} saved errors</div>
+                                </button>
+
+                                <button onClick={() => setMode('progress')} className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">📊</div>
+                                    <div className="text-xl">Progress Dashboard</div>
+                                    <div className="text-sm opacity-90">View your stats</div>
+                                </button>
+
+                                <button onClick={() => setMode('review')} className="bg-gradient-to-r from-teal-500 to-green-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-4xl mb-2">📖</div>
+                                    <div className="text-xl">Complete Review</div>
+                                    <div className="text-sm opacity-90">Quick reference</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // FLASHCARDS
+            if (mode === 'flashcards') {
+                const questions = getFilteredQuestions();
+                const q = questions[currentQuestion];
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <select value={selectedTopic} onChange={(e) => { setSelectedTopic(e.target.value); setCurrentQuestion(0); setShowAnswer(false); }} className="bg-white px-4 py-2 rounded-lg font-semibold">
+                                    {topics.map(t => <option key={t} value={t}>{t === 'all' ? 'All Topics' : t}</option>)}
+                                </select>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">{currentQuestion + 1} / {questions.length}</div>
+                            </div>
+
+                            <div onClick={() => setShowAnswer(!showAnswer)} className="bg-white rounded-3xl shadow-2xl p-8 min-h-[400px] cursor-pointer">
+                                <div className="mb-4">
+                                    <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">{q.topic}</span>
+                                </div>
+                                
+                                {!showAnswer ? (
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">{q.question}</h2>
+                                        <p className="text-gray-500 text-lg">Click to see answer →</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <h2 className="text-2xl font-bold text-gray-800">{q.question}</h2>
+                                        {q.type === 'mc' && (
+                                            <div className="space-y-2 mb-4">
+                                                {q.options.map((opt, idx) => (
+                                                    <div key={idx} className={`p-3 rounded-lg ${idx === q.correct ? 'bg-green-100 border-2 border-green-500 font-semibold' : 'bg-gray-100'}`}>
+                                                        {String.fromCharCode(65 + idx)}. {opt} {idx === q.correct && '✓'}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                                            <p className="text-lg text-gray-800">{q.explanation}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-between mt-6">
+                                <button onClick={() => { setCurrentQuestion(Math.max(0, currentQuestion - 1)); setShowAnswer(false); }} disabled={currentQuestion === 0} className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">← Previous</button>
+                                <button onClick={() => setShowAnswer(!showAnswer)} className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">{showAnswer ? 'Hide' : 'Show'} Answer</button>
+                                <button onClick={() => { setCurrentQuestion(Math.min(questions.length - 1, currentQuestion + 1)); setShowAnswer(false); }} disabled={currentQuestion === questions.length - 1} className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // PRACTICE TEST with ADAPTIVE FEEDBACK
+            if (mode === 'practice') {
+                if (testQuestions.length === 0) return null;
+
+                // Calculate results before rendering
+                let correct = 0;
+                const mistakes = [];
+                let percentage = 0;
+
+                if (testSubmitted) {
+                    testQuestions.forEach((q, idx) => {
+                        if (testAnswers[idx] === q.correct) {
+                            correct++;
+                        } else {
+                            mistakes.push({
+                                question: q.question,
+                                yourAnswer: q.options[testAnswers[idx]] || 'Not answered',
+                                correctAnswer: q.options[q.correct],
+                                explanation: q.explanation,
+                                topic: q.topic,
+                                subtopic: q.subtopic
+                            });
+                        }
+                    });
+                    percentage = Math.round((correct / testQuestions.length) * 100);
+                }
+
+                if (testSubmitted) {
+
+                    return (
+                        <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
+                            <div className="max-w-4xl mx-auto">
+                                <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                    <div className="text-center mb-8">
+                                        <div className="text-6xl mb-4">{percentage >= 90 ? '🏆' : percentage >= 70 ? '🎉' : '📚'}</div>
+                                        <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Complete!</h2>
+                                        <p className="text-3xl text-gray-600">{correct}/{testQuestions.length} ({percentage}%)</p>
+                                    </div>
+
+                                    {weakTopics.length > 0 && (
+                                        <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+                                            <h3 className="text-xl font-bold text-yellow-800 mb-2">📊 Adaptive Recommendations:</h3>
+                                            <p className="text-gray-700 mb-3">Focus on these topics:</p>
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                {weakTopics.map(topic => (
+                                                    <span key={topic} className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full font-semibold">{topic}</span>
+                                                ))}
+                                            </div>
+                                            <button onClick={() => { setQuizBuilderTopics(weakTopics); setMode('quizbuilder'); }} className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-yellow-700">
+                                                Practice These Topics
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {mistakes.length > 0 && (
+                                        <div className="mb-8">
+                                            <h3 className="text-2xl font-bold text-gray-800 mb-4">Review Wrong Answers:</h3>
+                                            <div className="space-y-4 max-h-96 overflow-y-auto">
+                                                {mistakes.map((item, idx) => (
+                                                    <div key={idx} className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                                                        <p className="font-semibold text-gray-800 mb-2">{item.question}</p>
+                                                        <p className="text-sm text-red-700">Your answer: {item.yourAnswer}</p>
+                                                        <p className="text-sm text-green-700 font-semibold">Correct: {item.correctAnswer}</p>
+                                                        <p className="text-sm text-gray-700 mt-2">{item.explanation}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex gap-4">
+                                        <button onClick={() => setMode('menu')} className="flex-1 bg-gray-600 text-white py-3 rounded-xl font-semibold">Menu</button>
+                                        <button onClick={() => initTest(20)} className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold">New Test</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">{testQuestions.length} Questions</div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <div className="space-y-8">
+                                    {testQuestions.map((q, qIdx) => (
+                                        <div key={qIdx} className="border-b border-gray-200 pb-6">
+                                            <div className="flex items-start gap-2 mb-3">
+                                                <span className="font-bold text-gray-800">{qIdx + 1}.</span>
+                                                <div className="flex-1">
+                                                    <p className="font-semibold text-gray-800 mb-3">{q.question}</p>
+                                                    <div className="space-y-2">
+                                                        {q.options.map((opt, optIdx) => (
+                                                            <button
+                                                                key={optIdx}
+                                                                onClick={() => setTestAnswers({...testAnswers, [qIdx]: optIdx})}
+                                                                className={`w-full text-left p-3 rounded-lg transition-all ${
+                                                                    testAnswers[qIdx] === optIdx
+                                                                        ? 'bg-blue-500 text-white font-semibold'
+                                                                        : 'bg-gray-100 hover:bg-gray-200'
+                                                                }`}
+                                                            >
+                                                                {String.fromCharCode(65 + optIdx)}. {opt}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => setTestSubmitted(true)}
+                                    disabled={Object.keys(testAnswers).length < testQuestions.length}
+                                    className="w-full mt-8 bg-green-600 text-white py-4 rounded-xl font-semibold text-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700"
+                                >
+                                    Submit Test ({Object.keys(testAnswers).length}/{testQuestions.length} answered)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // COMPARE & CONTRAST
+            if (mode === 'compare') {
+                const comp = comparisons[currentComp];
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <h2 className="text-2xl font-bold text-white">{comp.title}</h2>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">{currentComp + 1} / {comparisons.length}</div>
+                            </div>
+                            
+                            <div className="bg-white rounded-3xl shadow-2xl p-8 overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b-2 border-gray-300">
+                                            <th className="text-left p-4 font-bold text-gray-800">Feature</th>
+                                            {comp.items.map((item, idx) => (
+                                                <th key={idx} className={`text-left p-4 font-bold ${
+                                                    idx === 0 ? 'text-blue-600' : idx === 1 ? 'text-purple-600' : idx === 2 ? 'text-green-600' : 'text-orange-600'
+                                                }`}>{item}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {comp.aspects.map((aspect, idx) => (
+                                            <tr key={idx} className="border-b border-gray-200">
+                                                <td className="p-4 font-semibold text-gray-700">{aspect.name}</td>
+                                                {aspect.values.map((val, vIdx) => (
+                                                    <td key={vIdx} className={`p-4 ${
+                                                        vIdx === 0 ? 'bg-blue-50' : vIdx === 1 ? 'bg-purple-50' : vIdx === 2 ? 'bg-green-50' : 'bg-orange-50'
+                                                    }`}>{val}</td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="flex justify-between mt-6">
+                                <button onClick={() => setCurrentComp(Math.max(0, currentComp - 1))} disabled={currentComp === 0} className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">← Previous</button>
+                                <button onClick={() => setCurrentComp(Math.min(comparisons.length - 1, currentComp + 1))} disabled={currentComp === comparisons.length - 1} className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // MISTAKE BANK
+            if (mode === 'mistakes') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-red-400 to-pink-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <h2 className="text-2xl font-bold text-white">Mistake Bank</h2>
+                                <button onClick={() => { setMistakeBank([]); localStorage.removeItem('mistakeBank'); }} className="bg-white text-red-700 px-4 py-2 rounded-lg font-semibold">Clear All</button>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                {mistakeBank.length === 0 ? (
+                                    <div className="text-center py-12">
+                                        <div className="text-6xl mb-4">🎉</div>
+                                        <h3 className="text-2xl font-bold text-gray-800 mb-2">No Mistakes Yet!</h3>
+                                        <p className="text-gray-600">Take a practice test to start tracking errors.</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                                        {mistakeBank.map((item, idx) => (
+                                            <div key={idx} className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <p className="font-semibold text-gray-800">{item.question}</p>
+                                                    <span className="bg-red-200 text-red-800 px-2 py-1 rounded text-xs">{item.topic}</span>
+                                                </div>
+                                                <p className="text-sm text-red-700">Your answer: {item.yourAnswer}</p>
+                                                <p className="text-sm text-green-700 font-semibold">Correct: {item.correctAnswer}</p>
+                                                <p className="text-sm text-gray-700 mt-2">{item.explanation}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // PROGRESS DASHBOARD
+            if (mode === 'progress') {
+                const allTopics = ['Biological Molecules', 'Atomic Structure', 'Water & Polarity', 'Data Analysis', 'Experimental Design'];
+                
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-indigo-400 to-blue-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <h2 className="text-2xl font-bold text-white">Progress Dashboard</h2>
+                                <div></div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                    <div className="bg-gradient-to-r from-orange-100 to-red-100 p-6 rounded-xl">
+                                        <div className="text-4xl mb-2">🔥</div>
+                                        <div className="text-3xl font-bold text-gray-800">{studyStreak}</div>
+                                        <div className="text-gray-600">Day Streak</div>
+                                    </div>
+                                    <div className="bg-gradient-to-r from-red-100 to-pink-100 p-6 rounded-xl">
+                                        <div className="text-4xl mb-2">❌</div>
+                                        <div className="text-3xl font-bold text-gray-800">{mistakeBank.length}</div>
+                                        <div className="text-gray-600">Total Mistakes</div>
+                                    </div>
+                                </div>
+
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Topic Performance</h3>
+                                <div className="space-y-4">
+                                    {allTopics.map(topic => {
+                                        const stats = topicStats[topic] || { correct: 0, total: 0 };
+                                        const percentage = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                                        
+                                        return (
+                                            <div key={topic} className="border-b border-gray-200 pb-4">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="font-semibold text-gray-800">{topic}</span>
+                                                    <span className="text-gray-600">{stats.correct}/{stats.total} ({percentage}%)</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 rounded-full h-4">
+                                                    <div className={`h-4 rounded-full ${percentage >= 80 ? 'bg-green-500' : percentage >= 60 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{width: `${percentage}%`}}></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // QUIZ BUILDER
+            if (mode === 'quizbuilder') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <h2 className="text-2xl font-bold text-white">Quiz Builder</h2>
+                                <div></div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Select Topics for Your Custom Quiz:</h3>
+                                <div className="space-y-3 mb-8">
+                                    {topics.filter(t => t !== 'all').map(topic => (
+                                        <button
+                                            key={topic}
+                                            onClick={() => {
+                                                if (quizBuilderTopics.includes(topic)) {
+                                                    setQuizBuilderTopics(quizBuilderTopics.filter(t => t !== topic));
+                                                } else {
+                                                    setQuizBuilderTopics([...quizBuilderTopics, topic]);
+                                                }
+                                            }}
+                                            className={`w-full p-4 rounded-lg text-left font-semibold transition-all ${
+                                                quizBuilderTopics.includes(topic)
+                                                    ? 'bg-purple-500 text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200'
+                                            }`}
+                                        >
+                                            {topic} {quizBuilderTopics.includes(topic) && '✓'}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => { setMode('practice'); initTest(15); }}
+                                    disabled={quizBuilderTopics.length === 0}
+                                    className="w-full bg-purple-600 text-white py-4 rounded-xl font-semibold text-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-700"
+                                >
+                                    Start Custom Quiz ({quizBuilderTopics.length} topics selected)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // REVIEW MODE
+            if (mode === 'review') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-teal-400 to-green-500 p-4">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <h2 className="text-2xl font-bold text-white">Quick Reference Guide</h2>
+                                <div></div>
+                            </div>
+                            <div className="bg-white rounded-2xl shadow-xl p-8">
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="bg-blue-50 p-6 rounded-xl">
+                                        <h4 className="text-xl font-bold text-blue-800 mb-3">🍞 Carbohydrates</h4>
+                                        <p><strong>Monomer:</strong> Monosaccharides</p>
+                                        <p><strong>Bond:</strong> Glycosidic</p>
+                                        <p><strong>Examples:</strong> Glucose, starch, glycogen, cellulose</p>
+                                        <p><strong>Elements:</strong> C, H, O (1:2:1)</p>
+                                    </div>
+                                    <div className="bg-purple-50 p-6 rounded-xl">
+                                        <h4 className="text-xl font-bold text-purple-800 mb-3">🧬 Proteins</h4>
+                                        <p><strong>Monomer:</strong> Amino acids (20 types)</p>
+                                        <p><strong>Bond:</strong> Peptide</p>
+                                        <p><strong>Structure:</strong> NH₂-C-COOH + R group</p>
+                                        <p><strong>Elements:</strong> C, H, O, N, S</p>
+                                    </div>
+                                    <div className="bg-green-50 p-6 rounded-xl">
+                                        <h4 className="text-xl font-bold text-green-800 mb-3">🧬 Nucleic Acids</h4>
+                                        <p><strong>Monomer:</strong> Nucleotides</p>
+                                        <p><strong>DNA:</strong> Deoxyribose, A-T-G-C, double</p>
+                                        <p><strong>RNA:</strong> Ribose, A-U-G-C, single</p>
+                                        <p><strong>Elements:</strong> C, H, O, N, P</p>
+                                    </div>
+                                    <div className="bg-yellow-50 p-6 rounded-xl">
+                                        <h4 className="text-xl font-bold text-yellow-800 mb-3">💧 Lipids</h4>
+                                        <p><strong>Subunits:</strong> Fatty acids & glycerol</p>
+                                        <p><strong>Types:</strong> Triglycerides, phospholipids, steroids</p>
+                                        <p><strong>Saturated:</strong> No C=C, solid</p>
+                                        <p><strong>Unsaturated:</strong> Has C=C, liquid</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<CompleteStudyApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

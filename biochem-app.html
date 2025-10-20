@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biochemistry Master</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function BiochemistryMasterApp() {
+            const [mode, setMode] = useState('menu');
+            const [currentCard, setCurrentCard] = useState(0);
+            const [isFlipped, setIsFlipped] = useState(false);
+            const [matchingPairs, setMatchingPairs] = useState([]);
+            const [selectedCards, setSelectedCards] = useState([]);
+            const [matchedPairs, setMatchedPairs] = useState([]);
+            const [score, setScore] = useState(0);
+            const [attempts, setAttempts] = useState(0);
+            const [testQuestions, setTestQuestions] = useState([]);
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [userAnswers, setUserAnswers] = useState({});
+            const [showResults, setShowResults] = useState(false);
+
+            const macromolecules = [
+                {
+                    name: 'Carbohydrates',
+                    monomer: 'Monosaccharides (simple sugars like glucose, fructose)',
+                    polymer: 'Polysaccharides (starch, cellulose, glycogen)',
+                    elements: 'C, H, O (1:2:1 ratio)',
+                    bondType: 'Glycosidic bonds',
+                    functions: [
+                        'Primary energy source for cells (glucose)',
+                        'Energy storage: Starch (plants), Glycogen (animals)',
+                        'Structural support: Cellulose (plant cell walls)',
+                        'Cell recognition and signaling'
+                    ],
+                    examples: 'Glucose, fructose, sucrose, lactose, starch, glycogen, cellulose, chitin',
+                    keyFacts: [
+                        'Monosaccharides end in "-ose"',
+                        'Glycogen is highly branched for quick energy access',
+                        'Cellulose has unbranched chains with H-bonds between chains',
+                        'Starch is the main storage form in plants',
+                        'Humans cannot digest cellulose (fiber)'
+                    ],
+                    color: 'bg-blue-500'
+                },
+                {
+                    name: 'Proteins (Amino Acids)',
+                    monomer: 'Amino acids (20 types with different R groups)',
+                    polymer: 'Polypeptides/Proteins',
+                    elements: 'C, H, O, N, S (sulfur in some amino acids)',
+                    bondType: 'Peptide bonds (between amino group and carboxyl group)',
+                    functions: [
+                        'Enzymes: Speed up chemical reactions (catalysts)',
+                        'Structure: Collagen, keratin, actin, myosin',
+                        'Transport: Hemoglobin carries oxygen',
+                        'Defense: Antibodies fight pathogens',
+                        'Hormones: Insulin, growth hormone',
+                        'Movement: Muscle contraction'
+                    ],
+                    examples: 'Enzymes (amylase, pepsin), hemoglobin, insulin, collagen, keratin, antibodies, actin, myosin',
+                    keyFacts: [
+                        'Each amino acid has: amino group (NH₂), carboxyl group (COOH), R group (variable)',
+                        'R groups can be polar or nonpolar, affecting protein structure',
+                        'Protein structure has 4 levels: primary, secondary, tertiary, quaternary',
+                        'Hydrogen bonds maintain secondary structure (α-helix, β-sheet)',
+                        'Shape determines function - denaturation destroys function',
+                        'Dipeptide = 2 amino acids, Tripeptide = 3 amino acids, Polypeptide = many'
+                    ],
+                    color: 'bg-purple-500'
+                },
+                {
+                    name: 'Nucleic Acids',
+                    monomer: 'Nucleotides (3 parts: sugar, phosphate group, nitrogenous base)',
+                    polymer: 'DNA (deoxyribonucleic acid) or RNA (ribonucleic acid)',
+                    elements: 'C, H, O, N, P (phosphorus)',
+                    bondType: 'Phosphodiester bonds (between nucleotides), Hydrogen bonds (between bases)',
+                    functions: [
+                        'Store genetic information (DNA)',
+                        'Transfer genetic information (mRNA, tRNA, rRNA)',
+                        'Direct protein synthesis',
+                        'Energy transfer (ATP - adenosine triphosphate)'
+                    ],
+                    examples: 'DNA, mRNA, tRNA, rRNA, ATP',
+                    keyFacts: [
+                        'DNA: double helix, deoxyribose sugar, bases A-T-G-C',
+                        'RNA: single strand, ribose sugar, bases A-U-G-C',
+                        'A pairs with T (DNA) or U (RNA) via 2 H-bonds',
+                        'G pairs with C via 3 H-bonds',
+                        'Nucleotide components: 5-carbon sugar, phosphate, nitrogenous base',
+                        'DNA is more stable than RNA (deoxyribose lacks OH group)'
+                    ],
+                    color: 'bg-green-500'
+                },
+                {
+                    name: 'Lipids',
+                    monomer: 'Fatty acids and glycerol (not true polymers)',
+                    polymer: 'N/A (lipids are not polymers)',
+                    elements: 'C, H, O (more H than O, less oxygen than carbohydrates)',
+                    bondType: 'Ester bonds (between glycerol and fatty acids)',
+                    functions: [
+                        'Long-term energy storage (more energy/gram than carbs)',
+                        'Cell membrane structure (phospholipids - bilayer)',
+                        'Insulation and protection',
+                        'Hormone production (steroids: testosterone, estrogen, cortisol)',
+                        'Vitamin storage (A, D, E, K are fat-soluble)',
+                        'Waterproofing (waxes)'
+                    ],
+                    examples: 'Triglycerides (fats/oils), phospholipids, steroids (cholesterol, testosterone, estrogen), waxes',
+                    keyFacts: [
+                        'Hydrophobic (water-repelling) or amphipathic',
+                        'Saturated fats: no double bonds, solid at room temp',
+                        'Unsaturated fats: have double bonds (kinks), liquid at room temp',
+                        'Triglyceride = glycerol + 3 fatty acids',
+                        'Phospholipid = glycerol + 2 fatty acids + phosphate group',
+                        'Steroids have 4 fused carbon rings'
+                    ],
+                    color: 'bg-yellow-500'
+                }
+            ];
+
+            const questionBank = [
+                { type: 'multiple-choice', question: 'Which macromolecule is the primary and quickest source of energy for cells?', options: ['Proteins', 'Carbohydrates', 'Lipids', 'Nucleic Acids'], correct: 1, explanation: 'Carbohydrates, especially glucose, are the primary and quickest energy source.' },
+                { type: 'multiple-choice', question: 'What is the monomer of proteins?', options: ['Monosaccharides', 'Nucleotides', 'Amino acids', 'Fatty acids'], correct: 2, explanation: 'Amino acids are the monomers of proteins.' },
+                { type: 'multiple-choice', question: 'Which bond connects amino acids together in a protein?', options: ['Glycosidic bond', 'Peptide bond', 'Phosphodiester bond', 'Ester bond'], correct: 1, explanation: 'Peptide bonds form between amino acids through dehydration synthesis.' },
+                { type: 'multiple-choice', question: 'Which element is found in proteins but NOT in carbohydrates?', options: ['Carbon', 'Hydrogen', 'Oxygen', 'Nitrogen'], correct: 3, explanation: 'Nitrogen is found in proteins but not in carbohydrates.' },
+                { type: 'multiple-choice', question: 'Which macromolecule contains phosphorus?', options: ['Carbohydrates', 'Proteins', 'Nucleic Acids', 'Most Lipids'], correct: 2, explanation: 'Nucleic acids contain phosphorus in their phosphate groups.' },
+                { type: 'multiple-choice', question: 'What sugar is found in RNA?', options: ['Deoxyribose', 'Ribose', 'Glucose', 'Fructose'], correct: 1, explanation: 'RNA contains ribose sugar, DNA contains deoxyribose.' },
+                { type: 'multiple-choice', question: 'How many hydrogen bonds connect Adenine and Thymine in DNA?', options: ['1', '2', '3', '4'], correct: 1, explanation: 'A-T pairs with 2 H-bonds. G-C pairs with 3 H-bonds.' },
+                { type: 'multiple-choice', question: 'Which nitrogenous base is found in RNA but NOT in DNA?', options: ['Adenine', 'Uracil', 'Guanine', 'Cytosine'], correct: 1, explanation: 'RNA contains Uracil instead of Thymine.' },
+                { type: 'multiple-choice', question: 'Which type of fatty acid has NO double bonds?', options: ['Unsaturated', 'Polyunsaturated', 'Saturated', 'Trans fat'], correct: 2, explanation: 'Saturated fatty acids have no double bonds.' },
+                { type: 'multiple-choice', question: 'What makes up the "backbone" of a triglyceride?', options: ['Phosphate group', 'Glycerol', 'Fatty acids', 'Amino acids'], correct: 1, explanation: 'A triglyceride has a glycerol backbone with 3 fatty acids.' },
+                { type: 'multiple-choice', question: 'Which type of lipid makes up cell membranes?', options: ['Triglycerides', 'Steroids', 'Phospholipids', 'Waxes'], correct: 2, explanation: 'Phospholipids form the cell membrane bilayer.' },
+                { type: 'multiple-choice', question: 'Which polysaccharide is stored in animals?', options: ['Starch', 'Cellulose', 'Glycogen', 'Chitin'], correct: 2, explanation: 'Glycogen is the storage form in animals.' },
+                { type: 'multiple-choice', question: 'Which carbohydrate provides structural support in plants?', options: ['Starch', 'Glycogen', 'Cellulose', 'Glucose'], correct: 2, explanation: 'Cellulose provides structure in plant cell walls.' },
+                { type: 'multiple-choice', question: 'What type of bond connects monosaccharides?', options: ['Peptide bond', 'Glycosidic bond', 'Ester bond', 'Hydrogen bond'], correct: 1, explanation: 'Glycosidic bonds connect monosaccharides.' },
+                { type: 'multiple-choice', question: 'What is released during dehydration synthesis?', options: ['Carbon dioxide', 'Oxygen', 'Water', 'Hydrogen gas'], correct: 2, explanation: 'Dehydration synthesis removes water (H₂O).' },
+                { type: 'multiple-choice', question: 'Which reaction breaks polymers by adding water?', options: ['Dehydration synthesis', 'Hydrolysis', 'Oxidation', 'Reduction'], correct: 1, explanation: 'Hydrolysis breaks bonds by adding water.' },
+                { type: 'multiple-choice', question: 'How many amino acids are in a TRIpeptide?', options: ['1', '2', '3', '4'], correct: 2, explanation: 'A tripeptide contains 3 amino acids.' },
+                { type: 'multiple-choice', question: 'Which protein structure level has α-helices?', options: ['Primary', 'Secondary', 'Tertiary', 'Quaternary'], correct: 1, explanation: 'Secondary structure includes α-helices and β-sheets.' },
+                { type: 'true-false', question: 'DNA is single-stranded.', correct: false, explanation: 'DNA is double-stranded. RNA is single-stranded.' },
+                { type: 'true-false', question: 'Saturated fats are liquid at room temperature.', correct: false, explanation: 'Saturated fats are solid. Unsaturated fats are liquid.' }
+            ];
+
+            const moleculeStructures = [
+                { 
+                    id: 1, 
+                    type: 'Triglyceride', 
+                    description: 'Glycerol backbone with 3 fatty acid chains',
+                    visual: (
+                        <div className="flex items-center justify-center gap-4">
+                            <div className="text-center">
+                                <div className="bg-yellow-400 border-4 border-yellow-600 rounded w-16 h-16 flex items-center justify-center font-bold">G</div>
+                                <div className="text-xs mt-1">Glycerol</div>
+                            </div>
+                            <div className="text-2xl">—</div>
+                            <div className="flex flex-col gap-2">
+                                <div className="bg-red-400 border-2 border-red-600 rounded px-8 py-2 text-sm font-semibold">Fatty Acid 1</div>
+                                <div className="bg-red-400 border-2 border-red-600 rounded px-8 py-2 text-sm font-semibold">Fatty Acid 2</div>
+                                <div className="bg-red-400 border-2 border-red-600 rounded px-8 py-2 text-sm font-semibold">Fatty Acid 3</div>
+                            </div>
+                        </div>
+                    )
+                },
+                { 
+                    id: 2, 
+                    type: 'Phospholipid', 
+                    description: 'Glycerol + 2 fatty acids + phosphate group',
+                    visual: (
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="bg-blue-400 border-4 border-blue-600 rounded-full w-20 h-20 flex items-center justify-center font-bold text-white text-sm">PO₄</div>
+                            <div className="text-xs text-blue-600 font-semibold">Hydrophilic Head</div>
+                            <div className="w-1 h-8 bg-gray-800"></div>
+                            <div className="flex gap-4">
+                                <div className="w-2 h-32 bg-red-500 rounded"></div>
+                                <div className="w-2 h-32 bg-red-500 rounded"></div>
+                            </div>
+                            <div className="text-xs text-red-600 font-semibold">Hydrophobic Tails</div>
+                        </div>
+                    )
+                },
+                { 
+                    id: 3, 
+                    type: 'Steroid', 
+                    description: '4 fused carbon rings',
+                    visual: (
+                        <div className="relative w-64 h-48 mx-auto">
+                            <div className="absolute top-8 left-12 w-20 h-20 border-4 border-purple-600 bg-purple-200 rounded-lg transform rotate-45"></div>
+                            <div className="absolute top-8 left-28 w-20 h-20 border-4 border-purple-600 bg-purple-200 rounded-lg transform rotate-45"></div>
+                            <div className="absolute top-24 left-20 w-20 h-20 border-4 border-purple-600 bg-purple-200 rounded-lg transform rotate-45"></div>
+                            <div className="absolute top-24 left-4 w-16 h-16 border-4 border-purple-600 bg-purple-200 rounded-lg transform rotate-45"></div>
+                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-sm font-semibold text-purple-800">4 Fused Rings</div>
+                        </div>
+                    )
+                },
+                { 
+                    id: 4, 
+                    type: 'Amino Acid', 
+                    description: 'Building block of proteins (NH₂-C-COOH)',
+                    visual: (
+                        <div className="flex items-center justify-center gap-3 text-2xl font-bold">
+                            <div className="text-red-600">H₂N</div>
+                            <div className="text-gray-800">—</div>
+                            <div className="relative">
+                                <div className="text-gray-800">C</div>
+                                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-orange-600 text-lg">R</div>
+                                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-sm text-gray-600">H</div>
+                            </div>
+                            <div className="text-gray-800">—</div>
+                            <div className="text-blue-600">COOH</div>
+                        </div>
+                    )
+                },
+                { 
+                    id: 5, 
+                    type: 'Nucleotide', 
+                    description: 'Sugar + Phosphate + Nitrogenous Base',
+                    visual: (
+                        <div className="flex items-center justify-center gap-6">
+                            <div className="text-center">
+                                <div className="bg-red-400 border-4 border-red-600 rounded-full w-16 h-16 flex items-center justify-center font-bold text-white text-xs">PO₄</div>
+                                <div className="text-xs mt-1 font-semibold">Phosphate</div>
+                            </div>
+                            <div className="text-2xl">—</div>
+                            <div className="text-center">
+                                <div className="bg-blue-400 border-4 border-blue-600 rounded w-20 h-20 flex items-center justify-center font-bold text-white text-sm">Sugar</div>
+                                <div className="text-xs mt-1 font-semibold">5-Carbon</div>
+                            </div>
+                            <div className="text-2xl">—</div>
+                            <div className="text-center">
+                                <div className="bg-orange-400 border-4 border-orange-600 rounded w-20 h-20 flex items-center justify-center font-bold text-white text-xs">Base</div>
+                                <div className="text-xs mt-1 font-semibold">A, T, G, C, U</div>
+                            </div>
+                        </div>
+                    )
+                },
+                { 
+                    id: 6, 
+                    type: 'Monosaccharide', 
+                    description: 'Simple sugar like glucose (C₆H₁₂O₆)',
+                    visual: (
+                        <div className="relative w-48 h-48 mx-auto">
+                            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="absolute top-12 right-8 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="absolute bottom-12 right-12 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="absolute bottom-12 left-12 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="absolute top-12 left-8 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-2 h-16 bg-yellow-600 transform rotate-60"></div>
+                            <div className="absolute top-8 right-12 w-2 h-16 bg-yellow-600 transform -rotate-60"></div>
+                            <div className="absolute bottom-8 right-8 w-2 h-16 bg-yellow-600 transform rotate-20"></div>
+                            <div className="absolute bottom-8 left-8 w-2 h-16 bg-yellow-600 transform -rotate-20"></div>
+                            <div className="absolute top-12 left-12 w-16 h-2 bg-yellow-600"></div>
+                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-sm font-bold text-yellow-800">C₆H₁₂O₆</div>
+                        </div>
+                    )
+                }
+            ];
+
+            const reactionQuestions = [
+                { type: 'dehydration', question: 'Two glucose molecules join together. What is formed?', reactants: ['Glucose', 'Glucose'], products: ['Maltose (disaccharide)', 'Water (H₂O)'], explanation: 'Dehydration synthesis removes water to form a glycosidic bond.' },
+                { type: 'hydrolysis', question: 'A protein is being digested. What happens?', reactants: ['Protein (polypeptide)', 'Water (H₂O)'], products: ['Amino acids'], explanation: 'Hydrolysis adds water to break peptide bonds.' },
+                { type: 'dehydration', question: 'Two amino acids join to form a dipeptide. What is released?', reactants: ['Amino acid 1', 'Amino acid 2'], products: ['Dipeptide', 'Water (H₂O)'], explanation: 'Dehydration synthesis forms a peptide bond and releases water.' },
+                { type: 'hydrolysis', question: 'Starch is broken down during digestion. What process occurs?', reactants: ['Starch', 'Water (H₂O)'], products: ['Glucose molecules'], explanation: 'Hydrolysis breaks glycosidic bonds in starch.' },
+                { type: 'dehydration', question: 'Glycerol and three fatty acids combine. What is released?', reactants: ['Glycerol', '3 Fatty acids'], products: ['Triglyceride', '3 Water (H₂O)'], explanation: 'Three ester bonds form, releasing 3 water molecules.' }
+            ];
+
+            const initializeMatching = () => {
+                const data = [
+                    { id: 1, type: 'term', content: 'Carbohydrates', match: 'Monosaccharides' },
+                    { id: 2, type: 'answer', content: 'Monosaccharides', match: 'Carbohydrates' },
+                    { id: 3, type: 'term', content: 'Proteins', match: 'Amino acids' },
+                    { id: 4, type: 'answer', content: 'Amino acids', match: 'Proteins' },
+                    { id: 5, type: 'term', content: 'Nucleic Acids', match: 'Nucleotides' },
+                    { id: 6, type: 'answer', content: 'Nucleotides', match: 'Nucleic Acids' },
+                    { id: 7, type: 'term', content: 'Lipids', match: 'Fatty acids & glycerol' },
+                    { id: 8, type: 'answer', content: 'Fatty acids & glycerol', match: 'Lipids' },
+                    { id: 9, type: 'term', content: 'Peptide bond', match: 'Connects amino acids' },
+                    { id: 10, type: 'answer', content: 'Connects amino acids', match: 'Peptide bond' },
+                    { id: 11, type: 'term', content: 'Glycosidic bond', match: 'Connects sugars' },
+                    { id: 12, type: 'answer', content: 'Connects sugars', match: 'Glycosidic bond' },
+                    { id: 13, type: 'term', content: 'DNA', match: 'Stores genetic info' },
+                    { id: 14, type: 'answer', content: 'Stores genetic info', match: 'DNA' },
+                    { id: 15, type: 'term', content: 'Phospholipids', match: 'Cell membranes' },
+                    { id: 16, type: 'answer', content: 'Cell membranes', match: 'Phospholipids' }
+                ];
+                setMatchingPairs([...data].sort(() => Math.random() - 0.5));
+                setSelectedCards([]);
+                setMatchedPairs([]);
+                setScore(0);
+                setAttempts(0);
+            };
+
+            const initializeTest = () => {
+                const shuffled = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 15);
+                setTestQuestions(shuffled);
+                setCurrentQuestion(0);
+                setUserAnswers({});
+                setShowResults(false);
+            };
+
+            useEffect(() => {
+                if (mode === 'matching') initializeMatching();
+                else if (mode === 'test') initializeTest();
+            }, [mode]);
+
+            const handleCardSelect = (card) => {
+                if (matchedPairs.includes(card.id) || selectedCards.some(c => c.id === card.id)) return;
+                const newSelected = [...selectedCards, card];
+                setSelectedCards(newSelected);
+                if (newSelected.length === 2) {
+                    setAttempts(attempts + 1);
+                    if (newSelected[0].match === newSelected[1].content || newSelected[1].match === newSelected[0].content) {
+                        setMatchedPairs([...matchedPairs, newSelected[0].id, newSelected[1].id]);
+                        setScore(score + 10);
+                        setSelectedCards([]);
+                    } else {
+                        setTimeout(() => setSelectedCards([]), 1000);
+                    }
+                }
+            };
+
+            // MENU
+            if (mode === 'menu') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-4xl w-full">
+                            <div className="text-center mb-8">
+                                <div className="text-6xl mb-4">🧠</div>
+                                <h1 className="text-5xl font-bold text-gray-800 mb-2">Biochemistry Master</h1>
+                                <p className="text-gray-600 text-lg">Complete Quiz 2 Review Prep!</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                                <button onClick={() => setMode('flashcards')} className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-3xl mb-2">📚</div>
+                                    <div>Flashcard Mode</div>
+                                    <div className="text-sm opacity-90">Study macromolecules</div>
+                                </button>
+                                <button onClick={() => setMode('matching')} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-3xl mb-2">🎯</div>
+                                    <div>Matching Game</div>
+                                    <div className="text-sm opacity-90">Match concepts</div>
+                                </button>
+                                <button onClick={() => setMode('test')} className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-3xl mb-2">📝</div>
+                                    <div>Practice Test</div>
+                                    <div className="text-sm opacity-90">15 questions</div>
+                                </button>
+                                <button onClick={() => setMode('identify')} className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                    <div className="text-3xl mb-2">👁️</div>
+                                    <div>Identify Structures</div>
+                                    <div className="text-sm opacity-90">Visual recognition</div>
+                                </button>
+                                <button onClick={() => setMode('reactions')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all md:col-span-2">
+                                    <div className="text-3xl mb-2">⚗️</div>
+                                    <div>Reaction Practice</div>
+                                    <div className="text-sm opacity-90">Dehydration & Hydrolysis</div>
+                                </button>
+                            </div>
+                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-6">
+                                <h3 className="font-bold text-gray-800 mb-2">Topics: Macromolecules • Lipids • Peptide Bonds • DNA/RNA • Reactions • Polysaccharides</h3>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // FLASHCARDS
+            if (mode === 'flashcards') {
+                const macro = macromolecules[currentCard];
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">{currentCard + 1} / {macromolecules.length}</div>
+                            </div>
+                            <div onClick={() => setIsFlipped(!isFlipped)} className="bg-white rounded-3xl shadow-2xl p-8 min-h-[500px] cursor-pointer">
+                                {!isFlipped ? (
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className={`${macro.color} text-white p-6 rounded-2xl mb-6`}>
+                                            <h2 className="text-5xl font-bold">{macro.name}</h2>
+                                        </div>
+                                        <p className="text-gray-500 text-lg">Click to flip →</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4 overflow-y-auto max-h-[600px]">
+                                        <h2 className="text-3xl font-bold text-gray-800">{macro.name}</h2>
+                                        <div className="bg-blue-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-blue-800 mb-2">📦 Monomer:</h3>
+                                            <p className="text-gray-700">{macro.monomer}</p>
+                                        </div>
+                                        <div className="bg-green-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-green-800 mb-2">🔗 Polymer:</h3>
+                                            <p className="text-gray-700">{macro.polymer}</p>
+                                        </div>
+                                        <div className="bg-purple-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-purple-800 mb-2">⚛️ Elements:</h3>
+                                            <p className="text-gray-700">{macro.elements}</p>
+                                        </div>
+                                        <div className="bg-red-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-red-800 mb-2">🔗 Bond Type:</h3>
+                                            <p className="text-gray-700">{macro.bondType}</p>
+                                        </div>
+                                        <div className="bg-yellow-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-yellow-800 mb-2">⚡ Functions:</h3>
+                                            <ul className="space-y-1">
+                                                {macro.functions.map((func, idx) => <li key={idx} className="text-gray-700">• {func}</li>)}
+                                            </ul>
+                                        </div>
+                                        <div className="bg-orange-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-orange-800 mb-2">📝 Examples:</h3>
+                                            <p className="text-gray-700">{macro.examples}</p>
+                                        </div>
+                                        <div className="bg-pink-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-pink-800 mb-2">⭐ Key Facts:</h3>
+                                            <ul className="space-y-1">
+                                                {macro.keyFacts.map((fact, idx) => <li key={idx} className="text-gray-700">• {fact}</li>)}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex justify-between mt-6">
+                                <button onClick={() => { setCurrentCard(Math.max(0, currentCard - 1)); setIsFlipped(false); }} disabled={currentCard === 0} className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">← Previous</button>
+                                <button onClick={() => setIsFlipped(!isFlipped)} className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">{isFlipped ? 'Show Front' : 'Show Back'}</button>
+                                <button onClick={() => { setCurrentCard(Math.min(macromolecules.length - 1, currentCard + 1)); setIsFlipped(false); }} disabled={currentCard === macromolecules.length - 1} className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // MATCHING
+            if (mode === 'matching') {
+                const allMatched = matchedPairs.length === matchingPairs.length;
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-pink-400 to-purple-500 p-4">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <div className="flex gap-4">
+                                    <div className="bg-white px-4 py-2 rounded-lg font-semibold">Score: {score}</div>
+                                    <div className="bg-white px-4 py-2 rounded-lg font-semibold">Attempts: {attempts}</div>
+                                </div>
+                            </div>
+                            {allMatched && (
+                                <div className="bg-green-500 text-white rounded-2xl shadow-2xl p-6 mb-6 flex items-center justify-between">
+                                    <div>
+                                        <h3 className="text-2xl font-bold">Perfect! 🎉</h3>
+                                        <p>Score: {score} | Attempts: {attempts}</p>
+                                    </div>
+                                    <button onClick={initializeMatching} className="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold">Play Again</button>
+                                </div>
+                            )}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {matchingPairs.map((card) => {
+                                    const isMatched = matchedPairs.includes(card.id);
+                                    const isSelected = selectedCards.some(c => c.id === card.id);
+                                    const isWrong = selectedCards.length === 2 && isSelected && !isMatched;
+                                    return (
+                                        <button key={card.id} onClick={() => handleCardSelect(card)} disabled={isMatched}
+                                            className={`p-6 rounded-xl font-semibold text-center min-h-[120px] flex items-center justify-center transition-all transform hover:scale-105 ${
+                                                isMatched ? 'bg-green-500 text-white opacity-50' : 
+                                                isSelected ? isWrong ? 'bg-red-500 text-white' : 'bg-blue-500 text-white' :
+                                                card.type === 'term' ? 'bg-purple-100 text-purple-800' : 'bg-pink-100 text-pink-800'
+                                            }`}>
+                                            {card.content}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // TEST MODE
+            if (mode === 'test') {
+                if (testQuestions.length === 0) return null;
+                
+                if (showResults) {
+                    let correct = 0;
+                    testQuestions.forEach((q, idx) => {
+                        if ((q.type === 'multiple-choice' && userAnswers[idx] === q.correct) || 
+                            (q.type === 'true-false' && userAnswers[idx] === q.correct)) {
+                            correct++;
+                        }
+                    });
+                    const percentage = Math.round((correct / testQuestions.length) * 100);
+
+                    return (
+                        <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
+                            <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
+                                <div className="text-center mb-8">
+                                    <div className="text-6xl mb-4">🏆</div>
+                                    <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Complete!</h2>
+                                    <p className="text-2xl text-gray-600">{correct}/{testQuestions.length} ({percentage}%)</p>
+                                </div>
+                                <div className="space-y-6 mb-8 max-h-96 overflow-y-auto">
+                                    {testQuestions.map((q, idx) => {
+                                        const userAnswer = userAnswers[idx];
+                                        const isCorrect = q.type === 'multiple-choice' ? userAnswer === q.correct : userAnswer === q.correct;
+                                        return (
+                                            <div key={idx} className={`p-6 rounded-xl ${isCorrect ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'}`}>
+                                                <p className="font-semibold text-gray-800 mb-2">{idx + 1}. {q.question}</p>
+                                                {q.type === 'multiple-choice' && (
+                                                    <div className="space-y-2">
+                                                        {q.options.map((opt, optIdx) => (
+                                                            <div key={optIdx} className={`p-2 rounded ${optIdx === q.correct ? 'bg-green-200 font-semibold' : optIdx === userAnswer && optIdx !== q.correct ? 'bg-red-200' : 'bg-gray-100'}`}>
+                                                                {opt} {optIdx === q.correct && '✓'} {optIdx === userAnswer && optIdx !== q.correct && '✗'}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                {q.type === 'true-false' && (
+                                                    <div className="space-y-2">
+                                                        <div className={`p-2 rounded ${q.correct === true ? 'bg-green-200 font-semibold' : userAnswer === true ? 'bg-red-200' : 'bg-gray-100'}`}>
+                                                            True {q.correct === true && '✓'} {userAnswer === true && !q.correct && '✗'}
+                                                        </div>
+                                                        <div className={`p-2 rounded ${q.correct === false ? 'bg-green-200 font-semibold' : userAnswer === false ? 'bg-red-200' : 'bg-gray-100'}`}>
+                                                            False {q.correct === false && '✓'} {userAnswer === false && q.correct && '✗'}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <p className="mt-3 text-sm text-gray-700 bg-blue-50 p-3 rounded"><strong>Explanation:</strong> {q.explanation}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <div className="flex gap-4">
+                                    <button onClick={() => setMode('menu')} className="flex-1 bg-gray-600 text-white py-3 px-6 rounded-xl font-semibold">Menu</button>
+                                    <button onClick={initializeTest} className="flex-1 bg-green-600 text-white py-3 px-6 rounded-xl font-semibold">New Test</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                const currentQ = testQuestions[currentQuestion];
+                const answered = userAnswers.hasOwnProperty(currentQuestion);
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Exit</button>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">{currentQuestion + 1} / {testQuestions.length}</div>
+                            </div>
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <h3 className="text-2xl font-bold text-gray-800 mb-6">{currentQ.question}</h3>
+                                {currentQ.type === 'multiple-choice' && (
+                                    <div className="space-y-3 mb-8">
+                                        {currentQ.options.map((option, idx) => (
+                                            <button key={idx} onClick={() => setUserAnswers({...userAnswers, [currentQuestion]: idx})}
+                                                className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${userAnswers[currentQuestion] === idx ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}>
+                                                {String.fromCharCode(65 + idx)}. {option}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                                {currentQ.type === 'true-false' && (
+                                    <div className="space-y-3 mb-8">
+                                        <button onClick={() => setUserAnswers({...userAnswers, [currentQuestion]: true})} className={`w-full p-4 rounded-xl font-semibold transition-all ${userAnswers[currentQuestion] === true ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}>True</button>
+                                        <button onClick={() => setUserAnswers({...userAnswers, [currentQuestion]: false})} className={`w-full p-4 rounded-xl font-semibold transition-all ${userAnswers[currentQuestion] === false ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}>False</button>
+                                    </div>
+                                )}
+                                <div className="flex justify-between">
+                                    <button onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))} disabled={currentQuestion === 0} className="bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold disabled:opacity-50">← Previous</button>
+                                    {currentQuestion === testQuestions.length - 1 ? (
+                                        <button onClick={() => setShowResults(true)} disabled={Object.keys(userAnswers).length !== testQuestions.length} className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold disabled:opacity-50">Submit Test</button>
+                                    ) : (
+                                        <button onClick={() => setCurrentQuestion(currentQuestion + 1)} disabled={!answered} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold disabled:opacity-50">Next →</button>
+                                    )}
+                                </div>
+                                <div className="mt-6 flex gap-2 justify-center">
+                                    {testQuestions.map((_, idx) => <div key={idx} className={`w-3 h-3 rounded-full ${userAnswers.hasOwnProperty(idx) ? 'bg-green-500' : 'bg-gray-300'}`} />)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // IDENTIFY MODE
+            if (mode === 'identify') {
+                const [currentStructure, setCurrentStructure] = useState(0);
+                const [userGuess, setUserGuess] = useState('');
+                const [showAnswer, setShowAnswer] = useState(false);
+                const [identifyScore, setIdentifyScore] = useState(0);
+
+                const structure = moleculeStructures[currentStructure];
+
+                const handleGuess = (guess) => {
+                    setUserGuess(guess);
+                    if (guess === structure.type) setIdentifyScore(identifyScore + 1);
+                    setShowAnswer(true);
+                };
+
+                const nextStructure = () => {
+                    setCurrentStructure((currentStructure + 1) % moleculeStructures.length);
+                    setUserGuess('');
+                    setShowAnswer(false);
+                };
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">Score: {identifyScore} | {currentStructure + 1}/{moleculeStructures.length}</div>
+                            </div>
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Identify This Structure</h2>
+                                <div className="bg-gray-50 rounded-xl p-8 mb-6 flex items-center justify-center min-h-[250px]">
+                                    {structure.visual}
+                                </div>
+                                {!showAnswer ? (
+                                    <div>
+                                        <p className="text-lg text-gray-700 mb-4 text-center">What type of molecule is this?</p>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {['Triglyceride', 'Phospholipid', 'Steroid', 'Amino Acid', 'Nucleotide', 'Monosaccharide'].map((type) => (
+                                                <button key={type} onClick={() => handleGuess(type)} className="bg-blue-500 text-white p-4 rounded-xl font-semibold hover:bg-blue-600">{type}</button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div className={`p-6 rounded-xl mb-6 ${userGuess === structure.type ? 'bg-green-100 border-2 border-green-500' : 'bg-red-100 border-2 border-red-500'}`}>
+                                            <p className="text-xl font-bold mb-2">{userGuess === structure.type ? '✓ Correct!' : '✗ Incorrect'}</p>
+                                            <p className="text-lg"><strong>Answer:</strong> {structure.type}</p>
+                                            <p className="text-gray-700 mt-2">{structure.description}</p>
+                                        </div>
+                                        <button onClick={nextStructure} className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold">Next Structure →</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // REACTIONS MODE
+            if (mode === 'reactions') {
+                const [reactionIdx, setReactionIdx] = useState(0);
+                const [showAns, setShowAns] = useState(false);
+                const reaction = reactionQuestions[reactionIdx];
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
+                        <div className="max-w-5xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
+                                <div className="bg-white px-4 py-2 rounded-lg font-semibold">{reactionIdx + 1}/{reactionQuestions.length}</div>
+                            </div>
+                            <div className="bg-white rounded-3xl shadow-2xl p-8">
+                                <div className={`${reaction.type === 'dehydration' ? 'bg-orange-100' : 'bg-blue-100'} p-4 rounded-xl mb-6`}>
+                                    <h2 className="text-2xl font-bold text-gray-800 mb-2">{reaction.type === 'dehydration' ? '🔥 Dehydration Synthesis' : '💧 Hydrolysis'}</h2>
+                                    <p className="text-gray-700">{reaction.type === 'dehydration' ? 'Building by REMOVING water' : 'Breaking by ADDING water'}</p>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 mb-6">{reaction.question}</h3>
+                                <div className="bg-gray-50 rounded-xl p-8 mb-6">
+                                    <div className="flex items-center justify-center gap-8 flex-wrap">
+                                        <div className="text-center">
+                                            <p className="text-sm text-gray-600 mb-2 font-semibold">REACTANTS</p>
+                                            <div className="space-y-2">
+                                                {reaction.reactants.map((r, idx) => <div key={idx} className="bg-blue-200 px-6 py-3 rounded-lg font-semibold text-gray-800">{r}</div>)}
+                                            </div>
+                                        </div>
+                                        <div className="text-4xl font-bold text-gray-400">→</div>
+                                        {showAns ? (
+                                            <div className="text-center">
+                                                <p className="text-sm text-gray-600 mb-2 font-semibold">PRODUCTS</p>
+                                                <div className="space-y-2">
+                                                    {reaction.products.map((p, idx) => <div key={idx} className="bg-green-200 px-6 py-3 rounded-lg font-semibold text-gray-800">{p}</div>)}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center">
+                                                <p className="text-sm text-gray-600 mb-2 font-semibold">PRODUCTS</p>
+                                                <div className="bg-gray-300 px-12 py-8 rounded-lg"><p className="text-2xl">?</p></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                {showAns && (
+                                    <div className="bg-blue-50 p-6 rounded-xl mb-6">
+                                        <p className="text-gray-800"><strong>Explanation:</strong> {reaction.explanation}</p>
+                                    </div>
+                                )}
+                                <div className="flex gap-4">
+                                    {!showAns ? (
+                                        <button onClick={() => setShowAns(true)} className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-semibold">Show Answer</button>
+                                    ) : (
+                                        <button onClick={() => { setReactionIdx((reactionIdx + 1) % reactionQuestions.length); setShowAns(false); }} className="flex-1 bg-green-600 text-white py-4 rounded-xl font-semibold">Next Reaction →</button>
+                                    )}
+                                </div>
+                                <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl">
+                                    <h4 className="font-bold text-gray-800 mb-3">Quick Reference:</h4>
+                                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div className="bg-orange-100 p-4 rounded-lg">
+                                            <h5 className="font-bold text-orange-800 mb-2">Dehydration Synthesis</h5>
+                                            <ul className="space-y-1 text-gray-700">
+                                                <li>• Builds polymers</li>
+                                                <li>• Removes H₂O</li>
+                                                <li>• Forms bonds</li>
+                                                <li>• Anabolic reaction</li>
+                                            </ul>
+                                        </div>
+                                        <div className="bg-blue-100 p-4 rounded-lg">
+                                            <h5 className="font-bold text-blue-800 mb-2">Hydrolysis</h5>
+                                            <ul className="space-y-1 text-gray-700">
+                                                <li>• Breaks polymers</li>
+                                                <li>• Adds H₂O</li>
+                                                <li>• Breaks bonds</li>
+                                                <li>• Catabolic reaction</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<BiochemistryMasterApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

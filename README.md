@@ -5,7 +5,7 @@
 ### Turn study sessions into high scores
 
 [![Made with React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](https://react.dev/)
-![Test Badge](https://img.shields.io/badge/test-badge-green)
+[![Styled with Tailwind]([https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss&logoColor=white)]](https://tailwindcss.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-Backend-ffca28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)

@@ -1,113 +1,140 @@
-# studying.works
+<div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Firebase](https://img.shields.io/badge/Firebase-10.8.0-orange.svg)](https://firebase.google.com/)
-[![AI Powered](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-purple.svg)](https://www.anthropic.com/)
-[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
-[![Free](https://img.shields.io/badge/Price-FREE-brightgreen.svg)]()
+# 🎓 studying.works
 
-> **Turn study sessions into high scores.** AI-powered flashcards, quizzes, and gamified learning.
+### Turn study sessions into high scores
 
-[**Try it live →**](https://studying.works)
+[![Made with React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](https://react.dev/)
+[![Styled with Tailwind](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-Backend-ffca28?logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
----
+[Live Demo](https://studying.works) • [Report Bug](https://github.com/yourusername/studying-works/issues) • [Request Feature](https://github.com/yourusername/studying-works/issues)
 
-## ⚡ Features at a Glance
+![studying.works preview](assets/preview.png)
 
-[![AI Flashcards](https://img.shields.io/badge/AI-Flashcards-blue.svg)]()
-[![Smart Spaced Repetition](https://img.shields.io/badge/Spaced-Repetition-green.svg)]()
-[![9 Study Modes](https://img.shields.io/badge/Study-Modes-purple.svg)]()
-[![Community Library](https://img.shields.io/badge/Community-Library-orange.svg)]()
-[![Progress Tracking](https://img.shields.io/badge/Analytics-Full-brightgreen.svg)]()
-
-* AI flashcard generation in seconds
-* Gamified study: matching, speed rounds, audio quizzes
-* Community decks & sharing
-* Track streaks, scores, and achievements
+</div>
 
 ---
 
-## 🛠 Tech Stack
+## ✨ Features
 
-[![React](https://img.shields.io/badge/React-18-blue.svg)]()
-[![Tailwind](https://img.shields.io/badge/TailwindCSS-3.3.2-blueviolet.svg)]()
-[![Firebase](https://img.shields.io/badge/Firebase-10.8.0-orange.svg)]()
-[![Claude AI](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-purple.svg)]()
-[![Web Speech API](https://img.shields.io/badge/WebSpeechAPI-Enabled-lightgrey.svg)]()
+🤖 **AI Flashcard Generator** • Paste notes, get instant decks  
+🧠 **BKT Smart Study** • Bayesian Knowledge Tracing algorithm  
+🎴 **9 Study Modes** • Flashcards, quizzes, matching, speed challenges  
+📊 **Progress Tracking** • Streaks, mastery scores, achievements  
+🌍 **Community Library** • Share and discover study decks  
+🔥 **Spaced Repetition** • Intelligent review scheduling  
+📱 **Responsive Design** • Works on all devices  
 
 ---
 
 ## 🚀 Quick Start
-
-**User:**
-
-1. [Go live →](https://studying.works)
-2. Sign in with Google
-3. Paste notes → generate flashcards → start studying
-
-**Developer:**
-
 ```bash
+# Clone the repo
 git clone https://github.com/yourusername/studying-works.git
-cd studying-works
-open index.html  # or run a local server
+
+# Open in browser
+open index.html
+
+# Or serve locally
+python -m http.server 8000
 ```
 
 ---
 
-## 🧩 Study Modes
+## 🛠️ Built With
 
-[![Flashcards](https://img.shields.io/badge/Flashcards-🎴-blue.svg)]()
-[![Practice Test](https://img.shields.io/badge/Practice-Test-📝-green.svg)]()
-[![Multiple Choice](https://img.shields.io/badge/Multiple-Choice-🎯-purple.svg)]()
-[![True/False](https://img.shields.io/badge/True-False-✅-orange.svg)]()
-[![Matching Game](https://img.shields.io/badge/Matching-Game-🎮-red.svg)]()
-[![Speed Round](https://img.shields.io/badge/Speed-Round-⚡-yellow.svg)]()
-[![Audio Quiz](https://img.shields.io/badge/Audio-Quiz-🔊-blue.svg)]()
-[![Fill in Blank](https://img.shields.io/badge/Fill-Blank-📋-green.svg)]()
-[![Written Answer](https://img.shields.io/badge/Written-Answer-✍️-purple.svg)]()
-
----
-
-## ⚡ Credits & Powered By
-
-[![Claude AI](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-purple.svg)]()
-[![Firebase](https://img.shields.io/badge/Firebase-10.8.0-orange.svg)]()
-[![React](https://img.shields.io/badge/React-18-blue.svg)]()
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.3.2-blueviolet.svg)]()
-[![pyBKT](https://img.shields.io/badge/pyBKT-Bayesian-ff69b4.svg)]()
-
-> Built with ❤️ for students who want tools that **actually work**.
-
-**References:**
-
-* pyBKT: [EDM 2021 Paper](https://arxiv.org/abs/2105.00385)
-* Claude AI: [Anthropic](https://www.anthropic.com/)
-* Firebase: [Docs](https://firebase.google.com/)
+<table>
+<tr>
+<td align="center" width="25%">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="48" height="48" alt="React" />
+<br><strong>React</strong>
+<br>UI Components
+</td>
+<td align="center" width="25%">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" width="48" height="48" alt="Firebase" />
+<br><strong>Firebase</strong>
+<br>Auth & Database
+</td>
+<td align="center" width="25%">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="48" height="48" alt="Python" />
+<br><strong>Python</strong>
+<br>ML Backend
+</td>
+<td align="center" width="25%">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="48" height="48" alt="Tailwind" />
+<br><strong>Tailwind CSS</strong>
+<br>Styling
+</td>
+</tr>
+</table>
 
 ---
 
-## 🌐 Browser Support
+## 🏆 Credits & Acknowledgments
 
-[![Chrome](https://img.shields.io/badge/Chrome-90+-blue.svg)]()
-[![Firefox](https://img.shields.io/badge/Firefox-88+-orange.svg)]()
-[![Safari](https://img.shields.io/badge/Safari-14+-purple.svg)]()
-[![Edge](https://img.shields.io/badge/Edge-90+-green.svg)]()
+### 🧠 Machine Learning
+**[pyBKT](https://github.com/CAHLR/pyBKT)** - Bayesian Knowledge Tracing  
+*Badrinath, A., Wang, F., Pardos, Z. (2021). pyBKT: An Accessible Python Library of Bayesian Knowledge Tracing Models.*
+
+### 🎨 Design Resources
+- [Lucide Icons](https://lucide.dev/) - Beautiful icon set
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Google Fonts](https://fonts.google.com/) - Typography
+
+### 📚 Inspiration
+- [Anki](https://apps.ankiweb.net/) - Spaced repetition pioneer
+- [Quizlet](https://quizlet.com/) - Study platform innovation
+- [Khan Academy](https://www.khanacademy.org/) - Adaptive learning
+
+### 🤖 AI Services
+- [Anthropic Claude](https://www.anthropic.com/claude) - AI flashcard generation
+- [OpenAI](https://openai.com/) - Natural language processing
 
 ---
 
-## 📫 Support
+## 📖 Documentation
 
-* **Bugs?** [GitHub Issues](https://github.com/yourusername/studying-works/issues)
-* **Help & Docs:** [Wiki](https://github.com/yourusername/studying-works/wiki)
-* **Say Thanks:** ⭐ Star the repo
+📘 [User Guide](docs/USER_GUIDE.md)  
+🔧 [BKT Setup](docs/BKT_SETUP.md)  
+🏗️ [Architecture](docs/ARCHITECTURE.md)  
+🤝 [Contributing](CONTRIBUTING.md)  
+
+---
+
+## 🌟 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/studying-works&type=Date)](https://star-history.com/#yourusername/studying-works&Date)
+
+---
+
+## 📊 Project Stats
+
+![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/studying-works)
+![GitHub code size](https://img.shields.io/github/languages/code-size/yourusername/studying-works)
+![Lines of code](https://img.shields.io/tokei/lines/github/yourusername/studying-works)
+![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/studying-works)
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
 <div align="center">
 
-**[studying.works](https://studying.works)** · **[Docs](https://github.com/yourusername/studying-works/wiki)** · **[Report Bug](https://github.com/yourusername/studying-works/issues)**
+### Made with ❤️ by [Your Name](https://github.com/yourusername)
 
-Made for students, by someone who knows cramming sucks.
+[Website](https://studying.works) • [Twitter](https://twitter.com/yourusername) • [LinkedIn](https://linkedin.com/in/yourusername)
 
-</div>  
+**[⬆ back to top](#-studyingworks)**
+
+---
+
+© 2025 studying.works • [Terms](https://studying.works/terms.html) • [Privacy](https://studying.works/privacy.html) • [About](https://studying.works/about.html)
+
+</div>

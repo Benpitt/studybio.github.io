@@ -1,15 +1,31 @@
-/* Global styles for all pages */
+/* CRITICAL: Fix white borders on overscroll */
+html, body {
+    background: #111827 !important;
+    background-attachment: fixed !important;
+    overscroll-behavior: none;
+}
 
-/* Fix white borders on scroll */
 html {
-    background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87);
+    background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87) fixed !important;
     min-height: 100vh;
 }
 
 body {
-    background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87);
+    background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87) fixed !important;
     min-height: 100vh;
     overflow-x: hidden;
+}
+
+/* Ensure body always covers viewport */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87);
+    z-index: -1;
 }
 
 /* Page transition animations */
@@ -46,7 +62,6 @@ body {
     }
 }
 
-/* Apply to main content containers */
 .page-container {
     animation: fadeIn 0.4s ease-out;
 }
@@ -59,17 +74,14 @@ body {
     animation: slideInFromRight 0.4s ease-out;
 }
 
-/* Smooth scrolling */
 html {
     scroll-behavior: smooth;
 }
 
-/* Link transitions */
 a {
     transition: all 0.2s ease;
 }
 
-/* Button press animations */
 button {
     transition: all 0.15s ease;
 }
@@ -78,7 +90,6 @@ button:active {
     transform: scale(0.97);
 }
 
-/* Card hover effects */
 .card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -88,12 +99,10 @@ button:active {
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
-/* Navigation transitions */
 nav {
     transition: all 0.3s ease;
 }
 
-/* Modal/overlay animations */
 @keyframes modalFadeIn {
     from {
         opacity: 0;
@@ -109,7 +118,6 @@ nav {
     animation: modalFadeIn 0.25s ease-out;
 }
 
-/* Loading states */
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
@@ -123,7 +131,6 @@ nav {
     animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Prevent content flash */
 .no-flash {
     opacity: 0;
     animation: fadeIn 0.4s ease-out forwards;

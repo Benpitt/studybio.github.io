@@ -36,20 +36,6 @@
 
 ---
 
-## 🚀 Quick Start
-```bash
-# Clone the repo
-git clone https://github.com/yourusername/studying-works.git
-
-# Open in browser
-open index.html
-
-# Or serve locally
-python -m http.server 8000
-```
-
----
-
 ## 🛠️ Built With
 
 <table>

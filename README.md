@@ -5,12 +5,12 @@
 ### Turn study sessions into high scores
 
 [![Made with React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](https://react.dev/)
-[![Styled with Tailwind](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+![Styled with Tailwind](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss&logoColor=white)
 [![Firebase](https://img.shields.io/badge/Firebase-Backend-ffca28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Live Demo](https://studying.works) • [Report Bug](https://github.com/yourusername/studying-works/issues) • [Request Feature](https://github.com/yourusername/studying-works/issues)
+[Live Demo](https://studying.works) • [Report Bug](https://github.com/benpitt/studying.works/issues) • [Request Feature](https://github.com/benpitt/studying.works/issues)
 
 ![studying.works preview](assets/preview.png)
 

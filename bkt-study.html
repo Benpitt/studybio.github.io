@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKT Smart Study - studying.works</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global-styles.css">
+    <style>
+        .mastery-bar {
+            transition: width 0.5s ease-out;
+        }
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-flip-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
+    <script src="auth-guard.js"></script>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function Navigation() {
+            return (
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>studying.works</span>
+                                </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="bkt-study.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">BKT Study</a>
+                                    <a href="custom-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">My Flashcards</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function BKTStudyApp() {
+            const [mode, setMode] = useState('overview'); // overview, study, results
+            const [decks, setDecks] = useState([]);
+            const [selectedDeck, setSelectedDeck] = useState(null);
+            const [skills, setSkills] = useState({});
+            const [masteryScores, setMasteryScores] = useState({});
+            const [currentCard, setCurrentCard] = useState(0);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [sessionCards, setSessionCards] = useState([]);
+            const [sessionStats, setSessionStats] = useState({ correct: 0, total: 0 });
+            const [startTime, setStartTime] = useState(null);
+
+            useEffect(() => {
+                loadDecksAndSkills();
+                loadMasteryScores();
+            }, []);
+
+            function loadDecksAndSkills() {
+                const savedDecks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
+                setDecks(savedDecks);
+                
+                // Auto-tag cards with skills based on deck
+                const skillMap = {};
+                savedDecks.forEach(deck => {
+                    const skillName = `${deck.subject || 'general'}-${deck.title}`.toLowerCase().replace(/\s+/g, '-');
+                    deck.cards.forEach(card => {
+                        skillMap[card.id] = skillName;
+                    });
+                });
+                setSkills(skillMap);
+            }
+
+            function loadMasteryScores() {
+                // Load from localStorage (will be from backend later)
+                const saved = localStorage.getItem('bkt_mastery_scores');
+                if (saved) {
+                    setMasteryScores(JSON.parse(saved));
+                }
+            }
+
+            function getMasteryScore(skill) {
+                return masteryScores[skill] || 0.5; // Default 50% if unknown
+            }
+
+            function updateMasteryScore(skill, correct) {
+                // Simple Bayesian update (will be replaced by pyBKT)
+                const currentScore = getMasteryScore(skill);
+                const learningRate = 0.1;
+                const slipRate = 0.1;
+                const guessRate = 0.2;
+                
+                let newScore;
+                if (correct) {
+                    newScore = currentScore + (1 - currentScore) * learningRate;
+                } else {
+                    newScore = currentScore * (1 - slipRate);
+                }
+                
+                const updated = { ...masteryScores, [skill]: Math.max(0, Math.min(1, newScore)) };
+                setMasteryScores(updated);
+                localStorage.setItem('bkt_mastery_scores', JSON.stringify(updated));
+            }
+
+            function recordBKTReview(cardId, correct, responseTime) {
+                const skill = skills[cardId];
+                const review = {
+                    user_id: localStorage.getItem('userId'),
+                    skill: skill,
+                    correct: correct ? 1 : 0,
+                    timestamp: new Date().toISOString(),
+                    card_id: cardId,
+                    response_time: responseTime
+                };
+                
+                // Save to localStorage (will be Firestore later)
+                const reviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
+                reviews.push(review);
+                localStorage.setItem('bkt_reviews', JSON.stringify(reviews));
+                
+                // Update mastery score
+                updateMasteryScore(skill, correct);
+            }
+
+            function startStudySession(deck) {
+                setSelectedDeck(deck);
+                
+                // Sort cards by mastery (lowest first)
+                const cardsWithMastery = deck.cards.map(card => ({
+                    ...card,
+                    skill: skills[card.id],
+                    mastery: getMasteryScore(skills[card.id])
+                })).sort((a, b) => a.mastery - b.mastery);
+                
+                // Take top 20 cards needing practice
+                setSessionCards(cardsWithMastery.slice(0, 20));
+                setCurrentCard(0);
+                setShowAnswer(false);
+                setSessionStats({ correct: 0, total: 0 });
+                setStartTime(Date.now());
+                setMode('study');
+            }
+
+            function handleAnswer(correct) {
+                const card = sessionCards[currentCard];
+                const responseTime = (Date.now() - startTime) / 1000;
+                
+                recordBKTReview(card.id, correct, responseTime);
+                
+                setSessionStats({
+                    correct: sessionStats.correct + (correct ? 1 : 0),
+                    total: sessionStats.total + 1
+                });
+                
+                if (currentCard < sessionCards.length - 1) {
+                    setCurrentCard(currentCard + 1);
+                    setShowAnswer(false);
+                    setStartTime(Date.now());
+                } else {
+                    setMode('results');
+                }
+            }
+
+            if (mode === 'overview') {
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-24 p-6">
+                            <div className="max-w-7xl mx-auto">
+                                <div className="mb-8">
+                                    <h1 className="text-5xl font-bold text-white mb-2">🧠 BKT Smart Study</h1>
+                                    <p className="text-xl text-blue-200">AI-powered learning with Bayesian Knowledge Tracing</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                    <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white">
+                                        <div className="text-5xl mb-2">📊</div>
+                                        <div className="text-3xl font-bold mb-1">{Object.keys(masteryScores).length}</div>
+                                        <div className="text-blue-100">Skills Tracked</div>
+                                    </div>
+                                    <div className="bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 text-white">
+                                        <div className="text-5xl mb-2">✅</div>
+                                        <div className="text-3xl font-bold mb-1">
+                                            {Math.round(Object.values(masteryScores).reduce((a, b) => a + b, 0) / Math.max(1, Object.keys(masteryScores).length) * 100)}%
+                                        </div>
+                                        <div className="text-green-100">Avg Mastery</div>
+                                    </div>
+                                    <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
+                                        <div className="text-5xl mb-2">🎯</div>
+                                        <div className="text-3xl font-bold mb-1">
+                                            {JSON.parse(localStorage.getItem('bkt_reviews') || '[]').length}
+                                        </div>
+                                        <div className="text-purple-100">Total Reviews</div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white/10 backdrop-blur rounded-2xl p-6 mb-8">
+                                    <h2 className="text-2xl font-bold text-white mb-4">How BKT Works</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/90">
+                                        <div className="bg-white/5 p-4 rounded-xl">
+                                            <div className="text-3xl mb-2">🎓</div>
+                                            <div className="font-bold mb-1">Knowledge Tracking</div>
+                                            <div className="text-sm">Models your understanding of each concept with probability</div>
+                                        </div>
+                                        <div className="bg-white/5 p-4 rounded-xl">
+                                            <div className="text-3xl mb-2">🎯</div>
+                                            <div className="font-bold mb-1">Smart Prioritization</div>
+                                            <div className="text-sm">Reviews weakest skills first for maximum efficiency</div>
+                                        </div>
+                                        <div className="bg-white/5 p-4 rounded-xl">
+                                            <div className="text-3xl mb-2">🔮</div>
+                                            <div className="font-bold mb-1">Learns Your Patterns</div>
+                                            <div className="text-sm">Adapts to your learning speed and mistake patterns</div>
+                                        </div>
+                                        <div className="bg-white/5 p-4 rounded-xl">
+                                            <div className="text-3xl mb-2">📈</div>
+                                            <div className="font-bold mb-1">Handles Guesses & Slips</div>
+                                            <div className="text-sm">Knows difference between lucky guesses and real knowledge</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h2 className="text-3xl font-bold text-white mb-4">Your Decks</h2>
+                                {decks.length === 0 ? (
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
+                                        <div className="text-8xl mb-4">📚</div>
+                                        <h3 className="text-2xl font-bold text-white mb-4">No decks yet!</h3>
+                                        <p className="text-white/70 mb-6">Create flashcards first, then come back to study with BKT</p>
+                                        <a href="custom-flashcards.html" className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
+                                            Create Flashcards
+                                        </a>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {decks.map(deck => {
+                                            const deckSkill = `${deck.subject || 'general'}-${deck.title}`.toLowerCase().replace(/\s+/g, '-');
+                                            const mastery = getMasteryScore(deckSkill);
+                                            const masteryPercent = Math.round(mastery * 100);
+                                            
+                                            return (
+                                                <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl">
+                                                    <h3 className="text-2xl font-bold text-gray-800 mb-2">{deck.title}</h3>
+                                                    <p className="text-gray-600 mb-4">{deck.subject || 'General'} • {deck.cards.length} cards</p>
+                                                    
+                                                    <div className="mb-4">
+                                                        <div className="flex justify-between text-sm mb-2">
+                                                            <span className="text-gray-600">Mastery Level</span>
+                                                            <span className="font-bold text-gray-800">{masteryPercent}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-200 rounded-full h-3">
+                                                            <div 
+                                                                className="mastery-bar h-3 rounded-full"
+                                                                style={{
+                                                                    width: `${masteryPercent}%`,
+                                                                    background: masteryPercent < 50 ? 'linear-gradient(to right, #ef4444, #f97316)' :
+                                                                               masteryPercent < 80 ? 'linear-gradient(to right, #f97316, #eab308)' :
+                                                                               'linear-gradient(to right, #22c55e, #10b981)'
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <button 
+                                                        onClick={() => startStudySession(deck)}
+                                                        className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all"
+                                                    >
+                                                        Study Now →
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'study') {
+                const card = sessionCards[currentCard];
+                const mastery = Math.round(card.mastery * 100);
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-24 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <button onClick={() => setMode('overview')} className="text-white/80 hover:text-white mb-6">← Back</button>
+
+                                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span>Card {currentCard + 1} / {sessionCards.length}</span>
+                                        <span>Session: {sessionStats.correct}/{sessionStats.total} correct</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm">Mastery:</span>
+                                        <div className="flex-1 bg-white/20 rounded-full h-2">
+                                            <div className="h-2 rounded-full bg-blue-400" style={{width: `${mastery}%`}} />
+                                        </div>
+                                        <span className="text-sm font-bold">{mastery}%</span>
+                                    </div>
+                                </div>
+
+                                <div className={`card-flip ${showAnswer ? 'flipped' : ''} mb-6`}>
+                                    <div className="card-flip-inner relative" style={{minHeight: '400px'}}>
+                                        <div className="card-front absolute w-full h-full">
+                                            <div 
+                                                onClick={() => setShowAnswer(true)}
+                                                className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center"
+                                            >
+                                                <div>
+                                                    <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
+                                                    <div className="text-3xl font-bold text-center">{card.question}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="card-back absolute w-full h-full">
+                                            <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-3xl p-12 text-white shadow-2xl h-full flex items-center justify-center">
+                                                <div>
+                                                    <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
+                                                    <div className="text-2xl text-center">{card.answer}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {showAnswer ? (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button 
+                                            onClick={() => handleAnswer(false)}
+                                            className="bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl font-bold text-xl transition-all"
+                                        >
+                                            ❌ Didn't Know
+                                        </button>
+                                        <button 
+                                            onClick={() => handleAnswer(true)}
+                                            className="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold text-xl transition-all"
+                                        >
+                                            ✅ Knew It
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button 
+                                        onClick={() => setShowAnswer(true)}
+                                        className="w-full bg-white/20 hover:bg-white/30 text-white py-4 rounded-xl font-bold text-xl transition-all"
+                                    >
+                                        Show Answer
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'results') {
+                const accuracy = Math.round((sessionStats.correct / sessionStats.total) * 100);
+
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="max-w-2xl mx-auto p-6">
+                            <div className="bg-white rounded-3xl p-12 text-center">
+                                <div className="text-8xl mb-6">{accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div>
+                                <h2 className="text-5xl font-bold mb-4">Session Complete!</h2>
+                                <p className="text-2xl text-gray-600 mb-8">
+                                    {sessionStats.correct} / {sessionStats.total} correct ({accuracy}%)
+                                </p>
+                                
+                                <div className="bg-blue-50 rounded-xl p-6 mb-8">
+                                    <div className="text-4xl mb-2">🧠</div>
+                                    <div className="text-lg font-bold text-gray-800 mb-2">BKT is Learning!</div>
+                                    <div className="text-gray-600">Your mastery scores have been updated based on this session.</div>
+                                </div>
+
+                                <button 
+                                    onClick={() => setMode('overview')}
+                                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-xl hover:shadow-2xl transition-all"
+                                >
+                                    Back to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<BKTStudyApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

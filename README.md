@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Live Demo](https://studying.works) • [Report Bug](https://github.com/benpitt/studying.works/issues) • [Request Feature](https://github.com/benpitt/studying.works/issues)
+[Report Bug](https://github.com/benpitt/studying.works/issues) • [Request Feature](https://github.com/benpitt/studying.works/issues)
 
 <div align="center">
 

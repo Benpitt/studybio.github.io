@@ -109,7 +109,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 **[⬆ back to top](#-studyingworks)**
 
----
+
 
 © 2025 studying.works • [Terms](https://studying.works/terms.html) • [Privacy](https://studying.works/privacy.html) • [About](https://studying.works/about.html)
 

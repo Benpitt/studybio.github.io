@@ -331,17 +331,24 @@ ${text}
 REQUIREMENTS:
 1. Extract the 12 most important concepts, facts, or relationships from the text
 2. Questions must be clear, specific, and unambiguous
-3. Answers must be concise (1-3 sentences max) but complete
-4. Cover different cognitive levels: definitions, processes, comparisons, applications
-5. Avoid yes/no questions
-6. Use variety: "What", "How", "Why", "Describe", "Explain"
-7. Each card should be self-contained (answerable without other cards)
+3. Answers must be SHORT and PRECISE - just the core fact/term (1-10 words max)
+4. Answers should work as multiple choice options - avoid full sentences
+5. Cover different cognitive levels: definitions, processes, comparisons, applications
+6. Avoid yes/no questions
+7. Use variety: "What", "How", "Why", "Which", "When", "Who"
+8. Each card should be self-contained (answerable without other cards)
+
+ANSWER FORMAT EXAMPLES:
+- Question: "What organelle produces ATP?" → Answer: "Mitochondria"
+- Question: "When did World War II end?" → Answer: "1945"
+- Question: "Who wrote Romeo and Juliet?" → Answer: "William Shakespeare"
+- Question: "What is the capital of France?" → Answer: "Paris"
 
 OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
-{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer]"},{"question":"...","answer":"..."}]}
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Short, precise answer - 1-10 words]"},{"question":"...","answer":"..."}]}
 
 EXAMPLE OUTPUT STRUCTURE:
-{"cards":[{"question":"What is the primary function of mitochondria in eukaryotic cells?","answer":"Mitochondria generate ATP through cellular respiration, serving as the cell's powerhouse by converting glucose and oxygen into usable energy."},{"question":"How does the process of photosynthesis differ from cellular respiration?","answer":"Photosynthesis converts light energy into chemical energy (glucose) using CO2 and water, while cellular respiration breaks down glucose to release energy, producing CO2 and water as byproducts."}]}
+{"cards":[{"question":"What is the primary function of mitochondria?","answer":"ATP production"},{"question":"What process do plants use to convert light into energy?","answer":"Photosynthesis"}]}
 
 CRITICAL: Your response must contain ONLY the JSON object. No explanations, no markdown, no code blocks. Start with { and end with }`;
             } else if (mode === 'topic') {
@@ -365,18 +372,24 @@ ${difficultyInstructions}
 REQUIREMENTS:
 1. Cover the most essential concepts, facts, and relationships about this topic
 2. Questions must be clear, specific, and unambiguous - avoid vague phrasing
-3. Answers must be accurate, concise (2-4 sentences), and complete
-4. Progress logically from fundamental concepts to more complex ideas
-5. Include variety: definitions, processes, comparisons, applications, examples
-6. Avoid yes/no questions
-7. Each card must be self-contained and independently answerable
-8. Use academic but accessible language appropriate for the difficulty level
+3. Answers must be SHORT and PRECISE - just the core fact/term (1-10 words max)
+4. Answers should work as multiple choice options - avoid full sentences
+5. Progress logically from fundamental concepts to more complex ideas
+6. Include variety: definitions, processes, comparisons, applications, examples
+7. Avoid yes/no questions
+8. Each card must be self-contained and independently answerable
+9. Use academic but accessible language appropriate for the difficulty level
+
+ANSWER FORMAT - Keep answers SHORT:
+- "What is X?" → Answer with just the term/definition (e.g., "Mitochondria")
+- "When did X happen?" → Answer with date/time (e.g., "1945")
+- "Who did X?" → Answer with person's name (e.g., "Albert Einstein")
 
 OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
-{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer]"},{"question":"...","answer":"..."}]}
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Short, precise answer - 1-10 words]"},{"question":"...","answer":"..."}]}
 
 EXAMPLE OUTPUT STRUCTURE:
-{"cards":[{"question":"What is Newton's First Law of Motion?","answer":"An object at rest stays at rest and an object in motion stays in motion with the same speed and direction unless acted upon by an unbalanced force. This is also known as the law of inertia."},{"question":"How does inertia relate to an object's mass?","answer":"Inertia is directly proportional to mass. Objects with greater mass have more inertia, meaning they resist changes in their motion more strongly than objects with less mass."}]}
+{"cards":[{"question":"What is Newton's First Law also called?","answer":"Law of inertia"},{"question":"What force opposes motion between surfaces?","answer":"Friction"}]}
 
 CRITICAL: Your response must contain ONLY the JSON object. No explanations, no markdown formatting, no code blocks, no additional text. Start with { and end with }`;
             } else {

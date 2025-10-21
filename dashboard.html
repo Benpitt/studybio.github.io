@@ -1,216 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - studying.works | Your Study Hub</title>
-    <meta name="description" content="Access your personalized study dashboard with progress tracking, flashcards, quizzes, and AI-powered study tools.">
-    <meta name="robots" content="noindex, nofollow">
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
-    
-    <!-- Preconnect to Firebase CDN -->
-    <link rel="preconnect" href="https://www.gstatic.com">
-    <link rel="dns-prefetch" href="https://www.gstatic.com">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="global-styles.css">
-    <style>
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-        .animate-slide-in {
-            animation: slideIn 0.5s ease-out forwards;
-        }
-        .animate-pulse-custom {
-            animation: pulse 2s infinite;
-        }
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            background-size: 1000px 100%;
-            animation: shimmer 3s infinite;
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-    </style>
-</head>
-<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 " style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
-    <script src="auth-guard.js"></script>
-    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
-                        <span>🎓</span>
-                        <span>studying.works</span>
-                    </a>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="dashboard.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Dashboard</a>
-                        <a href="assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
-                        <a href="progress.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
-                        <a href="about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-2 bg-orange-500/20 px-4 py-2 rounded-full border border-orange-500/50">
-                        <span class="text-2xl animate-pulse-custom">🔥</span>
-                        <span class="text-white font-bold"><span id="streak">0</span> Day Streak</span>
-                    </div>
-                    <div class="relative group">
-                        <button class="flex items-center space-x-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all">
-                            <img id="user-photo" src="https://via.placeholder.com/40" alt="" class="w-8 h-8 rounded-full">
-                            <span id="user-name-nav" class="text-white font-semibold hidden md:block">User</span>
-                        </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                            <div class="p-4">
-                                <p id="user-email" class="text-sm text-gray-600 mb-3"></p>
-                                <button id="signout-btn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-all">
-                                    Sign Out
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+REPLACE LINES 214-238 IN YOUR DASHBOARD WITH THIS:
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        <div class="mb-8 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 id="greeting" class="text-5xl font-bold text-white mb-2">Welcome! 👋</h1>
-            <p class="text-xl text-blue-200">Ready to crush some studying?</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.2s; opacity: 0;">
-                <div class="text-5xl mb-2">🔥</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-streak">0</span></div>
-                <div class="text-orange-100 font-semibold">Day Streak</div>
-            </div>
-            <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.3s; opacity: 0;">
-                <div class="text-5xl mb-2">🎴</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-cards">0</span></div>
-                <div class="text-blue-100 font-semibold">Cards Reviewed</div>
-            </div>
-            <div class="bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.4s; opacity: 0;">
-                <div class="text-5xl mb-2">📝</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-quizzes">0</span></div>
-                <div class="text-green-100 font-semibold">Quizzes Taken</div>
-            </div>
-            <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.5s; opacity: 0;">
-                <div class="text-5xl mb-2">🎯</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-accuracy">0</span>%</div>
-                <div class="text-purple-100 font-semibold">Avg Accuracy</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-6">
-                <div class="animate-slide-in" style="animation-delay: 0.6s; opacity: 0;">
-                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
-                        <span>📚</span>
-                        <span class="ml-3">Your Subjects</span>
-                    </h2>
-
-                    <a href="custom-flashcards.html" class="block mb-6">
-                        <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">📚</div>
-                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
-                                        CUSTOM
-                                    </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">My Flashcards</h3>
-                                <p class="text-2xl text-amber-100 mb-4">Study Your Custom Decks</p>
-                                <p class="text-white/80 mb-6">5 study modes • Groups • Spaced repetition • Mistake bank</p>
-                                <div class="mt-6 bg-white text-orange-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-orange-100 transition-colors">
-                                    <span>Study Flashcards</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="bkt-study.html" class="block mb-6">
-                        <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🧠</div>
-                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
-                                        BETA
-                                    </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">BKT Smart Study</h3>
-                                <p class="text-2xl text-indigo-100 mb-4">AI Learning Algorithm</p>
-                                <p class="text-white/80 mb-6">Bayesian Knowledge Tracing • Adaptive intervals • Tracks mastery per concept</p>
-                                <div class="mt-6 bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-indigo-100 transition-colors">
-                                    <span>Study with BKT</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="ai-flashcards.html" class="block mb-6">
-                        <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🤖</div>
-                                    <div class="bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold text-sm flex items-center space-x-2 animate-pulse-custom">
-                                        <span>✨ AI</span>
-                                    </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">AI Generator</h3>
-                                <p class="text-2xl text-purple-100 mb-4">Let AI Create Flashcards</p>
-                                <p class="text-white/80 mb-6">Paste notes or enter topic • AI generates cards instantly • Save & study</p>
-                                <div class="mt-6 bg-white text-purple-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-purple-100 transition-colors">
-                                    <span>Generate with AI</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="community.html" class="block mb-6">
-                        <div class="bg-gradient-to-br from-cyan-600 to-blue-600 rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🌍</div>
-                                    <div class="bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold text-sm flex items-center space-x-2">
-                                        <span class="w-2 h-2 bg-green-900 rounded-full animate-pulse"></span>
-                                        <span>NEW!</span>
-                                    </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">Community Library</h3>
-                                <p class="text-2xl text-cyan-100 mb-4">Discover & Share Decks</p>
-                                <p class="text-white/80 mb-6">Browse flashcards from other students • Upload your own • Build together</p>
-                                <div class="mt-6 bg-white text-cyan-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-cyan-100 transition-colors">
-                                    <span>Explore Community</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
+                    <!-- Coming Soon Card (PROPERLY CLOSED) -->
                     <div class="bg-gradient-to-br from-green-600/50 to-teal-600/50 rounded-3xl p-8 relative overflow-hidden mb-6 opacity-60">
                         <div class="absolute inset-0 backdrop-blur-sm"></div>
                         <div class="relative z-10">
@@ -222,258 +12,59 @@
                             </div>
                             <h3 class="text-4xl font-bold text-white mb-2">Biology Quiz 3</h3>
                             <p class="text-xl text-white/60 mb-4">Available November</p>
-                        <p class="text-white/50">Based off Quiz 1 & Quiz 2 + New Material</p>
+                            <p class="text-white/50">Based off Quiz 1 & Quiz 2 + New Material</p>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="space-y-6">
-                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.7s; opacity: 0;"></div>
-
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.8s; opacity: 0;">
-                    <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
-                        <span>🏆</span>
-                        <span class="ml-2">Recent Achievements</span>
-                    </h3>
-                    <div id="achievements-list" class="space-y-3">
-                        <div class="text-center py-8 text-white/60">
-                            <div class="text-5xl mb-2">🎯</div>
-                            <p>Complete a quiz to unlock achievements!</p>
+                    <!-- Memory Games Card -->
+                    <a href="memory-games.html" class="block mb-6">
+                        <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl p-8 card-hover relative overflow-hidden group">
+                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="text-7xl">🎮</div>
+                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
+                                        NEW!
+                                    </div>
+                                </div>
+                                <h3 class="text-4xl font-bold text-white mb-2">Memory Games</h3>
+                                <p class="text-2xl text-purple-100 mb-4">Learn Through Play</p>
+                                <p class="text-white/80 mb-6">4 game modes • Memory match • Type race • Quiz arena</p>
+                                <div class="mt-6 bg-white text-purple-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-purple-100 transition-colors">
+                                    <span>Play Games</span>
+                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </a>
 
-                <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 card-hover animate-slide-in" style="animation-delay: 1s; opacity: 0;">
-                    <h3 class="text-2xl font-bold text-white mb-4">🚀 Quick Start</h3>
-                    <div class="space-y-2">
-                        <a href="custom-flashcards.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            ✏️ Create Flashcards
-                        </a>
-                        <a href="ai-flashcards.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            🤖 AI Generator
-                        </a>
-                        <a href="community.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            🌍 Browse Community
-                        </a>
-                        <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            ✅ Manage Tasks
-                        </a>
-                        <a href="progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            📊 View Progress
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        // Show dashboard immediately with cached data - don't wait for Firebase
-        const cachedUser = localStorage.getItem('userName');
-        if (cachedUser) {
-            console.log('Loading dashboard with cached data immediately');
-            showDashboard();
-        }
-
-        // Load Firebase in background
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
-            authDomain: "academie-9942b.firebaseapp.com",
-            projectId: "academie-9942b",
-            storageBucket: "academie-9942b.firebasestorage.app",
-            messagingSenderId: "1079518919325",
-            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        function showDashboard() {
-            // Get cached user info from localStorage
-            const userName = localStorage.getItem('userName') || 'Student';
-            const userEmail = localStorage.getItem('userEmail') || '';
-            const userPhoto = localStorage.getItem('userPhoto') || 'https://via.placeholder.com/40';
-            
-            document.getElementById('user-photo').src = userPhoto;
-            document.getElementById('user-name-nav').textContent = userName.split(' ')[0];
-            document.getElementById('user-email').textContent = userEmail;
-            
-            const greetings = [
-                { hour: 0, text: "Burning the midnight oil" },
-                { hour: 1, text: "Late night study session" },
-                { hour: 2, text: "Still going strong" },
-                { hour: 3, text: "Dedication level: legendary" },
-                { hour: 4, text: "Early bird catches the A+" },
-                { hour: 5, text: "Rise and grind" },
-                { hour: 6, text: "Good morning" },
-                { hour: 7, text: "Morning motivation time" },
-                { hour: 8, text: "Let's start the day strong" },
-                { hour: 9, text: "Good morning" },
-                { hour: 10, text: "Mid-morning momentum" },
-                { hour: 11, text: "Almost lunch time" },
-                { hour: 12, text: "Afternoon, let's do this" },
-                { hour: 13, text: "Perfect study time" },
-                { hour: 14, text: "Afternoon focus mode" },
-                { hour: 15, text: "Peak performance hours" },
-                { hour: 16, text: "After-school excellence" },
-                { hour: 17, text: "Evening study session" },
-                { hour: 18, text: "Dinner break soon" },
-                { hour: 19, text: "Prime study time" },
-                { hour: 20, text: "Evening grind" },
-                { hour: 21, text: "Night owl mode activated" },
-                { hour: 22, text: "Late night, bright mind" },
-                { hour: 23, text: "Almost midnight warrior" }
-            ];
-            
-            const hour = new Date().getHours();
-            const greeting = greetings.find(g => g.hour === hour) || greetings[12];
-            document.getElementById('greeting').textContent = `${greeting.text}, ${userName.split(' ')[0]}! 👋`;
-            
-            loadStats();
-        }
-
-        // Check authentication
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log('User authenticated:', user.email);
-                // Update localStorage
-                localStorage.setItem('userName', user.displayName);
-                localStorage.setItem('userEmail', user.email);
-                localStorage.setItem('userPhoto', user.photoURL);
-                localStorage.setItem('userId', user.uid);
-                showDashboard();
-            } else {
-                console.log('No user - checking localStorage');
-                // Check if we have cached login
-                const cachedUser = localStorage.getItem('userName');
-                if (!cachedUser) {
-                    // No cached user, redirect to login
-                    window.location.href = 'index.html';
-                } else {
-                    // Use cached data
-                    showDashboard();
-                }
-            }
-        });
-
-        // Sign out
-        document.getElementById('signout-btn').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                localStorage.clear();
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Sign out error:', error);
-            }
-        });
-
-        function loadStats() {
-            const streak = parseInt(localStorage.getItem('studyStreak') || '0');
-            const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
-            const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
-            const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
-            
-            document.getElementById('streak').textContent = streak;
-            document.getElementById('stat-streak').textContent = streak;
-            
-            const totalCards = Object.keys(cardHistory).length + customCards.length;
-            document.getElementById('stat-cards').textContent = totalCards;
-            
-            let totalTests = 0;
-            let totalCorrect = 0;
-            let totalQuestions = 0;
-            
-            Object.values(topicStats).forEach(stat => {
-                if (stat.total > 0) totalTests++;
-                totalCorrect += stat.correct || 0;
-                totalQuestions += stat.total || 0;
-            });
-            
-            document.getElementById('stat-quizzes').textContent = totalTests;
-            document.getElementById('stat-accuracy').textContent = totalQuestions > 0 
-                ? Math.round((totalCorrect / totalQuestions) * 100) 
-                : 0;
-
-            const bioStats = topicStats['Biological Molecules'] || { correct: 0, total: 0 };
-            const bioProgress = bioStats.total > 0 ? Math.round((bioStats.correct / bioStats.total) * 100) : 0;
-            const bioContainer = document.getElementById('bio-progress');
-            if (bioStats.total > 0) {
-                bioContainer.innerHTML = `
-                    <div class="bg-white/20 backdrop-blur rounded-lg px-4 py-2">
-                        <div class="text-xs text-white/80">Progress</div>
-                        <div class="text-xl font-bold text-white">${bioProgress}%</div>
-                    </div>
-                    <div class="bg-white/20 backdrop-blur rounded-lg px-4 py-2">
-                        <div class="text-xs text-white/80">Completed</div>
-                        <div class="text-xl font-bold text-white">${bioStats.correct}/${bioStats.total}</div>
-                    </div>
-                `;
-            }
-
-            const goal = totalCards > 0 ? Math.min(100, Math.round((totalCards / 20) * 100)) : 0;
-            const goalCard = document.getElementById('goal-card');
-            goalCard.innerHTML = `
-                <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
-                    <span>🎯</span>
-                    <span class="ml-2">Today's Goal</span>
-                </h3>
-                <p class="text-white/80 mb-4">${totalCards > 0 ? 'Keep reviewing!' : 'Review 20 flashcards'}</p>
-                <div class="bg-white/10 rounded-full h-4 overflow-hidden">
-                    <div class="bg-gradient-to-r from-green-400 to-teal-400 h-full rounded-full transition-all duration-1000" style="width: ${goal}%"></div>
-                </div>
-                <p class="text-white/60 text-sm mt-2">${totalCards} / 20 cards</p>
-            `;
-
-            loadAchievements(streak, totalCards, totalTests, totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0);
-        }
-
-        function loadAchievements(streak, cards, quizzes, accuracy) {
-            const achievements = [];
-            const container = document.getElementById('achievements-list');
-            
-            if (streak >= 1) achievements.push({ emoji: '🔥', name: 'First Day', desc: 'Study streak started!' });
-            if (streak >= 7) achievements.push({ emoji: '📅', name: 'Week Warrior', desc: '7 day streak!' });
-            if (streak >= 30) achievements.push({ emoji: '📆', name: 'Monthly Master', desc: '30 day streak!' });
-            if (cards >= 10) achievements.push({ emoji: '🎴', name: 'Getting Started', desc: '10+ cards reviewed' });
-            if (cards >= 50) achievements.push({ emoji: '📚', name: 'Half Century', desc: '50+ cards reviewed' });
-            if (cards >= 100) achievements.push({ emoji: '💯', name: 'Century Club', desc: '100+ cards!' });
-            if (quizzes >= 1) achievements.push({ emoji: '📝', name: 'Test Taker', desc: 'First quiz complete' });
-            if (quizzes >= 5) achievements.push({ emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes done' });
-            if (accuracy >= 90) achievements.push({ emoji: '⭐', name: 'Perfectionist', desc: '90%+ accuracy' });
-            if (accuracy >= 80) achievements.push({ emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy' });
-            
-            if (achievements.length > 0) {
-                container.innerHTML = achievements.slice(0, 3).map(a => `
-                    <div class="flex items-center space-x-3 p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-500/30">
-                        <div class="text-4xl">${a.emoji}</div>
-                        <div>
-                            <div class="font-bold text-white">${a.name}</div>
-                            <div class="text-xs text-white/70">${a.desc}</div>
+                    <!-- Mind Maps Card -->
+                    <a href="mind-maps.html" class="block mb-6">
+                        <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl p-8 card-hover relative overflow-hidden group">
+                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="text-7xl">🗺️</div>
+                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
+                                        NEW!
+                                    </div>
+                                </div>
+                                <h3 class="text-4xl font-bold text-white mb-2">Mind Maps</h3>
+                                <p class="text-2xl text-blue-100 mb-4">Visual Concept Maps</p>
+                                <p class="text-white/80 mb-6">3 layouts • Interactive • See connections • Spatial learning</p>
+                                <div class="mt-6 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-blue-100 transition-colors">
+                                    <span>Create Mind Map</span>
+                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
-            }
-        }
-    </script>
-    <footer class="bg-black/30 backdrop-blur-lg border-t border-white/10 py-8 mt-16">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-white/60 mb-4">© 2025 studying.works. All rights reserved.</p>
-            <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-6 mb-4">
-                <a href="dashboard.html" class="text-white/80 hover:text-white transition-all font-medium">🎓 Dashboard</a>
-                <a href="ai-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🤖 AI Generator</a>
-                <a href="custom-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🎴 My Flashcards</a>
-                <a href="community.html" class="text-white/80 hover:text-white transition-all font-medium">🌍 Community</a>
-            </div>
-            <div class="flex justify-center space-x-6 text-sm">
-                <a href="terms.html" class="text-white/60 hover:text-white transition-all">Terms of Service</a>
-                <a href="privacy.html" class="text-white/60 hover:text-white transition-all">Privacy Policy</a>
-                <a href="about.html" class="text-white/60 hover:text-white transition-all">About</a>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
+                    </a>
+
+ALSO ADD THESE TO THE QUICK START SIDEBAR (around line 268):
+
+                        <a href="memory-games.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
+                            🎮 Memory Games
+                        </a>
+                        <a href="mind-maps.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
+                            🗺️ Mind Maps
+                        </a>

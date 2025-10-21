@@ -14,7 +14,11 @@
 
 <div align="center">
 
-[![studying.works](https://socialify.git.ci/yourusername/studying-works/image?description=1&descriptionEditable=Turn%20study%20sessions%20into%20high%20scores&font=Raleway&language=1&name=1&owner=1&pattern=Circuit%20Board&theme=Dark)](https://studying.works)
+### 🎯 Live Preview
+
+<a href="https://studying.works">
+  <img src="https://img.shields.io/badge/🎓_Try_It_Live-studying.works-667eea?style=for-the-badge" alt="Try studying.works"/>
+</a>
 
 </div>
 

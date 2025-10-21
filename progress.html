@@ -30,8 +30,8 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 " style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
-    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto page-container pt-20 px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
                     <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
@@ -49,7 +49,7 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+    <div class="max-w-7xl mx-auto page-container pt-20 px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-8 animate-slide-in">
             <h1 class="text-5xl font-bold text-white mb-2">📊 Your Progress</h1>
             <p class="text-xl text-blue-200">Track your learning journey and celebrate milestones</p>
@@ -206,30 +206,69 @@
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             
-            const lastVisit = localStorage.getItem('lastVisit');
+            // Get actual study days from all progress data
             const studyDays = new Set();
-            if (lastVisit) {
-                const visitDate = new Date(lastVisit);
-                if (visitDate.getMonth() === currentMonth && visitDate.getFullYear() === currentYear) {
-                    studyDays.add(visitDate.getDate());
-                }
-            }
             
+            // Check progress entries (from quizzes)
+            const allProgress = JSON.parse(localStorage.getItem('progress') || '{}');
+            Object.values(allProgress).forEach(entries => {
+                if (Array.isArray(entries)) {
+                    entries.forEach(entry => {
+                        if (entry.date) {
+                            const date = new Date(entry.date);
+                            if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                                studyDays.add(date.getDate());
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Check flashcard reviews
+            const flashcardProgress = JSON.parse(localStorage.getItem('flashcardProgress') || '{}');
+            Object.values(flashcardProgress).forEach(card => {
+                if (card.lastReviewed) {
+                    const date = new Date(card.lastReviewed);
+                    if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                        studyDays.add(date.getDate());
+                    }
+                }
+            });
+            
+            // Check BKT reviews
+            const bktReviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
+            bktReviews.forEach(review => {
+                if (review.timestamp) {
+                    const date = new Date(review.timestamp);
+                    if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                        studyDays.add(date.getDate());
+                    }
+                }
+            });
+            
+            // Empty days for alignment
             for (let i = 0; i < firstDay; i++) {
                 const emptyDay = document.createElement('div');
                 calendar.appendChild(emptyDay);
             }
             
+            // Generate calendar days
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day aspect-square flex items-center justify-center rounded-lg text-white font-semibold cursor-pointer';
+                dayElement.className = 'calendar-day aspect-square flex items-center justify-center rounded-lg text-white font-semibold cursor-pointer transition-all';
                 
                 if (day === currentDay) {
                     dayElement.className += ' bg-blue-500 ring-2 ring-white';
-                } else if (studyDays.has(day) || day < currentDay) {
-                    dayElement.className += ' bg-green-500/80';
+                    dayElement.title = 'Today';
+                } else if (studyDays.has(day)) {
+                    dayElement.className += ' bg-green-500/80 hover:bg-green-500';
+                    dayElement.title = 'Studied this day!';
+                } else if (day < currentDay) {
+                    dayElement.className += ' bg-red-500/30 hover:bg-red-500/40';
+                    dayElement.title = 'Missed day';
                 } else {
-                    dayElement.className += ' bg-white/10';
+                    dayElement.className += ' bg-white/10 hover:bg-white/20';
+                    dayElement.title = 'Future day';
                 }
                 
                 dayElement.textContent = day;
@@ -239,19 +278,25 @@
 
         function generateTopicPerformance(topicStats) {
             const container = document.getElementById('topic-performance');
-            const topics = ['Biological Molecules', 'Atomic Structure', 'Water & Polarity', 'Data Analysis', 'Experimental Design'];
             
             if (Object.keys(topicStats).length === 0) {
                 container.innerHTML = '<p class="text-white/60 text-center py-8">Complete a quiz to see topic mastery!</p>';
                 return;
             }
             
+            // Get actual topics from stats
+            const topics = Object.keys(topicStats).filter(t => topicStats[t] && topicStats[t].total > 0);
+            
+            if (topics.length === 0) {
+                container.innerHTML = '<p class="text-white/60 text-center py-8">Complete a quiz to see topic mastery!</p>';
+                return;
+            }
+            
+            const colors = ['blue', 'green', 'yellow', 'purple', 'pink', 'orange', 'cyan', 'red', 'indigo'];
+            
             topics.forEach((topicName, index) => {
                 const stats = topicStats[topicName];
-                if (!stats || stats.total === 0) return;
-                
                 const percentage = Math.round((stats.correct / stats.total) * 100);
-                const colors = ['blue', 'green', 'yellow', 'purple', 'pink'];
                 const color = colors[index % colors.length];
                 
                 const div = document.createElement('div');
@@ -270,47 +315,67 @@
         }
 
         function generateAchievements(streak, cards, quizzes, correct, total) {
-            const achievements = [];
             const container = document.getElementById('achievements-grid');
-            
-            if (streak >= 1) achievements.push({ emoji: '🔥', name: 'First Day', desc: 'Study streak started' });
-            if (streak >= 3) achievements.push({ emoji: '📅', name: '3 Day Streak', desc: '3 days in a row' });
-            if (streak >= 7) achievements.push({ emoji: '🏅', name: 'Week Warrior', desc: '7 day streak' });
-            if (streak >= 14) achievements.push({ emoji: '💪', name: 'Fortnight Fighter', desc: '14 day streak' });
-            if (streak >= 30) achievements.push({ emoji: '📆', name: 'Monthly Master', desc: '30 day streak' });
-            if (streak >= 100) achievements.push({ emoji: '👑', name: 'Century King', desc: '100 day streak' });
-            
-            if (cards >= 10) achievements.push({ emoji: '🎴', name: 'Getting Started', desc: '10+ cards reviewed' });
-            if (cards >= 50) achievements.push({ emoji: '📚', name: 'Half Century', desc: '50+ cards reviewed' });
-            if (cards >= 100) achievements.push({ emoji: '💯', name: 'Century Club', desc: '100+ cards' });
-            if (cards >= 250) achievements.push({ emoji: '🌟', name: 'Super Studier', desc: '250+ cards' });
-            if (cards >= 500) achievements.push({ emoji: '⭐', name: 'Master Reviewer', desc: '500+ cards' });
-            
-            if (quizzes >= 1) achievements.push({ emoji: '📝', name: 'Test Taker', desc: 'First quiz complete' });
-            if (quizzes >= 5) achievements.push({ emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes' });
-            if (quizzes >= 10) achievements.push({ emoji: '🏆', name: 'Quiz Champion', desc: '10+ quizzes' });
-            if (quizzes >= 25) achievements.push({ emoji: '👨‍🎓', name: 'Quiz Expert', desc: '25+ quizzes' });
-            
             const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-            if (accuracy >= 70) achievements.push({ emoji: '🎯', name: 'Good Start', desc: '70%+ accuracy' });
-            if (accuracy >= 80) achievements.push({ emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy' });
-            if (accuracy >= 90) achievements.push({ emoji: '⭐', name: 'Perfectionist', desc: '90%+ accuracy' });
-            if (accuracy >= 95) achievements.push({ emoji: '💎', name: 'Near Perfect', desc: '95%+ accuracy' });
-            if (accuracy === 100) achievements.push({ emoji: '🏅', name: 'Flawless', desc: '100% accuracy' });
             
-            if (achievements.length === 0) {
-                container.innerHTML = '<div class="col-span-3 text-center py-8 text-white/60">Complete activities to unlock achievements!</div>';
-                return;
-            }
+            // Define ALL achievements with unlock requirements
+            const allAchievements = [
+                // Streak achievements
+                { emoji: '🔥', name: 'First Day', desc: 'Study streak started', unlocked: streak >= 1, requirement: '1 day streak' },
+                { emoji: '📅', name: '3 Day Streak', desc: '3 days in a row', unlocked: streak >= 3, requirement: '3 day streak' },
+                { emoji: '🏅', name: 'Week Warrior', desc: '7 day streak', unlocked: streak >= 7, requirement: '7 day streak' },
+                { emoji: '💪', name: 'Fortnight Fighter', desc: '14 day streak', unlocked: streak >= 14, requirement: '14 day streak' },
+                { emoji: '📆', name: 'Monthly Master', desc: '30 day streak', unlocked: streak >= 30, requirement: '30 day streak' },
+                { emoji: '👑', name: 'Century King', desc: '100 day streak', unlocked: streak >= 100, requirement: '100 day streak' },
+                
+                // Card review achievements
+                { emoji: '🎴', name: 'Getting Started', desc: '10+ cards reviewed', unlocked: cards >= 10, requirement: 'Review 10 cards' },
+                { emoji: '📚', name: 'Half Century', desc: '50+ cards reviewed', unlocked: cards >= 50, requirement: 'Review 50 cards' },
+                { emoji: '💯', name: 'Century Club', desc: '100+ cards', unlocked: cards >= 100, requirement: 'Review 100 cards' },
+                { emoji: '🌟', name: 'Super Studier', desc: '250+ cards', unlocked: cards >= 250, requirement: 'Review 250 cards' },
+                { emoji: '⭐', name: 'Master Reviewer', desc: '500+ cards', unlocked: cards >= 500, requirement: 'Review 500 cards' },
+                { emoji: '💎', name: 'Legend', desc: '1000+ cards', unlocked: cards >= 1000, requirement: 'Review 1000 cards' },
+                
+                // Quiz achievements
+                { emoji: '📝', name: 'Test Taker', desc: 'First quiz complete', unlocked: quizzes >= 1, requirement: 'Complete 1 quiz' },
+                { emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes', unlocked: quizzes >= 5, requirement: 'Complete 5 quizzes' },
+                { emoji: '🏆', name: 'Quiz Champion', desc: '10+ quizzes', unlocked: quizzes >= 10, requirement: 'Complete 10 quizzes' },
+                { emoji: '👨‍🎓', name: 'Quiz Expert', desc: '25+ quizzes', unlocked: quizzes >= 25, requirement: 'Complete 25 quizzes' },
+                { emoji: '🎓', name: 'Quiz Legend', desc: '50+ quizzes', unlocked: quizzes >= 50, requirement: 'Complete 50 quizzes' },
+                
+                // Accuracy achievements
+                { emoji: '🎯', name: 'Good Start', desc: '70%+ accuracy', unlocked: accuracy >= 70, requirement: 'Get 70% accuracy' },
+                { emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy', unlocked: accuracy >= 80, requirement: 'Get 80% accuracy' },
+                { emoji: '⭐', name: 'Perfectionist', desc: '90%+ accuracy', unlocked: accuracy >= 90, requirement: 'Get 90% accuracy' },
+                { emoji: '💎', name: 'Near Perfect', desc: '95%+ accuracy', unlocked: accuracy >= 95, requirement: 'Get 95% accuracy' },
+                { emoji: '🏅', name: 'Flawless', desc: '100% accuracy', unlocked: accuracy === 100, requirement: 'Get 100% accuracy' }
+            ];
             
-            achievements.forEach(a => {
+            container.innerHTML = '';
+            
+            allAchievements.forEach(a => {
                 const div = document.createElement('div');
-                div.className = 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 text-center border border-yellow-500/30';
-                div.innerHTML = `
-                    <div class="text-5xl mb-2">${a.emoji}</div>
-                    <div class="text-white font-bold text-sm">${a.name}</div>
-                    <div class="text-white/80 text-xs">${a.desc}</div>
-                `;
+                
+                if (a.unlocked) {
+                    // Unlocked - colorful and glowing
+                    div.className = 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 text-center border border-yellow-500/30 hover:scale-105 transition-transform cursor-pointer';
+                    div.innerHTML = `
+                        <div class="text-5xl mb-2 animate-bounce">${a.emoji}</div>
+                        <div class="text-white font-bold text-sm">${a.name}</div>
+                        <div class="text-white/80 text-xs">${a.desc}</div>
+                        <div class="mt-2 text-green-400 text-xs font-bold">✓ UNLOCKED</div>
+                    `;
+                } else {
+                    // Locked - greyed out
+                    div.className = 'bg-white/5 rounded-xl p-4 text-center border border-white/10 opacity-50 cursor-not-allowed';
+                    div.innerHTML = `
+                        <div class="text-5xl mb-2 grayscale">${a.emoji}</div>
+                        <div class="text-white/50 font-bold text-sm">${a.name}</div>
+                        <div class="text-white/40 text-xs">${a.desc}</div>
+                        <div class="mt-2 text-white/40 text-xs">🔒 ${a.requirement}</div>
+                    `;
+                }
+                
                 container.appendChild(div);
             });
         }

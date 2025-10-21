@@ -86,22 +86,6 @@
 [OpenAI](https://openai.com/) 
 
 
-## 🎯 Roadmap
-```mermaid
-gantt
-    title Development Roadmap
-    dateFormat  YYYY-MM
-    section Core
-    Initial Release           :done, 2025-01, 30d
-    Mobile App               :active, 2025-02, 60d
-    section AI
-    GPT-4 Integration        :2025-03, 45d
-    Advanced BKT Model       :2025-04, 30d
-    section Social
-    Study Groups             :2025-05, 45d
-    Leaderboards            :2025-06, 30d
-```
-
 ---
 
 ## 🌐 Browser Support

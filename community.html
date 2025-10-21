@@ -71,6 +71,29 @@
         const userId = localStorage.getItem('userId');
         const userName = localStorage.getItem('userName') || 'Anonymous';
         const userEmail = localStorage.getItem('userEmail') || '';
+        
+        // Admin whitelist
+        const ADMIN_EMAILS = ['hocquetb@winchesterthurston.org'];
+        const isAdmin = ADMIN_EMAILS.includes(userEmail);
+
+        async function deleteCommunityDeck(deckId) {
+            if (!isAdmin) {
+                alert('Admin access required');
+                return;
+            }
+            
+            if (!confirm('Delete this community deck? This cannot be undone.')) return;
+            
+            try {
+                await deleteDoc(doc(db, 'communityDecks', deckId));
+                alert('Deck deleted successfully');
+                await loadDecks();
+            } catch (error) {
+                alert('Error deleting deck: ' + error.message);
+            }
+        }
+        
+        window.deleteCommunityDeck = deleteCommunityDeck;
 
         async function loadDecks() {
             try {
@@ -215,9 +238,16 @@
                                             👤 ${deck.author}<br>
                                             🎴 ${deck.cards.length} cards • 📥 ${deck.downloads} downloads
                                         </div>
-                                        <button onclick="window.downloadDeck(${JSON.stringify(deck).replace(/"/g, '&quot;')})" class="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:shadow-lg transition-all">
-                                            📥 Download
-                                        </button>
+                                        <div class="flex gap-2">
+                                            <button onclick="window.downloadDeck(${JSON.stringify(deck).replace(/"/g, '&quot;')})" class="flex-1 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:shadow-lg transition-all">
+                                                📥 Download
+                                            </button>
+                                            ${isAdmin ? `
+                                                <button onclick="window.deleteCommunityDeck('${deck.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold transition-all">
+                                                    🗑️
+                                                </button>
+                                            ` : ''}
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>

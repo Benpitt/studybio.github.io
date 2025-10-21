@@ -121,7 +121,8 @@
                 }
             }, [speedActive, speedTimeLeft]);
 
-            // Insert after "// PASTE PART 2 HERE" in Part 1
+            // PASTE PART 2 HERE - Storage functions
+            
 
 function loadDecks() {
     const saved = localStorage.getItem('flashcardDecks');
@@ -220,7 +221,7 @@ function addToMistakes(card) {
     }
 }
 
-// Insert after "// PASTE PART 3 HERE" in Part 2
+// PASTE PART 3 HERE - Mode initialization functions
 
 function startMode(modeType, deck = null, group = null) {
     setCurrentDeck(deck);
@@ -341,66 +342,8 @@ function handleSpeedAnswer(answer) {
     }
 }
 
-// Insert after "// PASTE PART 4 HERE" in Part 3
-
-if (mode === 'decks') {
-    return (
-        <div className="min-h-screen">
-            <Navigation />
-            <div className="pt-20 p-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-5xl font-bold text-white">📚 My Flashcards</h1>
-                        <div className="flex gap-3">
-                            <button onClick={createGroup} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-bold transition-all">
-                                ➕ New Group
-                            </button>
-                            <a href="ai-flashcards.html" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-2xl text-white px-6 py-3 rounded-xl font-bold transition-all">
-                                🤖 Create with AI
-                            </a>
-                        </div>
-                    </div>
-
-                    {groups.length > 0 && (
-                        <div className="mb-8">
-                            <h2 className="text-3xl font-bold text-white mb-4">📁 Groups</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {groups.map(group => {
-                                    const groupDecks = decks.filter(d => group.deckIds.includes(d.id));
-                                    const totalCards = groupDecks.reduce((sum, d) => sum + d.cards.length, 0);
-                                    return (
-                                        <div key={group.id} className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">
-                                            <div className="flex justify-between items-start mb-3">
-                                                <h3 className="text-2xl font-bold">📁 {group.name}</h3>
-                                                <button onClick={() => deleteGroup(group.id)} className="text-white/70 hover:text-white">❌</button>
-                                            </div>
-                                            <p className="text-white/80 mb-4">{groupDecks.length} decks • {totalCards} cards</p>
-                                            <button onClick={() => setMode('menu-g-' + group.id)} className="w-full bg-white text-purple-600 py-2 rounded-lg font-bold hover:bg-purple-50 transition-all">
-                                                Study Group →
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    <h2 className="text-3xl font-bold text-white mb-4">🎴 All Decks</h2>
-                    {decks.length === 0 ? (
-                        <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
-                            <div className="text-8xl mb-4">📚</div>
-                            <h3 className="text-2xl font-bold text-white mb-4">No decks yet!</h3>
-                            <p className="text-white/70 mb-6">Create your first deck with AI</p>
-                            <a href="ai-flashcards.html" className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
-                                🤖 Create with AI
-                            </a>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {decks.map(deck => (
-                                <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all">
-                                    <div className="flex justify-between items-start mb-3">
-                                        <h3 className="text-2xl font-bold text-gray-800">{deck.title}</h3>
+// PASTE PART 4 HERE - Render functions (Decks Library)
+y-800">{deck.title}</h3>
                                         <button onClick={() => deleteDeck(deck.id)} className="text-red-500 hover:text-red-700">🗑️</button>
                                     </div>
                                     <p className="text-gray-600 mb-2">{deck.subject || 'General'}</p>
@@ -434,15 +377,44 @@ if (mode === 'decks') {
     );
 }
 
-// Insert after "// PASTE PART 5 HERE" in Part 4
+// PASTE PART 5 HERE - Menu view
+80 mb-4">{groupDecks.length} decks • {totalCards} cards</p>
+                                            <button onClick={() => setMode('menu-g-' + group.id)} className="w-full bg-white text-purple-600 py-2 rounded-lg font-bold hover:bg-purple-50 transition-all">
+                                                Study Group →
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
 
-if (mode.startsWith('menu-')) {
-    const parts = mode.split('-');
-    const type = parts[1]; // 'g' or 'd'
-    const id = parseInt(parts[2]);
-    
-    const isGroup = type === 'g';
-    const group = isGroup ? groups.find(g => g.id === id) : null;
+                    <h2 className="text-3xl font-bold text-white mb-4">🎴 All Decks</h2>
+                    {decks.length === 0 ? (
+                        <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
+                            <div className="text-8xl mb-4">📚</div>
+                            <h3 className="text-2xl font-bold text-white mb-4">No decks yet!</h3>
+                            <p className="text-white/70 mb-6">Create your first deck with AI</p>
+                            <a href="ai-flashcards.html" className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
+                                🤖 Create with AI
+                            </a>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {decks.map(deck => (
+                                <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className="text-2xl font-bold text-gra          <div className="text-sm opacity-80">To library</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// PASTE PART 6 HERE - Flashcards and Practice modes
+ull;
     const deck = !isGroup ? decks.find(d => d.id === id) : null;
     const entity = group || deck;
     
@@ -504,149 +476,7 @@ if (mode.startsWith('menu-')) {
                         <button onClick={() => setMode('decks')} className="bg-gradient-to-br from-gray-700 to-gray-900 hover:scale-105 p-8 rounded-2xl text-white transition-all">
                             <div className="text-6xl mb-3">📚</div>
                             <div className="text-2xl font-bold">Back</div>
-                            <div className="text-sm opacity-80">To library</div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// Insert after "// PASTE PART 6 HERE" in Part 5
-
-if (mode === 'flashcards') {
-    if (shuffledCards.length === 0 || currentCard >= shuffledCards.length) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="text-8xl mb-4">🎉</div>
-                    <h2 className="text-4xl font-bold text-white mb-4">Session Complete!</h2>
-                    <button onClick={() => setMode('decks')} className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl">
-                        Back to Library
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    const card = shuffledCards[currentCard];
-    const difficulty = cardDifficulty[card.id] || 'medium';
-
-    return (
-        <div className="min-h-screen">
-            <Navigation />
-            <div className="pt-20 p-6">
-                <div className="max-w-4xl mx-auto">
-                    <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
-
-                    <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white">
-                        <div className="flex justify-between items-center">
-                            <span>Card {currentCard + 1} / {shuffledCards.length}</span>
-                            <span>Difficulty: {difficulty === 'hard' ? '🔴' : difficulty === 'medium' ? '🟡' : '🟢'} {difficulty}</span>
-                        </div>
-                    </div>
-
-                    <div className={`flip-card ${showAnswer ? 'flipped' : ''}`}>
-                        <div className="flip-card-inner relative" style={{minHeight: '400px'}}>
-                            <div className="flip-card-front absolute w-full h-full">
-                                <div onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                    <div>
-                                        <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
-                                        <div className="text-3xl font-bold text-center">{card.question}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flip-card-back absolute w-full h-full">
-                                <div onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-br from-green-500 to-teal-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                    <div>
-                                        <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
-                                        <div className="text-2xl text-center">{card.answer}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {showAnswer && (
-                        <div className="mt-6 space-y-3">
-                            <div className="text-center text-white mb-4">How well did you know this?</div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <button onClick={() => { markDifficulty(card.id, 'hard'); addToMistakes(card); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
-                                    className="bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl font-bold">
-                                    🔴 Hard
-                                </button>
-                                <button onClick={() => { markDifficulty(card.id, 'medium'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
-                                    className="bg-yellow-500 hover:bg-yellow-600 text-white py-4 rounded-xl font-bold">
-                                    🟡 Medium
-                                </button>
-                                <button onClick={() => { markDifficulty(card.id, 'easy'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
-                                    className="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold">
-                                    🟢 Easy
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-}
-
-if (mode === 'practice') {
-    if (testSubmitted) {
-        const mistakes = testQuestions.filter((q, idx) => {
-            const userAns = testAnswers[q.id];
-            const isCorrect = userAns === q.answer;
-            if (!isCorrect) addToMistakes(q);
-            return !isCorrect;
-        });
-        const correct = testQuestions.length - mistakes.length;
-        const percentage = Math.round((correct / testQuestions.length) * 100);
-
-        return (
-            <div className="min-h-screen">
-                <Navigation />
-                <div className="pt-20 p-6">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="bg-white rounded-3xl p-12">
-                            <div className="text-center mb-8">
-                                <div className="text-8xl mb-6">{percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}</div>
-                                <h2 className="text-5xl font-bold mb-4">Score: {percentage}%</h2>
-                                <p className="text-2xl text-gray-600 mb-4">{correct} / {testQuestions.length} correct</p>
-                            </div>
-                            
-                            {mistakes.length > 0 && (
-                                <div className="mb-8">
-                                    <h3 className="text-2xl font-bold mb-4 text-red-600">Review Mistakes ({mistakes.length})</h3>
-                                    <div className="space-y-4">
-                                        {mistakes.map((q, idx) => {
-                                            const userAns = testAnswers[q.id];
-                                            return (
-                                                <div key={q.id} className="p-6 rounded-xl bg-red-50 border-2 border-red-200">
-                                                    <div className="font-bold text-lg mb-3">{q.question}</div>
-                                                    <div className="space-y-2">
-                                                        {q.choices.map((choice, cIdx) => (
-                                                            <div key={cIdx} className={`p-3 rounded-lg ${
-                                                                choice === q.answer ? 'bg-green-100 border-2 border-green-500' :
-                                                                choice === userAns ? 'bg-red-100 border-2 border-red-500' :
-                                                                'bg-white border border-gray-200'
-                                                            }`}>
-                                                                {choice === q.answer && <span className="mr-2">✅</span>}
-                                                                {choice === userAns && choice !== q.answer && <span className="mr-2">❌</span>}
-                                                                {choice}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="flex gap-4">
-                                <button onClick={() => setMode('decks')} className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-purple-700">
+                  ={() => setMode('decks')} className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-purple-700">
                                     Back to Library
                                 </button>
                                 {mistakes.length > 0 && (
@@ -707,42 +537,54 @@ if (mode === 'practice') {
     );
 }
 
-// Insert after "// PASTE PART 7 HERE" in Part 6
+// PASTE PART 7 HERE - Match, Speed, and Mistakes modes
+                               {choice === q.answer && <span className="mr-2">✅</span>}
+                                                                {choice === userAns && choice !== q.answer && <span className="mr-2">❌</span>}
+                                                                {choice}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
 
-if (mode === 'match') {
-    const allMatched = matchedPairs.length === matchPairs.length / 2;
+                            <div className="flex gap-4">
+                                <button onClicksName="text-white/80 hover:text-white mb-6">← Back</button>
 
-    if (allMatched) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="text-8xl mb-4">🎉</div>
-                    <h2 className="text-4xl font-bold text-white mb-4">Perfect Match!</h2>
-                    <p className="text-2xl text-blue-200 mb-6">Score: {matchScore} | Attempts: {matchAttempts}</p>
-                    <button onClick={() => setMode('decks')} className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl">
-                        Back to Library
-                    </button>
+                    <h2 className="text-4xl font-bold text-white mb-6">❌ Mistake Bank</h2>
+
+                    {mistakeBank.length === 0 ? (
+                        <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
+                            <div className="text-8xl mb-4">✅</div>
+                            <h3 className="text-2xl font-bold text-white">No mistakes yet!</h3>
+                            <p className="text-white/70 mt-2">Cards you get wrong will appear here</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {mistakeBank.map(card => (
+                                <div key={card.id} className="bg-white rounded-xl p-6">
+                                    <div className="font-bold text-xl mb-2">{card.question}</div>
+                                    <div className="text-gray-600">{card.answer}</div>
+                                </div>
+                            ))}
+                            <button onClick={() => {
+                                setMistakeBank([]);
+                                localStorage.setItem('customFlashcardMistakes', JSON.stringify([]));
+                            }} className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold">
+                                Clear Mistake Bank
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
+}
 
-    return (
-        <div className="min-h-screen">
-            <Navigation />
-            <div className="pt-20 p-6">
-                <div className="max-w-6xl mx-auto">
-                    <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
-
-                    <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white flex justify-between">
-                        <span>Score: {matchScore}</span>
-                        <span>Attempts: {matchAttempts}</span>
-                        <span>Matched: {matchedPairs.length} / {matchPairs.length / 2}</span>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {matchPairs.map(pair => {
-                            const isMatched = matchedPairs.includes(pair.pairId);
+Matched = matchedPairs.includes(pair.pairId);
                             const isSelected = selectedMatch?.id === pair.id;
                             return (
                                 <button
@@ -866,54 +708,7 @@ if (mode === 'mistakes') {
             <Navigation />
             <div className="pt-20 p-6">
                 <div className="max-w-4xl mx-auto">
-                    <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
-
-                    <h2 className="text-4xl font-bold text-white mb-6">❌ Mistake Bank</h2>
-
-                    {mistakeBank.length === 0 ? (
-                        <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
-                            <div className="text-8xl mb-4">✅</div>
-                            <h3 className="text-2xl font-bold text-white">No mistakes yet!</h3>
-                            <p className="text-white/70 mt-2">Cards you get wrong will appear here</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {mistakeBank.map(card => (
-                                <div key={card.id} className="bg-white rounded-xl p-6">
-                                    <div className="font-bold text-xl mb-2">{card.question}</div>
-                                    <div className="text-gray-600">{card.answer}</div>
-                                </div>
-                            ))}
-                            <button onClick={() => {
-                                setMistakeBank([]);
-                                localStorage.setItem('customFlashcardMistakes', JSON.stringify([]));
-                            }} className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold">
-                                Clear Mistake Bank
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-}
-
-return null;
-// END OF APP - Close the CustomFlashcardsApp function here
- - Match, Speed, and Mistakes modes
- - Flashcards and Practice modes
- - Menu view
- - Render functions (Decks Library)
- - Mode initialization functions
- - Storage functions
-            
-        }
-
-        ReactDOM.render(<CustomFlashcardsApp />, document.getElementById('root'));
-    </script>
-</body>
-</html>
-
+                    <button onClick={() => setMode('decks')} clas
         }
 
         ReactDOM.render(<CustomFlashcardsApp />, document.getElementById('root'));

@@ -2,7 +2,7 @@
 
 # 🎓 studying.works
 
-### Turn study sessions into high scores
+### Built for every kind of learner.
 
 [![Made with React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](https://react.dev/)
 [![Styled with Tailwind](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)

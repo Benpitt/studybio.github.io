@@ -86,18 +86,18 @@ python -m http.server 8000
 *Badrinath, A., Wang, F., Pardos, Z. (2021). pyBKT: An Accessible Python Library of Bayesian Knowledge Tracing Models.*
 
 ### 🎨 Design Resources
-- [Lucide Icons](https://lucide.dev/) - Beautiful icon set
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Google Fonts](https://fonts.google.com/) - Typography
+[Lucide Icons](https://lucide.dev/) - Beautiful icon set
+[Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+[Google Fonts](https://fonts.google.com/) - Typography
 
 ### 📚 Inspiration
-- [Anki](https://apps.ankiweb.net/) - Spaced repetition pioneer
-- [Quizlet](https://quizlet.com/) - Study platform innovation
-- [Khan Academy](https://www.khanacademy.org/) - Adaptive learning
+[Anki](https://apps.ankiweb.net/) - Spaced repetition pioneer
+[Quizlet](https://quizlet.com/) - Study platform innovation
+[Khan Academy](https://www.khanacademy.org/) - Adaptive learning
 
 ### 🤖 AI Services
-- [Anthropic Claude](https://www.anthropic.com/claude) - AI flashcard generation
-- [OpenAI](https://openai.com/) - Natural language processing
+[Anthropic Claude](https://www.anthropic.com/claude) 
+[OpenAI](https://openai.com/) 
 
 ---
 

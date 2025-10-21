@@ -14,9 +14,8 @@
 
 <div align="center">
 
-[![studying.works](https://og-image.vercel.app/**studying.works**.png?theme=dark&md=1&fontSize=100px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fvercel-triangle-white.svg)](https://studying.works)
+[![studying.works](https://socialify.git.ci/yourusername/studying-works/image?description=1&descriptionEditable=Turn%20study%20sessions%20into%20high%20scores&font=Raleway&language=1&name=1&owner=1&pattern=Circuit%20Board&theme=Dark)](https://studying.works)
 
-</div>
 </div>
 
 ---

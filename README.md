@@ -99,16 +99,6 @@ python -m http.server 8000
 [Anthropic Claude](https://www.anthropic.com/claude) 
 [OpenAI](https://openai.com/) 
 
----
-
-## 📖 Documentation
-
-📘 [User Guide](docs/USER_GUIDE.md)  
-🔧 [BKT Setup](docs/BKT_SETUP.md)  
-🏗️ [Architecture](docs/ARCHITECTURE.md)  
-🤝 [Contributing](CONTRIBUTING.md)  
-
----
 
 ## 🎯 Roadmap
 ```mermaid

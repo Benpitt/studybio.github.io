@@ -10,6 +10,39 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9cXaG02ijAVC79di00TvJglrmHesNU7U",
+            authDomain: "studying-works-d6c29.firebaseapp.com",
+            projectId: "studying-works-d6c29",
+            storageBucket: "studying-works-d6c29.firebasestorage.app",
+            messagingSenderId: "516007744934",
+            appId: "1:516007744934:web:69855ceeda0dc6baae7aae"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Make Firebase available globally
+        window.db = db;
+        window.auth = auth;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseOrderBy = orderBy;
+        window.firebaseServerTimestamp = serverTimestamp;
+        window.firebaseReady = true;
+    </script>
+    
     <style>
         .mastery-bar {
             transition: width 0.5s ease-out;
@@ -124,21 +157,39 @@
                 localStorage.setItem('bkt_mastery_scores', JSON.stringify(updated));
             }
 
-            function recordBKTReview(cardId, correct, responseTime) {
+            async function recordBKTReview(cardId, correct, responseTime) {
                 const skill = skills[cardId];
+                const userId = localStorage.getItem('userId');
+                
                 const review = {
-                    user_id: localStorage.getItem('userId'),
+                    userId: userId,
                     skill: skill,
                     correct: correct ? 1 : 0,
-                    timestamp: new Date().toISOString(),
-                    card_id: cardId,
-                    response_time: responseTime
+                    timestamp: window.firebaseServerTimestamp(),
+                    cardId: cardId,
+                    responseTime: responseTime,
+                    
+                    // Extra context for analysis
+                    timeOfDay: new Date().getHours(),
+                    dayOfWeek: new Date().getDay()
                 };
                 
-                // Save to localStorage (will be Firestore later)
-                const reviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
-                reviews.push(review);
-                localStorage.setItem('bkt_reviews', JSON.stringify(reviews));
+                try {
+                    // Save to Firestore
+                    await window.firebaseAddDoc(window.firebaseCollection(window.db, 'bkt_reviews'), review);
+                    console.log('✅ Review saved to Firebase:', review);
+                    
+                    // Also keep local backup
+                    const reviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
+                    reviews.push({...review, timestamp: new Date().toISOString()});
+                    localStorage.setItem('bkt_reviews', JSON.stringify(reviews));
+                } catch (error) {
+                    console.error('❌ Error saving review:', error);
+                    // Fallback to localStorage only
+                    const reviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
+                    reviews.push({...review, timestamp: new Date().toISOString()});
+                    localStorage.setItem('bkt_reviews', JSON.stringify(reviews));
+                }
                 
                 // Update mastery score
                 updateMasteryScore(skill, correct);

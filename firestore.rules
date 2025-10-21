@@ -77,6 +77,28 @@ service cloud.firestore {
                     && resource.data.userId == request.auth.uid;
     }
     
+    // BKT Reviews Collection
+    match /bkt_reviews/{reviewId} {
+      // Users can read all reviews (for analytics)
+      allow read: if isSignedIn();
+      
+      // Users can only create reviews for themselves
+      allow create: if isSignedIn() 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['userId', 'skill', 'correct', 'timestamp', 'cardId', 'responseTime'])
+                    && request.resource.data.correct in [0, 1]
+                    && request.resource.data.responseTime >= 0;
+      
+      // No updates or deletes (immutable review history)
+      allow update, delete: if false;
+    }
+    
+    // User Mastery Scores Collection  
+    match /user_mastery_scores/{userId} {
+      // Users can only read/write their own mastery scores
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+    
     // Block all other access
     match /{document=**} {
       allow read, write: if false;

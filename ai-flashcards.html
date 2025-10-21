@@ -13,11 +13,11 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="loading-animations.css">
 </head>
-<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;"> style="min-height: 100vh;">
+<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
     <script src="toast-notifications.js"></script>
     <script src="auth-guard.js"></script>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto page-container px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
                     <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2">
@@ -35,7 +35,7 @@
         </div>
     </nav>
 
-    <div class="pt-20 p-4 pb-20">
+    <div class="pt-24 p-4 pb-20">
         <div class="max-w-6xl mx-auto">
             <!-- Header -->
             <div class="text-center mb-8">
@@ -333,16 +333,29 @@ REQUIREMENTS:
 1. Extract the 12 most important concepts, facts, or relationships from the text
 2. Questions must be clear, specific, and unambiguous
 3. Answers must be concise (1-3 sentences max) but complete
-4. Cover different cognitive levels: definitions, processes, comparisons, applications
-5. Avoid yes/no questions
-6. Use variety: "What", "How", "Why", "Describe", "Explain"
-7. Each card should be self-contained (answerable without other cards)
+4. CRITICAL: Answers should be direct and not repeat the question. Instead of "Berlin fell in 1945", write "1945" or "The city fell in 1945"
+5. Cover different cognitive levels: definitions, processes, comparisons, applications
+6. Avoid yes/no questions
+7. Use variety: "What", "How", "Why", "Describe", "Explain", "When", "Where"
+8. Each card should be self-contained (answerable without other cards)
+9. For date/name/fact questions, answers should be brief and direct
 
 OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
-{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer]"},{"question":"...","answer":"..."}]}
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, direct answer without repeating question words]"},{"question":"...","answer":"..."}]}
 
-EXAMPLE OUTPUT STRUCTURE:
-{"cards":[{"question":"What is the primary function of mitochondria in eukaryotic cells?","answer":"Mitochondria generate ATP through cellular respiration, serving as the cell's powerhouse by converting glucose and oxygen into usable energy."},{"question":"How does the process of photosynthesis differ from cellular respiration?","answer":"Photosynthesis converts light energy into chemical energy (glucose) using CO2 and water, while cellular respiration breaks down glucose to release energy, producing CO2 and water as byproducts."}]}
+GOOD EXAMPLES:
+{"cards":[
+  {"question":"When did World War II end in Europe?","answer":"May 8, 1945"},
+  {"question":"What is the capital of France?","answer":"Paris"},
+  {"question":"What is the primary function of mitochondria?","answer":"Generating ATP through cellular respiration to power cellular processes"},
+  {"question":"How does photosynthesis differ from respiration?","answer":"Photosynthesis converts light energy into glucose using CO2 and water, while respiration breaks down glucose to release energy"}
+]}
+
+BAD EXAMPLES (DO NOT DO THIS):
+{"cards":[
+  {"question":"When did World War II end?","answer":"World War II ended in 1945"},
+  {"question":"What is the capital of France?","answer":"The capital of France is Paris"}
+]}
 
 CRITICAL: Your response must contain ONLY the JSON object. No explanations, no markdown, no code blocks. Start with { and end with }`;
             } else if (mode === 'topic') {
@@ -366,18 +379,28 @@ ${difficultyInstructions}
 REQUIREMENTS:
 1. Cover the most essential concepts, facts, and relationships about this topic
 2. Questions must be clear, specific, and unambiguous - avoid vague phrasing
-3. Answers must be accurate, concise (2-4 sentences), and complete
-4. Progress logically from fundamental concepts to more complex ideas
-5. Include variety: definitions, processes, comparisons, applications, examples
-6. Avoid yes/no questions
-7. Each card must be self-contained and independently answerable
-8. Use academic but accessible language appropriate for the difficulty level
+3. Answers must be accurate, concise (1-3 sentences), and complete
+4. CRITICAL: Answers should be direct and not repeat the question. For "When did X happen?" answer "1945" not "X happened in 1945"
+5. Progress logically from fundamental concepts to more complex ideas
+6. Include variety: definitions, processes, comparisons, applications, examples
+7. Avoid yes/no questions
+8. Each card must be self-contained and independently answerable
+9. Use academic but accessible language appropriate for the difficulty level
 
 OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
-{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer]"},{"question":"...","answer":"..."}]}
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, direct answer without repeating question words]"},{"question":"...","answer":"..."}]}
 
-EXAMPLE OUTPUT STRUCTURE:
-{"cards":[{"question":"What is Newton's First Law of Motion?","answer":"An object at rest stays at rest and an object in motion stays in motion with the same speed and direction unless acted upon by an unbalanced force. This is also known as the law of inertia."},{"question":"How does inertia relate to an object's mass?","answer":"Inertia is directly proportional to mass. Objects with greater mass have more inertia, meaning they resist changes in their motion more strongly than objects with less mass."}]}
+GOOD EXAMPLES:
+{"cards":[
+  {"question":"What is Newton's First Law of Motion?","answer":"An object at rest stays at rest and an object in motion continues at constant velocity unless acted upon by an unbalanced force (law of inertia)"},
+  {"question":"When was the Declaration of Independence signed?","answer":"July 4, 1776"},
+  {"question":"How does inertia relate to mass?","answer":"Inertia is directly proportional to mass - greater mass means stronger resistance to changes in motion"}
+]}
+
+BAD EXAMPLES (DO NOT DO THIS):
+{"cards":[
+  {"question":"When was the Declaration signed?","answer":"The Declaration was signed on July 4, 1776"}
+]}
 
 CRITICAL: Your response must contain ONLY the JSON object. No explanations, no markdown formatting, no code blocks, no additional text. Start with { and end with }`;
             } else {
@@ -396,15 +419,25 @@ REQUIREMENTS:
 2. Questions must be answerable based solely on the provided text
 3. Mix question types: factual recall, conceptual understanding, application
 4. Questions should be clear and unambiguous
-5. Answers should be complete but concise (1-3 sentences)
+5. CRITICAL: Answers should be direct and concise without repeating the question stem
 6. Cover all major topics mentioned in the text
 7. Avoid trick questions or unnecessarily complex phrasing
+8. For factual questions (dates, names, places), keep answers brief
 
 OUTPUT FORMAT (CRITICAL - MUST BE VALID JSON):
-{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Concise, complete answer based on the text]"},{"question":"...","answer":"..."}]}
+{"cards":[{"question":"[Clear, specific question ending with ?]","answer":"[Direct, concise answer]"},{"question":"...","answer":"..."}]}
 
-EXAMPLE OUTPUT STRUCTURE:
-{"cards":[{"question":"According to the text, what role do enzymes play in biological reactions?","answer":"Enzymes act as biological catalysts that speed up chemical reactions in living organisms by lowering the activation energy required for reactions to occur."},{"question":"What factors can affect enzyme activity as described in the passage?","answer":"Temperature, pH, and substrate concentration are the primary factors that influence enzyme activity, with each enzyme having optimal conditions for maximum efficiency."}]}
+GOOD EXAMPLES:
+{"cards":[
+  {"question":"What role do enzymes play in biological reactions?","answer":"Biological catalysts that speed up reactions by lowering activation energy"},
+  {"question":"When did the Renaissance begin in Italy?","answer":"14th century (around 1300)"},
+  {"question":"What factors affect enzyme activity?","answer":"Temperature, pH, and substrate concentration"}
+]}
+
+BAD EXAMPLES (DO NOT DO THIS):
+{"cards":[
+  {"question":"What role do enzymes play?","answer":"Enzymes play the role of biological catalysts"}
+]}
 
 CRITICAL: Your response must contain ONLY the JSON object. No introductory text, no explanations, no markdown, no code blocks. Start directly with { and end with }`;
             }

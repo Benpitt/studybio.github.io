@@ -26,13 +26,13 @@
 
 ## ✨ Features
 
-🤖 **AI Flashcard Generator** • Paste notes, get instant decks  
-🧠 **BKT Smart Study** • Bayesian Knowledge Tracing algorithm  
-🎴 **9 Study Modes** • Flashcards, quizzes, matching, speed challenges  
-📊 **Progress Tracking** • Streaks, mastery scores, achievements  
-🌍 **Community Library** • Share and discover study decks  
-🔥 **Spaced Repetition** • Intelligent review scheduling  
-📱 **Responsive Design** • Works on all devices  
+ **AI Flashcard Generator** • Paste notes, get instant decks  
+ **BKT Smart Study** • Bayesian Knowledge Tracing algorithm  
+ **9 Study Modes** • Flashcards, quizzes, matching, speed challenges  
+**Progress Tracking** • Streaks, mastery scores, achievements  
+**Community Library** • Share and discover study decks  
+**Spaced Repetition** • Intelligent review scheduling  
+**Responsive Design** • Works on all devices  
 
 ---
 

@@ -127,9 +127,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
 
-### Made with ❤️ by [Your Name](https://github.com/yourusername)
+### Made with ❤️ by [Ben Hocquet](https://github.com/benpitt
 
-[Website](https://studying.works) • [Twitter](https://twitter.com/yourusername) • [LinkedIn](https://linkedin.com/in/yourusername)
+[Website](https://studying.works)
 
 **[⬆ back to top](#-studyingworks)**
 

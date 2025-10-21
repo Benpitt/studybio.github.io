@@ -64,7 +64,7 @@ python -m http.server 8000
 <br>ML Backend
 </td>
 <td align="center" width="25%">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="48" height="48" alt="Tailwind" />
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/2560px-Tailwind_CSS_Logo.svg.png" width="48" height="48" alt="Tailwind" />
 <br><strong>Tailwind CSS</strong>
 <br>Styling
 </td>

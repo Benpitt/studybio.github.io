@@ -327,6 +327,18 @@ Built with ❤️ for students who want tools that work, not distractions.
 - Firebase for rock-solid infrastructure
 - Open-source tools from the community
 
+This project uses [pyBKT (Python Bayesian Knowledge Tracing)](https://github.com/CAHLR/pyBKT) 
+for intelligent spaced repetition learning.
+
+**Citation:**
+```
+Badrinath, A., Wang, F., Pardos, Z. (2021). 
+pyBKT: An Accessible Python Library of Bayesian Knowledge Tracing Models. 
+In S. Hsiao, & S. Sahebi (Eds.) Proceedings of the 14th International Conference 
+on Educational Data Mining (EDM). Pages 468-474.
+```
+
+[BKT Research Paper](https://arxiv.org/abs/2105.00385)
 ---
 
 ## Support

@@ -9,9 +9,905 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="global-styles.css">
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;"> style="min-height: 100vh;">
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="min-height: 100vh;">
+    <script src="auth-guard.js"></script>
     <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function Navigation() {
+            return (
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>studying.works</span>
+                                </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="ai-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">AI Generator</a>
+                                    <a href="custom-flashcards.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">My Flashcards</a>
+                                    <a href="community.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Community</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function CustomFlashcardsApp() {
+            // State - all modes
+            const [mode, setMode] = useState('decks');
+            const [decks, setDecks] = useState([]);
+            const [groups, setGroups] = useState([]);
+            const [currentDeck, setCurrentDeck] = useState(null);
+            const [currentGroup, setCurrentGroup] = useState(null);
+            const [combinedCards, setCombinedCards] = useState([]);
+            
+            // Flashcard mode
+            const [currentCard, setCurrentCard] = useState(0);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [cardDifficulty, setCardDifficulty] = useState({});
+            const [shuffledCards, setShuffledCards] = useState([]);
+            
+            // Practice test
+            const [testQuestions, setTestQuestions] = useState([]);
+            const [testAnswers, setTestAnswers] = useState({});
+            const [testSubmitted, setTestSubmitted] = useState(false);
+            
+            // Matching game
+            const [matchPairs, setMatchPairs] = useState([]);
+            const [selectedMatch, setSelectedMatch] = useState(null);
+            const [matchedPairs, setMatchedPairs] = useState([]);
+            const [matchScore, setMatchScore] = useState(0);
+            const [matchAttempts, setMatchAttempts] = useState(0);
+            
+            // Speed challenge
+            const [speedQuestions, setSpeedQuestions] = useState([]);
+            const [speedCurrentQ, setSpeedCurrentQ] = useState(0);
+            const [speedScore, setSpeedScore] = useState(0);
+            const [speedTimeLeft, setSpeedTimeLeft] = useState(10);
+            const [speedActive, setSpeedActive] = useState(false);
+            const [speedMistakes, setSpeedMistakes] = useState([]);
+            
+            // Mistake bank
+            const [mistakeBank, setMistakeBank] = useState([]);
+
+            // Init
+            useEffect(() => {
+                loadDecks();
+                loadGroups();
+                loadMistakes();
+                const savedDiff = localStorage.getItem('customCardDifficulty');
+                if (savedDiff) setCardDifficulty(JSON.parse(savedDiff));
+            }, []);
+
+            // Speed timer
+            useEffect(() => {
+                if (speedActive && speedTimeLeft > 0) {
+                    const timer = setTimeout(() => setSpeedTimeLeft(speedTimeLeft - 1), 1000);
+                    return () => clearTimeout(timer);
+                } else if (speedActive && speedTimeLeft === 0) {
+                    handleSpeedAnswer(null);
+                }
+            }, [speedActive, speedTimeLeft]);
+
+            // PART 2: Storage & Group Management Functions
+// Insert after "// PASTE PART 2 HERE" in Part 1
+
+            function loadDecks() {
+                const saved = localStorage.getItem('flashcardDecks');
+                if (saved) setDecks(JSON.parse(saved));
+            }
+
+            function loadGroups() {
+                const saved = localStorage.getItem('flashcardGroups');
+                if (saved) setGroups(JSON.parse(saved));
+            }
+
+            function loadMistakes() {
+                const saved = localStorage.getItem('customFlashcardMistakes');
+                if (saved) setMistakeBank(JSON.parse(saved));
+            }
+
+            function saveDecks(newDecks) {
+                localStorage.setItem('flashcardDecks', JSON.stringify(newDecks));
+                setDecks(newDecks);
+            }
+
+            function saveGroups(newGroups) {
+                localStorage.setItem('flashcardGroups', JSON.stringify(newGroups));
+                setGroups(newGroups);
+            }
+
+            function saveMistakes() {
+                localStorage.setItem('customFlashcardMistakes', JSON.stringify(mistakeBank));
+            }
+
+            function deleteDeck(id) {
+                if (confirm('Delete this deck? This cannot be undone.')) {
+                    saveDecks(decks.filter(d => d.id !== id));
+                }
+            }
+
+            function createGroup() {
+                const name = prompt('Enter group name:');
+                if (!name) return;
+
+                const newGroup = {
+                    id: Date.now(),
+                    name,
+                    deckIds: [],
+                    created: new Date().toISOString()
+                };
+                saveGroups([...groups, newGroup]);
+            }
+
+            function addDeckToGroup(groupId, deckId) {
+                const newGroups = groups.map(g => {
+                    if (g.id === groupId) {
+                        return { ...g, deckIds: [...new Set([...g.deckIds, deckId])] };
+                    }
+                    return g;
+                });
+                saveGroups(newGroups);
+            }
+
+            function removeDeckFromGroup(groupId, deckId) {
+                const newGroups = groups.map(g => {
+                    if (g.id === groupId) {
+                        return { ...g, deckIds: g.deckIds.filter(id => id !== deckId) };
+                    }
+                    return g;
+                });
+                saveGroups(newGroups);
+            }
+
+            function deleteGroup(groupId) {
+                if (confirm('Delete this group? (Decks will not be deleted)')) {
+                    saveGroups(groups.filter(g => g.id !== groupId));
+                }
+            }
+
+            function getCombinedCards(group) {
+                let cards = [];
+                group.deckIds.forEach(deckId => {
+                    const deck = decks.find(d => d.id === deckId);
+                    if (deck) cards = [...cards, ...deck.cards];
+                });
+                return cards;
+            }
+
+            function markDifficulty(cardId, level) {
+                const newDiff = { ...cardDifficulty, [cardId]: level };
+                setCardDifficulty(newDiff);
+                localStorage.setItem('customCardDifficulty', JSON.stringify(newDiff));
+            }
+
+            function addToMistakes(card) {
+                if (!mistakeBank.find(m => m.id === card.id)) {
+                    const newBank = [...mistakeBank, card];
+                    setMistakeBank(newBank);
+                    localStorage.setItem('customFlashcardMistakes', JSON.stringify(newBank));
+                }
+            }
+
+// PART 3: Mode Initialization Functions
+// Insert after "// PASTE PART 3 HERE" in Part 2
+
+            function startMode(modeType, deck = null, group = null) {
+                setCurrentDeck(deck);
+                setCurrentGroup(group);
+
+                let cards = [];
+                if (group) {
+                    cards = getCombinedCards(group);
+                    setCombinedCards(cards);
+                } else if (deck) {
+                    cards = deck.cards;
+                }
+
+                if (modeType === 'flashcards') {
+                    initFlashcards(cards);
+                } else if (modeType === 'practice') {
+                    initPractice(cards);
+                } else if (modeType === 'match') {
+                    initMatching(cards);
+                } else if (modeType === 'speed') {
+                    initSpeed(cards);
+                }
+
+                setMode(modeType);
+            }
+
+            function initFlashcards(cards) {
+                const weighted = [];
+                cards.forEach(card => {
+                    const difficulty = cardDifficulty[card.id] || 'medium';
+                    const weight = difficulty === 'hard' ? 5 : difficulty === 'medium' ? 2 : 1;
+                    for (let i = 0; i < weight; i++) weighted.push(card);
+                });
+                setShuffledCards(weighted.sort(() => Math.random() - 0.5));
+                setCurrentCard(0);
+                setShowAnswer(false);
+            }
+
+            function initPractice(cards) {
+                const shuffled = [...cards].sort(() => Math.random() - 0.5).slice(0, Math.min(15, cards.length));
+                const questionsWithChoices = shuffled.map(card => ({
+                    ...card,
+                    choices: generateChoices(card, cards)
+                }));
+                setTestQuestions(questionsWithChoices);
+                setTestAnswers({});
+                setTestSubmitted(false);
+            }
+
+            function initMatching(cards) {
+                const selected = cards.slice(0, 8);
+                const pairs = [];
+                selected.forEach(card => {
+                    pairs.push({ id: `q-${card.id}`, text: card.question, type: 'question', pairId: card.id });
+                    pairs.push({ id: `a-${card.id}`, text: card.answer, type: 'answer', pairId: card.id });
+                });
+                setMatchPairs(pairs.sort(() => Math.random() - 0.5));
+                setSelectedMatch(null);
+                setMatchedPairs([]);
+                setMatchScore(0);
+                setMatchAttempts(0);
+            }
+
+            function handleMatchClick(pair) {
+                if (matchedPairs.includes(pair.pairId)) return;
+
+                if (!selectedMatch) {
+                    setSelectedMatch(pair);
+                } else {
+                    setMatchAttempts(matchAttempts + 1);
+                    if (selectedMatch.pairId === pair.pairId && selectedMatch.type !== pair.type) {
+                        setMatchedPairs([...matchedPairs, pair.pairId]);
+                        setMatchScore(matchScore + 10);
+                    }
+                    setTimeout(() => setSelectedMatch(null), 500);
+                }
+            }
+
+            function initSpeed(cards) {
+                const questions = cards.slice(0, 10).map(card => ({
+                    ...card,
+                    choices: generateChoices(card, cards)
+                }));
+                setSpeedQuestions(questions);
+                setSpeedCurrentQ(0);
+                setSpeedScore(0);
+                setSpeedTimeLeft(10);
+                setSpeedActive(true);
+                setSpeedMistakes([]);
+            }
+
+            function generateChoices(card, allCards) {
+                const choices = [card.answer];
+                const others = allCards.filter(c => c.id !== card.id);
+                while (choices.length < 4 && others.length > 0) {
+                    const random = others[Math.floor(Math.random() * others.length)];
+                    if (!choices.includes(random.answer)) choices.push(random.answer);
+                    others.splice(others.indexOf(random), 1);
+                }
+                return choices.sort(() => Math.random() - 0.5);
+            }
+
+            function handleSpeedAnswer(answer) {
+                const currentQ = speedQuestions[speedCurrentQ];
+                const correct = currentQ.answer;
+                if (answer === correct) {
+                    setSpeedScore(speedScore + speedTimeLeft);
+                } else {
+                    addToMistakes(currentQ);
+                    setSpeedMistakes([...speedMistakes, currentQ]);
+                }
+
+                if (speedCurrentQ < speedQuestions.length - 1) {
+                    setSpeedCurrentQ(speedCurrentQ + 1);
+                    setSpeedTimeLeft(10);
+                } else {
+                    setSpeedActive(false);
+                }
+            }
+
+// PART 4: Render - Decks Library
+// Insert after "// PASTE PART 4 HERE" in Part 3
+
+            if (mode === 'decks') {
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-7xl mx-auto">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h1 className="text-5xl font-bold text-white">📚 My Flashcards</h1>
+                                    <div className="flex gap-3">
+                                        <button onClick={createGroup} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-bold transition-all">
+                                            ➕ New Group
+                                        </button>
+                                        <a href="ai-flashcards.html" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-2xl text-white px-6 py-3 rounded-xl font-bold transition-all">
+                                            🤖 Create with AI
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {groups.length > 0 && (
+                                    <div className="mb-8">
+                                        <h2 className="text-3xl font-bold text-white mb-4">📁 Groups</h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            {groups.map(group => {
+                                                const groupDecks = decks.filter(d => group.deckIds.includes(d.id));
+                                                const totalCards = groupDecks.reduce((sum, d) => sum + d.cards.length, 0);
+                                                return (
+                                                    <div key={group.id} className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">
+                                                        <div className="flex justify-between items-start mb-3">
+                                                            <h3 className="text-2xl font-bold">📁 {group.name}</h3>
+                                                            <button onClick={() => deleteGroup(group.id)} className="text-white/70 hover:text-white">❌</button>
+                                                        </div>
+                                                        <p className="text-white/80 mb-4">{groupDecks.length} decks • {totalCards} cards</p>
+                                                        <button onClick={() => setMode('menu-g-' + group.id)} className="w-full bg-white text-purple-600 py-2 rounded-lg font-bold hover:bg-purple-50 transition-all">
+                                                            Study Group →
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <h2 className="text-3xl font-bold text-white mb-4">🎴 All Decks</h2>
+                                {decks.length === 0 ? (
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
+                                        <div className="text-8xl mb-4">📚</div>
+                                        <h3 className="text-2xl font-bold text-white mb-4">No decks yet!</h3>
+                                        <p className="text-white/70 mb-6">Create your first deck with AI</p>
+                                        <a href="ai-flashcards.html" className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
+                                            🤖 Create with AI
+                                        </a>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        {decks.map(deck => (
+                                            <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all">
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <h3 className="text-2xl font-bold text-gray-800">{deck.title}</h3>
+                                                    <button onClick={() => deleteDeck(deck.id)} className="text-red-500 hover:text-red-700">🗑️</button>
+                                                </div>
+                                                <p className="text-gray-600 mb-2">{deck.subject || 'General'}</p>
+                                                <p className="text-sm text-gray-500 mb-4">{deck.cards.length} cards</p>
+
+                                                <div className="mb-4">
+                                                    <select onChange={(e) => e.target.value && addDeckToGroup(parseInt(e.target.value), deck.id)} className="w-full px-3 py-2 border rounded-lg text-sm mb-2">
+                                                        <option value="">Add to group...</option>
+                                                        {groups.map(g => (
+                                                            <option key={g.id} value={g.id}>{g.name}</option>
+                                                        ))}
+                                                    </select>
+                                                    {groups.filter(g => g.deckIds.includes(deck.id)).map(g => (
+                                                        <div key={g.id} className="flex items-center justify-between bg-purple-50 px-3 py-1 rounded text-sm mb-1">
+                                                            <span>📁 {g.name}</span>
+                                                            <button onClick={() => removeDeckFromGroup(g.id, deck.id)} className="text-red-500">×</button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <button onClick={() => setMode('menu-d-' + deck.id)} className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all">
+                                                    Study →
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+// PART 5: Study Mode Menu
+// Insert after "// PASTE PART 5 HERE" in Part 4
+
+            if (mode.startsWith('menu-')) {
+                const parts = mode.split('-');
+                const type = parts[1]; // 'g' or 'd'
+                const id = parseInt(parts[2]);
+
+                const isGroup = type === 'g';
+                const group = isGroup ? groups.find(g => g.id === id) : null;
+                const deck = !isGroup ? decks.find(d => d.id === id) : null;
+                const entity = group || deck;
+
+                if (!entity) {
+                    setMode('decks');
+                    return null;
+                }
+
+                const totalCards = isGroup
+                    ? getCombinedCards(group).length
+                    : deck.cards.length;
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-6xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6 flex items-center gap-2">
+                                    ← Back to Library
+                                </button>
+
+                                <div className="text-center mb-12">
+                                    <div className="text-8xl mb-4">{isGroup ? '📁' : '🎴'}</div>
+                                    <h1 className="text-6xl font-bold text-white mb-4">{entity.name || entity.title}</h1>
+                                    <p className="text-2xl text-blue-200">{totalCards} cards {isGroup ? `from ${group.deckIds.length} decks` : ''}</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <button onClick={() => startMode('flashcards', deck, group)} className="bg-gradient-to-br from-blue-500 to-cyan-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                        <div className="text-6xl mb-3">🎴</div>
+                                        <div className="text-2xl font-bold">Flashcards</div>
+                                        <div className="text-sm opacity-80">Spaced repetition</div>
+                                    </button>
+
+                                    <button onClick={() => startMode('practice', deck, group)} className="bg-gradient-to-br from-purple-500 to-pink-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                        <div className="text-6xl mb-3">📝</div>
+                                        <div className="text-2xl font-bold">Practice Test</div>
+                                        <div className="text-sm opacity-80">15 questions</div>
+                                    </button>
+
+                                    <button onClick={() => startMode('match', deck, group)} className="bg-gradient-to-br from-green-500 to-teal-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                        <div className="text-6xl mb-3">🎯</div>
+                                        <div className="text-2xl font-bold">Matching</div>
+                                        <div className="text-sm opacity-80">Match pairs</div>
+                                    </button>
+
+                                    <button onClick={() => startMode('speed', deck, group)} className="bg-gradient-to-br from-orange-500 to-red-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                        <div className="text-6xl mb-3">⚡</div>
+                                        <div className="text-2xl font-bold">Speed Challenge</div>
+                                        <div className="text-sm opacity-80">10 seconds each</div>
+                                    </button>
+
+                                    <button onClick={() => setMode('mistakes')} className="bg-gradient-to-br from-red-500 to-pink-600 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                        <div className="text-6xl mb-3">❌</div>
+                                        <div className="text-2xl font-bold">Mistake Bank</div>
+                                        <div className="text-sm opacity-80">{mistakeBank.length} cards</div>
+                                    </button>
+
+                                    <button onClick={() => setMode('decks')} className="bg-gradient-to-br from-gray-700 to-gray-900 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                        <div className="text-6xl mb-3">📚</div>
+                                        <div className="text-2xl font-bold">Back</div>
+                                        <div className="text-sm opacity-80">To library</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+// PART 6: Flashcards & Practice Test Modes
+// Insert after "// PASTE PART 6 HERE" in Part 5
+
+            if (mode === 'flashcards') {
+                if (shuffledCards.length === 0 || currentCard >= shuffledCards.length) {
+                    return (
+                        <div className="min-h-screen flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="text-8xl mb-4">🎉</div>
+                                <h2 className="text-4xl font-bold text-white mb-4">Session Complete!</h2>
+                                <button onClick={() => setMode('decks')} className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl">
+                                    Back to Library
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                const card = shuffledCards[currentCard];
+                const difficulty = cardDifficulty[card.id] || 'medium';
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
+
+                                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white">
+                                    <div className="flex justify-between items-center">
+                                        <span>Card {currentCard + 1} / {shuffledCards.length}</span>
+                                        <span>Difficulty: {difficulty === 'hard' ? '🔴' : difficulty === 'medium' ? '🟡' : '🟢'} {difficulty}</span>
+                                    </div>
+                                </div>
+
+                                <div className={`flip-card ${showAnswer ? 'flipped' : ''}`}>
+                                    <div className="flip-card-inner relative" style={{minHeight: '400px'}}>
+                                        <div className="flip-card-front absolute w-full h-full">
+                                            <div onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                                <div>
+                                                    <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
+                                                    <div className="text-3xl font-bold text-center">{card.question}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flip-card-back absolute w-full h-full">
+                                            <div onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-br from-green-500 to-teal-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                                <div>
+                                                    <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
+                                                    <div className="text-2xl text-center">{card.answer}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {showAnswer && (
+                                    <div className="mt-6 space-y-3">
+                                        <div className="text-center text-white mb-4">How well did you know this?</div>
+                                        <div className="grid grid-cols-3 gap-4">
+                                            <button onClick={() => { markDifficulty(card.id, 'hard'); addToMistakes(card); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
+                                                    className="bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl font-bold">
+                                                🔴 Hard
+                                            </button>
+                                            <button onClick={() => { markDifficulty(card.id, 'medium'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
+                                                    className="bg-yellow-500 hover:bg-yellow-600 text-white py-4 rounded-xl font-bold">
+                                                🟡 Medium
+                                            </button>
+                                            <button onClick={() => { markDifficulty(card.id, 'easy'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
+                                                    className="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold">
+                                                🟢 Easy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'practice') {
+                if (testSubmitted) {
+                    const mistakes = testQuestions.filter((q, idx) => {
+                        const userAns = testAnswers[q.id];
+                        const isCorrect = userAns === q.answer;
+                        if (!isCorrect) addToMistakes(q);
+                        return !isCorrect;
+                    });
+                    const correct = testQuestions.length - mistakes.length;
+                    const percentage = Math.round((correct / testQuestions.length) * 100);
+
+                    return (
+                        <div className="min-h-screen">
+                            <Navigation />
+                            <div className="pt-20 p-6">
+                                <div className="max-w-4xl mx-auto">
+                                    <div className="bg-white rounded-3xl p-12">
+                                        <div className="text-center mb-8">
+                                            <div className="text-8xl mb-6">{percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}</div>
+                                            <h2 className="text-5xl font-bold mb-4">Score: {percentage}%</h2>
+                                            <p className="text-2xl text-gray-600 mb-4">{correct} / {testQuestions.length} correct</p>
+                                        </div>
+
+                                        {mistakes.length > 0 && (
+                                            <div className="mb-8">
+                                                <h3 className="text-2xl font-bold mb-4 text-red-600">Review Mistakes ({mistakes.length})</h3>
+                                                <div className="space-y-4">
+                                                    {mistakes.map((q, idx) => {
+                                                        const userAns = testAnswers[q.id];
+                                                        return (
+                                                            <div key={q.id} className="p-6 rounded-xl bg-red-50 border-2 border-red-200">
+                                                                <div className="font-bold text-lg mb-3">{q.question}</div>
+                                                                <div className="space-y-2">
+                                                                    {q.choices.map((choice, cIdx) => (
+                                                                        <div key={cIdx} className={`p-3 rounded-lg ${
+                                                                            choice === q.answer ? 'bg-green-100 border-2 border-green-500' :
+                                                                                choice === userAns ? 'bg-red-100 border-2 border-red-500' :
+                                                                                    'bg-white border border-gray-200'
+                                                                        }`}>
+                                                                            {choice === q.answer && <span className="mr-2">✅</span>}
+                                                                            {choice === userAns && choice !== q.answer && <span className="mr-2">❌</span>}
+                                                                            {choice}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex gap-4">
+                                            <button onClick={() => setMode('decks')} className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-purple-700">
+                                                Back to Library
+                                            </button>
+                                            {mistakes.length > 0 && (
+                                                <button onClick={() => { setTestSubmitted(false); setTestAnswers({}); }} className="flex-1 bg-orange-500 text-white py-4 rounded-xl font-bold text-xl hover:bg-orange-600">
+                                                    Retry Test
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
+
+                                <div className="bg-white rounded-3xl p-8">
+                                    <h2 className="text-3xl font-bold mb-6">Practice Test</h2>
+
+                                    {testQuestions.map((q, idx) => (
+                                        <div key={q.id} className="mb-8 p-6 bg-gray-50 rounded-xl">
+                                            <div className="font-bold text-xl mb-4">{idx + 1}. {q.question}</div>
+                                            <div className="space-y-3">
+                                                {q.choices.map((choice, cIdx) => (
+                                                    <button
+                                                        key={cIdx}
+                                                        onClick={() => setTestAnswers({ ...testAnswers, [q.id]: choice })}
+                                                        className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                                                            testAnswers[q.id] === choice
+                                                                ? 'bg-blue-500 text-white border-blue-600 font-bold'
+                                                                : 'bg-white hover:bg-blue-50 border-gray-300'
+                                                        }`}
+                                                    >
+                                                        {choice}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <button
+                                        onClick={() => setTestSubmitted(true)}
+                                        disabled={Object.keys(testAnswers).length < testQuestions.length}
+                                        className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white py-4 rounded-xl font-bold text-xl transition-all"
+                                    >
+                                        Submit Test ({Object.keys(testAnswers).length}/{testQuestions.length} answered)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+// PART 7: Match, Speed, and Mistakes Modes
+// Insert after "// PASTE PART 7 HERE" in Part 6
+
+            if (mode === 'match') {
+                const allMatched = matchedPairs.length === matchPairs.length / 2;
+
+                if (allMatched) {
+                    return (
+                        <div className="min-h-screen flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="text-8xl mb-4">🎉</div>
+                                <h2 className="text-4xl font-bold text-white mb-4">Perfect Match!</h2>
+                                <p className="text-2xl text-blue-200 mb-6">Score: {matchScore} | Attempts: {matchAttempts}</p>
+                                <button onClick={() => setMode('decks')} className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl">
+                                    Back to Library
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-6xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
+
+                                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white flex justify-between">
+                                    <span>Score: {matchScore}</span>
+                                    <span>Attempts: {matchAttempts}</span>
+                                    <span>Matched: {matchedPairs.length} / {matchPairs.length / 2}</span>
+                                </div>
+
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {matchPairs.map(pair => {
+                                        const isMatched = matchedPairs.includes(pair.pairId);
+                                        const isSelected = selectedMatch?.id === pair.id;
+                                        return (
+                                            <button
+                                                key={pair.id}
+                                                onClick={() => handleMatchClick(pair)}
+                                                disabled={isMatched}
+                                                className={`p-6 rounded-xl font-bold transition-all min-h-32 ${
+                                                    isMatched ? 'bg-green-500 text-white opacity-50' :
+                                                        isSelected ? 'bg-yellow-400 text-gray-900 scale-105' :
+                                                            pair.type === 'question' ? 'bg-blue-500 hover:bg-blue-600 text-white' :
+                                                                'bg-purple-500 hover:bg-purple-600 text-white'
+                                                }`}
+                                            >
+                                                {pair.text}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'speed') {
+                if (!speedActive) {
+                    const maxScore = speedQuestions.length * 10;
+                    const percentage = Math.round((speedScore / maxScore) * 100);
+
+                    return (
+                        <div className="min-h-screen">
+                            <Navigation />
+                            <div className="pt-20 p-6">
+                                <div className="max-w-4xl mx-auto">
+                                    <div className="bg-white rounded-3xl p-12">
+                                        <div className="text-center mb-8">
+                                            <div className="text-8xl mb-4">⚡</div>
+                                            <h2 className="text-4xl font-bold mb-4">Challenge Complete!</h2>
+                                            <p className="text-2xl text-gray-600 mb-2">Final Score: {speedScore} / {maxScore}</p>
+                                            <p className="text-xl text-gray-500 mb-4">{percentage}% • {speedQuestions.length - speedMistakes.length}/{speedQuestions.length} correct</p>
+                                        </div>
+
+                                        {speedMistakes.length > 0 && (
+                                            <div className="mb-8">
+                                                <h3 className="text-2xl font-bold mb-4 text-red-600">Review Mistakes ({speedMistakes.length})</h3>
+                                                <div className="space-y-4">
+                                                    {speedMistakes.map((q, idx) => (
+                                                        <div key={idx} className="p-6 rounded-xl bg-red-50 border-2 border-red-200">
+                                                            <div className="font-bold text-lg mb-3">{q.question}</div>
+                                                            <div className="space-y-2">
+                                                                {q.choices.map((choice, cIdx) => (
+                                                                    <div key={cIdx} className={`p-3 rounded-lg ${
+                                                                        choice === q.answer ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'
+                                                                    }`}>
+                                                                        {choice === q.answer && <span className="mr-2">✅</span>}
+                                                                        {choice}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex gap-4">
+                                            <button onClick={() => setMode('decks')} className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-purple-700">
+                                                Back to Library
+                                            </button>
+                                            {speedMistakes.length > 0 && (
+                                                <button onClick={() => startMode('speed', currentDeck, currentGroup)} className="flex-1 bg-orange-500 text-white py-4 rounded-xl font-bold text-xl hover:bg-orange-600">
+                                                    Retry Challenge
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                const q = speedQuestions[speedCurrentQ];
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <div className="bg-white/10 backdrop-blur rounded-xl p-6 mb-6 text-white">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span>Question {speedCurrentQ + 1} / {speedQuestions.length}</span>
+                                        <span>Score: {speedScore}</span>
+                                    </div>
+                                    <div className="text-5xl font-bold text-center">{speedTimeLeft}s</div>
+                                </div>
+
+                                <div className="bg-white rounded-3xl p-12 mb-6">
+                                    <h3 className="text-3xl font-bold text-center mb-8">{q.question}</h3>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {q.choices.map((choice, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleSpeedAnswer(choice)}
+                                                className="bg-purple-100 hover:bg-purple-200 text-gray-900 p-6 rounded-xl font-bold text-xl transition-all"
+                                            >
+                                                {choice}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'mistakes') {
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
+
+                                <h2 className="text-4xl font-bold text-white mb-6">❌ Mistake Bank</h2>
+
+                                {mistakeBank.length === 0 ? (
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
+                                        <div className="text-8xl mb-4">✅</div>
+                                        <h3 className="text-2xl font-bold text-white">No mistakes yet!</h3>
+                                        <p className="text-white/70 mt-2">Cards you get wrong will appear here</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {mistakeBank.map(card => (
+                                            <div key={card.id} className="bg-white rounded-xl p-6">
+                                                <div className="font-bold text-xl mb-2">{card.question}</div>
+                                                <div className="text-gray-600">{card.answer}</div>
+                                            </div>
+                                        ))}
+                                        <button onClick={() => {
+                                            setMistakeBank([]);
+                                            localStorage.setItem('customFlashcardMistakes', JSON.stringify([]));
+                                        }} className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold">
+                                            Clear Mistake Bank
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<CustomFlashcardsApp />, document.getElementById('root'));
+    </script>
 </body>
 </html>

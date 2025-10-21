@@ -104,18 +104,30 @@ python -m http.server 8000
 
 ---
 
-## 🌟 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/studying-works&type=Date)](https://star-history.com/#yourusername/studying-works&Date)
+## 🎯 Roadmap
+```mermaid
+gantt
+    title Development Roadmap
+    dateFormat  YYYY-MM
+    section Core
+    Initial Release           :done, 2025-01, 30d
+    Mobile App               :active, 2025-02, 60d
+    section AI
+    GPT-4 Integration        :2025-03, 45d
+    Advanced BKT Model       :2025-04, 30d
+    section Social
+    Study Groups             :2025-05, 45d
+    Leaderboards            :2025-06, 30d
+```
 
 ---
 
-## 📊 Project Stats
+## 🌐 Browser Support
 
-![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/studying-works)
-![GitHub code size](https://img.shields.io/github/languages/code-size/yourusername/studying-works)
-![Lines of code](https://img.shields.io/tokei/lines/github/yourusername/studying-works)
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/studying-works)
+| ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |
+| --- | --- | --- | --- |
+| Chrome ✅ | Firefox ✅ | Safari ✅ | Edge ✅ |
+| Latest | Latest | Latest | Latest |
 
 ---
 
@@ -127,9 +139,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
 
-### Made with ❤️ by [Ben Hocquet](https://github.com/benpitt
-
-[Website](https://studying.works)
+### Made with ❤️ by [Ben Hocquet](https://github.com/Benpitt)
 
 **[⬆ back to top](#-studyingworks)**
 

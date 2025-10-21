@@ -36,6 +36,7 @@
     <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global-styles.css">
     <style>
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
@@ -71,7 +72,7 @@
         }
     </style>
 </head>
-<body class="overflow-hidden">
+<body class="overflow-hidden" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">>
     <script>
         // Instant check - if logged in, redirect immediately
         if (localStorage.getItem('userId') && localStorage.getItem('userName')) {

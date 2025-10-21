@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Games - studying.works</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global-styles.css">
+    <style>
+        .game-card {
+            transition: all 0.3s ease;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .matched {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
+    <script src="auth-guard.js"></script>
+    
+    <!-- Navigation -->
+    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                        <span>🎓</span>
+                        <span>studying.works</span>
+                    </a>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                        <a href="custom-flashcards.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Flashcards</a>
+                        <a href="memory-games.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Memory Games</a>
+                        <a href="mind-maps.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Mind Maps</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <h1 class="text-5xl font-bold text-white mb-2">🎮 Memory Games</h1>
+            <p class="text-xl text-blue-200">Learn through play - alternative to traditional flashcards</p>
+        </div>
+
+        <!-- Deck Selection -->
+        <div id="deck-selection" class="mb-8">
+            <div class="bg-white/10 backdrop-blur rounded-2xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">Select a Deck</h2>
+                <select id="deck-select" class="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 text-lg">
+                    <option value="">Choose a deck to play...</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Game Selection -->
+        <div id="game-selection" class="hidden mb-8">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">Choose Your Game</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Memory Match -->
+                <div class="game-card bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 cursor-pointer" onclick="startGame('memory-match')">
+                    <div class="text-6xl mb-4 text-center">🎴</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Memory Match</h3>
+                    <p class="text-white/90 mb-4">Flip cards and match terms with definitions</p>
+                    <div class="text-sm text-white/80">
+                        <span class="block">⏱️ Untimed</span>
+                        <span class="block">🧠 Focus & Memory</span>
+                    </div>
+                </div>
+
+                <!-- Type Race -->
+                <div class="game-card bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 cursor-pointer" onclick="startGame('type-race')">
+                    <div class="text-6xl mb-4 text-center">⌨️</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Type Race</h3>
+                    <p class="text-white/90 mb-4">Type the correct answer as fast as you can</p>
+                    <div class="text-sm text-white/80">
+                        <span class="block">⏱️ Timed</span>
+                        <span class="block">🎯 Active Recall</span>
+                    </div>
+                </div>
+
+                <!-- Match Madness -->
+                <div class="game-card bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl p-6 cursor-pointer" onclick="startGame('match-madness')">
+                    <div class="text-6xl mb-4 text-center">🎯</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Match Madness</h3>
+                    <p class="text-white/90 mb-4">Drag terms to match with definitions quickly</p>
+                    <div class="text-sm text-white/80">
+                        <span class="block">⏱️ 90 seconds</span>
+                        <span class="block">🔥 Fast-paced</span>
+                    </div>
+                </div>
+
+                <!-- Multiple Choice Arena -->
+                <div class="game-card bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 cursor-pointer" onclick="startGame('mc-arena')">
+                    <div class="text-6xl mb-4 text-center">🎲</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Quiz Arena</h3>
+                    <p class="text-white/90 mb-4">Multiple choice with streak multipliers</p>
+                    <div class="text-sm text-white/80">
+                        <span class="block">⏱️ 60 seconds</span>
+                        <span class="block">⚡ Combo System</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Game Container -->
+        <div id="game-container" class="hidden">
+            <div class="bg-white/10 backdrop-blur rounded-2xl p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="backToSelection()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all">
+                        ← Back
+                    </button>
+                    <div id="game-stats" class="text-white text-lg font-bold"></div>
+                    <div id="game-timer" class="text-white text-2xl font-bold"></div>
+                </div>
+                <div id="game-content"></div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results-container" class="hidden">
+            <div class="bg-white/10 backdrop-blur rounded-2xl p-8 text-center">
+                <div id="results-content"></div>
+                <div class="flex gap-4 justify-center mt-8">
+                    <button onclick="backToSelection()" class="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg transition-all font-bold">
+                        Choose Another Game
+                    </button>
+                    <button onclick="restartGame()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg transition-all font-bold">
+                        Play Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDeck = null;
+        let currentGame = null;
+        let gameState = {};
+
+        // Load decks
+        function loadDecks() {
+            const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
+            const select = document.getElementById('deck-select');
+            
+            decks.forEach((deck, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${deck.name} (${deck.cards.length} cards)`;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    currentDeck = decks[e.target.value];
+                    document.getElementById('game-selection').classList.remove('hidden');
+                }
+            });
+        }
+
+        function startGame(gameType) {
+            currentGame = gameType;
+            document.getElementById('game-selection').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            
+            if (gameType === 'memory-match') startMemoryMatch();
+            else if (gameType === 'type-race') startTypeRace();
+            else if (gameType === 'match-madness') startMatchMadness();
+            else if (gameType === 'mc-arena') startMCArena();
+        }
+
+        function backToSelection() {
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('results-container').classList.add('hidden');
+            document.getElementById('game-selection').classList.remove('hidden');
+            gameState = {};
+        }
+
+        function restartGame() {
+            document.getElementById('results-container').classList.add('hidden');
+            startGame(currentGame);
+        }
+
+        // ===== MEMORY MATCH GAME =====
+        function startMemoryMatch() {
+            const cards = [...currentDeck.cards].slice(0, 6); // Use 6 pairs
+            const gameCards = [];
+            
+            cards.forEach((card, idx) => {
+                gameCards.push({ id: `q${idx}`, type: 'question', text: card.question, pairId: idx });
+                gameCards.push({ id: `a${idx}`, type: 'answer', text: card.answer, pairId: idx });
+            });
+            
+            // Shuffle
+            gameCards.sort(() => Math.random() - 0.5);
+            
+            gameState = {
+                cards: gameCards,
+                flipped: [],
+                matched: [],
+                moves: 0,
+                startTime: Date.now()
+            };
+            
+            document.getElementById('game-stats').textContent = `Moves: 0 | Pairs: 0/${cards.length}`;
+            document.getElementById('game-timer').textContent = '';
+            
+            const content = document.getElementById('game-content');
+            content.innerHTML = `
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    ${gameCards.map((card, idx) => `
+                        <div class="flip-card h-32" onclick="flipCard(${idx})">
+                            <div class="flip-card-inner relative w-full h-full">
+                                <div class="flip-card-front absolute bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                                    <span class="text-4xl">🎴</span>
+                                </div>
+                                <div class="flip-card-back absolute bg-white rounded-xl p-4">
+                                    <p class="text-sm text-gray-800 text-center break-words">${card.text}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function flipCard(idx) {
+            if (gameState.flipped.length >= 2) return;
+            
+            const card = document.querySelectorAll('.flip-card')[idx];
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            
+            card.classList.add('flipped');
+            gameState.flipped.push(idx);
+            
+            if (gameState.flipped.length === 2) {
+                gameState.moves++;
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        function checkMatch() {
+            const [idx1, idx2] = gameState.flipped;
+            const card1 = gameState.cards[idx1];
+            const card2 = gameState.cards[idx2];
+            
+            const cardElements = document.querySelectorAll('.flip-card');
+            
+            if (card1.pairId === card2.pairId) {
+                // Match!
+                cardElements[idx1].classList.add('matched');
+                cardElements[idx2].classList.add('matched');
+                gameState.matched.push(card1.pairId);
+                
+                if (gameState.matched.length === 6) {
+                    endMemoryMatch();
+                }
+            } else {
+                // No match
+                cardElements[idx1].classList.remove('flipped');
+                cardElements[idx2].classList.remove('flipped');
+            }
+            
+            gameState.flipped = [];
+            document.getElementById('game-stats').textContent = `Moves: ${gameState.moves} | Pairs: ${gameState.matched.length}/6`;
+        }
+
+        function endMemoryMatch() {
+            const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            
+            document.getElementById('results-content').innerHTML = `
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-4xl font-bold text-white mb-4">Game Complete!</h2>
+                <div class="text-2xl text-white/90 space-y-2">
+                    <p>⏱️ Time: ${time} seconds</p>
+                    <p>🎯 Moves: ${gameState.moves}</p>
+                    <p>⭐ Efficiency: ${Math.max(100 - gameState.moves * 5, 0)}%</p>
+                </div>
+            `;
+        }
+
+        // ===== TYPE RACE GAME =====
+        function startTypeRace() {
+            gameState = {
+                cards: [...currentDeck.cards],
+                currentIndex: 0,
+                correct: 0,
+                startTime: Date.now()
+            };
+            
+            showTypeRaceCard();
+        }
+
+        function showTypeRaceCard() {
+            if (gameState.currentIndex >= gameState.cards.length) {
+                endTypeRace();
+                return;
+            }
+            
+            const card = gameState.cards[gameState.currentIndex];
+            document.getElementById('game-stats').textContent = `Card ${gameState.currentIndex + 1}/${gameState.cards.length}`;
+            document.getElementById('game-timer').textContent = `Correct: ${gameState.correct}`;
+            
+            const content = document.getElementById('game-content');
+            content.innerHTML = `
+                <div class="text-center">
+                    <div class="bg-white/20 rounded-xl p-8 mb-6">
+                        <p class="text-3xl text-white font-bold">${card.question}</p>
+                    </div>
+                    <input type="text" id="type-answer" 
+                           class="w-full max-w-2xl p-4 text-xl rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder-white/50"
+                           placeholder="Type your answer..." autofocus>
+                    <button onclick="checkTypeRaceAnswer()" 
+                            class="mt-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-3 rounded-lg font-bold text-xl transition-all">
+                        Submit
+                    </button>
+                    <p class="text-white/60 mt-4">Press Enter to submit</p>
+                </div>
+            `;
+            
+            document.getElementById('type-answer').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkTypeRaceAnswer();
+            });
+        }
+
+        function checkTypeRaceAnswer() {
+            const userAnswer = document.getElementById('type-answer').value.trim().toLowerCase();
+            const correctAnswer = gameState.cards[gameState.currentIndex].answer.toLowerCase();
+            
+            // Simple matching - contains key words
+            const isCorrect = correctAnswer.includes(userAnswer) || userAnswer.includes(correctAnswer.split(' ')[0]);
+            
+            if (isCorrect) {
+                gameState.correct++;
+                showFeedback('✅ Correct!', 'green');
+            } else {
+                showFeedback(`❌ Correct answer: ${gameState.cards[gameState.currentIndex].answer}`, 'red');
+            }
+            
+            gameState.currentIndex++;
+            setTimeout(showTypeRaceCard, 1500);
+        }
+
+        function showFeedback(message, color) {
+            const feedback = document.createElement('div');
+            feedback.className = `fixed top-24 left-1/2 transform -translate-x-1/2 bg-${color}-500 text-white px-6 py-3 rounded-lg font-bold text-xl z-50`;
+            feedback.textContent = message;
+            document.body.appendChild(feedback);
+            setTimeout(() => feedback.remove(), 1500);
+        }
+
+        function endTypeRace() {
+            const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const accuracy = Math.round((gameState.correct / gameState.cards.length) * 100);
+            
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            
+            document.getElementById('results-content').innerHTML = `
+                <div class="text-6xl mb-4">${accuracy >= 70 ? '🎉' : '💪'}</div>
+                <h2 class="text-4xl font-bold text-white mb-4">Type Race Complete!</h2>
+                <div class="text-2xl text-white/90 space-y-2">
+                    <p>⏱️ Time: ${time} seconds</p>
+                    <p>✅ Correct: ${gameState.correct}/${gameState.cards.length}</p>
+                    <p>🎯 Accuracy: ${accuracy}%</p>
+                    <p>⚡ Speed: ${(gameState.cards.length / time * 60).toFixed(1)} cards/min</p>
+                </div>
+            `;
+        }
+
+        // ===== MATCH MADNESS GAME =====
+        function startMatchMadness() {
+            const cards = [...currentDeck.cards].slice(0, 8);
+            gameState = {
+                cards: cards,
+                matched: 0,
+                startTime: Date.now(),
+                timeLimit: 90
+            };
+            
+            const questions = cards.map((c, i) => ({id: i, text: c.question, type: 'q'}));
+            const answers = cards.map((c, i) => ({id: i, text: c.answer, type: 'a'}));
+            answers.sort(() => Math.random() - 0.5);
+            
+            document.getElementById('game-stats').textContent = `Matched: 0/${cards.length}`;
+            
+            const content = document.getElementById('game-content');
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-white mb-4">Questions</h3>
+                        ${questions.map(q => `
+                            <div class="bg-white/20 p-4 rounded-lg text-white cursor-pointer hover:bg-white/30 transition-all"
+                                 data-id="${q.id}" data-type="q" onclick="selectMatchCard(this)">
+                                ${q.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-white mb-4">Answers</h3>
+                        ${answers.map(a => `
+                            <div class="bg-white/20 p-4 rounded-lg text-white cursor-pointer hover:bg-white/30 transition-all"
+                                 data-id="${a.id}" data-type="a" onclick="selectMatchCard(this)">
+                                ${a.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            startMatchTimer();
+        }
+
+        let matchSelected = null;
+        function selectMatchCard(element) {
+            if (element.classList.contains('matched')) return;
+            
+            if (!matchSelected) {
+                matchSelected = element;
+                element.classList.add('ring-4', 'ring-yellow-400');
+            } else {
+                const id1 = matchSelected.dataset.id;
+                const id2 = element.dataset.id;
+                const type1 = matchSelected.dataset.type;
+                const type2 = element.dataset.type;
+                
+                if (type1 !== type2 && id1 === id2) {
+                    // Match!
+                    matchSelected.classList.add('matched', 'bg-green-500');
+                    element.classList.add('matched', 'bg-green-500');
+                    gameState.matched++;
+                    document.getElementById('game-stats').textContent = `Matched: ${gameState.matched}/${gameState.cards.length}`;
+                    
+                    if (gameState.matched === gameState.cards.length) {
+                        clearInterval(gameState.timerInterval);
+                        endMatchMadness();
+                    }
+                }
+                
+                matchSelected.classList.remove('ring-4', 'ring-yellow-400');
+                matchSelected = null;
+            }
+        }
+
+        function startMatchTimer() {
+            gameState.timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                const remaining = gameState.timeLimit - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    endMatchMadness();
+                } else {
+                    document.getElementById('game-timer').textContent = `⏱️ ${remaining}s`;
+                }
+            }, 1000);
+        }
+
+        function endMatchMadness() {
+            const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            
+            document.getElementById('results-content').innerHTML = `
+                <div class="text-6xl mb-4">${gameState.matched === gameState.cards.length ? '🎉' : '⏰'}</div>
+                <h2 class="text-4xl font-bold text-white mb-4">${gameState.matched === gameState.cards.length ? 'Perfect!' : 'Time\'s Up!'}</h2>
+                <div class="text-2xl text-white/90 space-y-2">
+                    <p>⏱️ Time: ${time}/${gameState.timeLimit} seconds</p>
+                    <p>✅ Matched: ${gameState.matched}/${gameState.cards.length}</p>
+                    <p>🎯 Score: ${Math.round((gameState.matched / gameState.cards.length) * (gameState.timeLimit / time) * 100)}pts</p>
+                </div>
+            `;
+        }
+
+        // ===== MULTIPLE CHOICE ARENA =====
+        function startMCArena() {
+            gameState = {
+                cards: [...currentDeck.cards],
+                currentIndex: 0,
+                correct: 0,
+                streak: 0,
+                score: 0,
+                startTime: Date.now(),
+                timeLimit: 60
+            };
+            
+            showMCQuestion();
+            startMCTimer();
+        }
+
+        function showMCQuestion() {
+            if (gameState.currentIndex >= gameState.cards.length) {
+                endMCArena();
+                return;
+            }
+            
+            const card = gameState.cards[gameState.currentIndex];
+            const correctAnswer = card.answer;
+            
+            // Generate wrong answers from other cards
+            const wrongAnswers = gameState.cards
+                .filter(c => c.answer !== correctAnswer)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+                .map(c => c.answer);
+            
+            const allAnswers = [correctAnswer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+            
+            document.getElementById('game-stats').textContent = `Score: ${gameState.score} | Streak: ${gameState.streak}🔥`;
+            
+            const content = document.getElementById('game-content');
+            content.innerHTML = `
+                <div class="text-center">
+                    <div class="bg-white/20 rounded-xl p-8 mb-6">
+                        <p class="text-3xl text-white font-bold">${card.question}</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+                        ${allAnswers.map((answer, idx) => `
+                            <button onclick="checkMCAnswer('${answer.replace(/'/g, "\\'")}', '${correctAnswer.replace(/'/g, "\\'")}')"
+                                    class="bg-white/20 hover:bg-white/30 p-6 rounded-xl text-white text-lg transition-all">
+                                ${answer}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkMCAnswer(selected, correct) {
+            const isCorrect = selected === correct;
+            
+            if (isCorrect) {
+                gameState.correct++;
+                gameState.streak++;
+                gameState.score += 10 * gameState.streak;
+                showFeedback(`✅ Correct! +${10 * gameState.streak} pts`, 'green');
+            } else {
+                gameState.streak = 0;
+                showFeedback(`❌ Wrong! Answer: ${correct}`, 'red');
+            }
+            
+            gameState.currentIndex++;
+            setTimeout(showMCQuestion, 1500);
+        }
+
+        function startMCTimer() {
+            gameState.timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                const remaining = gameState.timeLimit - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    endMCArena();
+                } else {
+                    document.getElementById('game-timer').textContent = `⏱️ ${remaining}s`;
+                }
+            }, 1000);
+        }
+
+        function endMCArena() {
+            clearInterval(gameState.timerInterval);
+            const accuracy = Math.round((gameState.correct / gameState.currentIndex) * 100) || 0;
+            
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('results-container').classList.remove('hidden');
+            
+            document.getElementById('results-content').innerHTML = `
+                <div class="text-6xl mb-4">${gameState.score >= 200 ? '🏆' : '🎯'}</div>
+                <h2 class="text-4xl font-bold text-white mb-4">Quiz Arena Complete!</h2>
+                <div class="text-2xl text-white/90 space-y-2">
+                    <p>🏆 Score: ${gameState.score} points</p>
+                    <p>✅ Correct: ${gameState.correct}/${gameState.currentIndex}</p>
+                    <p>🎯 Accuracy: ${accuracy}%</p>
+                    <p>🔥 Best Streak: ${Math.max(...[gameState.streak])}x</p>
+                </div>
+            `;
+        }
+
+        // Initialize
+        loadDecks();
+    </script>
+</body>
+</html>

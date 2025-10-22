@@ -1,0 +1,325 @@
+/* Enhanced Button & UI Element Styles - Opposite Gradient Flow System */
+
+/* Opposite gradient animation (flows opposite to background) */
+@keyframes gradient-flow-reverse {
+    0% {
+        background-position: 100% 50%;
+    }
+    10% {
+        background-position: 85% 55%;
+    }
+    20% {
+        background-position: 65% 45%;
+    }
+    30% {
+        background-position: 50% 50%;
+    }
+    40% {
+        background-position: 35% 55%;
+    }
+    50% {
+        background-position: 20% 50%;
+    }
+    60% {
+        background-position: 5% 45%;
+    }
+    70% {
+        background-position: 25% 55%;
+    }
+    80% {
+        background-position: 50% 50%;
+    }
+    90% {
+        background-position: 75% 45%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes button-glow {
+    0%, 100% {
+        box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+    }
+    50% {
+        box-shadow: 0 6px 30px rgba(255, 107, 107, 0.7);
+    }
+}
+
+@keyframes input-glow {
+    0%, 100% {
+        border-color: rgba(255, 154, 158, 0.5);
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+    }
+    50% {
+        border-color: rgba(255, 154, 158, 0.8);
+        box-shadow: 0 0 25px rgba(255, 107, 107, 0.5);
+    }
+}
+
+/* ===== PRIMARY BUTTONS ===== */
+button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style),
+.btn-primary {
+    background: linear-gradient(45deg, #ff6b6b, #feca57, #ee5a6f, #ff9ff3, #54a0ff);
+    background-size: 400% 400%;
+    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style)::before,
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):hover::before,
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):hover,
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 35px rgba(255, 107, 107, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):active,
+.btn-primary:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* ===== SECONDARY BUTTONS ===== */
+.btn-secondary {
+    background: linear-gradient(45deg, #a29bfe, #fd79a8, #fdcb6e, #6c5ce7);
+    background-size: 400% 400%;
+    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 15px rgba(162, 155, 254, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(162, 155, 254, 0.6);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== DANGER/DELETE BUTTONS ===== */
+.btn-danger,
+button[id*="delete"],
+button[id*="signout"],
+button[id*="remove"] {
+    background: linear-gradient(45deg, #eb3b5a, #fc5c65, #fd79a8, #ff6348) !important;
+    background-size: 400% 400% !important;
+    animation: gradient-flow-reverse 20s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(235, 59, 90, 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-danger:hover,
+button[id*="delete"]:hover,
+button[id*="signout"]:hover,
+button[id*="remove"]:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 30px rgba(235, 59, 90, 0.7) !important;
+}
+
+/* ===== GHOST/TRANSPARENT BUTTONS ===== */
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+/* ===== INPUT FIELDS ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea,
+select {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 245, 0.95));
+    border: 2px solid rgba(255, 154, 158, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 250, 250, 1));
+    border: 2px solid rgba(255, 107, 107, 0.6);
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.4);
+    outline: none;
+    transform: scale(1.01);
+}
+
+/* ===== CHECKBOX & RADIO INPUTS ===== */
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: #ff6b6b;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+/* ===== SPECIAL: Google Sign-In Button Enhancement ===== */
+#google-signin-btn {
+    background: linear-gradient(135deg, #ffffff, #fff5f5) !important;
+    border: 3px solid transparent !important;
+    background-clip: padding-box !important;
+    position: relative !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+#google-signin-btn::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, #ff6b6b, #feca57, #ee5a6f, #ff9ff3, #54a0ff);
+    background-size: 400% 400%;
+    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border-radius: inherit;
+    z-index: -1;
+}
+
+/* ===== LINK BUTTONS (styled as buttons) ===== */
+a.button,
+a[class*="btn-"] {
+    display: inline-block;
+    text-decoration: none;
+}
+
+/* ===== DISABLED STATE ===== */
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    animation: none !important;
+}
+
+button:disabled:hover,
+input:disabled:hover,
+textarea:disabled:hover,
+select:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ===== SUBMIT BUTTONS ===== */
+button[type="submit"],
+input[type="submit"] {
+    background: linear-gradient(45deg, #10ac84, #00d2d3, #01a3a4, #48dbfb);
+    background-size: 400% 400%;
+    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(16, 172, 132, 0.4);
+    color: white;
+    font-weight: 700;
+}
+
+button[type="submit"]:hover,
+input[type="submit"]:hover {
+    box-shadow: 0 8px 35px rgba(16, 172, 132, 0.6);
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* ===== FORM LABELS ===== */
+label {
+    transition: all 0.2s ease;
+}
+
+label:has(+ input:focus),
+label:has(+ textarea:focus),
+label:has(+ select:focus) {
+    color: #ff6b6b;
+    transform: translateX(2px);
+}
+
+/* ===== RANGE INPUTS ===== */
+input[type="range"] {
+    accent-color: #ff6b6b;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    background: linear-gradient(135deg, #ff6b6b, #feca57);
+    cursor: pointer;
+}
+
+/* ===== SELECT DROPDOWNS ===== */
+select {
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, #ff6b6b 50%),
+                      linear-gradient(135deg, #ff6b6b 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px),
+                         calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+/* ===== LOADING STATES ===== */
+.loading-gradient {
+    background: linear-gradient(45deg, #ff6b6b, #feca57, #ee5a6f, #ff9ff3);
+    background-size: 400% 400%;
+    animation: gradient-flow-reverse 2s ease-in-out infinite;
+}
+
+/* ===== RESPONSIVE TOUCH STATES (Mobile) ===== */
+@media (hover: none) and (pointer: coarse) {
+    button:active,
+    .btn-primary:active,
+    .btn-secondary:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ===== FILE INPUTS ===== */
+input[type="file"]::file-selector-button {
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    background-size: 200% 200%;
+    animation: gradient-flow-reverse 15s ease infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}

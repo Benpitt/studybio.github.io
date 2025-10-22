@@ -177,28 +177,6 @@
     </style>
 </head>
 <body class="overflow-x-hidden">
-    <script>
-        // Instant check - if logged in with valid session, redirect immediately
-        const userId = localStorage.getItem('userId');
-        const userName = localStorage.getItem('userName');
-        const sessionTimestamp = localStorage.getItem('sessionTimestamp');
-
-        if (userId && userName && sessionTimestamp) {
-            // Check if session is still valid (less than 7 days old)
-            const now = Date.now();
-            const sevenDays = 7 * 24 * 60 * 60 * 1000;
-            const sessionAge = now - parseInt(sessionTimestamp);
-
-            if (sessionAge < sevenDays) {
-                console.log('Already logged in (cached) with valid session - redirecting immediately');
-                window.location.href = 'dashboard.html';
-            } else {
-                // Session expired, clear localStorage to prevent loop
-                console.log('Session expired, clearing localStorage');
-                localStorage.clear();
-            }
-        }
-    </script>
 
     <div class="min-h-screen bg-animated-gradient relative overflow-hidden">
         <!-- Glowing orbs background -->
@@ -306,7 +284,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -320,15 +298,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
-
-        // Check if already logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in, redirect to dashboard
-                console.log('Already signed in, redirecting to dashboard');
-                window.location.href = 'dashboard.html';
-            }
-        });
 
         // Google Sign-In
         document.getElementById('google-signin-btn').addEventListener('click', async () => {

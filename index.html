@@ -126,7 +126,7 @@
 </head>
 <body class="overflow-x-hidden">
     <script>
-        // Instant check - if logged in with valid session, redirect immediately
+        // Check session validity but don't redirect - let users see the landing page
         const userId = localStorage.getItem('userId');
         const userName = localStorage.getItem('userName');
         const sessionTimestamp = localStorage.getItem('sessionTimestamp');
@@ -137,11 +137,8 @@
             const sevenDays = 7 * 24 * 60 * 60 * 1000;
             const sessionAge = now - parseInt(sessionTimestamp);
 
-            if (sessionAge < sevenDays) {
-                console.log('Already logged in (cached) with valid session - redirecting immediately');
-                window.location.href = 'dashboard.html';
-            } else {
-                // Session expired, clear localStorage to prevent loop
+            if (sessionAge >= sevenDays) {
+                // Session expired, clear localStorage
                 console.log('Session expired, clearing localStorage');
                 localStorage.clear();
             }
@@ -269,18 +266,30 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Check if already logged in
+        // Check if already logged in and update button text
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in, redirect to dashboard
-                console.log('Already signed in, redirecting to dashboard');
-                window.location.href = 'dashboard.html';
+                // User is signed in, update button to show "Go to Dashboard"
+                console.log('User already signed in');
+                const btn = document.getElementById('google-signin-btn');
+                const btnText = btn.querySelector('span');
+                btnText.textContent = 'Go to Dashboard';
             }
         });
 
-        // Google Sign-In
+        // Google Sign-In or Dashboard Navigation
         document.getElementById('google-signin-btn').addEventListener('click', async () => {
             try {
+                // Check if user is already logged in
+                const currentUser = auth.currentUser;
+                if (currentUser) {
+                    // Already logged in, just go to dashboard
+                    console.log('Already logged in, redirecting to dashboard');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                // Not logged in, show loading and sign in
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('loading').classList.remove('hidden');
 
@@ -301,7 +310,7 @@
                 localStorage.setItem('userId', userData.userId);
                 localStorage.setItem('sessionTimestamp', Date.now().toString());
 
-                // Redirect immediately - don't wait
+                // Redirect to dashboard after successful sign-in
                 window.location.href = 'dashboard.html';
 
             } catch (error) {

@@ -67,21 +67,21 @@
 
 ## 🏆 Credits & Acknowledgments
 
-### 🧠 Machine Learning
+### Machine Learning
 **[pyBKT](https://github.com/CAHLR/pyBKT)** - Bayesian Knowledge Tracing  
 *Badrinath, A., Wang, F., Pardos, Z. (2021). pyBKT: An Accessible Python Library of Bayesian Knowledge Tracing Models.*
 
-### 🎨 Design Resources
+### Design Resources
 [Lucide Icons](https://lucide.dev/) - Beautiful icon set
 [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 [Google Fonts](https://fonts.google.com/) - Typography
 
-### 📚 Inspiration
+### Inspiration
 [Anki](https://apps.ankiweb.net/) - Spaced repetition pioneer
 [Quizlet](https://quizlet.com/) - Study platform innovation
 [Khan Academy](https://www.khanacademy.org/) - Adaptive learning
 
-### 🤖 AI Services
+### AI Services
 [Anthropic Claude](https://www.anthropic.com/claude) 
 [OpenAI](https://openai.com/) 
 

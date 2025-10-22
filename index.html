@@ -219,6 +219,7 @@
                 localStorage.setItem('userEmail', userData.userEmail);
                 localStorage.setItem('userPhoto', userData.userPhoto);
                 localStorage.setItem('userId', userData.userId);
+                localStorage.setItem('sessionTimestamp', Date.now().toString());
 
                 // Redirect immediately - don't wait
                 window.location.href = 'dashboard.html';

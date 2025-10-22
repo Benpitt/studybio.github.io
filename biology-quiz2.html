@@ -463,55 +463,55 @@
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                <button onClick={() => setMode('flashcards')} className="group bg-gradient-to-br from-blue-500 to-cyan-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => setMode('flashcards')} className="group card-gradient-blue text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎴</div>
                                     <div className="text-2xl mb-2">Smart Flashcards</div>
                                     <div className="text-sm opacity-90">Spaced repetition + confidence tracking</div>
                                 </button>
                                 
-                                <button onClick={() => { setMode('practice'); initTest(20); }} className="group bg-gradient-to-br from-green-500 to-teal-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => { setMode('practice'); initTest(20); }} className="group card-gradient-success text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📝</div>
                                     <div className="text-2xl mb-2">Practice Test</div>
                                     <div className="text-sm opacity-90">Adaptive feedback & recommendations</div>
                                 </button>
 
-                                <button onClick={() => setMode('quizbuilder')} className="group bg-gradient-to-br from-purple-500 to-pink-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => setMode('quizbuilder')} className="group card-gradient-purple text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎯</div>
                                     <div className="text-2xl mb-2">Quiz Builder</div>
                                     <div className="text-sm opacity-90">Build custom topic quizzes</div>
                                 </button>
 
-                                <button onClick={() => { setMode('match'); initMatchGame(); }} className="group bg-gradient-to-br from-yellow-500 to-orange-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => { setMode('match'); initMatchGame(); }} className="group card-gradient-amber text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎮</div>
                                     <div className="text-2xl mb-2">Matching Game</div>
                                     <div className="text-sm opacity-90">Match questions to answers</div>
                                 </button>
 
-                                <button onClick={() => { setMode('speed'); initSpeedChallenge(); }} className="group bg-gradient-to-br from-red-500 to-pink-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => { setMode('speed'); initSpeedChallenge(); }} className="group card-gradient-rose text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
                                     <div className="text-2xl mb-2">Speed Challenge</div>
                                     <div className="text-sm opacity-90">60 seconds rapid fire</div>
                                 </button>
 
-                                <button onClick={() => setMode('compare')} className="group bg-gradient-to-br from-indigo-500 to-purple-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => setMode('compare')} className="group card-gradient-indigo text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">⚖️</div>
                                     <div className="text-2xl mb-2">Compare & Contrast</div>
                                     <div className="text-sm opacity-90">6 comparison tables</div>
                                 </button>
 
-                                <button onClick={() => setMode('mistakes')} className="group bg-gradient-to-br from-orange-500 to-red-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => setMode('mistakes')} className="group card-gradient-fire text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">❌</div>
                                     <div className="text-2xl mb-2">Mistake Bank</div>
                                     <div className="text-sm opacity-90">{mistakeBank.length} errors saved</div>
                                 </button>
 
-                                <button onClick={() => setMode('progress')} className="group bg-gradient-to-br from-teal-500 to-green-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => setMode('progress')} className="group card-gradient-success text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📊</div>
                                     <div className="text-2xl mb-2">Progress Dashboard</div>
                                     <div className="text-sm opacity-90">Track your stats</div>
                                 </button>
 
-                                <button onClick={() => setMode('review')} className="group bg-gradient-to-br from-cyan-500 to-blue-500 text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                <button onClick={() => setMode('review')} className="group card-gradient-sky text-white p-8 rounded-2xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                                     <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📖</div>
                                     <div className="text-2xl mb-2">Quick Reference</div>
                                     <div className="text-sm opacity-90">Complete review guide</div>

@@ -105,7 +105,7 @@ Studying.works's code is open source and under the MIT License. See `LICENSE` fo
 
 <div align="center">
 
-### Made with ❤️ by [Ben Hocquet](https://github.com/Benpitt)
+### By [Ben Hocquet](https://github.com/Benpitt)
 
 **[⬆ back to top](#-studyingworks)**
 

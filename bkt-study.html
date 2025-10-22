@@ -255,19 +255,19 @@
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                    <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white">
+                                    <div className="card-gradient-blue rounded-2xl p-6 text-white">
                                         <div className="text-5xl mb-2">📊</div>
                                         <div className="text-3xl font-bold mb-1">{Object.keys(masteryScores).length}</div>
                                         <div className="text-blue-100">Skills Tracked</div>
                                     </div>
-                                    <div className="bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 text-white">
+                                    <div className="card-gradient-success rounded-2xl p-6 text-white">
                                         <div className="text-5xl mb-2">✅</div>
                                         <div className="text-3xl font-bold mb-1">
                                             {Math.round(Object.values(masteryScores).reduce((a, b) => a + b, 0) / Math.max(1, Object.keys(masteryScores).length) * 100)}%
                                         </div>
                                         <div className="text-green-100">Avg Mastery</div>
                                     </div>
-                                    <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
+                                    <div className="card-gradient-purple rounded-2xl p-6 text-white">
                                         <div className="text-5xl mb-2">🎯</div>
                                         <div className="text-3xl font-bold mb-1">
                                             {JSON.parse(localStorage.getItem('bkt_reviews') || '[]').length}
@@ -389,7 +389,7 @@
                                         <div className="card-front absolute w-full h-full">
                                             <div 
                                                 onClick={() => setShowAnswer(true)}
-                                                className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center"
+                                                className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center"
                                             >
                                                 <div>
                                                     <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
@@ -398,7 +398,7 @@
                                             </div>
                                         </div>
                                         <div className="card-back absolute w-full h-full">
-                                            <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-3xl p-12 text-white shadow-2xl h-full flex items-center justify-center">
+                                            <div className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl h-full flex items-center justify-center">
                                                 <div>
                                                     <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
                                                     <div className="text-2xl text-center">{card.answer}</div>

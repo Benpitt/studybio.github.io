@@ -374,7 +374,7 @@
                                                 const groupDecks = decks.filter(d => group.deckIds.includes(d.id));
                                                 const totalCards = groupDecks.reduce((sum, d) => sum + d.cards.length, 0);
                                                 return (
-                                                    <div key={group.id} className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">
+                                                    <div key={group.id} className="card-gradient-indigo rounded-2xl p-6 text-white">
                                                         <div className="flex justify-between items-start mb-3">
                                                             <h3 className="text-2xl font-bold">📁 {group.name}</h3>
                                                             <button onClick={() => deleteGroup(group.id)} className="text-white/70 hover:text-white">❌</button>
@@ -477,31 +477,31 @@
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <button onClick={() => startMode('flashcards', deck, group)} className="bg-gradient-to-br from-blue-500 to-cyan-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('flashcards', deck, group)} className="card-gradient-blue hover:scale-105 p-8 rounded-2xl text-white transition-all">
                                         <div className="text-6xl mb-3">🎴</div>
                                         <div className="text-2xl font-bold">Flashcards</div>
                                         <div className="text-sm opacity-80">Spaced repetition</div>
                                     </button>
 
-                                    <button onClick={() => startMode('practice', deck, group)} className="bg-gradient-to-br from-purple-500 to-pink-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('practice', deck, group)} className="card-gradient-purple hover:scale-105 p-8 rounded-2xl text-white transition-all">
                                         <div className="text-6xl mb-3">📝</div>
                                         <div className="text-2xl font-bold">Practice Test</div>
                                         <div className="text-sm opacity-80">15 questions</div>
                                     </button>
 
-                                    <button onClick={() => startMode('match', deck, group)} className="bg-gradient-to-br from-green-500 to-teal-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('match', deck, group)} className="card-gradient-success hover:scale-105 p-8 rounded-2xl text-white transition-all">
                                         <div className="text-6xl mb-3">🎯</div>
                                         <div className="text-2xl font-bold">Matching</div>
                                         <div className="text-sm opacity-80">Match pairs</div>
                                     </button>
 
-                                    <button onClick={() => startMode('speed', deck, group)} className="bg-gradient-to-br from-orange-500 to-red-500 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('speed', deck, group)} className="card-gradient-fire hover:scale-105 p-8 rounded-2xl text-white transition-all">
                                         <div className="text-6xl mb-3">⚡</div>
                                         <div className="text-2xl font-bold">Speed Challenge</div>
                                         <div className="text-sm opacity-80">10 seconds each</div>
                                     </button>
 
-                                    <button onClick={() => setMode('mistakes')} className="bg-gradient-to-br from-red-500 to-pink-600 hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => setMode('mistakes')} className="card-gradient-rose hover:scale-105 p-8 rounded-2xl text-white transition-all">
                                         <div className="text-6xl mb-3">❌</div>
                                         <div className="text-2xl font-bold">Mistake Bank</div>
                                         <div className="text-sm opacity-80">{mistakeBank.length} cards</div>
@@ -557,7 +557,7 @@
                                 <div className={`flip-card ${showAnswer ? 'flipped' : ''}`}>
                                     <div className="flip-card-inner relative" style={{minHeight: '400px'}}>
                                         <div className="flip-card-front absolute w-full h-full">
-                                            <div onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                            <div onClick={() => setShowAnswer(!showAnswer)} className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
                                                 <div>
                                                     <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
                                                     <div className="text-3xl font-bold text-center">{card.question}</div>
@@ -565,7 +565,7 @@
                                             </div>
                                         </div>
                                         <div className="flip-card-back absolute w-full h-full">
-                                            <div onClick={() => setShowAnswer(!showAnswer)} className="bg-gradient-to-br from-green-500 to-teal-600 rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                            <div onClick={() => setShowAnswer(!showAnswer)} className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
                                                 <div>
                                                     <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
                                                     <div className="text-2xl text-center">{card.answer}</div>

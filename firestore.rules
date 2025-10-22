@@ -93,12 +93,36 @@ service cloud.firestore {
       allow update, delete: if false;
     }
     
-    // User Mastery Scores Collection  
+    // User Mastery Scores Collection
     match /user_mastery_scores/{userId} {
       // Users can only read/write their own mastery scores
       allow read, write: if isSignedIn() && isOwner(userId);
     }
-    
+
+    // User Profile Collection
+    match /users/{userId} {
+      // Users can only read/write their own profile
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+
+    // User Flashcard Decks Collection
+    match /users/{userId}/flashcardDecks/{deckId} {
+      // Users can only read/write their own flashcard decks
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+
+    // User Data Collection (for progress, mastery, etc.)
+    match /users/{userId}/data/{docId} {
+      // Users can only read/write their own data
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+
+    // User Assignments Collection
+    match /users/{userId}/assignments/{assignmentId} {
+      // Users can only read/write their own assignments
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+
     // Block all other access
     match /{document=**} {
       allow read, write: if false;

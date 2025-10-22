@@ -38,9 +38,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <style>
+        /* Enhanced fluid gradient animation with organic movement */
         @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+            10% {
+                background-position: 15% 45%;
+            }
+            20% {
+                background-position: 35% 55%;
+            }
+            30% {
+                background-position: 50% 50%;
+            }
+            40% {
+                background-position: 65% 45%;
+            }
+            50% {
+                background-position: 80% 50%;
+            }
+            60% {
+                background-position: 95% 55%;
+            }
+            70% {
+                background-position: 75% 45%;
+            }
+            80% {
+                background-position: 50% 50%;
+            }
+            90% {
+                background-position: 25% 55%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
         @keyframes float-slow {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -63,14 +95,33 @@
             to { opacity: 1; transform: translateX(0); }
         }
         @keyframes glow-pulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+            0% {
+                opacity: 0.4;
+                transform: scale(1) translate(0, 0);
+            }
+            25% {
+                opacity: 0.6;
+                transform: scale(1.05) translate(10px, -10px);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1) translate(0, -20px);
+            }
+            75% {
+                opacity: 0.6;
+                transform: scale(1.05) translate(-10px, -10px);
+            }
+            100% {
+                opacity: 0.4;
+                transform: scale(1) translate(0, 0);
+            }
         }
 
         .bg-animated-gradient {
             background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe, #00f2fe);
             background-size: 400% 400%;
-            animation: gradient-shift 15s ease infinite;
+            animation: gradient-shift 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            transition: background 2s ease-in-out;
         }
 
         .glass-card {
@@ -112,8 +163,9 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            animation: glow-pulse 4s ease-in-out infinite;
+            animation: glow-pulse 8s ease-in-out infinite;
             pointer-events: none;
+            transition: background 2s ease-in-out;
         }
 
         .text-gradient {
@@ -312,5 +364,8 @@
             }
         });
     </script>
+
+    <!-- Dynamic Gradient System -->
+    <script src="dynamic-gradient.js"></script>
 </body>
 </html>

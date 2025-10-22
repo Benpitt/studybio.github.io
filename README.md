@@ -99,7 +99,7 @@
 
 ## 📜 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Studying.works's code is open source and under the MIT License. See `LICENSE` for more information.
 
 ---
 

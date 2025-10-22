@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKT Analytics - studying.works</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="global-styles.css">
+
+    <style>
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .math-formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
+    <script src="auth-guard.js"></script>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        function Navigation() {
+            return (
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>studying.works</span>
+                                </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="bkt-study.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">BKT Study</a>
+                                    <a href="bkt-analytics.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">BKT Analytics</a>
+                                    <a href="custom-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">My Flashcards</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function BKTAnalyticsApp() {
+            const [viewMode, setViewMode] = useState('simple'); // simple or technical
+            const [masteryScores, setMasteryScores] = useState({});
+            const [reviews, setReviews] = useState([]);
+            const [selectedSkill, setSelectedSkill] = useState(null);
+            const chartRef = useRef(null);
+            const skillChartRef = useRef(null);
+
+            useEffect(() => {
+                loadData();
+            }, []);
+
+            useEffect(() => {
+                if (Object.keys(masteryScores).length > 0) {
+                    renderMasteryChart();
+                }
+            }, [masteryScores]);
+
+            useEffect(() => {
+                if (selectedSkill && reviews.length > 0) {
+                    renderSkillProgressChart();
+                }
+            }, [selectedSkill, reviews]);
+
+            function loadData() {
+                // Load mastery scores
+                const savedMastery = localStorage.getItem('bkt_mastery_scores');
+                if (savedMastery) {
+                    setMasteryScores(JSON.parse(savedMastery));
+                }
+
+                // Load reviews
+                const savedReviews = localStorage.getItem('bkt_reviews');
+                if (savedReviews) {
+                    setReviews(JSON.parse(savedReviews));
+                }
+            }
+
+            function renderMasteryChart() {
+                const ctx = document.getElementById('masteryChart');
+                if (!ctx) return;
+
+                if (chartRef.current) {
+                    chartRef.current.destroy();
+                }
+
+                const skills = Object.keys(masteryScores);
+                const scores = Object.values(masteryScores);
+
+                chartRef.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: skills.map(s => s.replace(/-/g, ' ')),
+                        datasets: [{
+                            label: 'Mastery Score',
+                            data: scores,
+                            backgroundColor: scores.map(score =>
+                                score < 0.5 ? 'rgba(239, 68, 68, 0.8)' :
+                                score < 0.8 ? 'rgba(251, 191, 36, 0.8)' :
+                                'rgba(34, 197, 94, 0.8)'
+                            ),
+                            borderColor: scores.map(score =>
+                                score < 0.5 ? 'rgba(239, 68, 68, 1)' :
+                                score < 0.8 ? 'rgba(251, 191, 36, 1)' :
+                                'rgba(34, 197, 94, 1)'
+                            ),
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 1,
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    callback: function(value) {
+                                        return (value * 100) + '%';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Mastery: ' + Math.round(context.parsed.y * 100) + '%';
+                                    }
+                                }
+                            }
+                        },
+                        onClick: (e, items) => {
+                            if (items.length > 0) {
+                                const index = items[0].index;
+                                setSelectedSkill(skills[index]);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function renderSkillProgressChart() {
+                const ctx = document.getElementById('skillProgressChart');
+                if (!ctx || !selectedSkill) return;
+
+                if (skillChartRef.current) {
+                    skillChartRef.current.destroy();
+                }
+
+                // Filter reviews for selected skill
+                const skillReviews = reviews.filter(r => r.skill === selectedSkill);
+
+                // Calculate mastery over time using simplified BKT
+                let mastery = 0.5; // Starting mastery
+                const masteryOverTime = [mastery];
+                const learningRate = 0.1;
+                const slipRate = 0.1;
+
+                skillReviews.forEach(review => {
+                    if (review.correct === 1 || review.correct === true) {
+                        mastery = mastery + (1 - mastery) * learningRate;
+                    } else {
+                        mastery = mastery * (1 - slipRate);
+                    }
+                    masteryOverTime.push(mastery);
+                });
+
+                skillChartRef.current = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({length: masteryOverTime.length}, (_, i) => i),
+                        datasets: [{
+                            label: 'Mastery Progress',
+                            data: masteryOverTime,
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: skillReviews.map((r, i) =>
+                                (r.correct === 1 || r.correct === true) ? 'rgba(34, 197, 94, 1)' : 'rgba(239, 68, 68, 1)'
+                            )
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 1,
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    callback: function(value) {
+                                        return (value * 100) + '%';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Review Number',
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Mastery: ' + Math.round(context.parsed.y * 100) + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function calculateStats() {
+                const totalReviews = reviews.length;
+                const correctReviews = reviews.filter(r => r.correct === 1 || r.correct === true).length;
+                const accuracy = totalReviews > 0 ? (correctReviews / totalReviews) : 0;
+                const avgMastery = Object.values(masteryScores).reduce((a, b) => a + b, 0) / Math.max(1, Object.keys(masteryScores).length);
+
+                return {
+                    totalReviews,
+                    correctReviews,
+                    accuracy,
+                    avgMastery,
+                    totalSkills: Object.keys(masteryScores).length
+                };
+            }
+
+            const stats = calculateStats();
+
+            return (
+                <div className="min-h-screen">
+                    <Navigation />
+                    <div className="pt-24 p-6 pb-12">
+                        <div className="max-w-7xl mx-auto">
+                            {/* Header */}
+                            <div className="mb-8">
+                                <h1 className="text-5xl font-bold text-white mb-2">📊 BKT Analytics</h1>
+                                <p className="text-xl text-blue-200">Deep dive into your learning data</p>
+                            </div>
+
+                            {/* View Toggle */}
+                            <div className="bg-white/10 backdrop-blur rounded-2xl p-2 inline-flex mb-8">
+                                <button
+                                    onClick={() => setViewMode('simple')}
+                                    className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                                        viewMode === 'simple'
+                                            ? 'bg-white text-gray-900'
+                                            : 'text-white/70 hover:text-white'
+                                    }`}
+                                >
+                                    🎯 Simple View
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('technical')}
+                                    className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                                        viewMode === 'technical'
+                                            ? 'bg-white text-gray-900'
+                                            : 'text-white/70 hover:text-white'
+                                    }`}
+                                >
+                                    🧮 Technical View
+                                </button>
+                            </div>
+
+                            {/* Simple View */}
+                            {viewMode === 'simple' && (
+                                <div className="space-y-8">
+                                    {/* Stats Overview */}
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                        <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white card-hover">
+                                            <div className="text-5xl mb-2">📚</div>
+                                            <div className="text-3xl font-bold mb-1">{stats.totalSkills}</div>
+                                            <div className="text-blue-100">Skills Tracked</div>
+                                        </div>
+                                        <div className="bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 text-white card-hover">
+                                            <div className="text-5xl mb-2">✅</div>
+                                            <div className="text-3xl font-bold mb-1">{Math.round(stats.avgMastery * 100)}%</div>
+                                            <div className="text-green-100">Avg Mastery</div>
+                                        </div>
+                                        <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white card-hover">
+                                            <div className="text-5xl mb-2">🎯</div>
+                                            <div className="text-3xl font-bold mb-1">{stats.totalReviews}</div>
+                                            <div className="text-purple-100">Total Reviews</div>
+                                        </div>
+                                        <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white card-hover">
+                                            <div className="text-5xl mb-2">🔥</div>
+                                            <div className="text-3xl font-bold mb-1">{Math.round(stats.accuracy * 100)}%</div>
+                                            <div className="text-orange-100">Accuracy</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Mastery Chart */}
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+                                            <span>📊</span>
+                                            <span className="ml-2">Mastery by Skill</span>
+                                        </h2>
+                                        <p className="text-white/70 mb-4 text-sm">Click on a bar to see detailed progress</p>
+                                        {Object.keys(masteryScores).length > 0 ? (
+                                            <div style={{height: '300px'}}>
+                                                <canvas id="masteryChart"></canvas>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-12 text-white/60">
+                                                <div className="text-6xl mb-4">📚</div>
+                                                <p>No data yet! Start studying with BKT to see your progress.</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Selected Skill Progress */}
+                                    {selectedSkill && (
+                                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                            <div className="flex justify-between items-center mb-4">
+                                                <h2 className="text-2xl font-bold text-white flex items-center">
+                                                    <span>📈</span>
+                                                    <span className="ml-2">Progress: {selectedSkill.replace(/-/g, ' ')}</span>
+                                                </h2>
+                                                <button
+                                                    onClick={() => setSelectedSkill(null)}
+                                                    className="text-white/60 hover:text-white"
+                                                >
+                                                    ✕ Close
+                                                </button>
+                                            </div>
+                                            <div style={{height: '300px'}}>
+                                                <canvas id="skillProgressChart"></canvas>
+                                            </div>
+                                            <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                                                <div className="bg-white/5 p-3 rounded-lg">
+                                                    <div className="text-white/60 mb-1">Total Reviews</div>
+                                                    <div className="text-white font-bold text-xl">
+                                                        {reviews.filter(r => r.skill === selectedSkill).length}
+                                                    </div>
+                                                </div>
+                                                <div className="bg-white/5 p-3 rounded-lg">
+                                                    <div className="text-white/60 mb-1">Current Mastery</div>
+                                                    <div className="text-white font-bold text-xl">
+                                                        {Math.round(masteryScores[selectedSkill] * 100)}%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Simple Explanation */}
+                                    <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6">
+                                        <h2 className="text-2xl font-bold text-white mb-4">💡 How BKT Works (Simple)</h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white">
+                                            <div className="bg-white/10 p-4 rounded-xl">
+                                                <div className="text-3xl mb-2">🎯</div>
+                                                <div className="font-bold mb-2">Mastery Score (0-100%)</div>
+                                                <div className="text-sm text-white/90">
+                                                    How well the system thinks you know this topic. Starts at 50% and changes based on your answers.
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/10 p-4 rounded-xl">
+                                                <div className="text-3xl mb-2">✅</div>
+                                                <div className="font-bold mb-2">Correct Answer</div>
+                                                <div className="text-sm text-white/90">
+                                                    Increases your mastery score. The system becomes more confident you know it.
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/10 p-4 rounded-xl">
+                                                <div className="text-3xl mb-2">❌</div>
+                                                <div className="font-bold mb-2">Wrong Answer</div>
+                                                <div className="text-sm text-white/90">
+                                                    Decreases your mastery score. Shows you need more practice on this topic.
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/10 p-4 rounded-xl">
+                                                <div className="text-3xl mb-2">🔄</div>
+                                                <div className="font-bold mb-2">Smart Prioritization</div>
+                                                <div className="text-sm text-white/90">
+                                                    BKT shows you topics with lower mastery first, making study time more efficient.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Technical View */}
+                            {viewMode === 'technical' && (
+                                <div className="space-y-8">
+                                    {/* BKT Algorithm Explanation */}
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                        <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
+                                            <span>🧮</span>
+                                            <span className="ml-2">Bayesian Knowledge Tracing Algorithm</span>
+                                        </h2>
+
+                                        <div className="space-y-6 text-white">
+                                            <div>
+                                                <h3 className="text-xl font-bold mb-3 text-blue-300">1. Core BKT Equation</h3>
+                                                <div className="math-formula text-sm">
+                                                    P(L<sub>n</sub>) = P(L<sub>n-1</sub> | evidence)
+                                                    <br/><br/>
+                                                    Where:
+                                                    <br/>• P(L<sub>n</sub>) = Probability of knowing skill after n attempts (mastery)
+                                                    <br/>• Evidence = Observed correctness of answer
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <h3 className="text-xl font-bold mb-3 text-green-300">2. Four Key Parameters</h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="bg-white/5 p-4 rounded-lg">
+                                                        <div className="font-bold text-green-400 mb-2">P(L₀) - Prior Knowledge</div>
+                                                        <div className="text-sm text-white/80">
+                                                            Initial probability student knows skill before any practice
+                                                            <div className="math-formula mt-2 text-xs">
+                                                                Current: 0.5 (50%)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-white/5 p-4 rounded-lg">
+                                                        <div className="font-bold text-blue-400 mb-2">P(T) - Learn/Transit Rate</div>
+                                                        <div className="text-sm text-white/80">
+                                                            Probability of learning skill on each practice attempt
+                                                            <div className="math-formula mt-2 text-xs">
+                                                                Current: 0.1 (10% per correct)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-white/5 p-4 rounded-lg">
+                                                        <div className="font-bold text-yellow-400 mb-2">P(S) - Slip Rate</div>
+                                                        <div className="text-sm text-white/80">
+                                                            Probability of answering wrong despite knowing the skill
+                                                            <div className="math-formula mt-2 text-xs">
+                                                                Current: 0.1 (10% slip chance)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-white/5 p-4 rounded-lg">
+                                                        <div className="font-bold text-purple-400 mb-2">P(G) - Guess Rate</div>
+                                                        <div className="text-sm text-white/80">
+                                                            Probability of answering correctly by lucky guess
+                                                            <div className="math-formula mt-2 text-xs">
+                                                                Current: 0.2 (20% guess chance)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <h3 className="text-xl font-bold mb-3 text-orange-300">3. Update Formulas</h3>
+                                                <div className="space-y-4">
+                                                    <div className="bg-green-500/20 p-4 rounded-lg border border-green-500/50">
+                                                        <div className="font-bold mb-2">When Answer is CORRECT:</div>
+                                                        <div className="math-formula text-sm">
+                                                            P(L<sub>n</sub>) = P(L<sub>n-1</sub>) + (1 - P(L<sub>n-1</sub>)) × P(T)
+                                                            <br/><br/>
+                                                            Example: If P(L) = 0.5
+                                                            <br/>→ P(L<sub>new</sub>) = 0.5 + (1 - 0.5) × 0.1 = 0.55
+                                                            <br/><br/>
+                                                            Interpretation: Mastery increases by learning rate, weighted by how much is left to learn
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-red-500/20 p-4 rounded-lg border border-red-500/50">
+                                                        <div className="font-bold mb-2">When Answer is INCORRECT:</div>
+                                                        <div className="math-formula text-sm">
+                                                            P(L<sub>n</sub>) = P(L<sub>n-1</sub>) × (1 - P(S))
+                                                            <br/><br/>
+                                                            Example: If P(L) = 0.5
+                                                            <br/>→ P(L<sub>new</sub>) = 0.5 × (1 - 0.1) = 0.45
+                                                            <br/><br/>
+                                                            Interpretation: Mastery decreases, accounting for possibility it was just a slip
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <h3 className="text-xl font-bold mb-3 text-pink-300">4. Full Bayesian Update (Advanced)</h3>
+                                                <div className="math-formula text-sm">
+                                                    P(L<sub>n</sub> | correct) = P(correct | L<sub>n</sub>) × P(L<sub>n</sub>) / P(correct)
+                                                    <br/><br/>
+                                                    Where:
+                                                    <br/>• P(correct | L<sub>n</sub>) = (1 - P(S)) if learned, P(G) if not
+                                                    <br/>• P(correct) = P(L<sub>n</sub>)(1 - P(S)) + (1 - P(L<sub>n</sub>))P(G)
+                                                    <br/><br/>
+                                                    This accounts for both guessing and slipping simultaneously.
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <h3 className="text-xl font-bold mb-3 text-cyan-300">5. Implementation Notes</h3>
+                                                <div className="bg-white/5 p-4 rounded-lg space-y-2 text-sm">
+                                                    <div>
+                                                        <span className="font-bold text-cyan-400">Current Implementation:</span> Simplified Bayesian update (formulas in section 3)
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-cyan-400">Data Storage:</span> Reviews saved to Firebase (bkt_reviews collection)
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-cyan-400">Advanced BKT:</span> For full pyBKT with learned parameters, export data and run train_bkt.py (requires 100+ reviews)
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-cyan-400">Skill Modeling:</span> Each flashcard deck treated as separate skill
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Current Data Stats */}
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-4">📊 Your BKT Data</h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="bg-white/5 p-4 rounded-lg">
+                                                <div className="text-white/60 text-sm mb-1">Total Reviews</div>
+                                                <div className="text-3xl font-bold text-white">{stats.totalReviews}</div>
+                                                <div className="text-xs text-white/50 mt-2">
+                                                    {stats.totalReviews >= 100 ? '✅ Enough for pyBKT training' : `❌ Need ${100 - stats.totalReviews} more for training`}
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/5 p-4 rounded-lg">
+                                                <div className="text-white/60 text-sm mb-1">Tracked Skills</div>
+                                                <div className="text-3xl font-bold text-white">{stats.totalSkills}</div>
+                                                <div className="text-xs text-white/50 mt-2">
+                                                    Avg {Math.round(stats.totalReviews / Math.max(1, stats.totalSkills))} reviews/skill
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/5 p-4 rounded-lg">
+                                                <div className="text-white/60 text-sm mb-1">Model Status</div>
+                                                <div className="text-xl font-bold text-white">Simplified BKT</div>
+                                                <div className="text-xs text-white/50 mt-2">
+                                                    Fixed parameters (not learned)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Code Example */}
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-4">💻 Implementation Code</h2>
+                                        <div className="math-formula text-sm">
+                                            <pre className="text-white/90">
+{`function updateMasteryScore(skill, correct) {
+    // Current simplified BKT implementation
+    const currentScore = getMasteryScore(skill);
+    const learningRate = 0.1;  // P(T)
+    const slipRate = 0.1;      // P(S)
+    const guessRate = 0.2;     // P(G) - not used yet
+
+    let newScore;
+    if (correct) {
+        // Learning update
+        newScore = currentScore + (1 - currentScore) * learningRate;
+    } else {
+        // Slip penalty
+        newScore = currentScore * (1 - slipRate);
+    }
+
+    // Constrain to [0, 1]
+    return Math.max(0, Math.min(1, newScore));
+}`}
+                                            </pre>
+                                        </div>
+                                        <div className="mt-4 bg-yellow-500/20 border border-yellow-500/50 p-4 rounded-lg">
+                                            <div className="font-bold text-yellow-400 mb-2">🚀 Future Enhancement</div>
+                                            <div className="text-sm text-white/80">
+                                                For personalized P(T), P(S), and P(G) values per skill, collect 100+ reviews and run:
+                                                <div className="math-formula mt-2 text-xs">
+                                                    python export_firebase_bkt.py
+                                                    <br/>python train_bkt.py
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<BKTAnalyticsApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

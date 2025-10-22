@@ -149,14 +149,30 @@ class DynamicGradient {
 
     applyGradient() {
         const colors = this.getBlendedColors();
-        const element = document.querySelector('.bg-animated-gradient');
 
-        if (element) {
-            // Create gradient with all colors
+        // Update main animated gradient element if it exists (index page)
+        const animatedElement = document.querySelector('.bg-animated-gradient');
+        if (animatedElement) {
             const gradient = `linear-gradient(-45deg, ${colors.join(', ')})`;
-            element.style.background = gradient;
-            element.style.backgroundSize = '400% 400%';
+            animatedElement.style.background = gradient;
+            animatedElement.style.backgroundSize = '400% 400%';
         }
+
+        // Update global background for all pages
+        const backgroundGradient = `linear-gradient(to bottom right, ${colors[0]}, ${colors[3]}, ${colors[4]})`;
+
+        // Update html and body elements
+        if (document.documentElement) {
+            document.documentElement.style.background = `${backgroundGradient} fixed`;
+        }
+        if (document.body) {
+            document.body.style.background = `${backgroundGradient} fixed`;
+        }
+
+        // Update body::before pseudo-element via CSS custom properties
+        document.documentElement.style.setProperty('--gradient-color-1', colors[0]);
+        document.documentElement.style.setProperty('--gradient-color-2', colors[3]);
+        document.documentElement.style.setProperty('--gradient-color-3', colors[4]);
 
         // Update glowing orbs with palette colors
         this.updateGlowingOrbs(colors);

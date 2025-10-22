@@ -5,37 +5,37 @@
 
 class DynamicGradient {
     constructor() {
-        // Time-of-day color palettes
+        // Time-of-day color palettes - Dark theme
         this.palettes = {
             dawn: {
                 name: 'Dawn',
                 time: [5, 8],
-                colors: ['#ff6b9d', '#c94b8b', '#ffa07a', '#ee82ee', '#ff69b4', '#ffd1dc']
+                colors: ['#0a0a1a', '#1e1b4b', '#312e81', '#134e4a', '#1e40af', '#164e63']
             },
             morning: {
                 name: 'Morning',
                 time: [8, 12],
-                colors: ['#4facfe', '#00f2fe', '#43e97b', '#38f9d7', '#667eea', '#764ba2']
+                colors: ['#0a0a1a', '#1e1b4b', '#0f766e', '#134e4a', '#0e7490', '#1e40af']
             },
             afternoon: {
                 name: 'Afternoon',
                 time: [12, 17],
-                colors: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe', '#84fab0']
+                colors: ['#0a0a1a', '#1e1b4b', '#134e4a', '#0f766e', '#115e59', '#14532d']
             },
             evening: {
                 name: 'Evening',
                 time: [17, 20],
-                colors: ['#fa709a', '#fee140', '#ff9a56', '#ff6a88', '#ff99ac', '#fcb69f']
+                colors: ['#0a0a1a', '#1e1b4b', '#312e81', '#4c1d95', '#5b21b6', '#6b21a8']
             },
             night: {
                 name: 'Night',
                 time: [20, 24],
-                colors: ['#2e1753', '#1f1746', '#4c2885', '#667eea', '#764ba2', '#5f27cd']
+                colors: ['#0a0a1a', '#1e1b4b', '#312e81', '#4c1d95', '#581c87', '#6b21a8']
             },
             lateNight: {
                 name: 'Late Night',
                 time: [0, 5],
-                colors: ['#1a1a2e', '#16213e', '#0f3460', '#533483', '#5f27cd', '#341f97']
+                colors: ['#0a0a1a', '#0f172a', '#1e1b4b', '#312e81', '#1e293b', '#0f172a']
             }
         };
 

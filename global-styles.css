@@ -1,12 +1,12 @@
 /* CRITICAL: Fix white borders on overscroll */
 :root {
-    --gradient-color-1: #111827;
-    --gradient-color-2: #1e3a8a;
-    --gradient-color-3: #581c87;
+    --gradient-color-1: #0a0a1a;
+    --gradient-color-2: #1e1b4b;
+    --gradient-color-3: #134e4a;
 }
 
 html, body {
-    background: #111827 !important;
+    background: #0a0a1a !important;
     background-attachment: fixed !important;
     overscroll-behavior: none;
 }

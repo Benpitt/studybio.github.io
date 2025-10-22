@@ -74,10 +74,25 @@
 </head>
 <body class="overflow-hidden" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">>
     <script>
-        // Instant check - if logged in, redirect immediately
-        if (localStorage.getItem('userId') && localStorage.getItem('userName')) {
-            console.log('Already logged in (cached) - redirecting immediately');
-            window.location.href = 'dashboard.html';
+        // Instant check - if logged in with valid session, redirect immediately
+        const userId = localStorage.getItem('userId');
+        const userName = localStorage.getItem('userName');
+        const sessionTimestamp = localStorage.getItem('sessionTimestamp');
+
+        if (userId && userName && sessionTimestamp) {
+            // Check if session is still valid (less than 7 days old)
+            const now = Date.now();
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            const sessionAge = now - parseInt(sessionTimestamp);
+
+            if (sessionAge < sevenDays) {
+                console.log('Already logged in (cached) with valid session - redirecting immediately');
+                window.location.href = 'dashboard.html';
+            } else {
+                // Session expired, clear localStorage to prevent loop
+                console.log('Session expired, clearing localStorage');
+                localStorage.clear();
+            }
         }
     </script>
     

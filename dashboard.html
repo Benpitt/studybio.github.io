@@ -352,6 +352,7 @@
                 localStorage.setItem('userEmail', user.email);
                 localStorage.setItem('userPhoto', user.photoURL);
                 localStorage.setItem('userId', user.uid);
+                localStorage.setItem('sessionTimestamp', Date.now().toString());
                 showDashboard();
             } else {
                 console.log('No user - checking localStorage');

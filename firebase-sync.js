@@ -4,7 +4,7 @@
  * Add this to a new file: firebase-sync.js
  */
 
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 class FirebaseSync {
     constructor(db, userId) {

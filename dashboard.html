@@ -286,6 +286,7 @@
         // Load Firebase in background
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -298,6 +299,100 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // FirebaseSync Class
+        class FirebaseSync {
+            constructor(db, userId) {
+                this.db = db;
+                this.userId = userId;
+            }
+
+            async syncUserProfile() {
+                const userData = {
+                    userId: this.userId,
+                    userName: localStorage.getItem('userName'),
+                    userEmail: localStorage.getItem('userEmail'),
+                    streak: parseInt(localStorage.getItem('streak') || '0'),
+                    lastVisit: localStorage.getItem('lastVisit'),
+                    updatedAt: serverTimestamp()
+                };
+                await setDoc(doc(this.db, 'users', this.userId), userData, { merge: true });
+                console.log('✅ User profile synced');
+            }
+
+            async syncFlashcardDecks() {
+                const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
+                for (const deck of decks) {
+                    const deckRef = doc(this.db, 'users', this.userId, 'flashcardDecks', deck.id.toString());
+                    await setDoc(deckRef, { ...deck, syncedAt: serverTimestamp() });
+                }
+                console.log(`✅ Synced ${decks.length} flashcard decks`);
+            }
+
+            async syncFlashcardProgress() {
+                const progress = JSON.parse(localStorage.getItem('flashcardProgress') || '{}');
+                if (Object.keys(progress).length === 0) return;
+                const progressRef = doc(this.db, 'users', this.userId, 'data', 'flashcardProgress');
+                await setDoc(progressRef, { progress: progress, syncedAt: serverTimestamp() });
+                console.log('✅ Flashcard progress synced');
+            }
+
+            async syncQuizProgress() {
+                const progress = JSON.parse(localStorage.getItem('progress') || '{}');
+                if (Object.keys(progress).length === 0) return;
+                const progressRef = doc(this.db, 'users', this.userId, 'data', 'quizProgress');
+                await setDoc(progressRef, { progress: progress, syncedAt: serverTimestamp() });
+                console.log('✅ Quiz progress synced');
+            }
+
+            async syncAssignments() {
+                const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
+                for (const assignment of assignments) {
+                    const assignmentRef = doc(this.db, 'users', this.userId, 'assignments', assignment.id.toString());
+                    await setDoc(assignmentRef, { ...assignment, syncedAt: serverTimestamp() });
+                }
+                console.log(`✅ Synced ${assignments.length} assignments`);
+            }
+
+            async syncBKTMastery() {
+                const mastery = JSON.parse(localStorage.getItem('bkt_mastery_scores') || '{}');
+                if (Object.keys(mastery).length === 0) return;
+                const masteryRef = doc(this.db, 'users', this.userId, 'data', 'bktMastery');
+                await setDoc(masteryRef, { scores: mastery, syncedAt: serverTimestamp() });
+                console.log('✅ BKT mastery scores synced');
+            }
+
+            async syncAll() {
+                console.log('🔄 Starting full sync...');
+                try {
+                    await this.syncUserProfile();
+                    await this.syncFlashcardDecks();
+                    await this.syncFlashcardProgress();
+                    await this.syncQuizProgress();
+                    await this.syncAssignments();
+                    await this.syncBKTMastery();
+                    localStorage.setItem('lastSync', new Date().toISOString());
+                    console.log('✅ Full sync complete!');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Sync failed:', error);
+                    return false;
+                }
+            }
+
+            enableAutoSync(intervalMinutes = 5) {
+                this.syncAll();
+                setInterval(() => {
+                    console.log('🔄 Auto-syncing...');
+                    this.syncAll();
+                }, intervalMinutes * 60 * 1000);
+                window.addEventListener('beforeunload', () => {
+                    this.syncAll();
+                });
+                console.log(`✅ Auto-sync enabled (every ${intervalMinutes} minutes)`);
+            }
+        }
 
         function showDashboard() {
             // Get cached user info from localStorage
@@ -354,6 +449,12 @@
                 localStorage.setItem('userId', user.uid);
                 localStorage.setItem('sessionTimestamp', Date.now().toString());
                 showDashboard();
+
+                // Initialize Firebase Sync
+                const sync = new FirebaseSync(db, user.uid);
+                // Enable auto-sync every 5 minutes
+                sync.enableAutoSync(5);
+                console.log('🔄 Firebase sync initialized for user:', user.email);
             } else {
                 console.log('No user - checking localStorage');
                 // Check if we have cached login

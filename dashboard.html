@@ -91,9 +91,38 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        <div class="mb-8 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
+        <div class="mb-6 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
             <h1 id="greeting" class="text-5xl font-bold text-white mb-2">Welcome! 👋</h1>
             <p class="text-xl text-blue-200">Ready to crush some studying?</p>
+        </div>
+
+        <!-- Quick Insights Banner -->
+        <div class="mb-8 animate-slide-in" style="animation-delay: 0.15s; opacity: 0;">
+            <div class="bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl">⚡</div>
+                        <div>
+                            <div class="text-white/80 text-sm font-semibold">Today's Focus</div>
+                            <div id="daily-focus" class="text-white font-bold text-lg">Getting Started</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl">📈</div>
+                        <div>
+                            <div class="text-white/80 text-sm font-semibold">Study Time Today</div>
+                            <div id="study-time-today" class="text-white font-bold text-lg">0 min</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl">🎯</div>
+                        <div>
+                            <div class="text-white/80 text-sm font-semibold">Recent Activity</div>
+                            <div id="recent-activity" class="text-white font-bold text-lg">No activity yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -486,17 +515,81 @@
             }
         });
 
+        function updateQuickInsights(totalCards, topicStats, assignments, streak) {
+            // Daily Focus
+            const incompleteTasks = assignments.filter(a => !a.completed);
+            const todayTasks = incompleteTasks.filter(a => {
+                if (!a.dueDate) return false;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const due = new Date(a.dueDate);
+                due.setHours(0, 0, 0, 0);
+                return due.getTime() === today.getTime();
+            });
+
+            let focusText = 'Getting Started';
+            if (todayTasks.length > 0) {
+                focusText = `${todayTasks.length} task${todayTasks.length > 1 ? 's' : ''} due today`;
+            } else if (totalCards > 0) {
+                focusText = 'Keep reviewing flashcards!';
+            } else if (streak > 0) {
+                focusText = `Maintain ${streak} day streak`;
+            }
+            document.getElementById('daily-focus').textContent = focusText;
+
+            // Study Time Today (estimate based on activities today)
+            const today = new Date().toDateString();
+            const todayReviews = Object.values(JSON.parse(localStorage.getItem('flashcardProgress') || '{}')).filter(card => {
+                if (!card.lastReviewed) return false;
+                return new Date(card.lastReviewed).toDateString() === today;
+            }).length;
+
+            const bktReviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]').filter(r => {
+                return new Date(r.timestamp).toDateString() === today;
+            }).length;
+
+            const estimatedMinutes = (todayReviews * 0.5) + (bktReviews * 0.3); // estimate 30s per card
+            document.getElementById('study-time-today').textContent = estimatedMinutes > 0 ? `~${Math.round(estimatedMinutes)} min` : '0 min';
+
+            // Recent Activity
+            let recentText = 'No activity yet';
+            const allProgress = JSON.parse(localStorage.getItem('progress') || '{}');
+            const recentQuizzes = Object.values(allProgress).flat().filter(e => e && e.date);
+
+            if (recentQuizzes.length > 0) {
+                const latestQuiz = recentQuizzes.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                const timeDiff = Date.now() - new Date(latestQuiz.date).getTime();
+                const hoursAgo = Math.floor(timeDiff / (1000 * 60 * 60));
+
+                if (hoursAgo < 1) {
+                    recentText = 'Quiz completed just now';
+                } else if (hoursAgo < 24) {
+                    recentText = `Quiz ${hoursAgo}h ago`;
+                } else {
+                    const daysAgo = Math.floor(hoursAgo / 24);
+                    recentText = `Quiz ${daysAgo}d ago`;
+                }
+            } else if (todayReviews > 0) {
+                recentText = `${todayReviews} card${todayReviews > 1 ? 's' : ''} reviewed`;
+            }
+            document.getElementById('recent-activity').textContent = recentText;
+        }
+
         function loadStats() {
             const streak = parseInt(localStorage.getItem('studyStreak') || '0');
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
             const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
-            
+            const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
+
             document.getElementById('streak').textContent = streak;
             document.getElementById('stat-streak').textContent = streak;
-            
+
             const totalCards = Object.keys(cardHistory).length + customCards.length;
             document.getElementById('stat-cards').textContent = totalCards;
+
+            // Populate Quick Insights Banner
+            updateQuickInsights(totalCards, topicStats, assignments, streak);
             
             let totalTests = 0;
             let totalCorrect = 0;

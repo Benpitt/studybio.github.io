@@ -56,35 +56,6 @@
             <p class="text-xl text-blue-200">Track your learning journey and celebrate milestones</p>
         </div>
 
-        <!-- Trending Analytics Banner -->
-        <div class="mb-4 animate-slide-in" style="animation-delay: 0.05s; opacity: 0;">
-            <div class="bg-gradient-to-r from-teal-500/20 via-cyan-500/20 to-blue-500/20 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="text-4xl">📈</div>
-                        <div>
-                            <div class="text-white/80 text-sm font-semibold">This Week vs Last</div>
-                            <div id="week-comparison" class="text-white font-bold text-lg">Loading...</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-4xl">🏆</div>
-                        <div>
-                            <div class="text-white/80 text-sm font-semibold">Best Subject</div>
-                            <div id="best-subject" class="text-white font-bold text-lg">None yet</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-4xl">🔥</div>
-                        <div>
-                            <div class="text-white/80 text-sm font-semibold">Study Momentum</div>
-                            <div id="momentum" class="text-white font-bold text-lg">Building up!</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <div class="card-gradient-fire rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.1s;">
                 <div class="flex items-center justify-between mb-4">
@@ -193,80 +164,12 @@
     </div>
 
     <script>
-        function updateTrendingAnalytics(topicStats, streak) {
-            // Week Comparison
-            const flashcardProgress = JSON.parse(localStorage.getItem('flashcardProgress') || '{}');
-            const bktReviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
-
-            const now = new Date();
-            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-
-            const thisWeek = Object.values(flashcardProgress).filter(card => {
-                return card.lastReviewed && new Date(card.lastReviewed) > oneWeekAgo;
-            }).length + bktReviews.filter(r => new Date(r.timestamp) > oneWeekAgo).length;
-
-            const lastWeek = Object.values(flashcardProgress).filter(card => {
-                const date = new Date(card.lastReviewed);
-                return card.lastReviewed && date > twoWeeksAgo && date <= oneWeekAgo;
-            }).length + bktReviews.filter(r => {
-                const date = new Date(r.timestamp);
-                return date > twoWeeksAgo && date <= oneWeekAgo;
-            }).length;
-
-            let weekCompText = 'No data yet';
-            if (thisWeek > lastWeek && lastWeek > 0) {
-                const increase = Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
-                weekCompText = `↗️ +${increase}% increase`;
-            } else if (thisWeek < lastWeek && lastWeek > 0) {
-                const decrease = Math.round(((lastWeek - thisWeek) / lastWeek) * 100);
-                weekCompText = `↘️ -${decrease}% decrease`;
-            } else if (thisWeek === lastWeek && thisWeek > 0) {
-                weekCompText = '➡️ Same as last week';
-            } else if (thisWeek > 0) {
-                weekCompText = `${thisWeek} activities`;
-            }
-            document.getElementById('week-comparison').textContent = weekCompText;
-
-            // Best Subject
-            const topics = Object.keys(topicStats).filter(t => topicStats[t] && topicStats[t].total > 0);
-            if (topics.length > 0) {
-                const bestTopic = topics.sort((a, b) => {
-                    const aScore = topicStats[a].correct / topicStats[a].total;
-                    const bScore = topicStats[b].correct / topicStats[b].total;
-                    return bScore - aScore;
-                })[0];
-                const percentage = Math.round((topicStats[bestTopic].correct / topicStats[bestTopic].total) * 100);
-                document.getElementById('best-subject').textContent = `${bestTopic.substring(0, 15)}... (${percentage}%)`;
-            } else {
-                document.getElementById('best-subject').textContent = 'None yet';
-            }
-
-            // Study Momentum
-            let momentumText = 'Building up!';
-            if (streak >= 30) {
-                momentumText = '🚀 Unstoppable!';
-            } else if (streak >= 7) {
-                momentumText = '💪 Strong streak!';
-            } else if (streak >= 3) {
-                momentumText = '📈 Gaining momentum!';
-            } else if (thisWeek > lastWeek && lastWeek > 0) {
-                momentumText = '⬆️ Trending up!';
-            } else if (thisWeek > 0) {
-                momentumText = '✨ Making progress!';
-            }
-            document.getElementById('momentum').textContent = momentumText;
-        }
-
         function loadStats() {
             const streak = parseInt(localStorage.getItem('studyStreak') || '0');
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
             const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
             const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
-
-            // Update Trending Analytics Banner
-            updateTrendingAnalytics(topicStats, streak);
 
             document.getElementById('total-streak').textContent = streak;
             

@@ -13,6 +13,36 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
 
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getFirestore, collection, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9cXaG02ijAVC79di00TvJglrmHesNU7U",
+            authDomain: "studying-works-d6c29.firebaseapp.com",
+            projectId: "studying-works-d6c29",
+            storageBucket: "studying-works-d6c29.firebasestorage.app",
+            messagingSenderId: "516007744934",
+            appId: "1:516007744934:web:69855ceeda0dc6baae7aae"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Make Firebase available globally
+        window.db = db;
+        window.auth = auth;
+        window.firebaseCollection = collection;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseOrderBy = orderBy;
+        window.firebaseReady = true;
+    </script>
+
     <style>
         .card-hover {
             transition: all 0.3s ease;
@@ -84,17 +114,54 @@
                 }
             }, [selectedSkill, reviews]);
 
-            function loadData() {
-                // Load mastery scores
+            async function loadData() {
+                // Load mastery scores from localStorage (this is updated in real-time in bkt-study)
                 const savedMastery = localStorage.getItem('bkt_mastery_scores');
                 if (savedMastery) {
                     setMasteryScores(JSON.parse(savedMastery));
                 }
 
-                // Load reviews
-                const savedReviews = localStorage.getItem('bkt_reviews');
-                if (savedReviews) {
-                    setReviews(JSON.parse(savedReviews));
+                // Load reviews from Firebase
+                const userId = localStorage.getItem('userId');
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        console.log('📊 Loading BKT reviews from Firebase...');
+                        const reviewsRef = window.firebaseCollection(window.db, 'bkt_reviews');
+                        const q = window.firebaseQuery(
+                            reviewsRef,
+                            window.firebaseWhere('userId', '==', userId),
+                            window.firebaseOrderBy('timestamp', 'desc')
+                        );
+
+                        const querySnapshot = await window.firebaseGetDocs(q);
+                        const firebaseReviews = [];
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            firebaseReviews.push({
+                                ...data,
+                                timestamp: data.timestamp?.toDate?.()?.toISOString() || new Date().toISOString()
+                            });
+                        });
+
+                        console.log(`✅ Loaded ${firebaseReviews.length} reviews from Firebase`);
+                        setReviews(firebaseReviews);
+
+                        // Also update localStorage as backup
+                        localStorage.setItem('bkt_reviews', JSON.stringify(firebaseReviews));
+                    } catch (error) {
+                        console.error('❌ Error loading reviews from Firebase:', error);
+                        // Fallback to localStorage
+                        const savedReviews = localStorage.getItem('bkt_reviews');
+                        if (savedReviews) {
+                            setReviews(JSON.parse(savedReviews));
+                        }
+                    }
+                } else {
+                    // Fallback to localStorage if Firebase not ready
+                    const savedReviews = localStorage.getItem('bkt_reviews');
+                    if (savedReviews) {
+                        setReviews(JSON.parse(savedReviews));
+                    }
                 }
             }
 

@@ -15,16 +15,16 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
         import { getFirestore, doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         const firebaseConfig = {
-            apiKey: "AIzaSyC9cXaG02ijAVC79di00TvJglrmHesNU7U",
-            authDomain: "studying-works-d6c29.firebaseapp.com",
-            projectId: "studying-works-d6c29",
-            storageBucket: "studying-works-d6c29.firebasestorage.app",
-            messagingSenderId: "516007744934",
-            appId: "1:516007744934:web:69855ceeda0dc6baae7aae"
+            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
+            authDomain: "academie-9942b.firebaseapp.com",
+            projectId: "academie-9942b",
+            storageBucket: "academie-9942b.firebasestorage.app",
+            messagingSenderId: "1079518919325",
+            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -34,6 +34,7 @@
         // Make Firebase available globally
         window.db = db;
         window.auth = auth;
+        window.onAuthStateChanged = onAuthStateChanged;
         window.firebaseDoc = doc;
         window.firebaseGetDoc = getDoc;
         window.firebaseCollection = collection;
@@ -172,10 +173,32 @@
             const [startTime, setStartTime] = useState(null);
             const [masteryPopups, setMasteryPopups] = useState([]);
             const [isTransitioning, setIsTransitioning] = useState(false);
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
 
             useEffect(() => {
-                loadDecksAndSkills();
-                loadMasteryScores();
+                // Wait for authentication before loading data
+                if (window.auth && window.onAuthStateChanged) {
+                    window.onAuthStateChanged(window.auth, (user) => {
+                        if (user) {
+                            console.log('✅ User authenticated:', user.email);
+                            localStorage.setItem('userId', user.uid);
+                            setIsAuthenticated(true);
+                            loadDecksAndSkills();
+                            loadMasteryScores();
+                        } else {
+                            console.log('❌ No authenticated user');
+                            setIsAuthenticated(false);
+                            // Still try to load from localStorage cache
+                            loadDecksAndSkills();
+                            loadMasteryScores();
+                        }
+                    });
+                } else {
+                    // Fallback: try to load from localStorage cache
+                    console.log('⚠️ Firebase Auth not ready, loading from cache');
+                    loadDecksAndSkills();
+                    loadMasteryScores();
+                }
             }, []);
 
             async function loadDecksAndSkills() {

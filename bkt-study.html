@@ -16,7 +16,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyC9cXaG02ijAVC79di00TvJglrmHesNU7U",
@@ -30,10 +30,12 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
+
         // Make Firebase available globally
         window.db = db;
         window.auth = auth;
+        window.firebaseDoc = doc;
+        window.firebaseGetDoc = getDoc;
         window.firebaseCollection = collection;
         window.firebaseAddDoc = addDoc;
         window.firebaseGetDocs = getDocs;
@@ -176,10 +178,47 @@
                 loadMasteryScores();
             }, []);
 
-            function loadDecksAndSkills() {
+            async function loadDecksAndSkills() {
+                console.log('📥 Loading decks from Firebase...');
+                const userId = localStorage.getItem('userId');
+
+                // Try to load from Firebase first
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        const decksSnapshot = await window.firebaseGetDocs(
+                            window.firebaseCollection(window.db, 'users', userId, 'flashcardDecks')
+                        );
+                        const firebaseDecks = [];
+                        decksSnapshot.forEach(doc => {
+                            firebaseDecks.push(doc.data());
+                        });
+
+                        if (firebaseDecks.length > 0) {
+                            console.log(`✅ Loaded ${firebaseDecks.length} decks from Firebase`);
+                            localStorage.setItem('flashcardDecks', JSON.stringify(firebaseDecks));
+                            setDecks(firebaseDecks);
+
+                            // Auto-tag cards with skills based on deck
+                            const skillMap = {};
+                            firebaseDecks.forEach(deck => {
+                                const skillName = `${deck.subject || 'general'}-${deck.title}`.toLowerCase().replace(/\s+/g, '-');
+                                deck.cards.forEach(card => {
+                                    skillMap[card.id] = skillName;
+                                });
+                            });
+                            setSkills(skillMap);
+                            return;
+                        }
+                    } catch (error) {
+                        console.error('❌ Error loading decks from Firebase:', error);
+                    }
+                }
+
+                // Fallback to localStorage
+                console.log('📦 Loading decks from localStorage');
                 const savedDecks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
                 setDecks(savedDecks);
-                
+
                 // Auto-tag cards with skills based on deck
                 const skillMap = {};
                 savedDecks.forEach(deck => {
@@ -191,8 +230,32 @@
                 setSkills(skillMap);
             }
 
-            function loadMasteryScores() {
-                // Load from localStorage (will be from backend later)
+            async function loadMasteryScores() {
+                console.log('📥 Loading mastery scores from Firebase...');
+                const userId = localStorage.getItem('userId');
+
+                // Try to load from Firebase first
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        const masteryDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktMastery');
+                        const masteryDoc = await window.firebaseGetDoc(masteryDocRef);
+
+                        if (masteryDoc.exists()) {
+                            const data = masteryDoc.data();
+                            if (data.scores) {
+                                console.log('✅ Loaded mastery scores from Firebase');
+                                localStorage.setItem('bkt_mastery_scores', JSON.stringify(data.scores));
+                                setMasteryScores(data.scores);
+                                return;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('❌ Error loading mastery scores from Firebase:', error);
+                    }
+                }
+
+                // Fallback to localStorage
+                console.log('📦 Loading mastery scores from localStorage');
                 const saved = localStorage.getItem('bkt_mastery_scores');
                 if (saved) {
                     setMasteryScores(JSON.parse(saved));

@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progress - studying.works</title>
+
+    <!-- Preconnect to Firebase CDN -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://www.gstatic.com">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -163,7 +168,132 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Firebase imports and initialization
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
+            authDomain: "academie-9942b.firebaseapp.com",
+            projectId: "academie-9942b",
+            storageBucket: "academie-9942b.firebasestorage.app",
+            messagingSenderId: "1079518919325",
+            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Load data from Firebase
+        async function loadFromFirebase(userId) {
+            console.log('📥 Loading progress data from Firebase...');
+            try {
+                // Load user profile
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.streak) localStorage.setItem('studyStreak', userData.streak.toString());
+                    console.log('✅ User profile loaded from Firebase');
+                }
+
+                // Load flashcard decks
+                const decksSnapshot = await getDocs(collection(db, 'users', userId, 'flashcardDecks'));
+                const decks = [];
+                decksSnapshot.forEach(doc => {
+                    decks.push(doc.data());
+                });
+                if (decks.length > 0) {
+                    localStorage.setItem('flashcardDecks', JSON.stringify(decks));
+                    console.log(`✅ Loaded ${decks.length} flashcard decks from Firebase`);
+                }
+
+                // Load flashcard progress
+                const flashcardProgressDoc = await getDoc(doc(db, 'users', userId, 'data', 'flashcardProgress'));
+                if (flashcardProgressDoc.exists()) {
+                    const data = flashcardProgressDoc.data();
+                    if (data.progress) {
+                        localStorage.setItem('flashcardProgress', JSON.stringify(data.progress));
+                        console.log('✅ Flashcard progress loaded from Firebase');
+                    }
+                }
+
+                // Load quiz progress
+                const quizProgressDoc = await getDoc(doc(db, 'users', userId, 'data', 'quizProgress'));
+                if (quizProgressDoc.exists()) {
+                    const data = quizProgressDoc.data();
+                    if (data.progress) {
+                        localStorage.setItem('progress', JSON.stringify(data.progress));
+                        console.log('✅ Quiz progress loaded from Firebase');
+                    }
+                }
+
+                // Load assignments
+                const assignmentsSnapshot = await getDocs(collection(db, 'users', userId, 'assignments'));
+                const assignments = [];
+                assignmentsSnapshot.forEach(doc => {
+                    assignments.push(doc.data());
+                });
+                if (assignments.length > 0) {
+                    localStorage.setItem('assignments', JSON.stringify(assignments));
+                    console.log(`✅ Loaded ${assignments.length} assignments from Firebase`);
+                }
+
+                // Load BKT reviews
+                const bktReviewsRef = collection(db, 'bkt_reviews');
+                const bktQuery = query(bktReviewsRef, where('userId', '==', userId));
+                const bktSnapshot = await getDocs(bktQuery);
+                const reviews = [];
+                bktSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    reviews.push({
+                        ...data,
+                        timestamp: data.timestamp?.toDate?.()?.toISOString() || new Date().toISOString()
+                    });
+                });
+                if (reviews.length > 0) {
+                    localStorage.setItem('bkt_reviews', JSON.stringify(reviews));
+                    console.log(`✅ Loaded ${reviews.length} BKT reviews from Firebase`);
+                }
+
+                // Load topic stats
+                const topicStatsDoc = await getDoc(doc(db, 'users', userId, 'data', 'topicStats'));
+                if (topicStatsDoc.exists()) {
+                    const data = topicStatsDoc.data();
+                    if (data.stats) {
+                        localStorage.setItem('topicStats', JSON.stringify(data.stats));
+                        console.log('✅ Topic stats loaded from Firebase');
+                    }
+                }
+
+                console.log('✅ All progress data loaded from Firebase!');
+                return true;
+            } catch (error) {
+                console.error('❌ Error loading from Firebase:', error);
+                return false;
+            }
+        }
+
+        // Check authentication and load data
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log('User authenticated:', user.email);
+                localStorage.setItem('userId', user.uid);
+
+                // Load data from Firebase first
+                await loadFromFirebase(user.uid);
+
+                // Now load stats with Firebase data
+                loadStats();
+            } else {
+                console.log('No user, loading from cache');
+                // Load from localStorage cache
+                loadStats();
+            }
+        });
+
         function loadStats() {
             const streak = parseInt(localStorage.getItem('studyStreak') || '0');
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
@@ -468,8 +598,6 @@
                 <div class="text-white text-sm text-center">${milestone.progress} / ${milestone.total}</div>
             `;
         }
-        
-        loadStats();
     </script>
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>

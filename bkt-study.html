@@ -66,42 +66,40 @@
             transform: rotateY(180deg);
         }
 
-        /* Mastery popup animations - subtle and encouraging */
-        @keyframes masteryPopup {
+        /* Mastery popup animations - floating around card */
+        @keyframes masteryPopupFloat {
             0% {
                 opacity: 0;
-                transform: translateY(10px) scale(0.9);
+                transform: translateY(0) scale(0.8);
             }
-            15% {
+            10% {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(-10px) scale(1);
             }
-            85% {
+            90% {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(-60px) scale(1);
             }
             100% {
                 opacity: 0;
-                transform: translateY(-10px) scale(0.95);
+                transform: translateY(-80px) scale(0.9);
             }
         }
 
         .mastery-popup {
-            position: fixed;
-            top: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.25rem;
+            position: absolute;
+            font-size: 1.1rem;
             font-weight: 700;
             background: linear-gradient(135deg, #10b981, #14b8a6);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
             pointer-events: none;
-            z-index: 100;
-            animation: masteryPopup 2s ease-out forwards;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 200;
+            animation: masteryPopupFloat 2s ease-out forwards;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            white-space: nowrap;
         }
 
         /* Card transition animations */
@@ -213,15 +211,17 @@
             }
 
             function showMasteryPopup(masteryChange, wasCorrect) {
-                // Always show positive reinforcement
                 let message;
+
                 if (wasCorrect) {
+                    // Only show popup if there's actual progress
                     if (masteryChange >= 5) {
                         message = '🎯 +' + masteryChange + '% Mastery!';
                     } else if (masteryChange > 0) {
-                        message = '✨ +' + masteryChange + '% Progress!';
+                        message = '✨ +' + masteryChange + '%';
                     } else {
-                        message = '✅ Great job!';
+                        // Don't show popup for no change
+                        return;
                     }
                 } else {
                     // Encouraging messages for incorrect answers
@@ -234,9 +234,25 @@
                     message = encouragements[Math.floor(Math.random() * encouragements.length)];
                 }
 
+                // Random position around the flashcard
+                // Generate positions around the edges of the card
+                const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+                let position = {};
+
+                if (side === 0) { // top
+                    position = { top: '10%', left: (30 + Math.random() * 40) + '%' };
+                } else if (side === 1) { // right
+                    position = { top: (30 + Math.random() * 40) + '%', right: '5%' };
+                } else if (side === 2) { // bottom
+                    position = { bottom: '15%', left: (30 + Math.random() * 40) + '%' };
+                } else { // left
+                    position = { top: (30 + Math.random() * 40) + '%', left: '5%' };
+                }
+
                 const popup = {
-                    id: Date.now(),
-                    message: message
+                    id: Date.now() + Math.random(), // Ensure uniqueness
+                    message: message,
+                    position: position
                 };
 
                 setMasteryPopups(prev => [...prev, popup]);
@@ -529,7 +545,7 @@
                                 </div>
 
                                 {/* Flashcard */}
-                                <div className={`card-flip ${showAnswer ? 'flipped' : ''} mb-6 ${isTransitioning ? 'card-exit' : 'card-enter'}`}>
+                                <div className={`card-flip ${showAnswer ? 'flipped' : ''} mb-6 ${isTransitioning ? 'card-exit' : 'card-enter'} relative`}>
                                     <div className="card-flip-inner relative" style={{minHeight: '450px'}}>
                                         <div className="card-front absolute w-full h-full">
                                             <div
@@ -556,6 +572,17 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Mastery Popups - positioned relative to card */}
+                                    {masteryPopups.map(popup => (
+                                        <div
+                                            key={popup.id}
+                                            className="mastery-popup"
+                                            style={popup.position}
+                                        >
+                                            {popup.message}
+                                        </div>
+                                    ))}
                                 </div>
 
                                 {/* Action Buttons */}
@@ -584,16 +611,6 @@
                                         Reveal Answer
                                     </button>
                                 ) : null}
-
-                                {/* Mastery Popups */}
-                                {masteryPopups.map(popup => (
-                                    <div
-                                        key={popup.id}
-                                        className="mastery-popup"
-                                    >
-                                        {popup.message}
-                                    </div>
-                                ))}
                             </div>
                         </div>
                     </div>

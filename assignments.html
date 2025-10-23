@@ -147,9 +147,53 @@
                     <Navigation />
                     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4 pt-20">
                         <div className="max-w-7xl mx-auto">
-                            <div className="mb-8 animate-slide-in">
+                            <div className="mb-6 animate-slide-in">
                                 <h1 className="text-5xl font-bold text-white mb-2">✅ Assignments & Tasks</h1>
                                 <p className="text-xl text-blue-200">Stay organized and never miss a deadline</p>
+                            </div>
+
+                            {/* Priority Overview Banner */}
+                            <div className="mb-8 animate-slide-in" style={{animationDelay: '0.05s', opacity: 0}}>
+                                <div className="bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="flex items-center space-x-4">
+                                            <div className="text-4xl">📌</div>
+                                            <div>
+                                                <div className="text-white/80 text-sm font-semibold">Upcoming Next</div>
+                                                <div className="text-white font-bold text-lg">
+                                                    {(() => {
+                                                        const upcoming = tasks.filter(t => !t.completed && t.dueDate)
+                                                            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0];
+                                                        if (!upcoming) return 'All clear!';
+                                                        const days = getDaysUntil(upcoming.dueDate);
+                                                        if (days === 0) return 'Task due today!';
+                                                        if (days === 1) return 'Task due tomorrow';
+                                                        if (days < 0) return `${Math.abs(days)}d overdue`;
+                                                        return `Due in ${days} days`;
+                                                    })()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <div className="text-4xl">🎯</div>
+                                            <div>
+                                                <div className="text-white/80 text-sm font-semibold">Priority Tasks</div>
+                                                <div className="text-white font-bold text-lg">
+                                                    {tasks.filter(t => !t.completed && t.priority === 'high').length} high priority
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <div className="text-4xl">📊</div>
+                                            <div>
+                                                <div className="text-white/80 text-sm font-semibold">Completion Rate</div>
+                                                <div className="text-white font-bold text-lg">
+                                                    {tasks.length > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}% complete
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

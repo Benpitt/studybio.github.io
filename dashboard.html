@@ -318,17 +318,98 @@
                 this.userId = userId;
             }
 
+            async loadFromFirebase() {
+                console.log('📥 Loading data from Firebase...');
+                try {
+                    // Load user profile
+                    const userDoc = await getDoc(doc(this.db, 'users', this.userId));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        if (userData.streak) localStorage.setItem('studyStreak', userData.streak.toString());
+                        console.log('✅ User profile loaded from Firebase');
+                    }
+
+                    // Load flashcard decks
+                    const decksSnapshot = await getDocs(collection(this.db, 'users', this.userId, 'flashcardDecks'));
+                    const decks = [];
+                    decksSnapshot.forEach(doc => {
+                        decks.push(doc.data());
+                    });
+                    if (decks.length > 0) {
+                        localStorage.setItem('flashcardDecks', JSON.stringify(decks));
+                        console.log(`✅ Loaded ${decks.length} flashcard decks from Firebase`);
+                    }
+
+                    // Load flashcard progress
+                    const flashcardProgressDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'flashcardProgress'));
+                    if (flashcardProgressDoc.exists()) {
+                        const data = flashcardProgressDoc.data();
+                        if (data.progress) {
+                            localStorage.setItem('flashcardProgress', JSON.stringify(data.progress));
+                            console.log('✅ Flashcard progress loaded from Firebase');
+                        }
+                    }
+
+                    // Load quiz progress
+                    const quizProgressDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'quizProgress'));
+                    if (quizProgressDoc.exists()) {
+                        const data = quizProgressDoc.data();
+                        if (data.progress) {
+                            localStorage.setItem('progress', JSON.stringify(data.progress));
+                            console.log('✅ Quiz progress loaded from Firebase');
+                        }
+                    }
+
+                    // Load assignments
+                    const assignmentsSnapshot = await getDocs(collection(this.db, 'users', this.userId, 'assignments'));
+                    const assignments = [];
+                    assignmentsSnapshot.forEach(doc => {
+                        assignments.push(doc.data());
+                    });
+                    if (assignments.length > 0) {
+                        localStorage.setItem('assignments', JSON.stringify(assignments));
+                        console.log(`✅ Loaded ${assignments.length} assignments from Firebase`);
+                    }
+
+                    // Load BKT mastery scores
+                    const bktMasteryDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'bktMastery'));
+                    if (bktMasteryDoc.exists()) {
+                        const data = bktMasteryDoc.data();
+                        if (data.scores) {
+                            localStorage.setItem('bkt_mastery_scores', JSON.stringify(data.scores));
+                            console.log('✅ BKT mastery scores loaded from Firebase');
+                        }
+                    }
+
+                    // Load topic stats
+                    const topicStatsDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'topicStats'));
+                    if (topicStatsDoc.exists()) {
+                        const data = topicStatsDoc.data();
+                        if (data.stats) {
+                            localStorage.setItem('topicStats', JSON.stringify(data.stats));
+                            console.log('✅ Topic stats loaded from Firebase');
+                        }
+                    }
+
+                    console.log('✅ All data loaded from Firebase!');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Error loading from Firebase:', error);
+                    return false;
+                }
+            }
+
             async syncUserProfile() {
                 const userData = {
                     userId: this.userId,
                     userName: localStorage.getItem('userName'),
                     userEmail: localStorage.getItem('userEmail'),
-                    streak: parseInt(localStorage.getItem('streak') || '0'),
+                    streak: parseInt(localStorage.getItem('studyStreak') || '0'),
                     lastVisit: localStorage.getItem('lastVisit'),
                     updatedAt: serverTimestamp()
                 };
                 await setDoc(doc(this.db, 'users', this.userId), userData, { merge: true });
-                console.log('✅ User profile synced');
+                console.log('✅ User profile synced to Firebase');
             }
 
             async syncFlashcardDecks() {
@@ -337,7 +418,7 @@
                     const deckRef = doc(this.db, 'users', this.userId, 'flashcardDecks', deck.id.toString());
                     await setDoc(deckRef, { ...deck, syncedAt: serverTimestamp() });
                 }
-                console.log(`✅ Synced ${decks.length} flashcard decks`);
+                console.log(`✅ Synced ${decks.length} flashcard decks to Firebase`);
             }
 
             async syncFlashcardProgress() {
@@ -345,7 +426,7 @@
                 if (Object.keys(progress).length === 0) return;
                 const progressRef = doc(this.db, 'users', this.userId, 'data', 'flashcardProgress');
                 await setDoc(progressRef, { progress: progress, syncedAt: serverTimestamp() });
-                console.log('✅ Flashcard progress synced');
+                console.log('✅ Flashcard progress synced to Firebase');
             }
 
             async syncQuizProgress() {
@@ -353,7 +434,15 @@
                 if (Object.keys(progress).length === 0) return;
                 const progressRef = doc(this.db, 'users', this.userId, 'data', 'quizProgress');
                 await setDoc(progressRef, { progress: progress, syncedAt: serverTimestamp() });
-                console.log('✅ Quiz progress synced');
+                console.log('✅ Quiz progress synced to Firebase');
+            }
+
+            async syncTopicStats() {
+                const stats = JSON.parse(localStorage.getItem('topicStats') || '{}');
+                if (Object.keys(stats).length === 0) return;
+                const statsRef = doc(this.db, 'users', this.userId, 'data', 'topicStats');
+                await setDoc(statsRef, { stats: stats, syncedAt: serverTimestamp() });
+                console.log('✅ Topic stats synced to Firebase');
             }
 
             async syncAssignments() {
@@ -362,7 +451,7 @@
                     const assignmentRef = doc(this.db, 'users', this.userId, 'assignments', assignment.id.toString());
                     await setDoc(assignmentRef, { ...assignment, syncedAt: serverTimestamp() });
                 }
-                console.log(`✅ Synced ${assignments.length} assignments`);
+                console.log(`✅ Synced ${assignments.length} assignments to Firebase`);
             }
 
             async syncBKTMastery() {
@@ -370,23 +459,24 @@
                 if (Object.keys(mastery).length === 0) return;
                 const masteryRef = doc(this.db, 'users', this.userId, 'data', 'bktMastery');
                 await setDoc(masteryRef, { scores: mastery, syncedAt: serverTimestamp() });
-                console.log('✅ BKT mastery scores synced');
+                console.log('✅ BKT mastery scores synced to Firebase');
             }
 
             async syncAll() {
-                console.log('🔄 Starting full sync...');
+                console.log('🔄 Syncing to Firebase...');
                 try {
                     await this.syncUserProfile();
                     await this.syncFlashcardDecks();
                     await this.syncFlashcardProgress();
                     await this.syncQuizProgress();
+                    await this.syncTopicStats();
                     await this.syncAssignments();
                     await this.syncBKTMastery();
                     localStorage.setItem('lastSync', new Date().toISOString());
-                    console.log('✅ Full sync complete!');
+                    console.log('✅ Full sync to Firebase complete!');
                     return true;
                 } catch (error) {
-                    console.error('❌ Sync failed:', error);
+                    console.error('❌ Sync to Firebase failed:', error);
                     return false;
                 }
             }
@@ -394,7 +484,7 @@
             enableAutoSync(intervalMinutes = 5) {
                 this.syncAll();
                 setInterval(() => {
-                    console.log('🔄 Auto-syncing...');
+                    console.log('🔄 Auto-syncing to Firebase...');
                     this.syncAll();
                 }, intervalMinutes * 60 * 1000);
                 window.addEventListener('beforeunload', () => {
@@ -449,7 +539,7 @@
         }
 
         // Check authentication
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 console.log('User authenticated:', user.email);
                 // Update localStorage
@@ -458,13 +548,20 @@
                 localStorage.setItem('userPhoto', user.photoURL);
                 localStorage.setItem('userId', user.uid);
                 localStorage.setItem('sessionTimestamp', Date.now().toString());
+
+                // Initialize Firebase Sync and load data first
+                const sync = new FirebaseSync(db, user.uid);
+                console.log('🔄 Loading data from Firebase for user:', user.email);
+
+                // Load data from Firebase first
+                await sync.loadFromFirebase();
+
+                // Now show dashboard with Firebase data
                 showDashboard();
 
-                // Initialize Firebase Sync
-                const sync = new FirebaseSync(db, user.uid);
                 // Enable auto-sync every 5 minutes
                 sync.enableAutoSync(5);
-                console.log('🔄 Firebase sync initialized for user:', user.email);
+                console.log('✅ Firebase sync initialized for user:', user.email);
             } else {
                 console.log('No user - checking localStorage');
                 // Check if we have cached login

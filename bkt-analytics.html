@@ -17,7 +17,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-        import { getFirestore, collection, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, collection, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyC9cXaG02ijAVC79di00TvJglrmHesNU7U",
@@ -35,6 +35,8 @@
         // Make Firebase available globally
         window.db = db;
         window.auth = auth;
+        window.firebaseDoc = doc;
+        window.firebaseGetDoc = getDoc;
         window.firebaseCollection = collection;
         window.firebaseGetDocs = getDocs;
         window.firebaseQuery = query;
@@ -115,14 +117,46 @@
             }, [selectedSkill, reviews]);
 
             async function loadData() {
-                // Load mastery scores from localStorage (this is updated in real-time in bkt-study)
-                const savedMastery = localStorage.getItem('bkt_mastery_scores');
-                if (savedMastery) {
-                    setMasteryScores(JSON.parse(savedMastery));
+                const userId = localStorage.getItem('userId');
+
+                // Load mastery scores from Firebase first
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        console.log('📥 Loading mastery scores from Firebase...');
+                        const masteryDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktMastery');
+                        const masteryDoc = await window.firebaseGetDoc(masteryDocRef);
+
+                        if (masteryDoc.exists()) {
+                            const data = masteryDoc.data();
+                            if (data.scores) {
+                                console.log('✅ Loaded mastery scores from Firebase');
+                                localStorage.setItem('bkt_mastery_scores', JSON.stringify(data.scores));
+                                setMasteryScores(data.scores);
+                            }
+                        } else {
+                            // Fallback to localStorage
+                            const savedMastery = localStorage.getItem('bkt_mastery_scores');
+                            if (savedMastery) {
+                                setMasteryScores(JSON.parse(savedMastery));
+                            }
+                        }
+                    } catch (error) {
+                        console.error('❌ Error loading mastery scores from Firebase:', error);
+                        // Fallback to localStorage
+                        const savedMastery = localStorage.getItem('bkt_mastery_scores');
+                        if (savedMastery) {
+                            setMasteryScores(JSON.parse(savedMastery));
+                        }
+                    }
+                } else {
+                    // Fallback to localStorage
+                    const savedMastery = localStorage.getItem('bkt_mastery_scores');
+                    if (savedMastery) {
+                        setMasteryScores(JSON.parse(savedMastery));
+                    }
                 }
 
                 // Load reviews from Firebase
-                const userId = localStorage.getItem('userId');
                 if (window.firebaseReady && userId && window.db) {
                     try {
                         console.log('📊 Loading BKT reviews from Firebase...');

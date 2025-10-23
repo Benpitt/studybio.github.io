@@ -94,11 +94,12 @@
         }
 
         function BKTAnalyticsApp() {
-            const [viewMode, setViewMode] = useState('simple'); // simple or technical
+            const [viewMode, setViewMode] = useState('simple'); // simple, technical, or explanation
             const [masteryScores, setMasteryScores] = useState({});
             const [reviews, setReviews] = useState([]);
             const [selectedSkill, setSelectedSkill] = useState(null);
             const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [showAdvancedBKTModal, setShowAdvancedBKTModal] = useState(false);
             const chartRef = useRef(null);
             const skillChartRef = useRef(null);
 
@@ -429,6 +430,16 @@
                                     🎯 Simple View
                                 </button>
                                 <button
+                                    onClick={() => setViewMode('explanation')}
+                                    className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                                        viewMode === 'explanation'
+                                            ? 'bg-white text-gray-900'
+                                            : 'text-white/70 hover:text-white'
+                                    }`}
+                                >
+                                    📖 Explanation
+                                </button>
+                                <button
                                     onClick={() => setViewMode('technical')}
                                     className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                                         viewMode === 'technical'
@@ -439,6 +450,171 @@
                                     🧮 Technical View
                                 </button>
                             </div>
+
+                            {/* Advanced BKT Mode Banner */}
+                            {stats.totalReviews >= 100 && (
+                                <div className="mb-8 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 backdrop-blur rounded-2xl p-6 border-2 border-purple-400/50 animate-pulse-slow">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="text-4xl">🎓</div>
+                                                <h3 className="text-2xl font-bold text-white">Advanced BKT Mode Ready!</h3>
+                                            </div>
+                                            <p className="text-white/90 mb-4">
+                                                Congratulations! You've completed <strong>{stats.totalReviews} reviews</strong> - enough data to unlock
+                                                personalized BKT parameters. Advanced mode will learn YOUR unique learning patterns for each skill.
+                                            </p>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={() => setShowAdvancedBKTModal(true)}
+                                                    className="bg-white text-purple-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg"
+                                                >
+                                                    🚀 Enable Advanced BKT
+                                                </button>
+                                                <a
+                                                    href="https://github.com/Benpitt/studying.works/blob/main/BKT_FIREBASE_SUMMARY.md"
+                                                    target="_blank"
+                                                    className="bg-white/10 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20"
+                                                >
+                                                    📚 Learn More
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={(e) => e.currentTarget.parentElement.parentElement.style.display = 'none'}
+                                            className="text-white/60 hover:text-white text-2xl"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Advanced BKT Modal */}
+                            {showAdvancedBKTModal && (
+                                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                                    <div className="bg-gradient-to-br from-gray-900 to-purple-900 rounded-2xl p-8 max-w-3xl w-full border-2 border-purple-400/50 max-h-[90vh] overflow-y-auto">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div>
+                                                <h2 className="text-3xl font-bold text-white mb-2">🎓 Enable Advanced BKT Mode</h2>
+                                                <p className="text-white/70">Personalize your learning with machine learning</p>
+                                            </div>
+                                            <button
+                                                onClick={() => setShowAdvancedBKTModal(false)}
+                                                className="text-white/60 hover:text-white text-3xl"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            {/* What You'll Get */}
+                                            <div className="bg-white/10 p-6 rounded-xl">
+                                                <h3 className="text-xl font-bold text-white mb-4">✨ What You'll Get</h3>
+                                                <ul className="space-y-3 text-white/90">
+                                                    <li className="flex gap-3">
+                                                        <span>🎯</span>
+                                                        <span><strong>Personalized Learning Rates:</strong> The model learns how quickly YOU master each skill</span>
+                                                    </li>
+                                                    <li className="flex gap-3">
+                                                        <span>📊</span>
+                                                        <span><strong>Skill-Specific Parameters:</strong> Different topics get different P(T), P(S), P(G) values based on your performance</span>
+                                                    </li>
+                                                    <li className="flex gap-3">
+                                                        <span>🎓</span>
+                                                        <span><strong>More Accurate Predictions:</strong> Better mastery estimates = more efficient studying</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            {/* How to Enable */}
+                                            <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-6 rounded-xl border border-blue-400/30">
+                                                <h3 className="text-xl font-bold text-white mb-4">🚀 How to Enable (3 Steps)</h3>
+                                                <div className="space-y-4">
+                                                    <div className="flex gap-4">
+                                                        <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold text-white">1</div>
+                                                        <div className="flex-1">
+                                                            <div className="font-bold text-white mb-1">Export Your Data</div>
+                                                            <div className="bg-black/30 p-3 rounded font-mono text-sm text-green-300">
+                                                                python export_firebase_bkt.py
+                                                            </div>
+                                                            <p className="text-white/70 text-sm mt-2">Downloads your {stats.totalReviews} reviews from Firebase</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-4">
+                                                        <div className="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold text-white">2</div>
+                                                        <div className="flex-1">
+                                                            <div className="font-bold text-white mb-1">Train the Model</div>
+                                                            <div className="bg-black/30 p-3 rounded font-mono text-sm text-green-300">
+                                                                python train_bkt.py
+                                                            </div>
+                                                            <p className="text-white/70 text-sm mt-2">Uses pyBKT machine learning to learn your patterns</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-4">
+                                                        <div className="flex-shrink-0 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center font-bold text-white">3</div>
+                                                        <div className="flex-1">
+                                                            <div className="font-bold text-white mb-1">Apply New Parameters</div>
+                                                            <p className="text-white/70 text-sm">The trained model outputs personalized parameters for each skill that will be used in future study sessions</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Prerequisites */}
+                                            <div className="bg-yellow-500/20 border border-yellow-500/50 p-4 rounded-lg">
+                                                <div className="flex gap-3">
+                                                    <span className="text-2xl">⚙️</span>
+                                                    <div>
+                                                        <div className="font-bold text-yellow-300 mb-2">Prerequisites</div>
+                                                        <ul className="text-white/80 text-sm space-y-1">
+                                                            <li>• Python 3.7+ installed</li>
+                                                            <li>• pyBKT library: <code className="bg-black/30 px-2 py-1 rounded">pip install pyBKT</code></li>
+                                                            <li>• Firebase service account key (for data export)</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Current Stats */}
+                                            <div className="bg-white/5 p-4 rounded-xl">
+                                                <h3 className="font-bold text-white mb-3">📊 Your Current Stats</h3>
+                                                <div className="grid grid-cols-3 gap-4 text-center">
+                                                    <div>
+                                                        <div className="text-3xl font-bold text-green-400">{stats.totalReviews}</div>
+                                                        <div className="text-white/60 text-sm">Reviews</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-3xl font-bold text-blue-400">{stats.totalSkills}</div>
+                                                        <div className="text-white/60 text-sm">Skills</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-3xl font-bold text-purple-400">{Math.round(stats.totalReviews / Math.max(1, stats.totalSkills))}</div>
+                                                        <div className="text-white/60 text-sm">Avg/Skill</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex gap-4">
+                                                <a
+                                                    href="https://github.com/Benpitt/studying.works/blob/main/BKT_FIREBASE_SUMMARY.md"
+                                                    target="_blank"
+                                                    className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl font-bold text-center hover:scale-105 transition-transform shadow-lg"
+                                                >
+                                                    📖 View Full Setup Guide
+                                                </a>
+                                                <button
+                                                    onClick={() => setShowAdvancedBKTModal(false)}
+                                                    className="bg-white/10 text-white px-6 py-4 rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20"
+                                                >
+                                                    Close
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Simple View */}
                             {viewMode === 'simple' && (
@@ -554,6 +730,206 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Explanation View */}
+                            {viewMode === 'explanation' && (
+                                <div className="space-y-8">
+                                    {/* What is BKT */}
+                                    <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur rounded-2xl p-8 border border-white/20">
+                                        <h2 className="text-3xl font-bold text-white mb-6">🎓 What is Bayesian Knowledge Tracing?</h2>
+                                        <div className="text-white/90 text-lg space-y-4">
+                                            <p>
+                                                Imagine you have a study buddy who's watching you practice. Every time you answer a question,
+                                                your buddy updates their estimate of how well you know that topic. <strong>That's exactly what BKT does!</strong>
+                                            </p>
+                                            <p>
+                                                BKT is like having an intelligent tutor that tracks your knowledge in real-time. It doesn't just
+                                                count right and wrong answers - it understands that learning is complex and uncertain.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* The Story of Learning */}
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-6">📚 The Story of How You Learn</h2>
+                                        <div className="space-y-6">
+                                            {/* Step 1 */}
+                                            <div className="flex gap-4">
+                                                <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-2xl">
+                                                    1️⃣
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xl font-bold text-white mb-2">You Start at 50/50</h3>
+                                                    <p className="text-white/80">
+                                                        When you first see a new topic, BKT assumes you might know it or might not - it's a fair starting point.
+                                                        Think of it like flipping a coin: 50% chance you already know it.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Step 2 */}
+                                            <div className="flex gap-4">
+                                                <div className="flex-shrink-0 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-2xl">
+                                                    2️⃣
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xl font-bold text-white mb-2">You Answer a Question Correctly ✅</h3>
+                                                    <p className="text-white/80">
+                                                        Great! Your mastery score goes UP. But here's the smart part: BKT knows you might have just gotten lucky
+                                                        and guessed right. So it increases your score, but not all the way to 100%. It's being cautiously optimistic.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Step 3 */}
+                                            <div className="flex gap-4">
+                                                <div className="flex-shrink-0 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-2xl">
+                                                    3️⃣
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xl font-bold text-white mb-2">You Answer a Question Wrong ❌</h3>
+                                                    <p className="text-white/80">
+                                                        Oops! Your mastery score goes DOWN. But BKT is fair - it knows that even experts sometimes make mistakes
+                                                        (called "slips"). Maybe you knew it but clicked the wrong button! So your score drops, but not all the
+                                                        way to zero.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Step 4 */}
+                                            <div className="flex gap-4">
+                                                <div className="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-2xl">
+                                                    4️⃣
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xl font-bold text-white mb-2">The Pattern Emerges 📈</h3>
+                                                    <p className="text-white/80">
+                                                        As you practice more, BKT builds a clearer picture of your knowledge. If you keep getting questions right,
+                                                        your mastery score climbs toward 100%. If you struggle, it stays lower - signaling you need more practice.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Why This Matters */}
+                                    <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur rounded-2xl p-8 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-6">💡 Why This Matters for Your Learning</h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="bg-white/10 p-6 rounded-xl">
+                                                <div className="text-4xl mb-3">🎯</div>
+                                                <h3 className="font-bold text-white text-lg mb-2">Smarter Practice</h3>
+                                                <p className="text-white/80">
+                                                    BKT shows you the topics you need most. No more wasting time on things you already know perfectly!
+                                                </p>
+                                            </div>
+                                            <div className="bg-white/10 p-6 rounded-xl">
+                                                <div className="text-4xl mb-3">⚡</div>
+                                                <h3 className="font-bold text-white text-lg mb-2">Faster Learning</h3>
+                                                <p className="text-white/80">
+                                                    By focusing on your weak spots, you learn more efficiently. It's like having a personal tutor
+                                                    who knows exactly what you need.
+                                                </p>
+                                            </div>
+                                            <div className="bg-white/10 p-6 rounded-xl">
+                                                <div className="text-4xl mb-3">📊</div>
+                                                <h3 className="font-bold text-white text-lg mb-2">Track Your Progress</h3>
+                                                <p className="text-white/80">
+                                                    See your mastery scores rise over time. It's incredibly motivating to watch yourself improve!
+                                                </p>
+                                            </div>
+                                            <div className="bg-white/10 p-6 rounded-xl">
+                                                <div className="text-4xl mb-3">🧠</div>
+                                                <h3 className="font-bold text-white text-lg mb-2">Science-Backed</h3>
+                                                <p className="text-white/80">
+                                                    BKT is used by major educational platforms and backed by research. You're using a proven method!
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* The Magic Behind It */}
+                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-6">✨ The Magic Behind the Scenes</h2>
+                                        <div className="space-y-4 text-white/90">
+                                            <div className="bg-white/5 p-5 rounded-xl">
+                                                <h3 className="font-bold text-blue-300 mb-3 text-lg">🎲 BKT Knows You Might Guess</h3>
+                                                <p>
+                                                    Got a multiple-choice question right? BKT considers you might have been lucky. That's why one
+                                                    correct answer doesn't immediately make you a master - it takes consistent performance.
+                                                </p>
+                                            </div>
+                                            <div className="bg-white/5 p-5 rounded-xl">
+                                                <h3 className="font-bold text-yellow-300 mb-3 text-lg">😅 BKT Knows You Might Slip</h3>
+                                                <p>
+                                                    Made a mistake even though you know the material? BKT gets it. One wrong answer doesn't destroy
+                                                    your mastery score - because humans make silly mistakes sometimes!
+                                                </p>
+                                            </div>
+                                            <div className="bg-white/5 p-5 rounded-xl">
+                                                <h3 className="font-bold text-green-300 mb-3 text-lg">📈 BKT Knows You're Learning</h3>
+                                                <p>
+                                                    With each practice session, you're building neural pathways. BKT models this gradual improvement
+                                                    by increasing your mastery bit by bit as you prove you know the material.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Simple vs Advanced */}
+                                    <div className="bg-gradient-to-br from-indigo-500/20 to-pink-500/20 backdrop-blur rounded-2xl p-8 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-6">🚀 Simple BKT vs. Advanced BKT</h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="bg-white/10 p-6 rounded-xl border-2 border-blue-400/50">
+                                                <div className="text-3xl mb-3">🎯</div>
+                                                <h3 className="font-bold text-white text-xl mb-3">Simple BKT (Current)</h3>
+                                                <ul className="text-white/80 space-y-2 text-sm">
+                                                    <li>✓ Works right away</li>
+                                                    <li>✓ Uses standard learning rates for everyone</li>
+                                                    <li>✓ Same rules for all topics</li>
+                                                    <li>✓ Already helping you learn better!</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-white/10 p-6 rounded-xl border-2 border-purple-400/50">
+                                                <div className="text-3xl mb-3">🎓</div>
+                                                <h3 className="font-bold text-white text-xl mb-3">Advanced BKT (Unlock at 100+ reviews)</h3>
+                                                <ul className="text-white/80 space-y-2 text-sm">
+                                                    <li>✓ Personalized to YOUR learning style</li>
+                                                    <li>✓ Different rates for different topics</li>
+                                                    <li>✓ Learns from YOUR specific patterns</li>
+                                                    <li>✓ Even more accurate predictions!</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div className="mt-6 bg-yellow-500/20 border border-yellow-500/50 p-4 rounded-lg">
+                                            <div className="flex items-start gap-3">
+                                                <div className="text-2xl">💡</div>
+                                                <div>
+                                                    <div className="font-bold text-yellow-300 mb-2">Pro Tip</div>
+                                                    <p className="text-white/80 text-sm">
+                                                        Keep studying and once you hit 100 reviews, you can unlock Advanced BKT mode!
+                                                        The system will learn YOUR unique learning patterns and become even better at helping you master topics.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom Line */}
+                                    <div className="bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur rounded-2xl p-8 border border-white/20">
+                                        <h2 className="text-2xl font-bold text-white mb-4">🎯 The Bottom Line</h2>
+                                        <p className="text-white/90 text-lg leading-relaxed">
+                                            BKT is your intelligent study companion that watches how you learn, understands the uncertainty
+                                            in the learning process (guessing, slipping, gradual improvement), and helps you focus on what
+                                            matters most. It's not just tracking if you're right or wrong - it's modeling your journey to mastery.
+                                        </p>
+                                        <p className="text-white/80 mt-4 italic">
+                                            Think of it as having a wise mentor who knows when to challenge you with harder material and
+                                            when to give you more practice on the basics. All backed by mathematics and cognitive science! 📚
+                                        </p>
                                     </div>
                                 </div>
                             )}

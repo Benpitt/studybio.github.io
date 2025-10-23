@@ -196,23 +196,23 @@
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                <div className="card-gradient-blue rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.1s', opacity: 0}}>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div className="card-gradient-blue rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.1s'}}>
                                     <div className="text-4xl mb-2">📝</div>
                                     <div className="text-3xl font-bold">{stats.total}</div>
                                     <div className="text-blue-100 text-sm">Total Tasks</div>
                                 </div>
-                                <div className="card-gradient-success rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.2s', opacity: 0}}>
+                                <div className="card-gradient-success rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.2s'}}>
                                     <div className="text-4xl mb-2">✅</div>
                                     <div className="text-3xl font-bold">{stats.completed}</div>
                                     <div className="text-green-100 text-sm">Completed</div>
                                 </div>
-                                <div className="card-gradient-fire rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.3s', opacity: 0}}>
+                                <div className="card-gradient-fire rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.3s'}}>
                                     <div className="text-4xl mb-2">⏰</div>
                                     <div className="text-3xl font-bold">{stats.today}</div>
                                     <div className="text-orange-100 text-sm">Due Today</div>
                                 </div>
-                                <div className="card-gradient-rose rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.4s', opacity: 0}}>
+                                <div className="card-gradient-rose rounded-2xl p-6 text-white animate-slide-in" style={{animationDelay: '0.4s'}}>
                                     <div className="text-4xl mb-2">🚨</div>
                                     <div className="text-3xl font-bold">{stats.overdue}</div>
                                     <div className="text-red-100 text-sm">Overdue</div>
@@ -221,7 +221,7 @@
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <div className="lg:col-span-1">
-                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style={{animationDelay: '0.5s', opacity: 0}}>
+                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style={{animationDelay: '0.5s'}}>
                                         <h2 className="text-2xl font-bold text-white mb-4">➕ Add Task</h2>
                                         <div className="space-y-4">
                                             <div>
@@ -250,7 +250,7 @@
                                         </div>
                                     </div>
 
-                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 mt-6 animate-slide-in" style={{animationDelay: '0.6s', opacity: 0}}>
+                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 mt-6 animate-slide-in" style={{animationDelay: '0.6s'}}>
                                         <h3 className="text-xl font-bold text-white mb-4">🔍 Filter</h3>
                                         <div className="space-y-2">
                                             {['all', 'today', 'week', 'overdue', 'high'].map(f => (
@@ -269,7 +269,7 @@
                                 </div>
 
                                 <div className="lg:col-span-2">
-                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style={{animationDelay: '0.7s', opacity: 0}}>
+                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style={{animationDelay: '0.7s'}}>
                                         <h2 className="text-2xl font-bold text-white mb-4">
                                             {filter === 'all' ? 'All Tasks' : filter === 'today' ? 'Due Today' : filter === 'week' ? 'This Week' : filter === 'overdue' ? 'Overdue' : 'High Priority'}
                                             <span className="ml-2 text-lg font-normal text-white/60">({filteredTasks.length})</span>

@@ -231,7 +231,7 @@
                             // Auto-tag cards with skills based on deck
                             const skillMap = {};
                             firebaseDecks.forEach(deck => {
-                                const skillName = `${deck.subject || 'general'}-${deck.title}`.toLowerCase().replace(/\s+/g, '-');
+                                const skillName = `${deck.subject || 'general'}-${deck.title || 'untitled-deck'}`.toLowerCase().replace(/\s+/g, '-');
                                 deck.cards.forEach(card => {
                                     skillMap[card.id] = skillName;
                                 });
@@ -252,7 +252,7 @@
                 // Auto-tag cards with skills based on deck
                 const skillMap = {};
                 savedDecks.forEach(deck => {
-                    const skillName = `${deck.subject || 'general'}-${deck.title}`.toLowerCase().replace(/\s+/g, '-');
+                    const skillName = `${deck.subject || 'general'}-${deck.title || 'untitled-deck'}`.toLowerCase().replace(/\s+/g, '-');
                     deck.cards.forEach(card => {
                         skillMap[card.id] = skillName;
                     });
@@ -570,22 +570,24 @@
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {decks.map(deck => {
-                                            const deckSkill = `${deck.subject || 'general'}-${deck.title}`.toLowerCase().replace(/\s+/g, '-');
+                                            const deckTitle = deck.title || 'Untitled Deck';
+                                            const deckSubject = deck.subject || 'General';
+                                            const deckSkill = `${deckSubject}-${deckTitle}`.toLowerCase().replace(/\s+/g, '-');
                                             const mastery = getMasteryScore(deckSkill);
                                             const masteryPercent = Math.round(mastery * 100);
-                                            
+
                                             return (
-                                                <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl">
-                                                    <h3 className="text-2xl font-bold text-gray-800 mb-2">{deck.title}</h3>
-                                                    <p className="text-gray-600 mb-4">{deck.subject || 'General'} • {deck.cards.length} cards</p>
+                                                <div key={deck.id} className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/20 hover:border-white/40 transition-all card-hover">
+                                                    <h3 className="text-2xl font-bold text-white mb-2">{deckTitle}</h3>
+                                                    <p className="text-white/80 mb-4">{deckSubject} • {deck.cards.length} cards</p>
                                                     
                                                     <div className="mb-4">
                                                         <div className="flex justify-between text-sm mb-2">
-                                                            <span className="text-gray-600">Mastery Level</span>
-                                                            <span className="font-bold text-gray-800">{masteryPercent}%</span>
+                                                            <span className="text-white/70">Mastery Level</span>
+                                                            <span className="font-bold text-white">{masteryPercent}%</span>
                                                         </div>
-                                                        <div className="w-full bg-gray-200 rounded-full h-3">
-                                                            <div 
+                                                        <div className="w-full bg-white/20 rounded-full h-3">
+                                                            <div
                                                                 className="mastery-bar h-3 rounded-full"
                                                                 style={{
                                                                     width: `${masteryPercent}%`,

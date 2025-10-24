@@ -36,6 +36,50 @@
 
 ---
 
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 16+ and npm
+- Firebase account (for authentication and database)
+
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/benpitt/studying.works.git
+   cd studying.works
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   Copy `.env.example` to `.env` and add your Firebase credentials:
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then edit `.env` with your Firebase project credentials from the [Firebase Console](https://console.firebase.google.com/):
+   - `VITE_FIREBASE_API_KEY` - Your Firebase API key
+   - `VITE_FIREBASE_AUTH_DOMAIN` - Your Firebase auth domain
+   - `VITE_FIREBASE_PROJECT_ID` - Your Firebase project ID
+   - And other Firebase config values...
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+---
+
 ## 🛠️ Built With
 
 <table>

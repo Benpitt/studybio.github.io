@@ -50,7 +50,7 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 " style="background: linear-gradient(to bottom right, #0a0a1a, #1e1b4b, #134e4a); min-height: 100vh;">
-    <script src="auth-guard.js"></script>
+    <script type="module" src="auth-guard.js"></script>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -297,6 +297,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { authService } from './auth-service.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -579,11 +580,17 @@
         // Sign out
         document.getElementById('signout-btn').addEventListener('click', async () => {
             try {
-                await signOut(auth);
-                localStorage.clear();
+                // Initialize auth service if not already done
+                if (!authService.auth) {
+                    await authService.initializeAuth(app);
+                }
+                await authService.signOut();
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error('Sign out error:', error);
+                // Fallback to manual signout
+                localStorage.clear();
+                window.location.href = 'index.html';
             }
         });
 

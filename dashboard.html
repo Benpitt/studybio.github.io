@@ -597,7 +597,8 @@
             document.getElementById('streak').textContent = streak;
             document.getElementById('stat-streak').textContent = streak;
 
-            const totalCards = Object.keys(cardHistory).length + customCards.length;
+            // Count only reviewed cards from cardHistory
+            const totalCards = Object.keys(cardHistory).length;
             document.getElementById('stat-cards').textContent = totalCards;
 
             let totalTests = 0;

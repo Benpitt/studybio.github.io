@@ -12,7 +12,15 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-        import { firebaseConfig } from "./firebase-config-admin.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9cXaG02ijAVC79di00TvJglrmHesNU7U",
+            authDomain: "studying-works-d6c29.firebaseapp.com",
+            projectId: "studying-works-d6c29",
+            storageBucket: "studying-works-d6c29.firebasestorage.app",
+            messagingSenderId: "516007744934",
+            appId: "1:516007744934:web:69855ceeda0dc6baae7aae"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);

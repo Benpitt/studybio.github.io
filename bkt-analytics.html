@@ -404,6 +404,113 @@
                 };
             }
 
+            // Client-side Advanced BKT Training
+            async function trainAdvancedBKT() {
+                if (reviews.length < 100) {
+                    alert('You need at least 100 reviews to train advanced BKT. Keep studying!');
+                    return;
+                }
+
+                console.log('🎓 Starting Advanced BKT Training...');
+
+                // Group reviews by skill
+                const skillGroups = {};
+                reviews.forEach(review => {
+                    if (!skillGroups[review.skill]) {
+                        skillGroups[review.skill] = [];
+                    }
+                    skillGroups[review.skill].push(review);
+                });
+
+                const advancedParams = {};
+
+                // Calculate personalized parameters for each skill
+                Object.keys(skillGroups).forEach(skill => {
+                    const skillReviews = skillGroups[skill];
+
+                    if (skillReviews.length < 5) {
+                        // Not enough data for this skill, use defaults
+                        advancedParams[skill] = {
+                            prior: 0.5,
+                            learn: 0.1,
+                            slip: 0.1,
+                            guess: 0.2
+                        };
+                        return;
+                    }
+
+                    // Calculate accuracy for this skill
+                    const correctCount = skillReviews.filter(r => r.correct === 1 || r.correct === true).length;
+                    const accuracy = correctCount / skillReviews.length;
+
+                    // Estimate P(L0) - Prior knowledge based on early performance
+                    const firstFive = skillReviews.slice(0, Math.min(5, skillReviews.length));
+                    const earlyCorrect = firstFive.filter(r => r.correct === 1 || r.correct === true).length;
+                    const prior = Math.max(0.1, Math.min(0.9, earlyCorrect / firstFive.length));
+
+                    // Estimate P(T) - Learning rate based on improvement over time
+                    const firstHalf = skillReviews.slice(0, Math.floor(skillReviews.length / 2));
+                    const secondHalf = skillReviews.slice(Math.floor(skillReviews.length / 2));
+                    const firstHalfAccuracy = firstHalf.filter(r => r.correct === 1 || r.correct === true).length / firstHalf.length;
+                    const secondHalfAccuracy = secondHalf.filter(r => r.correct === 1 || r.correct === true).length / secondHalf.length;
+                    const improvement = secondHalfAccuracy - firstHalfAccuracy;
+                    const learn = Math.max(0.05, Math.min(0.3, 0.1 + improvement));
+
+                    // Estimate P(S) - Slip rate based on inconsistency
+                    // Calculate how often correct is followed by incorrect
+                    let slipCount = 0;
+                    for (let i = 0; i < skillReviews.length - 1; i++) {
+                        if ((skillReviews[i].correct === 1 || skillReviews[i].correct === true) &&
+                            (skillReviews[i + 1].correct === 0 || skillReviews[i + 1].correct === false)) {
+                            slipCount++;
+                        }
+                    }
+                    const slip = Math.max(0.05, Math.min(0.3, slipCount / Math.max(1, skillReviews.length - 1)));
+
+                    // Estimate P(G) - Guess rate based on low-mastery correct answers
+                    // If accuracy is low but there are correct answers, likely guessing
+                    const guess = accuracy < 0.5 ? Math.min(0.3, accuracy) : Math.max(0.1, 0.3 - accuracy * 0.2);
+
+                    advancedParams[skill] = {
+                        prior: Math.round(prior * 1000) / 1000,
+                        learn: Math.round(learn * 1000) / 1000,
+                        slip: Math.round(slip * 1000) / 1000,
+                        guess: Math.round(guess * 1000) / 1000
+                    };
+
+                    console.log(`✅ Trained ${skill}:`, advancedParams[skill]);
+                });
+
+                // Save to localStorage and Firebase
+                localStorage.setItem('bkt_advanced_params', JSON.stringify(advancedParams));
+                localStorage.setItem('bkt_mode', 'advanced');
+
+                // Save to Firebase
+                const userId = localStorage.getItem('userId');
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        const { setDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+                        const paramsDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktAdvancedParams');
+                        await setDoc(paramsDocRef, {
+                            params: advancedParams,
+                            trainedAt: new Date(),
+                            reviewCount: reviews.length,
+                            mode: 'advanced'
+                        });
+                        console.log('✅ Advanced BKT parameters saved to Firebase');
+                    } catch (error) {
+                        console.error('❌ Error saving to Firebase:', error);
+                    }
+                }
+
+                alert(`🎉 Advanced BKT Trained Successfully!\n\nPersonalized parameters calculated for ${Object.keys(advancedParams).length} skills based on ${reviews.length} reviews.\n\nAdvanced mode is now active! Your study sessions will use these personalized parameters.`);
+
+                setShowAdvancedBKTModal(false);
+
+                // Reload the page to reflect changes
+                setTimeout(() => window.location.reload(), 1000);
+            }
+
             const stats = calculateStats();
 
             return (
@@ -493,11 +600,11 @@
                             {/* Advanced BKT Modal */}
                             {showAdvancedBKTModal && (
                                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                                    <div className="bg-gradient-to-br from-gray-900 to-purple-900 rounded-2xl p-8 max-w-3xl w-full border-2 border-purple-400/50 max-h-[90vh] overflow-y-auto">
+                                    <div className="bg-gradient-to-br from-gray-900 to-purple-900 rounded-2xl p-8 max-w-2xl w-full border-2 border-purple-400/50 max-h-[90vh] overflow-y-auto">
                                         <div className="flex justify-between items-start mb-6">
                                             <div>
                                                 <h2 className="text-3xl font-bold text-white mb-2">🎓 Enable Advanced BKT Mode</h2>
-                                                <p className="text-white/70">Personalize your learning with machine learning</p>
+                                                <p className="text-white/70">One-click personalized learning</p>
                                             </div>
                                             <button
                                                 onClick={() => setShowAdvancedBKTModal(false)}
@@ -514,11 +621,11 @@
                                                 <ul className="space-y-3 text-white/90">
                                                     <li className="flex gap-3">
                                                         <span>🎯</span>
-                                                        <span><strong>Personalized Learning Rates:</strong> The model learns how quickly YOU master each skill</span>
+                                                        <span><strong>Personalized Learning Rates:</strong> The system learns how quickly YOU master each skill</span>
                                                     </li>
                                                     <li className="flex gap-3">
                                                         <span>📊</span>
-                                                        <span><strong>Skill-Specific Parameters:</strong> Different topics get different P(T), P(S), P(G) values based on your performance</span>
+                                                        <span><strong>Skill-Specific Parameters:</strong> Different topics get different P(L₀), P(T), P(S), P(G) values based on your performance</span>
                                                     </li>
                                                     <li className="flex gap-3">
                                                         <span>🎓</span>
@@ -527,58 +634,35 @@
                                                 </ul>
                                             </div>
 
-                                            {/* How to Enable */}
+                                            {/* How It Works */}
                                             <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-6 rounded-xl border border-blue-400/30">
-                                                <h3 className="text-xl font-bold text-white mb-4">🚀 How to Enable (3 Steps)</h3>
-                                                <div className="space-y-4">
-                                                    <div className="flex gap-4">
-                                                        <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold text-white">1</div>
-                                                        <div className="flex-1">
-                                                            <div className="font-bold text-white mb-1">Export Your Data</div>
-                                                            <div className="bg-black/30 p-3 rounded font-mono text-sm text-green-300">
-                                                                python export_firebase_bkt.py
-                                                            </div>
-                                                            <p className="text-white/70 text-sm mt-2">Downloads your {stats.totalReviews} reviews from Firebase</p>
-                                                        </div>
+                                                <h3 className="text-xl font-bold text-white mb-4">🚀 How It Works</h3>
+                                                <p className="text-white/90 mb-4">
+                                                    When you click "Train Now", the system will automatically analyze your <strong>{stats.totalReviews} reviews</strong> and calculate personalized BKT parameters for each of your <strong>{stats.totalSkills} skills</strong>.
+                                                </p>
+                                                <div className="space-y-3 text-sm text-white/80">
+                                                    <div className="flex gap-3">
+                                                        <span>📈</span>
+                                                        <span>Analyzes your learning trajectory for each skill</span>
                                                     </div>
-                                                    <div className="flex gap-4">
-                                                        <div className="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold text-white">2</div>
-                                                        <div className="flex-1">
-                                                            <div className="font-bold text-white mb-1">Train the Model</div>
-                                                            <div className="bg-black/30 p-3 rounded font-mono text-sm text-green-300">
-                                                                python train_bkt.py
-                                                            </div>
-                                                            <p className="text-white/70 text-sm mt-2">Uses pyBKT machine learning to learn your patterns</p>
-                                                        </div>
+                                                    <div className="flex gap-3">
+                                                        <span>🧮</span>
+                                                        <span>Estimates your slip rate, guess rate, and learning rate</span>
                                                     </div>
-                                                    <div className="flex gap-4">
-                                                        <div className="flex-shrink-0 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center font-bold text-white">3</div>
-                                                        <div className="flex-1">
-                                                            <div className="font-bold text-white mb-1">Apply New Parameters</div>
-                                                            <p className="text-white/70 text-sm">The trained model outputs personalized parameters for each skill that will be used in future study sessions</p>
-                                                        </div>
+                                                    <div className="flex gap-3">
+                                                        <span>💾</span>
+                                                        <span>Saves parameters automatically to your profile</span>
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Prerequisites */}
-                                            <div className="bg-yellow-500/20 border border-yellow-500/50 p-4 rounded-lg">
-                                                <div className="flex gap-3">
-                                                    <span className="text-2xl">⚙️</span>
-                                                    <div>
-                                                        <div className="font-bold text-yellow-300 mb-2">Prerequisites</div>
-                                                        <ul className="text-white/80 text-sm space-y-1">
-                                                            <li>• Python 3.7+ installed</li>
-                                                            <li>• pyBKT library: <code className="bg-black/30 px-2 py-1 rounded">pip install pyBKT</code></li>
-                                                            <li>• Firebase service account key (for data export)</li>
-                                                        </ul>
+                                                    <div className="flex gap-3">
+                                                        <span>⚡</span>
+                                                        <span>Takes just a few seconds - no downloads required!</span>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {/* Current Stats */}
-                                            <div className="bg-white/5 p-4 rounded-xl">
-                                                <h3 className="font-bold text-white mb-3">📊 Your Current Stats</h3>
+                                            <div className="bg-white/5 p-5 rounded-xl">
+                                                <h3 className="font-bold text-white mb-4">📊 Your Training Data</h3>
                                                 <div className="grid grid-cols-3 gap-4 text-center">
                                                     <div>
                                                         <div className="text-3xl font-bold text-green-400">{stats.totalReviews}</div>
@@ -595,21 +679,43 @@
                                                 </div>
                                             </div>
 
+                                            {/* Ready to Train */}
+                                            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50 p-5 rounded-xl">
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="text-3xl">✅</span>
+                                                    <div>
+                                                        <div className="font-bold text-green-300 text-lg mb-2">Ready to Train!</div>
+                                                        <p className="text-white/80 text-sm">
+                                                            You have enough data to create personalized BKT parameters. This will make your future study sessions even more effective by adapting to your unique learning patterns.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             {/* Action Buttons */}
                                             <div className="flex gap-4">
-                                                <a
-                                                    href="https://github.com/Benpitt/studying.works/blob/main/BKT_FIREBASE_SUMMARY.md"
-                                                    target="_blank"
-                                                    className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl font-bold text-center hover:scale-105 transition-transform shadow-lg"
+                                                <button
+                                                    onClick={trainAdvancedBKT}
+                                                    className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl font-bold text-center hover:scale-105 transition-transform shadow-lg text-lg"
                                                 >
-                                                    📖 View Full Setup Guide
-                                                </a>
+                                                    🚀 Train Now
+                                                </button>
                                                 <button
                                                     onClick={() => setShowAdvancedBKTModal(false)}
                                                     className="bg-white/10 text-white px-6 py-4 rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20"
                                                 >
-                                                    Close
+                                                    Cancel
                                                 </button>
+                                            </div>
+
+                                            <div className="text-center">
+                                                <a
+                                                    href="https://github.com/Benpitt/studying.works/blob/main/BKT_FIREBASE_SUMMARY.md"
+                                                    target="_blank"
+                                                    className="text-blue-300 hover:text-blue-200 text-sm underline"
+                                                >
+                                                    📖 Learn more about Advanced BKT
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

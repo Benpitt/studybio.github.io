@@ -597,7 +597,18 @@
             document.getElementById('streak').textContent = streak;
             document.getElementById('stat-streak').textContent = streak;
 
-            const totalCards = Object.keys(cardHistory).length + customCards.length;
+            // Count reviewed cards from cardHistory and customFlashcards
+            let totalCards = Object.keys(cardHistory).length;
+            // Add reviewed custom cards not already in cardHistory
+            if (Array.isArray(customCards)) {
+                customCards.forEach(card => {
+                    // If custom card has been reviewed but is not in cardHistory, count it
+                    // Assume 'reviewed' property marks reviewed custom cards
+                    if (card.reviewed && !cardHistory.hasOwnProperty(card.id)) {
+                        totalCards++;
+                    }
+                });
+            }
             document.getElementById('stat-cards').textContent = totalCards;
 
             let totalTests = 0;

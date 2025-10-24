@@ -302,7 +302,8 @@
             const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
 
             document.getElementById('total-streak').textContent = streak;
-            
+
+            // Count reviewed cards from cardHistory and reviewed custom cards
             const totalCards = Object.keys(cardHistory).length + customCards.filter(c => cardHistory[c.id]).length;
             document.getElementById('total-cards').textContent = totalCards;
             

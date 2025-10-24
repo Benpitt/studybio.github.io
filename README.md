@@ -14,7 +14,7 @@
 
 <div align="center">
 
-### 🎯 Live Preview
+### Preview
 
 <a href="https://studying.works">
   <img src="https://img.shields.io/badge/🎓_Try_It_Live-studying.works-667eea?style=for-the-badge" alt="Try studying.works"/>
@@ -24,7 +24,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
  **AI Flashcard Generator** • Paste notes, get instant decks  
  **BKT Smart Study** • Bayesian Knowledge Tracing algorithm  
@@ -36,7 +36,7 @@
 
 ---
 
-## 🛠️ Built With
+## Built With
 
 <table>
 <tr>
@@ -65,21 +65,18 @@
 
 ---
 
-## 🏆 Credits & Acknowledgments
+##  Credits & Acknowledgments
 
 ### Machine Learning
 **[pyBKT](https://github.com/CAHLR/pyBKT)** - Bayesian Knowledge Tracing  
 *Badrinath, A., Wang, F., Pardos, Z. (2021). pyBKT: An Accessible Python Library of Bayesian Knowledge Tracing Models.*
+(under MIT)
 
 ### Design Resources
 [Lucide Icons](https://lucide.dev/) - Beautiful icon set
 [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 [Google Fonts](https://fonts.google.com/) - Typography
 
-### Inspiration
-[Anki](https://apps.ankiweb.net/) - Spaced repetition pioneer
-[Quizlet](https://quizlet.com/) - Study platform innovation
-[Khan Academy](https://www.khanacademy.org/) - Adaptive learning
 
 ### AI Services
 [Anthropic Claude](https://www.anthropic.com/claude) 

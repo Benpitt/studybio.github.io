@@ -297,15 +297,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
-            authDomain: "academie-9942b.firebaseapp.com",
-            projectId: "academie-9942b",
-            storageBucket: "academie-9942b.firebasestorage.app",
-            messagingSenderId: "1079518919325",
-            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
-        };
+        import { firebaseConfig } from "./firebase-config.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);

@@ -180,7 +180,7 @@
             decks.forEach((deck, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${deck.name} (${deck.cards.length} cards)`;
+                option.textContent = `${deck.title} (${deck.cards.length} cards)`;
                 select.appendChild(option);
             });
 

@@ -395,12 +395,26 @@
                 const accuracy = totalReviews > 0 ? (correctReviews / totalReviews) : 0;
                 const avgMastery = Object.values(masteryScores).reduce((a, b) => a + b, 0) / Math.max(1, Object.keys(masteryScores).length);
 
+                // Multiple choice specific stats
+                const multipleChoiceReviews = reviews.filter(r => r.questionType === 'multiple_choice');
+                const flashcardReviews = reviews.filter(r => !r.questionType || r.questionType === 'flashcard');
+                const mcCorrect = multipleChoiceReviews.filter(r => r.correct === 1 || r.correct === true).length;
+                const fcCorrect = flashcardReviews.filter(r => r.correct === 1 || r.correct === true).length;
+                const mcAccuracy = multipleChoiceReviews.length > 0 ? (mcCorrect / multipleChoiceReviews.length) : 0;
+                const fcAccuracy = flashcardReviews.length > 0 ? (fcCorrect / flashcardReviews.length) : 0;
+
                 return {
                     totalReviews,
                     correctReviews,
                     accuracy,
                     avgMastery,
-                    totalSkills: Object.keys(masteryScores).length
+                    totalSkills: Object.keys(masteryScores).length,
+                    multipleChoiceCount: multipleChoiceReviews.length,
+                    flashcardCount: flashcardReviews.length,
+                    multipleChoiceAccuracy: mcAccuracy,
+                    flashcardAccuracy: fcAccuracy,
+                    multipleChoiceCorrect: mcCorrect,
+                    flashcardCorrect: fcCorrect
                 };
             }
 
@@ -748,6 +762,83 @@
                                             <div className="text-orange-100">Accuracy</div>
                                         </div>
                                     </div>
+
+                                    {/* Question Type Breakdown - Only show if multiple choice questions exist */}
+                                    {stats.multipleChoiceCount > 0 && (
+                                        <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+                                            <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+                                                <span>📝</span>
+                                                <span className="ml-2">Question Type Performance</span>
+                                            </h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                {/* Multiple Choice Stats */}
+                                                <div className="bg-white/5 rounded-xl p-6">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <h3 className="text-xl font-bold text-white">Multiple Choice</h3>
+                                                        <span className="text-3xl">📝</span>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-white/70">Total Questions:</span>
+                                                            <span className="text-white font-bold text-lg">{stats.multipleChoiceCount}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-white/70">Correct:</span>
+                                                            <span className="text-green-400 font-bold text-lg">{stats.multipleChoiceCorrect}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-white/70">Accuracy:</span>
+                                                            <span className="text-white font-bold text-2xl">{Math.round(stats.multipleChoiceAccuracy * 100)}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-white/20 rounded-full h-3 mt-2">
+                                                            <div
+                                                                className="h-3 rounded-full transition-all"
+                                                                style={{
+                                                                    width: `${Math.round(stats.multipleChoiceAccuracy * 100)}%`,
+                                                                    background: stats.multipleChoiceAccuracy < 0.5 ? 'linear-gradient(to right, #ef4444, #f97316)' :
+                                                                               stats.multipleChoiceAccuracy < 0.8 ? 'linear-gradient(to right, #f97316, #eab308)' :
+                                                                               'linear-gradient(to right, #22c55e, #10b981)'
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Flashcard Stats */}
+                                                <div className="bg-white/5 rounded-xl p-6">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <h3 className="text-xl font-bold text-white">Flashcards</h3>
+                                                        <span className="text-3xl">🎯</span>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-white/70">Total Questions:</span>
+                                                            <span className="text-white font-bold text-lg">{stats.flashcardCount}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-white/70">Correct:</span>
+                                                            <span className="text-green-400 font-bold text-lg">{stats.flashcardCorrect}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-white/70">Accuracy:</span>
+                                                            <span className="text-white font-bold text-2xl">{Math.round(stats.flashcardAccuracy * 100)}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-white/20 rounded-full h-3 mt-2">
+                                                            <div
+                                                                className="h-3 rounded-full transition-all"
+                                                                style={{
+                                                                    width: `${Math.round(stats.flashcardAccuracy * 100)}%`,
+                                                                    background: stats.flashcardAccuracy < 0.5 ? 'linear-gradient(to right, #ef4444, #f97316)' :
+                                                                               stats.flashcardAccuracy < 0.8 ? 'linear-gradient(to right, #f97316, #eab308)' :
+                                                                               'linear-gradient(to right, #22c55e, #10b981)'
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Mastery Chart */}
                                     <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">

@@ -181,6 +181,8 @@
             const [masteryPopups, setMasteryPopups] = useState([]);
             const [isTransitioning, setIsTransitioning] = useState(false);
             const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showMultipleChoiceResult, setShowMultipleChoiceResult] = useState(false);
 
             useEffect(() => {
                 // Wait for authentication before loading data
@@ -396,10 +398,10 @@
                 localStorage.setItem('bkt_mastery_scores', JSON.stringify(updated));
             }
 
-            async function recordBKTReview(cardId, correct, responseTime) {
+            async function recordBKTReview(cardId, correct, responseTime, questionType = 'flashcard', selectedOption = null, totalOptions = null) {
                 const skill = skills[cardId];
                 const userId = localStorage.getItem('userId');
-                
+
                 const review = {
                     userId: userId,
                     skill: skill,
@@ -407,17 +409,24 @@
                     timestamp: window.firebaseServerTimestamp(),
                     cardId: cardId,
                     responseTime: responseTime,
-                    
+                    questionType: questionType, // 'flashcard' or 'multiple_choice'
+
                     // Extra context for analysis
                     timeOfDay: new Date().getHours(),
                     dayOfWeek: new Date().getDay()
                 };
-                
+
+                // Add multiple choice specific data
+                if (questionType === 'multiple_choice') {
+                    review.selectedOption = selectedOption;
+                    review.totalOptions = totalOptions;
+                }
+
                 try {
                     // Save to Firestore
                     await window.firebaseAddDoc(window.firebaseCollection(window.db, 'bkt_reviews'), review);
                     console.log('✅ Review saved to Firebase:', review);
-                    
+
                     // Also keep local backup
                     const reviews = JSON.parse(localStorage.getItem('bkt_reviews') || '[]');
                     reviews.push({...review, timestamp: new Date().toISOString()});
@@ -429,35 +438,39 @@
                     reviews.push({...review, timestamp: new Date().toISOString()});
                     localStorage.setItem('bkt_reviews', JSON.stringify(reviews));
                 }
-                
+
                 // Update mastery score
                 updateMasteryScore(skill, correct);
             }
 
             function startStudySession(deck) {
                 setSelectedDeck(deck);
-                
+
                 // Sort cards by mastery (lowest first)
                 const cardsWithMastery = deck.cards.map(card => ({
                     ...card,
                     skill: skills[card.id],
                     mastery: getMasteryScore(skills[card.id])
                 })).sort((a, b) => a.mastery - b.mastery);
-                
+
                 // Take top 20 cards needing practice
                 setSessionCards(cardsWithMastery.slice(0, 20));
                 setCurrentCard(0);
                 setShowAnswer(false);
+                setSelectedAnswer(null);
+                setShowMultipleChoiceResult(false);
                 setSessionStats({ correct: 0, total: 0 });
                 setStartTime(Date.now());
                 setMode('study');
             }
 
-            function handleAnswer(correct) {
+            function handleAnswer(correct, questionType = 'flashcard', selectedOption = null) {
                 const card = sessionCards[currentCard];
                 const responseTime = (Date.now() - startTime) / 1000;
 
-                recordBKTReview(card.id, correct, responseTime);
+                // For multiple choice, track the selected option
+                const totalOptions = card.options ? card.options.length : null;
+                recordBKTReview(card.id, correct, responseTime, questionType, selectedOption, totalOptions);
 
                 setSessionStats({
                     correct: sessionStats.correct + (correct ? 1 : 0),
@@ -468,6 +481,8 @@
                     // Set transitioning state and hide answer immediately
                     setIsTransitioning(true);
                     setShowAnswer(false);
+                    setSelectedAnswer(null);
+                    setShowMultipleChoiceResult(false);
 
                     // Short delay to ensure card flips back before changing card
                     setTimeout(() => {
@@ -478,6 +493,20 @@
                 } else {
                     setMode('results');
                 }
+            }
+
+            function handleMultipleChoiceAnswer(optionIndex) {
+                const card = sessionCards[currentCard];
+                setSelectedAnswer(optionIndex);
+                setShowMultipleChoiceResult(true);
+
+                // Check if answer is correct
+                const correct = optionIndex === card.correctOption;
+
+                // Short delay before moving to next card to show result
+                setTimeout(() => {
+                    handleAnswer(correct, 'multiple_choice', optionIndex);
+                }, 1500);
             }
 
             if (mode === 'overview') {
@@ -619,6 +648,7 @@
             if (mode === 'study') {
                 const card = sessionCards[currentCard];
                 const mastery = Math.round(card.mastery * 100);
+                const isMultipleChoice = card.options && card.options.length > 0;
 
                 return (
                     <div className="min-h-screen">
@@ -636,8 +666,11 @@
                                 <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 mb-6 text-white shadow-xl">
                                     <div className="flex justify-between items-center mb-4">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-2xl">🎯</span>
+                                            <span className="text-2xl">{isMultipleChoice ? '📝' : '🎯'}</span>
                                             <span className="font-bold text-lg">Card {currentCard + 1} of {sessionCards.length}</span>
+                                            <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
+                                                {isMultipleChoice ? 'Multiple Choice' : 'Flashcard'}
+                                            </span>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm opacity-80">Session:</span>
@@ -663,73 +696,145 @@
                                     </div>
                                 </div>
 
-                                {/* Flashcard */}
-                                <div className={`card-flip ${showAnswer ? 'flipped' : ''} mb-6 ${isTransitioning ? 'card-exit' : 'card-enter'} relative`}>
-                                    <div className="card-flip-inner relative" style={{minHeight: '450px'}}>
-                                        <div className="card-front absolute w-full h-full">
+                                {/* Multiple Choice or Flashcard */}
+                                {isMultipleChoice ? (
+                                    <div className={`mb-6 ${isTransitioning ? 'card-exit' : 'card-enter'} relative`}>
+                                        {/* Question */}
+                                        <div className="card-gradient-indigo rounded-3xl p-8 text-white shadow-2xl mb-6 border-2 border-white/20">
+                                            <div className="text-xs uppercase tracking-widest mb-4 opacity-60 font-bold">Multiple Choice Question</div>
+                                            <div className="text-3xl font-bold leading-relaxed mb-2">{card.question}</div>
+                                            {card.explanation && showMultipleChoiceResult && (
+                                                <div className="mt-4 text-sm bg-white/10 p-4 rounded-xl">
+                                                    <div className="font-bold mb-1">Explanation:</div>
+                                                    <div className="opacity-90">{card.explanation}</div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Options */}
+                                        <div className="space-y-3">
+                                            {card.options.map((option, index) => {
+                                                const isSelected = selectedAnswer === index;
+                                                const isCorrect = index === card.correctOption;
+                                                const showResult = showMultipleChoiceResult;
+
+                                                let buttonClass = "w-full text-left p-5 rounded-xl font-semibold text-lg transition-all shadow-lg border-2 ";
+
+                                                if (showResult) {
+                                                    if (isSelected && isCorrect) {
+                                                        buttonClass += "bg-gradient-to-br from-green-500 to-green-600 text-white border-green-400 scale-105";
+                                                    } else if (isSelected && !isCorrect) {
+                                                        buttonClass += "bg-gradient-to-br from-red-500 to-red-600 text-white border-red-400";
+                                                    } else if (isCorrect) {
+                                                        buttonClass += "bg-gradient-to-br from-green-500/50 to-green-600/50 text-white border-green-400";
+                                                    } else {
+                                                        buttonClass += "bg-white/10 text-white/50 border-white/20";
+                                                    }
+                                                } else {
+                                                    buttonClass += "bg-white/10 hover:bg-white/20 text-white border-white/30 hover:border-white/50 hover:scale-102";
+                                                }
+
+                                                return (
+                                                    <button
+                                                        key={index}
+                                                        onClick={() => !showMultipleChoiceResult && !isTransitioning && handleMultipleChoiceAnswer(index)}
+                                                        disabled={showMultipleChoiceResult || isTransitioning}
+                                                        className={buttonClass}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-2xl font-bold opacity-80">{String.fromCharCode(65 + index)}.</span>
+                                                            <span className="flex-1">{option}</span>
+                                                            {showResult && isCorrect && <span className="text-2xl">✓</span>}
+                                                            {showResult && isSelected && !isCorrect && <span className="text-2xl">✗</span>}
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Mastery Popups */}
+                                        {masteryPopups.map(popup => (
                                             <div
-                                                onClick={() => !isTransitioning && setShowAnswer(true)}
-                                                className="card-gradient-indigo rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center border-2 border-white/20 hover:border-white/40 transition-all"
-                                                style={{minHeight: '450px'}}
+                                                key={popup.id}
+                                                className="mastery-popup"
+                                                style={popup.position}
                                             >
-                                                <div className="text-center">
-                                                    <div className="text-xs uppercase tracking-widest mb-6 opacity-60 font-bold">Question</div>
-                                                    <div className="text-4xl font-bold leading-relaxed">{card.question}</div>
-                                                    <div className="mt-8 text-sm opacity-60">Click to reveal answer</div>
+                                                {popup.message}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={`card-flip ${showAnswer ? 'flipped' : ''} mb-6 ${isTransitioning ? 'card-exit' : 'card-enter'} relative`}>
+                                        <div className="card-flip-inner relative" style={{minHeight: '450px'}}>
+                                            <div className="card-front absolute w-full h-full">
+                                                <div
+                                                    onClick={() => !isTransitioning && setShowAnswer(true)}
+                                                    className="card-gradient-indigo rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center border-2 border-white/20 hover:border-white/40 transition-all"
+                                                    style={{minHeight: '450px'}}
+                                                >
+                                                    <div className="text-center">
+                                                        <div className="text-xs uppercase tracking-widest mb-6 opacity-60 font-bold">Question</div>
+                                                        <div className="text-4xl font-bold leading-relaxed">{card.question}</div>
+                                                        <div className="mt-8 text-sm opacity-60">Click to reveal answer</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="card-back absolute w-full h-full">
+                                                <div
+                                                    className="card-gradient-emerald rounded-3xl p-12 text-white shadow-2xl h-full flex flex-col items-center justify-center border-2 border-white/20"
+                                                    style={{minHeight: '450px'}}
+                                                >
+                                                    <div className="text-center">
+                                                        <div className="text-xs uppercase tracking-widest mb-6 opacity-60 font-bold">Answer</div>
+                                                        <div className="text-3xl font-semibold leading-relaxed">{card.answer}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="card-back absolute w-full h-full">
+
+                                        {/* Mastery Popups - positioned relative to card */}
+                                        {masteryPopups.map(popup => (
                                             <div
-                                                className="card-gradient-emerald rounded-3xl p-12 text-white shadow-2xl h-full flex flex-col items-center justify-center border-2 border-white/20"
-                                                style={{minHeight: '450px'}}
+                                                key={popup.id}
+                                                className="mastery-popup"
+                                                style={popup.position}
                                             >
-                                                <div className="text-center">
-                                                    <div className="text-xs uppercase tracking-widest mb-6 opacity-60 font-bold">Answer</div>
-                                                    <div className="text-3xl font-semibold leading-relaxed">{card.answer}</div>
-                                                </div>
+                                                {popup.message}
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
+                                )}
 
-                                    {/* Mastery Popups - positioned relative to card */}
-                                    {masteryPopups.map(popup => (
-                                        <div
-                                            key={popup.id}
-                                            className="mastery-popup"
-                                            style={popup.position}
-                                        >
-                                            {popup.message}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Action Buttons */}
-                                {showAnswer && !isTransitioning ? (
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <button
-                                            onClick={() => handleAnswer(false)}
-                                            className="bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-5 rounded-2xl font-bold text-xl transition-all shadow-lg hover:shadow-2xl hover:scale-105 border-2 border-red-400/50"
-                                        >
-                                            <div className="text-3xl mb-1">❌</div>
-                                            <div>Didn't Know</div>
-                                        </button>
-                                        <button
-                                            onClick={() => handleAnswer(true)}
-                                            className="bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-5 rounded-2xl font-bold text-xl transition-all shadow-lg hover:shadow-2xl hover:scale-105 border-2 border-green-400/50"
-                                        >
-                                            <div className="text-3xl mb-1">✅</div>
-                                            <div>Knew It!</div>
-                                        </button>
-                                    </div>
-                                ) : !isTransitioning ? (
-                                    <button
-                                        onClick={() => setShowAnswer(true)}
-                                        className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-lg text-white py-5 rounded-2xl font-bold text-xl transition-all border-2 border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl"
-                                    >
-                                        Reveal Answer
-                                    </button>
-                                ) : null}
+                                {/* Action Buttons for Flashcards */}
+                                {!isMultipleChoice && (
+                                    <>
+                                        {showAnswer && !isTransitioning ? (
+                                            <div className="grid grid-cols-2 gap-6">
+                                                <button
+                                                    onClick={() => handleAnswer(false)}
+                                                    className="bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-5 rounded-2xl font-bold text-xl transition-all shadow-lg hover:shadow-2xl hover:scale-105 border-2 border-red-400/50"
+                                                >
+                                                    <div className="text-3xl mb-1">❌</div>
+                                                    <div>Didn't Know</div>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleAnswer(true)}
+                                                    className="bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-5 rounded-2xl font-bold text-xl transition-all shadow-lg hover:shadow-2xl hover:scale-105 border-2 border-green-400/50"
+                                                >
+                                                    <div className="text-3xl mb-1">✅</div>
+                                                    <div>Knew It!</div>
+                                                </button>
+                                            </div>
+                                        ) : !isTransitioning ? (
+                                            <button
+                                                onClick={() => setShowAnswer(true)}
+                                                className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-lg text-white py-5 rounded-2xl font-bold text-xl transition-all border-2 border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl"
+                                            >
+                                                Reveal Answer
+                                            </button>
+                                        ) : null}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

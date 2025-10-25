@@ -285,7 +285,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { authService } from './auth-service.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -297,8 +297,28 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+
+        // Initialize auth service with persistence
+        async function initAuth() {
+            try {
+                await authService.initializeAuth(app);
+
+                // Check if user is already authenticated (from cached session)
+                const currentUser = await authService.waitForAuthState();
+
+                if (currentUser && authService.isSessionValid()) {
+                    // User is already authenticated, redirect to dashboard
+                    console.log('User already authenticated, redirecting...');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+            } catch (error) {
+                console.error('Auth initialization error:', error);
+            }
+        }
+
+        // Initialize authentication on page load
+        initAuth();
 
         // Google Sign-In
         document.getElementById('google-signin-btn').addEventListener('click', async () => {
@@ -306,25 +326,13 @@
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('loading').classList.remove('hidden');
 
-                const result = await signInWithPopup(auth, provider);
-                const user = result.user;
+                // Use auth service for sign-in
+                const user = await authService.signInWithGoogle();
 
-                // Save user info immediately
-                const userData = {
-                    userName: user.displayName,
-                    userEmail: user.email,
-                    userPhoto: user.photoURL,
-                    userId: user.uid
-                };
-
-                localStorage.setItem('userName', userData.userName);
-                localStorage.setItem('userEmail', userData.userEmail);
-                localStorage.setItem('userPhoto', userData.userPhoto);
-                localStorage.setItem('userId', userData.userId);
-                localStorage.setItem('sessionTimestamp', Date.now().toString());
-
-                // Redirect immediately - don't wait
-                window.location.href = 'dashboard.html';
+                if (user) {
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                }
 
             } catch (error) {
                 console.error('Sign-in error:', error);

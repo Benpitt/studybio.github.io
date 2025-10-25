@@ -524,6 +524,11 @@
             startMCTimer();
         }
 
+        // Helper to escape JS strings for single-quoted string literals
+        function jsStringEscape(str) {
+            return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        }
+
         function showMCQuestion() {
             if (gameState.currentIndex >= gameState.cards.length) {
                 endMCArena();
@@ -552,7 +557,7 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
                         ${allAnswers.map((answer, idx) => `
-                            <button onclick="checkMCAnswer('${answer.replace(/'/g, "\\'")}', '${correctAnswer.replace(/'/g, "\\'")}')"
+                            <button onclick="checkMCAnswer('${jsStringEscape(answer)}', '${jsStringEscape(correctAnswer)}')"
                                     class="bg-white/20 hover:bg-white/30 p-6 rounded-xl text-white text-lg transition-all">
                                 ${answer}
                             </button>

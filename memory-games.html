@@ -544,6 +544,13 @@
             
             document.getElementById('game-stats').textContent = `Score: ${gameState.score} | Streak: ${gameState.streak}🔥`;
             
+            // Helper to safely escape strings for single-quoted JS contexts (onclick)
+            function jsEscape(str) {
+                return str
+                    .replace(/\\/g, '\\\\')   // Escape backslashes first
+                    .replace(/'/g, "\\'");    // Then escape single quotes
+            }
+
             const content = document.getElementById('game-content');
             content.innerHTML = `
                 <div class="text-center">
@@ -552,7 +559,7 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
                         ${allAnswers.map((answer, idx) => `
-                            <button onclick="checkMCAnswer('${answer.replace(/'/g, "\\'")}', '${correctAnswer.replace(/'/g, "\\'")}')"
+                            <button onclick="checkMCAnswer('${jsEscape(answer)}', '${jsEscape(correctAnswer)}')"
                                     class="bg-white/20 hover:bg-white/30 p-6 rounded-xl text-white text-lg transition-all">
                                 ${answer}
                             </button>

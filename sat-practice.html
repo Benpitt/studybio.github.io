@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAT Practice Test - Studying Works</title>
+    <title>SAT Practice - Studying Works</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -12,218 +12,183 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
     <style>
-        .calculator-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
         }
 
-        .stopwatch-container {
+        .draggable-widget {
             position: fixed;
-            top: 80px;
-            right: 20px;
             z-index: 1000;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: move;
+        }
+
+        .draggable-widget.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+        }
+
+        .widget-header {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .widget-content {
+            padding: 12px;
         }
 
         .desmos-container {
             width: 100%;
-            height: 500px;
-            border-radius: 8px;
-            overflow: hidden;
+            height: 400px;
+            border-radius: 4px;
         }
 
-        .question-area {
+        .question-panel {
             background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 32px;
+            min-height: calc(100vh - 64px);
         }
 
-        .choice-button {
-            transition: all 0.2s ease;
+        .answer-panel {
+            background: #fafafa;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
         }
 
-        .choice-button:hover {
-            transform: translateX(4px);
-        }
-
-        .choice-button.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .choice-button.correct {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .choice-button.incorrect {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-        }
-
-        .minimized-toggle {
-            cursor: pointer;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 12px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            transition: all 0.2s ease;
-        }
-
-        .minimized-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .calculator-btn {
-            padding: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            border: 1px solid #e5e7eb;
-            background: white;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .calculator-btn:hover {
-            background: #f3f4f6;
-        }
-
-        .calculator-btn:active {
-            transform: scale(0.95);
-        }
-
-        .calculator-btn.operator {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-        }
-
-        .calculator-btn.operator:hover {
-            opacity: 0.9;
-        }
-
-        .calculator-display {
-            background: #f9fafb;
+        .choice-option {
+            padding: 16px 20px;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
-            padding: 16px;
-            font-size: 24px;
-            text-align: right;
-            font-family: 'Courier New', monospace;
-            min-height: 60px;
-            overflow-x: auto;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .choice-option:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+
+        .choice-option.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .choice-option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .choice-option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .topic-card {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .topic-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .topic-card.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .widget-toggle {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .widget-toggle:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+
+        .widget-toggle.active {
+            border-color: #667eea;
+            background: #eef2ff;
+            color: #667eea;
+        }
+
+        .question-id {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 min-h-screen">
+<body>
     <script type="module" src="auth-guard.js"></script>
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Sample SAT Questions - Replace with your JSON data
-        const SAMPLE_QUESTIONS = [
-            {
-                id: "sat-math-1",
-                domain: "Algebra",
-                section: "Math",
-                type: "multiple-choice",
-                question: {
-                    paragraph: "If 3x + 5 = 20, what is the value of x?",
-                    question: "Select the correct answer:",
-                    choices: {
-                        A: "x = 3",
-                        B: "x = 5",
-                        C: "x = 7",
-                        D: "x = 15"
-                    },
-                    correct_answer: "B",
-                    explanation: "Solving for x: 3x + 5 = 20, subtract 5 from both sides: 3x = 15, divide by 3: x = 5"
-                }
-            },
-            {
-                id: "sat-math-2",
-                domain: "Algebra",
-                section: "Math",
-                type: "free-response",
-                question: {
-                    paragraph: "A rectangle has a perimeter of 40 units. If the length is 3 units more than twice the width, what is the width?",
-                    question: "Enter your answer as a number:",
-                    correct_answer: "5.67",
-                    tolerance: 0.1,
-                    explanation: "Let w = width. Then length = 2w + 3. Perimeter = 2(w + l) = 40. So 2(w + 2w + 3) = 40, which gives 6w + 6 = 40, so w = 34/6 ≈ 5.67"
-                }
-            },
-            {
-                id: "sat-reading-1",
-                domain: "Reading Comprehension",
-                section: "Reading",
-                type: "multiple-choice",
-                question: {
-                    paragraph: "The Industrial Revolution, which took place from the 18th to 19th centuries, was a period during which predominantly agrarian, rural societies in Europe and America became industrial and urban. Prior to this period, manufacturing was often done in people's homes, using hand tools or basic machines. Industrialization marked a shift to powered, special-purpose machinery, factories, and mass production.",
-                    question: "Based on the passage, what was a primary characteristic of the Industrial Revolution?",
-                    choices: {
-                        A: "A decrease in agricultural production",
-                        B: "A shift from rural to urban manufacturing",
-                        C: "An elimination of hand tools",
-                        D: "A reduction in population"
-                    },
-                    correct_answer: "B",
-                    explanation: "The passage explicitly states that the Industrial Revolution transformed 'predominantly agrarian, rural societies' into 'industrial and urban' ones, indicating a shift from rural to urban manufacturing."
-                }
-            },
-            {
-                id: "sat-writing-1",
-                domain: "Standard English Conventions",
-                section: "Writing",
-                type: "multiple-choice",
-                question: {
-                    paragraph: "The scientist's research, which spanned over two decades, _____ groundbreaking discoveries in the field of genetics.",
-                    question: "Which choice completes the text so that it conforms to the conventions of Standard English?",
-                    choices: {
-                        A: "have produced",
-                        B: "has produced",
-                        C: "were producing",
-                        D: "are producing"
-                    },
-                    correct_answer: "B",
-                    explanation: "The subject 'research' is singular, so it requires the singular verb form 'has produced' rather than the plural 'have produced'."
-                }
-            }
-        ];
-
         function Navigation() {
             return (
-                <nav className="bg-white shadow-lg sticky top-0 z-50">
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between h-16">
-                            <div className="flex items-center">
-                                <a href="dashboard.html" className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold text-xl">S</span>
-                                    </div>
-                                    <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                                        SAT Practice
-                                    </span>
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>studying.works</span>
                                 </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="sat-practice.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">SAT Practice</a>
+                                    <a href="custom-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Flashcards</a>
+                                    <a href="progress.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
+                                </div>
                             </div>
                             <div className="flex items-center space-x-4">
-                                <a href="dashboard.html" className="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                    Dashboard
-                                </a>
+                                <div className="relative group">
+                                    <button className="flex items-center space-x-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all">
+                                        <img id="user-photo" src="https://via.placeholder.com/40" alt="" className="w-8 h-8 rounded-full" />
+                                        <span id="user-name-nav" className="text-white font-semibold hidden md:block">User</span>
+                                    </button>
+                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                        <div className="p-4">
+                                            <p id="user-email" className="text-sm text-gray-600 mb-3"></p>
+                                            <button id="signout-btn" className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-all">
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -231,225 +196,61 @@
             );
         }
 
-        function Calculator({ isMinimized, onToggleMinimize }) {
-            const [display, setDisplay] = useState('0');
-            const [previousValue, setPreviousValue] = useState(null);
-            const [operation, setOperation] = useState(null);
-            const [waitingForOperand, setWaitingForOperand] = useState(false);
+        function DraggableWidget({ title, children, initialX, initialY, onClose }) {
+            const [position, setPosition] = useState({ x: initialX, y: initialY });
+            const [isDragging, setIsDragging] = useState(false);
+            const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+            const widgetRef = useRef(null);
 
-            const handleNumber = (num) => {
-                if (waitingForOperand) {
-                    setDisplay(String(num));
-                    setWaitingForOperand(false);
-                } else {
-                    setDisplay(display === '0' ? String(num) : display + num);
+            const handleMouseDown = (e) => {
+                if (e.target.closest('.widget-header')) {
+                    setIsDragging(true);
+                    const rect = widgetRef.current.getBoundingClientRect();
+                    setDragOffset({
+                        x: e.clientX - rect.left,
+                        y: e.clientY - rect.top
+                    });
                 }
             };
-
-            const handleDecimal = () => {
-                if (waitingForOperand) {
-                    setDisplay('0.');
-                    setWaitingForOperand(false);
-                } else if (display.indexOf('.') === -1) {
-                    setDisplay(display + '.');
-                }
-            };
-
-            const handleOperation = (nextOperation) => {
-                const inputValue = parseFloat(display);
-
-                if (previousValue === null) {
-                    setPreviousValue(inputValue);
-                } else if (operation) {
-                    const currentValue = previousValue || 0;
-                    const newValue = calculate(currentValue, inputValue, operation);
-
-                    setDisplay(String(newValue));
-                    setPreviousValue(newValue);
-                }
-
-                setWaitingForOperand(true);
-                setOperation(nextOperation);
-            };
-
-            const calculate = (firstValue, secondValue, op) => {
-                switch (op) {
-                    case '+': return firstValue + secondValue;
-                    case '-': return firstValue - secondValue;
-                    case '*': return firstValue * secondValue;
-                    case '/': return firstValue / secondValue;
-                    case '%': return firstValue % secondValue;
-                    default: return secondValue;
-                }
-            };
-
-            const handleEquals = () => {
-                const inputValue = parseFloat(display);
-
-                if (previousValue !== null && operation) {
-                    const newValue = calculate(previousValue, inputValue, operation);
-                    setDisplay(String(newValue));
-                    setPreviousValue(null);
-                    setOperation(null);
-                    setWaitingForOperand(true);
-                }
-            };
-
-            const handleClear = () => {
-                setDisplay('0');
-                setPreviousValue(null);
-                setOperation(null);
-                setWaitingForOperand(false);
-            };
-
-            const handleSquareRoot = () => {
-                const value = parseFloat(display);
-                setDisplay(String(Math.sqrt(value)));
-            };
-
-            const handlePower = () => {
-                const value = parseFloat(display);
-                setDisplay(String(value * value));
-            };
-
-            if (isMinimized) {
-                return (
-                    <div className="calculator-container">
-                        <div className="minimized-toggle" onClick={onToggleMinimize}>
-                            Calculator
-                        </div>
-                    </div>
-                );
-            }
-
-            return (
-                <div className="calculator-container">
-                    <div className="bg-white p-4" style={{width: '280px'}}>
-                        <div className="flex justify-between items-center mb-3">
-                            <h3 className="font-bold text-gray-800">Calculator</h3>
-                            <button
-                                onClick={onToggleMinimize}
-                                className="text-gray-500 hover:text-gray-700 text-xl"
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <div className="calculator-display mb-3">
-                            {display}
-                        </div>
-                        <div className="grid grid-cols-4 gap-2">
-                            <button className="calculator-btn" onClick={handleClear}>C</button>
-                            <button className="calculator-btn" onClick={handleSquareRoot}>√</button>
-                            <button className="calculator-btn" onClick={handlePower}>x²</button>
-                            <button className="calculator-btn operator" onClick={() => handleOperation('/')}>÷</button>
-
-                            <button className="calculator-btn" onClick={() => handleNumber(7)}>7</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(8)}>8</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(9)}>9</button>
-                            <button className="calculator-btn operator" onClick={() => handleOperation('*')}>×</button>
-
-                            <button className="calculator-btn" onClick={() => handleNumber(4)}>4</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(5)}>5</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(6)}>6</button>
-                            <button className="calculator-btn operator" onClick={() => handleOperation('-')}>−</button>
-
-                            <button className="calculator-btn" onClick={() => handleNumber(1)}>1</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(2)}>2</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(3)}>3</button>
-                            <button className="calculator-btn operator" onClick={() => handleOperation('+')}>+</button>
-
-                            <button className="calculator-btn" onClick={() => handleOperation('%')}>%</button>
-                            <button className="calculator-btn" onClick={() => handleNumber(0)}>0</button>
-                            <button className="calculator-btn" onClick={handleDecimal}>.</button>
-                            <button className="calculator-btn operator" onClick={handleEquals}>=</button>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        function Stopwatch({ isMinimized, onToggleMinimize }) {
-            const [time, setTime] = useState(0);
-            const [isRunning, setIsRunning] = useState(false);
-            const intervalRef = useRef(null);
 
             useEffect(() => {
-                if (isRunning) {
-                    intervalRef.current = setInterval(() => {
-                        setTime(t => t + 10);
-                    }, 10);
-                } else {
-                    if (intervalRef.current) {
-                        clearInterval(intervalRef.current);
+                const handleMouseMove = (e) => {
+                    if (isDragging) {
+                        setPosition({
+                            x: e.clientX - dragOffset.x,
+                            y: e.clientY - dragOffset.y
+                        });
                     }
+                };
+
+                const handleMouseUp = () => {
+                    setIsDragging(false);
+                };
+
+                if (isDragging) {
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
                 }
 
                 return () => {
-                    if (intervalRef.current) {
-                        clearInterval(intervalRef.current);
-                    }
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
                 };
-            }, [isRunning]);
-
-            const formatTime = (ms) => {
-                const minutes = Math.floor(ms / 60000);
-                const seconds = Math.floor((ms % 60000) / 1000);
-                const milliseconds = Math.floor((ms % 1000) / 10);
-
-                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
-            };
-
-            const handleStartStop = () => {
-                setIsRunning(!isRunning);
-            };
-
-            const handleReset = () => {
-                setIsRunning(false);
-                setTime(0);
-            };
-
-            if (isMinimized) {
-                return (
-                    <div className="stopwatch-container">
-                        <div className="minimized-toggle" onClick={onToggleMinimize}>
-                            Stopwatch: {formatTime(time)}
-                        </div>
-                    </div>
-                );
-            }
+            }, [isDragging, dragOffset]);
 
             return (
-                <div className="stopwatch-container">
-                    <div className="flex justify-between items-center mb-3">
-                        <h3 className="font-bold text-gray-800">Stopwatch</h3>
-                        <button
-                            onClick={onToggleMinimize}
-                            className="text-gray-500 hover:text-gray-700 text-xl"
-                        >
-                            ×
-                        </button>
+                <div
+                    ref={widgetRef}
+                    className={`draggable-widget ${isDragging ? 'dragging' : ''}`}
+                    style={{ left: `${position.x}px`, top: `${position.y}px` }}
+                    onMouseDown={handleMouseDown}
+                >
+                    <div className="widget-header">
+                        <span>{title}</span>
+                        <button onClick={onClose} className="text-white hover:text-gray-200 font-bold text-lg">×</button>
                     </div>
-                    <div className="text-4xl font-mono font-bold text-center mb-4 text-gray-800">
-                        {formatTime(time)}
-                    </div>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleStartStop}
-                            className="flex-1 px-4 py-2 rounded-lg font-semibold text-white transition-all"
-                            style={{
-                                background: isRunning
-                                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                            }}
-                        >
-                            {isRunning ? 'Stop' : 'Start'}
-                        </button>
-                        <button
-                            onClick={handleReset}
-                            className="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 transition-all"
-                        >
-                            Reset
-                        </button>
+                    <div className="widget-content">
+                        {children}
                     </div>
                 </div>
             );
@@ -461,20 +262,13 @@
 
             useEffect(() => {
                 if (containerRef.current && !calculatorRef.current) {
-                    const options = mode === 'scientific'
-                        ? {
-                            expressionsCollapsed: true,
-                            keypad: true,
-                            graphpaper: false
-                          }
-                        : {
-                            keypad: true,
-                            expressions: true,
-                            settingsMenu: true,
-                            expressionsTopbar: true
-                          };
-
-                    calculatorRef.current = Desmos.GraphingCalculator(containerRef.current, options);
+                    calculatorRef.current = Desmos.GraphingCalculator(containerRef.current, {
+                        keypad: true,
+                        expressions: mode === 'graphing',
+                        graphpaper: mode === 'graphing',
+                        settingsMenu: true,
+                        expressionsTopbar: mode === 'graphing'
+                    });
                 }
 
                 return () => {
@@ -488,112 +282,207 @@
             return <div ref={containerRef} className="desmos-container" />;
         }
 
-        function QuestionDisplay({ question, onAnswer, userAnswer, isSubmitted }) {
-            const [selectedChoice, setSelectedChoice] = useState(userAnswer || null);
-            const [textAnswer, setTextAnswer] = useState(userAnswer || '');
+        function Stopwatch() {
+            const [time, setTime] = useState(0);
+            const [isRunning, setIsRunning] = useState(false);
+            const intervalRef = useRef(null);
 
-            const handleChoiceSelect = (choice) => {
-                if (!isSubmitted) {
-                    setSelectedChoice(choice);
-                    onAnswer(choice);
+            useEffect(() => {
+                if (isRunning) {
+                    intervalRef.current = setInterval(() => {
+                        setTime(t => t + 10);
+                    }, 10);
+                } else {
+                    if (intervalRef.current) clearInterval(intervalRef.current);
                 }
-            };
+                return () => {
+                    if (intervalRef.current) clearInterval(intervalRef.current);
+                };
+            }, [isRunning]);
 
-            const handleTextChange = (e) => {
-                if (!isSubmitted) {
-                    setTextAnswer(e.target.value);
-                    onAnswer(e.target.value);
-                }
-            };
-
-            const getChoiceClass = (choice) => {
-                if (!isSubmitted) {
-                    return selectedChoice === choice ? 'selected' : '';
-                }
-                if (choice === question.question.correct_answer) {
-                    return 'correct';
-                }
-                if (choice === selectedChoice && choice !== question.question.correct_answer) {
-                    return 'incorrect';
-                }
-                return '';
+            const formatTime = (ms) => {
+                const minutes = Math.floor(ms / 60000);
+                const seconds = Math.floor((ms % 60000) / 1000);
+                const milliseconds = Math.floor((ms % 1000) / 10);
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
             };
 
             return (
-                <div className="question-area">
-                    <div className="mb-6">
-                        <div className="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold mb-3">
-                            {question.section} - {question.domain}
-                        </div>
-                        <div className="text-gray-800 text-lg leading-relaxed mb-4 whitespace-pre-wrap">
-                            {question.question.paragraph}
-                        </div>
-                        <div className="text-gray-900 font-semibold mb-4">
-                            {question.question.question}
-                        </div>
+                <div style={{ minWidth: '200px' }}>
+                    <div className="text-3xl font-mono font-bold text-center mb-3 text-gray-800">
+                        {formatTime(time)}
                     </div>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setIsRunning(!isRunning)}
+                            className="flex-1 px-4 py-2 rounded-lg font-semibold text-white transition-all"
+                            style={{
+                                background: isRunning
+                                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                            }}
+                        >
+                            {isRunning ? 'Stop' : 'Start'}
+                        </button>
+                        <button
+                            onClick={() => { setIsRunning(false); setTime(0); }}
+                            className="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 transition-all"
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            );
+        }
 
-                    {question.type === 'multiple-choice' && (
-                        <div className="space-y-3">
-                            {Object.entries(question.question.choices).map(([key, value]) => (
-                                <button
-                                    key={key}
-                                    onClick={() => handleChoiceSelect(key)}
-                                    disabled={isSubmitted}
-                                    className={`choice-button w-full text-left p-4 border-2 rounded-lg font-medium ${getChoiceClass(key)}`}
-                                    style={{
-                                        borderColor: getChoiceClass(key) ? 'transparent' : '#e5e7eb',
-                                        cursor: isSubmitted ? 'default' : 'pointer'
-                                    }}
-                                >
-                                    <span className="font-bold mr-3">{key}.</span>
-                                    {value}
-                                </button>
-                            ))}
+        function TopicSelectionMenu({ onStartTest }) {
+            const [selectedTopics, setSelectedTopics] = useState([]);
+            const [customCount, setCustomCount] = useState(10);
+
+            const topics = [
+                { id: 'algebra', name: 'Algebra', icon: '📐', count: 0 },
+                { id: 'trigonometry', name: 'Trigonometry', icon: '📊', count: 0 },
+                { id: 'geometry', name: 'Geometry', icon: '🔺', count: 0 },
+                { id: 'reading', name: 'Reading', icon: '📖', count: 0 },
+                { id: 'writing', name: 'Writing', icon: '✍️', count: 0 }
+            ];
+
+            const toggleTopic = (topicId) => {
+                setSelectedTopics(prev =>
+                    prev.includes(topicId)
+                        ? prev.filter(id => id !== topicId)
+                        : [...prev, topicId]
+                );
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto py-12 px-6">
+                    <div className="bg-white rounded-xl shadow-lg p-8">
+                        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                            SAT Practice Test Setup
+                        </h1>
+                        <p className="text-gray-600 mb-8">Select topics and configure your practice session</p>
+
+                        <div className="mb-8">
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Select Topics</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {topics.map(topic => (
+                                    <div
+                                        key={topic.id}
+                                        onClick={() => toggleTopic(topic.id)}
+                                        className={`topic-card ${selectedTopics.includes(topic.id) ? 'selected' : ''}`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-3xl">{topic.icon}</span>
+                                                <div>
+                                                    <div className="font-bold text-gray-800">{topic.name}</div>
+                                                    <div className="text-sm text-gray-500">{topic.count} questions available</div>
+                                                </div>
+                                            </div>
+                                            <div className={`w-6 h-6 rounded-full border-2 ${selectedTopics.includes(topic.id) ? 'bg-purple-600 border-purple-600' : 'border-gray-300'}`}>
+                                                {selectedTopics.includes(topic.id) && <span className="text-white text-sm">✓</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    )}
 
-                    {question.type === 'free-response' && (
-                        <div>
+                        <div className="mb-8">
+                            <label className="block text-lg font-bold mb-3 text-gray-800">Number of Questions</label>
                             <input
-                                type="text"
-                                value={textAnswer}
-                                onChange={handleTextChange}
-                                disabled={isSubmitted}
-                                placeholder="Enter your answer..."
-                                className="w-full p-4 border-2 border-gray-300 rounded-lg text-lg font-medium focus:border-purple-500 focus:outline-none"
+                                type="number"
+                                min="1"
+                                max="50"
+                                value={customCount}
+                                onChange={(e) => setCustomCount(parseInt(e.target.value) || 10)}
+                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-lg"
                             />
                         </div>
-                    )}
 
-                    {isSubmitted && (
-                        <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
-                            <h4 className="font-bold text-blue-900 mb-2">Explanation:</h4>
-                            <p className="text-blue-800">{question.question.explanation}</p>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => onStartTest({ mode: 'random', topics: selectedTopics, count: customCount })}
+                                disabled={selectedTopics.length === 0}
+                                className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Start Random Test
+                            </button>
+                            <button
+                                onClick={() => onStartTest({ mode: 'custom', topics: selectedTopics, count: customCount })}
+                                disabled={selectedTopics.length === 0}
+                                className="flex-1 px-6 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Review Specific Questions
+                            </button>
                         </div>
-                    )}
+                    </div>
                 </div>
             );
         }
 
         function SATApp() {
-            const [questions, setQuestions] = useState(SAMPLE_QUESTIONS);
+            const [mode, setMode] = useState('menu'); // 'menu' or 'test'
+            const [questions, setQuestions] = useState([]);
             const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
             const [userAnswers, setUserAnswers] = useState({});
             const [isSubmitted, setIsSubmitted] = useState(false);
-            const [showCalculator, setShowCalculator] = useState(true);
-            const [calculatorMinimized, setCalculatorMinimized] = useState(false);
-            const [stopwatchMinimized, setStopwatchMinimized] = useState(false);
-            const [desmosMode, setDesmosMode] = useState('graphing'); // 'graphing' or 'scientific'
-            const [showDesmos, setShowDesmos] = useState(false);
-            const [score, setScore] = useState(null);
+            const [showCalculator, setShowCalculator] = useState(false);
+            const [showStopwatch, setShowStopwatch] = useState(false);
+            const [calculatorMode, setCalculatorMode] = useState('graphing');
 
-            const currentQuestion = questions[currentQuestionIndex];
+            // Load questions from JSON
+            useEffect(() => {
+                fetch('/SAT_Questions.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Loaded questions:', data);
+                        // Transform the data to our format if needed
+                        if (Array.isArray(data)) {
+                            setQuestions(data);
+                        } else if (data.questions) {
+                            setQuestions(data.questions);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error loading questions:', err);
+                        // Use fallback sample questions
+                        setQuestions([
+                            {
+                                id: "sample-1",
+                                topic: "algebra",
+                                domain: "Linear Equations",
+                                question: "If 2x + 5 = 15, what is the value of x?",
+                                choices: ["A) 3", "B) 5", "C) 7", "D) 10"],
+                                correct: "B",
+                                explanation: "Subtract 5 from both sides: 2x = 10, then divide by 2: x = 5"
+                            }
+                        ]);
+                    });
+            }, []);
+
+            const handleStartTest = (config) => {
+                // Filter questions based on selected topics
+                let filteredQuestions = questions.filter(q =>
+                    config.topics.includes(q.topic?.toLowerCase())
+                );
+
+                // Shuffle and take the specified count
+                const shuffled = filteredQuestions.sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, config.count);
+
+                setQuestions(selected);
+                setCurrentQuestionIndex(0);
+                setUserAnswers({});
+                setIsSubmitted(false);
+                setMode('test');
+            };
 
             const handleAnswer = (answer) => {
                 setUserAnswers({
                     ...userAnswers,
-                    [currentQuestion.id]: answer
+                    [questions[currentQuestionIndex].id]: answer
                 });
             };
 
@@ -611,167 +500,219 @@
                 }
             };
 
-            const handleSubmitAnswer = () => {
-                setIsSubmitted(true);
-            };
+            if (mode === 'menu') {
+                return <TopicSelectionMenu onStartTest={handleStartTest} />;
+            }
 
-            const handleFinishTest = () => {
-                let correct = 0;
-                questions.forEach(q => {
-                    const userAnswer = userAnswers[q.id];
-                    if (q.type === 'multiple-choice') {
-                        if (userAnswer === q.question.correct_answer) {
-                            correct++;
-                        }
-                    } else if (q.type === 'free-response') {
-                        const userNum = parseFloat(userAnswer);
-                        const correctNum = parseFloat(q.question.correct_answer);
-                        const tolerance = q.question.tolerance || 0.01;
-                        if (Math.abs(userNum - correctNum) <= tolerance) {
-                            correct++;
-                        }
-                    }
-                });
-                setScore({ correct, total: questions.length, percentage: Math.round((correct / questions.length) * 100) });
-            };
-
-            if (score !== null) {
+            if (questions.length === 0) {
                 return (
-                    <div className="min-h-screen py-12 px-4">
-                        <div className="max-w-2xl mx-auto">
-                            <div className="question-area text-center">
-                                <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                                    Test Complete!
-                                </h2>
-                                <div className="text-6xl font-bold mb-4 text-gray-800">
-                                    {score.percentage}%
-                                </div>
-                                <div className="text-xl text-gray-600 mb-8">
-                                    You got {score.correct} out of {score.total} questions correct
-                                </div>
-                                <button
-                                    onClick={() => {
-                                        setScore(null);
-                                        setCurrentQuestionIndex(0);
-                                        setUserAnswers({});
-                                        setIsSubmitted(false);
-                                    }}
-                                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold rounded-lg hover:opacity-90 transition-all"
-                                >
-                                    Start New Test
-                                </button>
-                            </div>
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-center">
+                            <div className="text-6xl mb-4">📚</div>
+                            <p className="text-xl text-gray-600">Loading questions...</p>
                         </div>
                     </div>
                 );
             }
 
+            const currentQuestion = questions[currentQuestionIndex];
+
             return (
-                <div className="min-h-screen py-12 px-4">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="mb-6 flex justify-between items-center">
-                            <div>
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                                    SAT Practice Test
-                                </h1>
-                                <p className="text-gray-600 mt-2">
-                                    Question {currentQuestionIndex + 1} of {questions.length}
-                                </p>
-                            </div>
-                            <div className="flex gap-3">
+                <>
+                    <div className="grid grid-cols-2" style={{ height: 'calc(100vh - 64px)' }}>
+                        {/* Left Panel - Question */}
+                        <div className="question-panel overflow-y-auto">
+                            <div className="mb-6">
                                 <button
-                                    onClick={() => setShowDesmos(!showDesmos)}
-                                    className="px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all font-semibold text-gray-700"
+                                    onClick={() => setMode('menu')}
+                                    className="text-purple-600 hover:text-purple-700 font-semibold mb-4"
                                 >
-                                    {showDesmos ? 'Hide' : 'Show'} Desmos
+                                    ← Back to Menu
                                 </button>
-                                {showDesmos && (
+                                <div className="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-gray-800">
+                                            Question {currentQuestionIndex + 1} of {questions.length}
+                                        </h1>
+                                    </div>
+                                    <div className="question-id">
+                                        ID: {currentQuestion.id}
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 mb-4">
+                                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
+                                        {currentQuestion.topic || 'Math'}
+                                    </span>
+                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                                        {currentQuestion.domain || 'General'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="prose max-w-none">
+                                <div className="text-lg text-gray-800 leading-relaxed mb-6 whitespace-pre-wrap">
+                                    {currentQuestion.passage && (
+                                        <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-purple-500">
+                                            {currentQuestion.passage}
+                                        </div>
+                                    )}
+                                    <div className="font-semibold text-xl mb-4">
+                                        {currentQuestion.question}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {isSubmitted && (
+                                <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                                    <h4 className="font-bold text-blue-900 mb-2">Explanation:</h4>
+                                    <p className="text-blue-800">{currentQuestion.explanation || 'No explanation available.'}</p>
+                                </div>
+                            )}
+
+                            <div className="flex gap-3 mt-8">
+                                <button
+                                    onClick={handlePrevious}
+                                    disabled={currentQuestionIndex === 0}
+                                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-semibold transition-all"
+                                >
+                                    ← Previous
+                                </button>
+                                <button
+                                    onClick={handleNext}
+                                    disabled={currentQuestionIndex === questions.length - 1}
+                                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+                                >
+                                    Next →
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Right Panel - Answers & Widgets */}
+                        <div className="answer-panel overflow-y-auto">
+                            {/* Widget Toggles */}
+                            <div className="flex gap-2 mb-6">
+                                <button
+                                    onClick={() => setShowCalculator(!showCalculator)}
+                                    className={`widget-toggle ${showCalculator ? 'active' : ''}`}
+                                >
+                                    🧮 Calculator
+                                </button>
+                                <button
+                                    onClick={() => setShowStopwatch(!showStopwatch)}
+                                    className={`widget-toggle ${showStopwatch ? 'active' : ''}`}
+                                >
+                                    ⏱️ Stopwatch
+                                </button>
+                                {showCalculator && (
                                     <select
-                                        value={desmosMode}
-                                        onChange={(e) => setDesmosMode(e.target.value)}
-                                        className="px-4 py-2 bg-white rounded-lg shadow-md font-semibold text-gray-700"
+                                        value={calculatorMode}
+                                        onChange={(e) => setCalculatorMode(e.target.value)}
+                                        className="px-3 py-1 border-2 border-gray-300 rounded-lg text-sm font-semibold"
                                     >
                                         <option value="graphing">Graphing</option>
                                         <option value="scientific">Scientific</option>
                                     </select>
                                 )}
                             </div>
-                        </div>
 
-                        {showDesmos && (
-                            <div className="mb-6 bg-white rounded-lg shadow-lg p-4">
-                                <h3 className="font-bold text-gray-800 mb-3">
-                                    Desmos {desmosMode === 'graphing' ? 'Graphing' : 'Scientific'} Calculator
-                                </h3>
-                                <DesmosCalculator mode={desmosMode} />
+                            {/* Answer Choices */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-bold mb-4 text-gray-800">Answer Choices</h3>
+                                <div className="space-y-3">
+                                    {currentQuestion.choices?.map((choice, idx) => {
+                                        const letter = String.fromCharCode(65 + idx);
+                                        const isSelected = userAnswers[currentQuestion.id] === letter;
+                                        const isCorrect = letter === currentQuestion.correct;
+
+                                        let className = 'choice-option';
+                                        if (isSubmitted) {
+                                            if (isCorrect) className += ' correct';
+                                            else if (isSelected) className += ' incorrect';
+                                        } else if (isSelected) {
+                                            className += ' selected';
+                                        }
+
+                                        return (
+                                            <div
+                                                key={idx}
+                                                onClick={() => !isSubmitted && handleAnswer(letter)}
+                                                className={className}
+                                            >
+                                                <span className="font-bold mr-3">{letter})</span>
+                                                {choice.replace(/^[A-D]\)\s*/, '')}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        )}
 
-                        <QuestionDisplay
-                            question={currentQuestion}
-                            onAnswer={handleAnswer}
-                            userAnswer={userAnswers[currentQuestion.id]}
-                            isSubmitted={isSubmitted}
-                        />
+                            {!isSubmitted && userAnswers[currentQuestion.id] && (
+                                <button
+                                    onClick={() => setIsSubmitted(true)}
+                                    className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:opacity-90 transition-all mb-6"
+                                >
+                                    Check Answer
+                                </button>
+                            )}
 
-                        <div className="mt-6 flex justify-between items-center">
-                            <button
-                                onClick={handlePrevious}
-                                disabled={currentQuestionIndex === 0}
-                                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-semibold transition-all"
-                            >
-                                Previous
-                            </button>
-
-                            <div className="flex gap-3">
-                                {!isSubmitted && userAnswers[currentQuestion.id] && (
-                                    <button
-                                        onClick={handleSubmitAnswer}
-                                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:opacity-90 transition-all"
-                                    >
-                                        Check Answer
-                                    </button>
-                                )}
-
-                                {currentQuestionIndex < questions.length - 1 ? (
-                                    <button
-                                        onClick={handleNext}
-                                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all"
-                                    >
-                                        Next
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={handleFinishTest}
-                                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all"
-                                    >
-                                        Finish Test
-                                    </button>
-                                )}
+                            {/* Progress */}
+                            <div className="mt-6">
+                                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                                    <span>Progress</span>
+                                    <span>{Math.round(((currentQuestionIndex + 1) / questions.length) * 100)}%</span>
+                                </div>
+                                <div className="bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="bg-gradient-to-r from-purple-600 to-blue-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                                    />
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Progress bar */}
-                        <div className="mt-6 bg-gray-200 rounded-full h-2">
-                            <div
-                                className="bg-gradient-to-r from-purple-600 to-blue-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
-                            />
                         </div>
                     </div>
 
-                    {/* Calculator and Stopwatch */}
-                    <Calculator
-                        isMinimized={calculatorMinimized}
-                        onToggleMinimize={() => setCalculatorMinimized(!calculatorMinimized)}
-                    />
-                    <Stopwatch
-                        isMinimized={stopwatchMinimized}
-                        onToggleMinimize={() => setStopwatchMinimized(!stopwatchMinimized)}
-                    />
-                </div>
+                    {/* Draggable Widgets */}
+                    {showCalculator && (
+                        <DraggableWidget
+                            title={`Desmos ${calculatorMode === 'graphing' ? 'Graphing' : 'Scientific'} Calculator`}
+                            initialX={window.innerWidth - 500}
+                            initialY={100}
+                            onClose={() => setShowCalculator(false)}
+                        >
+                            <div style={{ width: '450px' }}>
+                                <DesmosCalculator mode={calculatorMode} />
+                            </div>
+                        </DraggableWidget>
+                    )}
+
+                    {showStopwatch && (
+                        <DraggableWidget
+                            title="Stopwatch"
+                            initialX={window.innerWidth - 280}
+                            initialY={100}
+                            onClose={() => setShowStopwatch(false)}
+                        >
+                            <Stopwatch />
+                        </DraggableWidget>
+                    )}
+                </>
             );
         }
+
+        // Initialize user info
+        const userName = localStorage.getItem('userName') || 'Student';
+        const userEmail = localStorage.getItem('userEmail') || '';
+        const userPhoto = localStorage.getItem('userPhoto') || 'https://via.placeholder.com/40';
+
+        document.getElementById('user-photo').src = userPhoto;
+        document.getElementById('user-name-nav').textContent = userName.split(' ')[0];
+        document.getElementById('user-email').textContent = userEmail;
+
+        // Sign out handler
+        document.getElementById('signout-btn').addEventListener('click', async () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(

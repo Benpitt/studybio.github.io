@@ -455,33 +455,47 @@
 
             // Load questions from JSON
             useEffect(() => {
+                console.log('Attempting to load SAT_Questions.json...');
                 fetch('/SAT_Questions.json')
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! status: ${res.status}`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         console.log('Loaded questions:', data);
                         // Transform the data to our format if needed
                         if (Array.isArray(data)) {
                             setAllQuestions(data);
+                            console.log(`Loaded ${data.length} questions`);
                         } else if (data.questions) {
                             setAllQuestions(data.questions);
+                            console.log(`Loaded ${data.questions.length} questions`);
+                        } else {
+                            console.warn('Unknown data format, using fallback');
+                            setAllQuestions([getSampleQuestion()]);
                         }
                     })
                     .catch(err => {
-                        console.error('Error loading questions:', err);
+                        console.error('Error loading SAT_Questions.json:', err.message);
+                        console.log('Using fallback sample question. Upload SAT_Questions.json to use real data.');
                         // Use fallback sample questions
-                        setAllQuestions([
-                            {
-                                id: "sample-1",
-                                topic: "algebra",
-                                domain: "Linear Equations",
-                                question: "If 2x + 5 = 15, what is the value of x?",
-                                choices: ["A) 3", "B) 5", "C) 7", "D) 10"],
-                                correct: "B",
-                                explanation: "Subtract 5 from both sides: 2x = 10, then divide by 2: x = 5"
-                            }
-                        ]);
+                        setAllQuestions([getSampleQuestion()]);
                     });
             }, []);
+
+            function getSampleQuestion() {
+                return {
+                    id: "sample-1",
+                    topic: "algebra",
+                    domain: "Linear Equations",
+                    question: "If 2x + 5 = 15, what is the value of x?",
+                    choices: ["A) 3", "B) 5", "C) 7", "D) 10"],
+                    correct: "B",
+                    explanation: "Subtract 5 from both sides: 2x = 10, then divide by 2: x = 5"
+                };
+            }
 
             const handleStartTest = (config) => {
                 // Filter questions based on selected topics

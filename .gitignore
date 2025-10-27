@@ -1,0 +1,17 @@
+# SAT Questions - User-specific data
+SAT_Questions.json
+
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

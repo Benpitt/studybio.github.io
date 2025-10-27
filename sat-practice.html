@@ -335,16 +335,36 @@
             );
         }
 
-        function TopicSelectionMenu({ onStartTest }) {
+        // Helper function to map domain to topic (for OpenSAT format which doesn't have topic field)
+        function getDomainTopic(domain) {
+            if (!domain) return 'other';
+            const d = domain.toLowerCase();
+            if (d.includes('algebra') || d.includes('equation') || d.includes('function')) return 'algebra';
+            if (d.includes('trig') || d.includes('sine') || d.includes('cosine')) return 'trigonometry';
+            if (d.includes('geometry') || d.includes('circle') || d.includes('triangle')) return 'geometry';
+            if (d.includes('reading') || d.includes('comprehension') || d.includes('inference')) return 'reading';
+            if (d.includes('english') || d.includes('grammar') || d.includes('punctuation') || d.includes('writing')) return 'writing';
+            return 'other';
+        }
+
+        function TopicSelectionMenu({ onStartTest, allQuestions }) {
             const [selectedTopics, setSelectedTopics] = useState([]);
             const [customCount, setCustomCount] = useState(10);
 
+            // Count questions per topic
+            const getTopicCount = (topicId) => {
+                return allQuestions.filter(q => {
+                    const qTopic = q.topic?.toLowerCase() || getDomainTopic(q.domain);
+                    return qTopic === topicId;
+                }).length;
+            };
+
             const topics = [
-                { id: 'algebra', name: 'Algebra', icon: '📐', count: 0 },
-                { id: 'trigonometry', name: 'Trigonometry', icon: '📊', count: 0 },
-                { id: 'geometry', name: 'Geometry', icon: '🔺', count: 0 },
-                { id: 'reading', name: 'Reading', icon: '📖', count: 0 },
-                { id: 'writing', name: 'Writing', icon: '✍️', count: 0 }
+                { id: 'algebra', name: 'Algebra', icon: '📐', count: getTopicCount('algebra') },
+                { id: 'trigonometry', name: 'Trigonometry', icon: '📊', count: getTopicCount('trigonometry') },
+                { id: 'geometry', name: 'Geometry', icon: '🔺', count: getTopicCount('geometry') },
+                { id: 'reading', name: 'Reading', icon: '📖', count: getTopicCount('reading') },
+                { id: 'writing', name: 'Writing', icon: '✍️', count: getTopicCount('writing') }
             ];
 
             const toggleTopic = (topicId) => {
@@ -424,7 +444,8 @@
 
         function SATApp() {
             const [mode, setMode] = useState('menu'); // 'menu' or 'test'
-            const [questions, setQuestions] = useState([]);
+            const [allQuestions, setAllQuestions] = useState([]); // Full question bank
+            const [testQuestions, setTestQuestions] = useState([]); // Current test questions
             const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
             const [userAnswers, setUserAnswers] = useState({});
             const [isSubmitted, setIsSubmitted] = useState(false);
@@ -440,15 +461,15 @@
                         console.log('Loaded questions:', data);
                         // Transform the data to our format if needed
                         if (Array.isArray(data)) {
-                            setQuestions(data);
+                            setAllQuestions(data);
                         } else if (data.questions) {
-                            setQuestions(data.questions);
+                            setAllQuestions(data.questions);
                         }
                     })
                     .catch(err => {
                         console.error('Error loading questions:', err);
                         // Use fallback sample questions
-                        setQuestions([
+                        setAllQuestions([
                             {
                                 id: "sample-1",
                                 topic: "algebra",
@@ -464,15 +485,16 @@
 
             const handleStartTest = (config) => {
                 // Filter questions based on selected topics
-                let filteredQuestions = questions.filter(q =>
-                    config.topics.includes(q.topic?.toLowerCase())
-                );
+                let filteredQuestions = allQuestions.filter(q => {
+                    const qTopic = q.topic?.toLowerCase() || getDomainTopic(q.domain);
+                    return config.topics.includes(qTopic);
+                });
 
                 // Shuffle and take the specified count
                 const shuffled = filteredQuestions.sort(() => Math.random() - 0.5);
                 const selected = shuffled.slice(0, config.count);
 
-                setQuestions(selected);
+                setTestQuestions(selected);
                 setCurrentQuestionIndex(0);
                 setUserAnswers({});
                 setIsSubmitted(false);
@@ -482,13 +504,13 @@
             const handleAnswer = (answer) => {
                 setUserAnswers({
                     ...userAnswers,
-                    [questions[currentQuestionIndex].id]: answer
+                    [testQuestions[currentQuestionIndex].id]: answer
                 });
             };
 
             const handleNext = () => {
                 setIsSubmitted(false);
-                if (currentQuestionIndex < questions.length - 1) {
+                if (currentQuestionIndex < testQuestions.length - 1) {
                     setCurrentQuestionIndex(currentQuestionIndex + 1);
                 }
             };
@@ -501,10 +523,10 @@
             };
 
             if (mode === 'menu') {
-                return <TopicSelectionMenu onStartTest={handleStartTest} />;
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} />;
             }
 
-            if (questions.length === 0) {
+            if (allQuestions.length === 0) {
                 return (
                     <div className="flex items-center justify-center min-h-screen">
                         <div className="text-center">
@@ -515,7 +537,19 @@
                 );
             }
 
-            const currentQuestion = questions[currentQuestionIndex];
+            if (testQuestions.length === 0) {
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} />;
+            }
+
+            const currentQuestion = testQuestions[currentQuestionIndex];
+
+            // Handle both OpenSAT format (nested) and simple format
+            const questionData = currentQuestion.question?.question ? currentQuestion.question : currentQuestion;
+            const passage = questionData.paragraph || currentQuestion.passage;
+            const questionText = questionData.question || currentQuestion.question;
+            const explanation = questionData.explanation || currentQuestion.explanation;
+            const choices = questionData.choices;
+            const correctAnswer = questionData.correct_answer || currentQuestion.correct;
 
             return (
                 <>
@@ -532,7 +566,7 @@
                                 <div className="flex items-center justify-between mb-4">
                                     <div>
                                         <h1 className="text-2xl font-bold text-gray-800">
-                                            Question {currentQuestionIndex + 1} of {questions.length}
+                                            Question {currentQuestionIndex + 1} of {testQuestions.length}
                                         </h1>
                                     </div>
                                     <div className="question-id">
@@ -541,7 +575,7 @@
                                 </div>
                                 <div className="flex gap-2 mb-4">
                                     <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
-                                        {currentQuestion.topic || 'Math'}
+                                        {currentQuestion.topic || getDomainTopic(currentQuestion.domain)}
                                     </span>
                                     <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
                                         {currentQuestion.domain || 'General'}
@@ -551,13 +585,13 @@
 
                             <div className="prose max-w-none">
                                 <div className="text-lg text-gray-800 leading-relaxed mb-6 whitespace-pre-wrap">
-                                    {currentQuestion.passage && (
+                                    {passage && (
                                         <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-purple-500">
-                                            {currentQuestion.passage}
+                                            {passage}
                                         </div>
                                     )}
                                     <div className="font-semibold text-xl mb-4">
-                                        {currentQuestion.question}
+                                        {questionText}
                                     </div>
                                 </div>
                             </div>
@@ -565,7 +599,7 @@
                             {isSubmitted && (
                                 <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
                                     <h4 className="font-bold text-blue-900 mb-2">Explanation:</h4>
-                                    <p className="text-blue-800">{currentQuestion.explanation || 'No explanation available.'}</p>
+                                    <p className="text-blue-800">{explanation || 'No explanation available.'}</p>
                                 </div>
                             )}
 
@@ -579,7 +613,7 @@
                                 </button>
                                 <button
                                     onClick={handleNext}
-                                    disabled={currentQuestionIndex === questions.length - 1}
+                                    disabled={currentQuestionIndex === testQuestions.length - 1}
                                     className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
                                 >
                                     Next →
@@ -619,30 +653,43 @@
                             <div className="mb-6">
                                 <h3 className="text-lg font-bold mb-4 text-gray-800">Answer Choices</h3>
                                 <div className="space-y-3">
-                                    {currentQuestion.choices?.map((choice, idx) => {
-                                        const letter = String.fromCharCode(65 + idx);
-                                        const isSelected = userAnswers[currentQuestion.id] === letter;
-                                        const isCorrect = letter === currentQuestion.correct;
+                                    {(() => {
+                                        // Handle both array format and object format (OpenSAT)
+                                        const choicesArray = Array.isArray(choices)
+                                            ? choices
+                                            : Object.entries(choices || {}).map(([key, value]) => `${key}) ${value}`);
 
-                                        let className = 'choice-option';
-                                        if (isSubmitted) {
-                                            if (isCorrect) className += ' correct';
-                                            else if (isSelected) className += ' incorrect';
-                                        } else if (isSelected) {
-                                            className += ' selected';
-                                        }
+                                        return choicesArray.map((choice, idx) => {
+                                            const letter = Array.isArray(choices)
+                                                ? String.fromCharCode(65 + idx)
+                                                : choice.charAt(0); // Extract A, B, C, D from "A) text"
 
-                                        return (
-                                            <div
-                                                key={idx}
-                                                onClick={() => !isSubmitted && handleAnswer(letter)}
-                                                className={className}
-                                            >
-                                                <span className="font-bold mr-3">{letter})</span>
-                                                {choice.replace(/^[A-D]\)\s*/, '')}
-                                            </div>
-                                        );
-                                    })}
+                                            const isSelected = userAnswers[currentQuestion.id] === letter;
+                                            const isCorrect = letter === correctAnswer;
+
+                                            let className = 'choice-option';
+                                            if (isSubmitted) {
+                                                if (isCorrect) className += ' correct';
+                                                else if (isSelected) className += ' incorrect';
+                                            } else if (isSelected) {
+                                                className += ' selected';
+                                            }
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => !isSubmitted && handleAnswer(letter)}
+                                                    className={className}
+                                                >
+                                                    <span className="font-bold mr-3">{letter})</span>
+                                                    {Array.isArray(choices)
+                                                        ? choice.replace(/^[A-D]\)\s*/, '')
+                                                        : choice.substring(3) // Remove "A) " prefix
+                                                    }
+                                                </div>
+                                            );
+                                        });
+                                    })()}
                                 </div>
                             </div>
 
@@ -659,12 +706,12 @@
                             <div className="mt-6">
                                 <div className="flex justify-between text-sm text-gray-600 mb-2">
                                     <span>Progress</span>
-                                    <span>{Math.round(((currentQuestionIndex + 1) / questions.length) * 100)}%</span>
+                                    <span>{Math.round(((currentQuestionIndex + 1) / testQuestions.length) * 100)}%</span>
                                 </div>
                                 <div className="bg-gray-200 rounded-full h-2">
                                     <div
                                         className="bg-gradient-to-r from-purple-600 to-blue-500 h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                                        style={{ width: `${((currentQuestionIndex + 1) / testQuestions.length) * 100}%` }}
                                     />
                                 </div>
                             </div>

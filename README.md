@@ -26,12 +26,13 @@
 
 ## Features
 
- **AI Flashcard Generator** • Paste notes, get instant decks  
- **BKT Smart Study** • Bayesian Knowledge Tracing algorithm  
- **9 Study Modes** • Flashcards, quizzes, matching, speed challenges  
-**Progress Tracking** • Streaks, mastery scores, achievements  
-**Community Library** • Share and discover study decks  
-**Spaced Repetition** • Intelligent review scheduling  
+ **AI Flashcard Generator** • Paste notes, get instant decks
+ **SAT Practice** • 4,203 unique questions from OpenSAT API with topic-based practice
+ **BKT Smart Study** • Bayesian Knowledge Tracing algorithm
+ **9 Study Modes** • Flashcards, quizzes, matching, speed challenges
+**Progress Tracking** • Streaks, mastery scores, achievements
+**Community Library** • Share and discover study decks
+**Spaced Repetition** • Intelligent review scheduling
 **Responsive Design** • Works on all devices  
 
 ---
@@ -68,9 +69,15 @@
 ##  Credits & Acknowledgments
 
 ### Machine Learning
-**[pyBKT](https://github.com/CAHLR/pyBKT)** - Bayesian Knowledge Tracing  
+**[pyBKT](https://github.com/CAHLR/pyBKT)** - Bayesian Knowledge Tracing
 *Badrinath, A., Wang, F., Pardos, Z. (2021). pyBKT: An Accessible Python Library of Bayesian Knowledge Tracing Models.*
 (under MIT)
+
+### SAT Question Bank
+**[OpenSAT](https://github.com/opensat/opensat)** - 4,203 unique SAT practice questions
+*Official College Board SAT questions in accessible API format*
+• Algebra • Geometry • Trigonometry • Reading • Writing
+• Automatic deduplication • Multiple format support
 
 ### Design Resources
 [Lucide Icons](https://lucide.dev/) - Beautiful icon set
@@ -79,7 +86,7 @@
 
 
 ### AI Services
-[Anthropic Claude](https://www.anthropic.com/claude) 
+[Anthropic Claude](https://www.anthropic.com/claude)
 [OpenAI](https://openai.com/) 
 
 

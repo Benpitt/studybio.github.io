@@ -62,9 +62,9 @@
 <br>Styling
 </td>
   <td align="center" width="25%">
-<img src="[https://prnt.sc/mwwdDc77h8sV)" width="48" height="48" alt="KaTeX" />
-<br><strong>Math Formatting</strong>
-<br>ML Backend
+<img src="[https://images.opencollective.com/katex/33b3dc5/logo/256.png)" width="48" height="48" alt="KaTeX" />
+<br><strong>KaTex</strong>
+<br>Math Formatting
 </tr>
 </table>
 

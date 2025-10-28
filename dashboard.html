@@ -91,219 +91,176 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        <div class="mb-6 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 id="greeting" class="text-5xl font-bold text-white mb-2">Welcome! 👋</h1>
-            <p class="text-xl text-blue-200">Ready to crush some studying?</p>
+        <div class="mb-4 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="greeting" class="text-3xl font-bold text-white mb-1">Welcome! 👋</h1>
+            <p class="text-base text-blue-200">Ready to crush some studying?</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="card-gradient-fire rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.2s;">
-                <div class="text-5xl mb-2">🔥</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-streak">0</span></div>
-                <div class="text-orange-100 font-semibold">Day Streak</div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="card-gradient-fire rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.2s;">
+                <div class="text-3xl mb-1">🔥</div>
+                <div class="text-2xl font-bold"><span id="stat-streak">0</span></div>
+                <div class="text-xs text-orange-100 font-semibold">Day Streak</div>
             </div>
-            <div class="card-gradient-blue rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.3s;">
-                <div class="text-5xl mb-2">🎴</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-cards">0</span></div>
-                <div class="text-blue-100 font-semibold">Cards Reviewed</div>
+            <div class="card-gradient-blue rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.3s;">
+                <div class="text-3xl mb-1">🎴</div>
+                <div class="text-2xl font-bold"><span id="stat-cards">0</span></div>
+                <div class="text-xs text-blue-100 font-semibold">Cards Reviewed</div>
             </div>
-            <div class="card-gradient-success rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.4s;">
-                <div class="text-5xl mb-2">📝</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-quizzes">0</span></div>
-                <div class="text-green-100 font-semibold">Quizzes Taken</div>
+            <div class="card-gradient-success rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.4s;">
+                <div class="text-3xl mb-1">📝</div>
+                <div class="text-2xl font-bold"><span id="stat-quizzes">0</span></div>
+                <div class="text-xs text-green-100 font-semibold">Quizzes Taken</div>
             </div>
-            <div class="card-gradient-purple rounded-2xl p-6 text-white card-hover animate-slide-in" style="animation-delay: 0.5s;">
-                <div class="text-5xl mb-2">🎯</div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-accuracy">0</span>%</div>
-                <div class="text-purple-100 font-semibold">Avg Accuracy</div>
+            <div class="card-gradient-purple rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.5s;">
+                <div class="text-3xl mb-1">🎯</div>
+                <div class="text-2xl font-bold"><span id="stat-accuracy">0</span>%</div>
+                <div class="text-xs text-purple-100 font-semibold">Avg Accuracy</div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
                 <div class="animate-slide-in" style="animation-delay: 0.6s;">
-                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
                         <span>📚</span>
-                        <span class="ml-3">Your Subjects</span>
+                        <span class="ml-2">Study Apps</span>
                     </h2>
 
-                    <a href="custom-flashcards.html" class="block mb-6">
-                        <div class="card-gradient-amber rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">📚</div>
-                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
-                                        CUSTOM
+                    <!-- iPhone-inspired 2-column grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- My Flashcards -->
+                        <a href="custom-flashcards.html" class="block">
+                            <div class="card-gradient-amber rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="text-5xl">📚</div>
+                                        <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
+                                            CUSTOM
+                                        </div>
                                     </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">My Flashcards</h3>
-                                <p class="text-2xl text-amber-100 mb-4">Study Your Custom Decks</p>
-                                <p class="text-white/80 mb-6">5 study modes • Groups • Spaced repetition • Mistake bank</p>
-                                <div class="mt-6 bg-white text-orange-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-orange-100 transition-colors">
-                                    <span>Study Flashcards</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                    <h3 class="text-xl font-bold text-white mb-1">My Flashcards</h3>
+                                    <p class="text-sm text-white/80 mb-3">5 study modes • Spaced repetition</p>
                                 </div>
                             </div>
-                        </div>
-                    <a href="bkt-study.html" class="block mb-6">
+                        </a>
 
-                    <a href="bkt-study.html" class="block mb-6">
-                        <div class="card-gradient-indigo rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🧠</div>
-                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
-                                        BETA
+                        <!-- BKT Smart Study -->
+                        <a href="bkt-study.html" class="block">
+                            <div class="card-gradient-indigo rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="text-5xl">🧠</div>
+                                        <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
+                                            BETA
+                                        </div>
                                     </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">BKT Smart Study</h3>
-                                <p class="text-2xl text-indigo-100 mb-4">AI Learning Algorithm</p>
-                                <p class="text-white/80 mb-6">Bayesian Knowledge Tracing • Adaptive intervals • Tracks mastery per concept</p>
-                                <div class="flex items-center justify-between mt-6">
-                                    <div class="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-indigo-100 transition-colors">
-                                        <span>Study with BKT</span>
-                                        <span class="transform group-hover:translate-x-1 transition-transform">→</span>
-                                    </div>
-                                    <a href="bkt-analytics.html" onclick="event.stopPropagation();" class="text-white/80 hover:text-white text-sm underline">
-                                        View Analytics
-                                    </a>
+                                    <h3 class="text-xl font-bold text-white mb-1">BKT Smart Study</h3>
+                                    <p class="text-sm text-white/80 mb-3">AI Learning Algorithm</p>
                                 </div>
                             </div>
-                        </div>
-                    </a>
-                        
-                    <a href="bkt-study.html" class="block mb-6" style="margin-bottom: 1.5rem;">
+                        </a>
 
-                    <a href="ai-flashcards.html" class="block mb-6">
-
-                    <a href="ai-flashcards.html" class="block mb-6">
-                        <div class="card-gradient-violet rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🤖</div>
-                                    <div class="bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold text-sm flex items-center space-x-2 animate-pulse-custom">
-                                        <span>✨ AI</span>
+                        <!-- AI Generator -->
+                        <a href="ai-flashcards.html" class="block">
+                            <div class="card-gradient-violet rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="text-5xl">🤖</div>
+                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
+                                            ✨ AI
+                                        </div>
                                     </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">AI Generator</h3>
-                                <p class="text-2xl text-purple-100 mb-4">Let AI Create Flashcards</p>
-                                <p class="text-white/80 mb-6">Paste notes or enter topic • AI generates cards instantly • Save & study</p>
-                                <div class="mt-6 bg-white text-purple-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-purple-100 transition-colors">
-                                    <span>Generate with AI</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                    <h3 class="text-xl font-bold text-white mb-1">AI Generator</h3>
+                                    <p class="text-sm text-white/80 mb-3">Create flashcards instantly</p>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
 
-                    <a href="community.html" class="block mb-6">
-                        <div class="card-gradient-sky rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🌍</div>
-                                    <div class="bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold text-sm flex items-center space-x-2">
-                                        <span class="w-2 h-2 bg-green-900 rounded-full animate-pulse"></span>
-                                        <span>NEW!</span>
+                        <!-- Community Library -->
+                        <a href="community.html" class="block">
+                            <div class="card-gradient-sky rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="text-5xl">🌍</div>
+                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
+                                            NEW
+                                        </div>
                                     </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">Community Library</h3>
-                                <p class="text-2xl text-cyan-100 mb-4">Discover & Share Decks</p>
-                                <p class="text-white/80 mb-6">Browse flashcards from other students • Upload your own • Build together</p>
-                                <div class="mt-6 bg-white text-cyan-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-cyan-100 transition-colors">
-                                    <span>Explore Community</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                    <h3 class="text-xl font-bold text-white mb-1">Community</h3>
+                                    <p class="text-sm text-white/80 mb-3">Share & discover decks</p>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
 
-                    <!-- Memory Games Card -->
-                    <a href="memory-games.html" class="block mb-6">
-                        <div class="card-gradient-rose rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">🎮</div>
-                                    <div class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold text-sm">
-                                        NEW!
+                        <!-- Memory Games -->
+                        <a href="memory-games.html" class="block">
+                            <div class="card-gradient-rose rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="text-5xl">🎮</div>
+                                        <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
+                                            NEW
+                                        </div>
                                     </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">Memory Games</h3>
-                                <p class="text-2xl text-purple-100 mb-4">Learn Through Play</p>
-                                <p class="text-white/80 mb-6">4 game modes • Memory match • Type race • Quiz arena</p>
-                                <div class="mt-6 bg-white text-purple-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-purple-100 transition-colors">
-                                    <span>Play Games</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                    <h3 class="text-xl font-bold text-white mb-1">Memory Games</h3>
+                                    <p class="text-sm text-white/80 mb-3">Learn through play</p>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
 
-                    <!-- SAT Practice Card -->
-                    <a href="sat-practice.html" class="block mb-6">
-                        <div class="card-gradient-blue rounded-3xl p-8 card-hover relative overflow-hidden group">
-                            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="text-7xl">📝</div>
-                                    <div class="bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold text-sm flex items-center space-x-2">
-                                        <span class="w-2 h-2 bg-green-900 rounded-full animate-pulse"></span>
-                                        <span>NEW!</span>
+                        <!-- SAT Practice -->
+                        <a href="sat-practice.html" class="block">
+                            <div class="card-gradient-blue rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
+                                <div class="relative z-10 flex flex-col h-full">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="text-5xl">📝</div>
+                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
+                                            NEW
+                                        </div>
                                     </div>
-                                </div>
-                                <h3 class="text-4xl font-bold text-white mb-2">SAT Practice</h3>
-                                <p class="text-2xl text-blue-100 mb-4">Full Digital SAT Experience</p>
-                                <p class="text-white/80 mb-6">Calculator • Stopwatch • Desmos graphing • Practice questions</p>
-                                <div class="mt-6 bg-white text-blue-600 px-6 py-3 rounded-xl font-bold inline-flex items-center space-x-2 group-hover:bg-blue-100 transition-colors">
-                                    <span>Start Practice Test</span>
-                                    <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                                    <h3 class="text-xl font-bold text-white mb-1">SAT Practice</h3>
+                                    <p class="text-sm text-white/80 mb-3">Full digital experience</p>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.7s;"></div>
+            <div class="space-y-4">
+                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.7s;"></div>
 
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.8s;">
-                    <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.8s;">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center">
                         <span>🏆</span>
-                        <span class="ml-2">Recent Achievements</span>
+                        <span class="ml-2">Achievements</span>
                     </h3>
-                    <div id="achievements-list" class="space-y-3">
-                        <div class="text-center py-8 text-white/60">
-                            <div class="text-5xl mb-2">🎯</div>
+                    <div id="achievements-list" class="space-y-2">
+                        <div class="text-center py-6 text-white/60 text-sm">
+                            <div class="text-4xl mb-2">🎯</div>
                             <p>Complete a quiz to unlock achievements!</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="card-gradient-violet rounded-2xl p-6 card-hover animate-slide-in" style="animation-delay: 1s;">
-                    <h3 class="text-2xl font-bold text-white mb-4">🚀 Quick Start</h3>
+                <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in" style="animation-delay: 1s;">
+                    <h3 class="text-xl font-bold text-white mb-3">🚀 Quick Actions</h3>
                     <div class="space-y-2">
-                        <a href="custom-flashcards.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            ✏️ Create Flashcards
+                        <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
+                            ✅ Assignments
                         </a>
-                        <a href="ai-flashcards.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            🤖 AI Generator
+                        <a href="progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
+                            📊 Progress
                         </a>
-                        <a href="community.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            🌍 Browse Community
-                        </a>
-                        <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            ✅ Manage Tasks
-                        </a>
-                        <a href="progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            📊 View Progress
-                        </a>
-                        <a href="sat-practice.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white font-semibold transition-all">
-                            📝 SAT Practice
+                        <a href="bkt-analytics.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
+                            🧠 BKT Analytics
                         </a>
                     </div>
                 </div>
@@ -678,15 +635,15 @@
             const goal = totalCards > 0 ? Math.min(100, Math.round((totalCards / 20) * 100)) : 0;
             const goalCard = document.getElementById('goal-card');
             goalCard.innerHTML = `
-                <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
+                <h3 class="text-xl font-bold text-white mb-3 flex items-center">
                     <span>🎯</span>
                     <span class="ml-2">Today's Goal</span>
                 </h3>
-                <p class="text-white/80 mb-4">${totalCards > 0 ? 'Keep reviewing!' : 'Review 20 flashcards'}</p>
-                <div class="bg-white/10 rounded-full h-4 overflow-hidden">
+                <p class="text-white/80 text-sm mb-3">${totalCards > 0 ? 'Keep reviewing!' : 'Review 20 flashcards'}</p>
+                <div class="bg-white/10 rounded-full h-3 overflow-hidden">
                     <div class="bg-gradient-to-r from-green-400 to-teal-400 h-full rounded-full transition-all duration-1000" style="width: ${goal}%"></div>
                 </div>
-                <p class="text-white/60 text-sm mt-2">${totalCards} / 20 cards</p>
+                <p class="text-white/60 text-xs mt-2">${totalCards} / 20 cards</p>
             `;
 
             loadAchievements(streak, totalCards, totalTests, totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0);
@@ -709,10 +666,10 @@
             
             if (achievements.length > 0) {
                 container.innerHTML = achievements.slice(0, 3).map(a => `
-                    <div class="flex items-center space-x-3 p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-500/30">
-                        <div class="text-4xl">${a.emoji}</div>
+                    <div class="flex items-center space-x-2 p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
+                        <div class="text-3xl">${a.emoji}</div>
                         <div>
-                            <div class="font-bold text-white">${a.name}</div>
+                            <div class="font-bold text-white text-sm">${a.name}</div>
                             <div class="text-xs text-white/70">${a.desc}</div>
                         </div>
                     </div>

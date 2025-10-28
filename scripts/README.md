@@ -2,7 +2,7 @@
 
 This directory contains utility scripts for maintaining the studying.works application.
 
-## Available Scripts
+## JavaScript Scripts
 
 ### `validate_questions.js`
 
@@ -37,28 +37,51 @@ node scripts/validate_questions.js
 - `0`: All validations passed
 - `1`: Validation errors found
 
-**Example Output:**
+### `classify_questions.js`
 
+Classifies SAT questions into their respective domains and categories.
+
+**Usage:**
+
+```bash
+node scripts/classify_questions.js
 ```
-🔍 Starting SAT Questions Validation...
 
-✅ JSON file successfully parsed
-✅ Schema validation passed
-✅ Additional validation checks passed
+## Python Scripts
 
-📊 Statistics:
-  Total questions: 15
-  Reading & Writing: 5 questions
-  Math: 10 questions
+### `train_bkt.py`
 
-  Question types:
-    Multiple Choice: 13 questions
-    Student-Produced Response: 2 questions
+Trains the Bayesian Knowledge Tracing (BKT) model using student interaction data.
 
-✨ All validations passed successfully!
+**Usage:**
+
+```bash
+python3 scripts/train_bkt.py
+```
+
+### `export_firebase_bkt.py`
+
+Exports BKT data from Firebase for analysis or backup.
+
+**Usage:**
+
+```bash
+python3 scripts/export_firebase_bkt.py
+```
+
+### `merge_questions.py`
+
+Merges multiple question datasets while handling duplicates and conflicts.
+
+**Usage:**
+
+```bash
+python3 scripts/merge_questions.py
 ```
 
 ## Development
+
+### JavaScript Scripts
 
 The validation script uses [AJV (Another JSON Validator)](https://ajv.js.org/) for JSON schema validation.
 
@@ -67,3 +90,7 @@ To add new validation rules:
 1. Update the `questionSchema` object in `validate_questions.js`
 2. Or add custom validation logic in the `performAdditionalValidation()` function
 3. Test your changes by running the validation script
+
+### Python Scripts
+
+Python scripts require Python 3.7+ and may have additional dependencies. Check individual script headers for requirements.

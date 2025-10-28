@@ -2,7 +2,7 @@
   "name": "studying.works",
   "version": "1.0.0",
   "description": "An adaptive learning platform with SAT practice questions, AI flashcards, and Bayesian Knowledge Tracing",
-  "main": "auth-guard.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "validate-questions": "node scripts/validate_questions.js"

@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="global-styles.css">
-    <link rel="stylesheet" href="button-styles.css">
+    <link rel="stylesheet" href="../../src/styles/global-styles.css">
+    <link rel="stylesheet" href="../../src/styles/button-styles.css">
     <style>
         body {
             margin: 0;
@@ -155,7 +155,7 @@
     </style>
 </head>
 <body>
-    <script type="module" src="auth-guard.js"></script>
+    <script type="module" src="../../src/auth/auth-guard.js"></script>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -209,12 +209,12 @@
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center justify-between h-16">
                             <div className="flex items-center space-x-8">
-                                <a href="dashboard.html" className="text-xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                <a href="../../dashboard.html" className="text-xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
                                     <span>🎓</span>
                                     <span>studying.works</span>
                                 </a>
                                 <div className="hidden md:flex space-x-4">
-                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="../../dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
                                     <a href="sat-practice.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">SAT Practice</a>
                                     <a href="custom-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Flashcards</a>
                                     <a href="progress.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
@@ -934,6 +934,6 @@
         );
     </script>
 
-    <script src="toast-notifications.js"></script>
+    <script src="../../src/utils/toast-notifications.js"></script>
 </body>
 </html>

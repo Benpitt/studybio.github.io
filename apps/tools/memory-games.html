@@ -6,8 +6,8 @@
     <title>Memory Games - studying.works</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="global-styles.css">
-    <link rel="stylesheet" href="button-styles.css">
+    <link rel="stylesheet" href="../../src/styles/global-styles.css">
+    <link rel="stylesheet" href="../../src/styles/button-styles.css">
     <style>
         .game-card {
             transition: all 0.3s ease;
@@ -46,19 +46,19 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
-    <script type="module" src="auth-guard.js"></script>
+    <script type="module" src="../../src/auth/auth-guard.js"></script>
     
     <!-- Navigation -->
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
-                    <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                    <a href="../../dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
                         <span>🎓</span>
                         <span>studying.works</span>
                     </a>
                     <div class="hidden md:flex space-x-4">
-                        <a href="dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                        <a href="../../dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
                         <a href="custom-flashcards.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Flashcards</a>
                         <a href="memory-games.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Memory Games</a>
                         <a href="mind-maps.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Mind Maps</a>
@@ -623,6 +623,6 @@
         loadDecks();
     </script>
     <!-- Dynamic Gradient System -->
-    <script src="dynamic-gradient.js"></script>
+    <script src="../../src/utils/dynamic-gradient.js"></script>
 </body>
 </html>

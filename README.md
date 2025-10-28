@@ -62,7 +62,7 @@
 <br>Styling
 </td>
   <td align="center" width="25%">
-<img src="[[https://images.opencollective.com/katex/33b3dc5/logo/256.png](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO2BbVj1t4JwVsXldFps5-5gqNAQh_6uEvFg&s))" width="48" height="48" alt="KaTeX" />
+<img src="[[https://avatars.githubusercontent.com/u/31191489?s=200&v=4))" width="48" height="48" alt="KaTeX" />
 <br><strong>KaTex</strong>
 <br>Math Formatting
 </tr>

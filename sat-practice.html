@@ -488,15 +488,30 @@
                     })
                     .then(data => {
                         console.log('Loaded questions:', data);
+                        console.log('Data type:', typeof data);
+                        console.log('Is array?', Array.isArray(data));
+                        console.log('Has questions property?', data.questions !== undefined);
+                        console.log('Object keys:', Object.keys(data));
+
                         // Transform the data to our format if needed
                         if (Array.isArray(data)) {
                             setAllQuestions(data);
-                            console.log(`Loaded ${data.length} questions`);
+                            console.log(`✅ Loaded ${data.length} questions from array`);
                         } else if (data.questions) {
                             setAllQuestions(data.questions);
-                            console.log(`Loaded ${data.questions.length} questions`);
+                            console.log(`✅ Loaded ${data.questions.length} questions from data.questions`);
+                        } else if (typeof data === 'object') {
+                            // Try to convert object to array
+                            const questionsArray = Object.values(data);
+                            if (questionsArray.length > 0 && questionsArray[0].id) {
+                                setAllQuestions(questionsArray);
+                                console.log(`✅ Converted object to array: ${questionsArray.length} questions`);
+                            } else {
+                                console.warn('❌ Unknown data format, using fallback. Data structure:', data);
+                                setAllQuestions([getSampleQuestion()]);
+                            }
                         } else {
-                            console.warn('Unknown data format, using fallback');
+                            console.warn('❌ Unknown data format, using fallback');
                             setAllQuestions([getSampleQuestion()]);
                         }
                     })

@@ -14,8 +14,8 @@
     <link rel="dns-prefetch" href="https://www.gstatic.com">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="global-styles.css">
-    <link rel="stylesheet" href="button-styles.css">
+    <link rel="stylesheet" href="src/styles/global-styles.css">
+    <link rel="stylesheet" href="src/styles/button-styles.css">
     <style>
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -50,7 +50,7 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 " style="background: linear-gradient(to bottom right, #0a0a1a, #1e1b4b, #134e4a); min-height: 100vh;">
-    <script type="module" src="auth-guard.js"></script>
+    <script type="module" src="src/auth/auth-guard.js"></script>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -61,9 +61,9 @@
                     </a>
                     <div class="hidden md:flex space-x-4">
                         <a href="dashboard.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Dashboard</a>
-                        <a href="assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
-                        <a href="progress.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
-                        <a href="about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
+                        <a href="pages/assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
+                        <a href="pages/progress.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
+                        <a href="pages/about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -130,7 +130,7 @@
                     <!-- iPhone-inspired 2-column grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- My Flashcards -->
-                        <a href="custom-flashcards.html" class="block">
+                        <a href="apps/tools/custom-flashcards.html" class="block">
                             <div class="card-gradient-amber rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
@@ -147,7 +147,7 @@
                         </a>
 
                         <!-- BKT Smart Study -->
-                        <a href="bkt-study.html" class="block">
+                        <a href="apps/study/bkt-study.html" class="block">
                             <div class="card-gradient-indigo rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
@@ -164,7 +164,7 @@
                         </a>
 
                         <!-- AI Generator -->
-                        <a href="ai-flashcards.html" class="block">
+                        <a href="apps/tools/ai-flashcards.html" class="block">
                             <div class="card-gradient-violet rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
@@ -181,7 +181,7 @@
                         </a>
 
                         <!-- Community Library -->
-                        <a href="community.html" class="block">
+                        <a href="pages/community.html" class="block">
                             <div class="card-gradient-sky rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
@@ -198,7 +198,7 @@
                         </a>
 
                         <!-- Memory Games -->
-                        <a href="memory-games.html" class="block">
+                        <a href="apps/tools/memory-games.html" class="block">
                             <div class="card-gradient-rose rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
@@ -215,7 +215,7 @@
                         </a>
 
                         <!-- SAT Practice -->
-                        <a href="sat-practice.html" class="block">
+                        <a href="apps/tools/sat-practice.html" class="block">
                             <div class="card-gradient-blue rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
@@ -270,13 +270,13 @@
                 <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in" style="animation-delay: 1s;">
                     <h3 class="text-xl font-bold text-white mb-3">🚀 Quick Actions</h3>
                     <div class="space-y-2">
-                        <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
+                        <a href="pages/assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
                             ✅ Assignments
                         </a>
-                        <a href="progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
+                        <a href="pages/progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
                             📊 Progress
                         </a>
-                        <a href="bkt-analytics.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
+                        <a href="apps/tools/bkt-analytics.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
                             🧠 BKT Analytics
                         </a>
                     </div>
@@ -297,7 +297,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { authService } from './auth-service.js';
+        import { authService } from './src/auth/auth-service.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -699,18 +699,18 @@
             <p class="text-white/60 mb-4">© 2025 studying.works. All rights reserved.</p>
             <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-6 mb-4">
                 <a href="dashboard.html" class="text-white/80 hover:text-white transition-all font-medium">🎓 Dashboard</a>
-                <a href="ai-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🤖 AI Generator</a>
-                <a href="custom-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🎴 My Flashcards</a>
-                <a href="community.html" class="text-white/80 hover:text-white transition-all font-medium">🌍 Community</a>
+                <a href="apps/tools/ai-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🤖 AI Generator</a>
+                <a href="apps/tools/custom-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🎴 My Flashcards</a>
+                <a href="pages/community.html" class="text-white/80 hover:text-white transition-all font-medium">🌍 Community</a>
             </div>
             <div class="flex justify-center space-x-6 text-sm">
-                <a href="terms.html" class="text-white/60 hover:text-white transition-all">Terms of Service</a>
-                <a href="privacy.html" class="text-white/60 hover:text-white transition-all">Privacy Policy</a>
-                <a href="about.html" class="text-white/60 hover:text-white transition-all">About</a>
+                <a href="pages/terms.html" class="text-white/60 hover:text-white transition-all">Terms of Service</a>
+                <a href="pages/privacy.html" class="text-white/60 hover:text-white transition-all">Privacy Policy</a>
+                <a href="pages/about.html" class="text-white/60 hover:text-white transition-all">About</a>
             </div>
         </div>
     </footer>
     <!-- Dynamic Gradient System -->
-    <script src="dynamic-gradient.js"></script>
+    <script src="src/utils/dynamic-gradient.js"></script>
 </body>
 </html>

@@ -36,8 +36,8 @@
     <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="global-styles.css">
-    <link rel="stylesheet" href="button-styles.css">
+    <link rel="stylesheet" href="src/styles/global-styles.css">
+    <link rel="stylesheet" href="src/styles/button-styles.css">
     <style>
         /* Enhanced fluid gradient animation with organic movement */
         @keyframes gradient-shift {
@@ -285,7 +285,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { authService } from './auth-service.js';
+        import { authService } from './src/auth/auth-service.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
@@ -344,6 +344,6 @@
     </script>
 
     <!-- Dynamic Gradient System -->
-    <script src="dynamic-gradient.js"></script>
+    <script src="src/utils/dynamic-gradient.js"></script>
 </body>
 </html>

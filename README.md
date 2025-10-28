@@ -92,6 +92,28 @@
 
 ---
 
+## Project Structure
+
+```
+studying.works/
+├── apps/              # Study and tool applications
+│   ├── study/        # Study-focused apps (BKT, Biology, etc.)
+│   └── tools/        # Utility apps (Flashcards, SAT Practice, etc.)
+├── dashboard/        # Dashboard and practice test app
+├── data/             # SAT questions and other data files
+├── docs/             # Technical documentation
+├── files/            # Classified question files
+├── pages/            # Static pages (About, Terms, Privacy, etc.)
+├── scripts/          # Utility scripts (Python, JavaScript)
+└── src/              # Source code
+    ├── auth/         # Authentication modules
+    ├── services/     # Firebase and other services
+    ├── styles/       # Global CSS files
+    └── utils/        # Utility functions and helpers
+```
+
+---
+
 ## Browser Support
 
 | ![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |

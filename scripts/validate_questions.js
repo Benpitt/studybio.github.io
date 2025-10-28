@@ -87,6 +87,22 @@ function performAdditionalValidation(data) {
   const errors = [];
   const ids = new Set();
 
+  // Define valid domains for each section (outside the loop)
+  const validDomains = {
+    'Reading & Writing': [
+      'Information and Ideas',
+      'Craft and Structure',
+      'Expression of Ideas',
+      'Standard English Conventions'
+    ],
+    'Math': [
+      'Algebra',
+      'Advanced Math',
+      'Problem-Solving and Data Analysis',
+      'Geometry and Trigonometry'
+    ]
+  };
+
   data.questions.forEach((question, index) => {
     // Check for duplicate IDs
     if (ids.has(question.id)) {
@@ -120,21 +136,6 @@ function performAdditionalValidation(data) {
     }
 
     // Validate recognized domains
-    const validDomains = {
-      'Reading & Writing': [
-        'Information and Ideas',
-        'Craft and Structure',
-        'Expression of Ideas',
-        'Standard English Conventions'
-      ],
-      'Math': [
-        'Algebra',
-        'Advanced Math',
-        'Problem-Solving and Data Analysis',
-        'Geometry and Trigonometry'
-      ]
-    };
-
     if (validDomains[question.section] && !validDomains[question.section].includes(question.domain)) {
       console.warn(`Warning: Question ${question.id} has unrecognized domain "${question.domain}" for section "${question.section}"`);
     }

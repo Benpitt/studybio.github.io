@@ -61,6 +61,10 @@
 <br><strong>Tailwind CSS</strong>
 <br>Styling
 </td>
+  <td align="center" width="25%">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/KaTeX_logo.svg/500px-KaTeX_logo.svg.png" width="48" height="48" alt="KaTeX" />
+<br><strong>Math Formatting</strong>
+<br>ML Backend
 </tr>
 </table>
 

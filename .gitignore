@@ -1,5 +1,7 @@
 # SAT Questions - User-specific data
 SAT_Questions.json
+SAT_Questions_*.json
+jsonformatter.txt
 
 # Node modules
 node_modules/

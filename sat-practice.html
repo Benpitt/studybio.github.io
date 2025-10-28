@@ -506,63 +506,69 @@
 
                         let questionsArray = [];
 
-                        // Handle College Board format (object with UUID keys)
+                        // Handle mixed format (object with mixed CB and clean format)
                         if (!Array.isArray(data) && typeof data === 'object') {
-                            console.log('Detected CB format - converting object to array');
-                            const cbQuestions = Object.values(data);
-                            console.log(`Found ${cbQuestions.length} questions in CB format`);
+                            console.log('Converting object to array');
+                            const allQuestions = Object.values(data);
+                            console.log(`Found ${allQuestions.length} questions`);
 
-                            questionsArray = cbQuestions.map(q => {
-                                const content = q.content || {};
-                                const isMCQ = content.type === 'mcq';
-                                const isSPR = content.type === 'spr';
+                            questionsArray = allQuestions.map(q => {
+                                // Detect format: CB has 'content' property, clean format has 'question' property
+                                const isCBFormat = q.content !== undefined;
 
-                                // Strip HTML tags for cleaner display
-                                const stripHTML = (html) => {
-                                    if (!html) return '';
-                                    return html
-                                        .replace(/<math[^>]*>.*?<\/math>/gi, '[math]')
-                                        .replace(/<[^>]+>/g, '')
-                                        .replace(/&nbsp;/g, ' ')
-                                        .replace(/&rsquo;/g, "'")
-                                        .replace(/&ldquo;/g, '"')
-                                        .replace(/&rdquo;/g, '"')
-                                        .trim();
-                                };
+                                if (isCBFormat) {
+                                    // Parse CB format
+                                    const content = q.content || {};
+                                    const isMCQ = content.type === 'mcq';
 
-                                // Build choices for MCQ
-                                let choices = [];
-                                let correctAnswer = null;
+                                    const stripHTML = (html) => {
+                                        if (!html) return '';
+                                        return html
+                                            .replace(/<math[^>]*>.*?<\/math>/gi, '[math]')
+                                            .replace(/<[^>]+>/g, '')
+                                            .replace(/&nbsp;/g, ' ')
+                                            .replace(/&rsquo;/g, "'")
+                                            .trim();
+                                    };
 
-                                if (isMCQ && content.answerOptions) {
-                                    choices = content.answerOptions.map((opt, idx) => {
-                                        const letter = String.fromCharCode(65 + idx);
-                                        return `${letter}) ${stripHTML(opt.content)}`;
-                                    });
+                                    let choices = [];
+                                    if (isMCQ && content.answerOptions) {
+                                        choices = content.answerOptions.map((opt, idx) => {
+                                            const letter = String.fromCharCode(65 + idx);
+                                            return `${letter}) ${stripHTML(opt.content)}`;
+                                        });
+                                    }
 
-                                    // Correct answer is usually a letter like 'C'
-                                    correctAnswer = content.correct_answer?.[0] || 'A';
-                                } else if (isSPR) {
-                                    // For student produced response, create input field
-                                    correctAnswer = content.correct_answer?.[0] || '';
+                                    return {
+                                        id: q.questionId || q.uId,
+                                        domain: q.primary_class_cd_desc || 'General',
+                                        module: q.module,
+                                        question: stripHTML(content.stem),
+                                        choices: isMCQ ? choices : null,
+                                        correct: (content.correct_answer || [''])[0],
+                                        explanation: stripHTML(content.rationale),
+                                        difficulty: q.difficulty,
+                                        format: 'cb'
+                                    };
+                                } else {
+                                    // Parse clean format
+                                    const qData = q.question || {};
+                                    return {
+                                        id: q.id,
+                                        domain: q.domain || 'General',
+                                        module: q.module,
+                                        question: qData.question,
+                                        passage: qData.paragraph !== 'null' ? qData.paragraph : null,
+                                        choices: qData.choices,
+                                        correct: qData.correct_answer,
+                                        explanation: qData.explanation,
+                                        difficulty: q.difficulty,
+                                        format: 'clean'
+                                    };
                                 }
-
-                                return {
-                                    id: q.questionId || q.uId,
-                                    domain: q.primary_class_cd_desc || q.skill_desc || 'General',
-                                    topic: q.module === 'math' ? 'algebra' : 'writing',
-                                    question: stripHTML(content.stem),
-                                    passage: null,
-                                    choices: isMCQ ? choices : null,
-                                    correct: correctAnswer,
-                                    type: isMCQ ? 'multiple-choice' : 'free-response',
-                                    explanation: stripHTML(content.rationale),
-                                    difficulty: q.difficulty,
-                                    module: q.module
-                                };
                             });
 
-                            console.log(`✅ Converted ${questionsArray.length} CB questions`);
+                            console.log(`✅ Converted ${questionsArray.length} questions`);
                         }
                         // Handle simple array format
                         else if (Array.isArray(data)) {

@@ -1,4 +1,5 @@
 # SAT Questions - User-specific data (keep backups and old versions out)
+files/SAT_Questions.json
 SAT_Questions_old.json
 SAT_Questions_corrupted.json
 SAT_Questions_backup*.json

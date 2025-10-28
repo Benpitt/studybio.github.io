@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Practice Test - studying.works</title>
+    <meta name="description" content="Full-length SAT practice test with official question structure">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white/10 backdrop-blur-lg border-b border-white/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="../../dashboard.html" class="text-white hover:text-blue-300 transition-colors">
+                    ← Back to Dashboard
+                </a>
+            </div>
+            <h1 class="text-white font-bold text-xl">SAT Practice Test</h1>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Start View -->
+        <div id="start-view" class="view">
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl">
+                    <div class="text-center">
+                        <div class="text-7xl mb-6">📝</div>
+                        <h2 class="text-4xl font-bold text-white mb-4">SAT Practice Test Generator</h2>
+                        <p class="text-xl text-white/80 mb-8">
+                            Take a full-length SAT practice test with questions from official domains
+                        </p>
+                        
+                        <div class="bg-white/5 rounded-2xl p-6 mb-8 text-left">
+                            <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                                <span class="text-2xl mr-2">📊</span>
+                                Test Structure
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-3">
+                                    <h4 class="text-white font-semibold text-lg mb-2">Reading & Writing (54 questions)</h4>
+                                    <div class="text-white/70 text-sm space-y-1">
+                                        <p>• Information and Ideas (13-15)</p>
+                                        <p>• Craft and Structure (13-15)</p>
+                                        <p>• Expression of Ideas (11-13)</p>
+                                        <p>• Standard English Conventions (11-13)</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <h4 class="text-white font-semibold text-lg mb-2">Math (44 questions)</h4>
+                                    <div class="text-white/70 text-sm space-y-1">
+                                        <p>• Algebra (13-15)</p>
+                                        <p>• Advanced Math (13-15)</p>
+                                        <p>• Problem-Solving and Data Analysis (5-7)</p>
+                                        <p>• Geometry & Trigonometry (5-7)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-500/20 border-2 border-blue-400/50 rounded-2xl p-4 mb-8">
+                            <p class="text-white/90 text-sm">
+                                <strong>Note:</strong> Questions are randomly selected from our classified question bank.
+                                Your test will include a mix of multiple-choice and student-produced response (grid-in) questions.
+                            </p>
+                        </div>
+
+                        <button id="start-test-btn" class="btn-primary text-xl px-12 py-4 rounded-full font-bold shadow-lg hover:scale-105 transition-transform">
+                            Start New SAT Practice Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading View -->
+        <div id="loading-view" class="view" style="display: none;">
+            <div class="max-w-2xl mx-auto text-center">
+                <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-12 border border-white/20">
+                    <div class="text-6xl mb-6 animate-bounce">⏳</div>
+                    <h2 class="text-3xl font-bold text-white mb-4">Generating Your Test...</h2>
+                    <p class="text-white/70 text-lg">Selecting questions from the classified question bank</p>
+                    <div class="mt-8">
+                        <div class="w-full bg-white/10 rounded-full h-3 overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test View -->
+        <div id="test-view" class="view" style="display: none;">
+            <!-- Progress Bar -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-4 mb-6 border border-white/20">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-white text-sm">
+                        <span class="font-bold">Question <span id="question-number">1</span></span> 
+                        of <span id="total-questions">98</span>
+                    </div>
+                    <div class="text-white/70 text-sm">
+                        <span id="section-name">Reading and Writing</span>
+                    </div>
+                </div>
+                <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-6 md:p-8 border border-white/20 mb-6">
+                <!-- Domain Badge -->
+                <div class="mb-4">
+                    <span class="inline-block bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                        <span id="domain-name">Domain</span>
+                    </span>
+                </div>
+
+                <!-- Question Text -->
+                <div id="question-text" class="text-white text-lg mb-6 leading-relaxed">
+                    Question text will appear here
+                </div>
+
+                <!-- Answer Options -->
+                <div id="answer-options" class="space-y-3">
+                    <!-- Options will be rendered here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center">
+                <button id="prev-btn" class="btn-secondary px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                    ← Previous
+                </button>
+                <button id="next-btn" class="btn-primary px-8 py-3 rounded-xl font-semibold hover:scale-105 transition-transform">
+                    Next →
+                </button>
+                <button id="submit-test-btn" class="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg" style="display: none;">
+                    Submit Test ✓
+                </button>
+            </div>
+        </div>
+
+        <!-- Results View -->
+        <div id="results-view" class="view" style="display: none;">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl">
+                    <div class="text-center mb-8">
+                        <div class="text-7xl mb-4">🎉</div>
+                        <h2 class="text-4xl font-bold text-white mb-2">Test Complete!</h2>
+                        <p class="text-white/70 text-lg">Here are your results</p>
+                    </div>
+
+                    <!-- Overall Score -->
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl p-8 mb-8 text-center">
+                        <div class="text-white/80 text-lg mb-2">Overall Score</div>
+                        <div class="text-white text-7xl font-bold mb-2">
+                            <span id="total-score">0</span>%
+                        </div>
+                        <div class="text-white/90 text-xl">
+                            <span id="correct-count">0</span> / <span id="total-count">98</span> correct
+                        </div>
+                    </div>
+
+                    <!-- Section Breakdown -->
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <!-- Reading & Writing -->
+                        <div class="bg-white/5 rounded-2xl p-6 border border-white/20">
+                            <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
+                                <span class="text-3xl mr-2">📖</span>
+                                Reading & Writing
+                            </h3>
+                            <div class="text-center">
+                                <div class="text-5xl font-bold text-white mb-2">
+                                    <span id="rw-score">0</span>%
+                                </div>
+                                <div class="text-white/70">
+                                    <span id="rw-correct">0</span> / <span id="rw-total">54</span> correct
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Math -->
+                        <div class="bg-white/5 rounded-2xl p-6 border border-white/20">
+                            <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
+                                <span class="text-3xl mr-2">🔢</span>
+                                Math
+                            </h3>
+                            <div class="text-center">
+                                <div class="text-5xl font-bold text-white mb-2">
+                                    <span id="math-score">0</span>%
+                                </div>
+                                <div class="text-white/70">
+                                    <span id="math-correct">0</span> / <span id="math-total">44</span> correct
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button id="new-test-btn" class="btn-primary px-8 py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform">
+                            Take Another Test
+                        </button>
+                        <a href="../../dashboard.html" class="btn-secondary px-8 py-4 rounded-xl font-bold text-lg text-center hover:scale-105 transition-transform">
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

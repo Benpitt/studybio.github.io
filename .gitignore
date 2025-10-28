@@ -4,6 +4,7 @@ SAT_Questions_old.json
 SAT_Questions_corrupted.json
 SAT_Questions_backup*.json
 jsonformatter.txt
+files/SAT_Questions_classified.json
 
 # Node modules
 node_modules/

@@ -1,0 +1,234 @@
+{
+  "questions": [
+    {
+      "id": "rw-001",
+      "section": "Reading & Writing",
+      "domain": "Information and Ideas",
+      "identifier": "Main idea / central claim",
+      "passage": "The concept of 'deep time' revolutionized geology in the 18th century. Scottish geologist James Hutton proposed that Earth's features were shaped by slow, continuous processes over immense periods, challenging the prevailing belief in a young Earth. His work laid the foundation for modern geology and our understanding of Earth's 4.5-billion-year history.",
+      "question": "Which choice best describes the main idea of the text?",
+      "type": "Multiple Choice",
+      "options": [
+        "James Hutton was a Scottish geologist who lived in the 18th century.",
+        "The concept of deep time transformed geological understanding by proposing that Earth's features formed over vast periods.",
+        "Earth is approximately 4.5 billion years old according to modern science.",
+        "Geological processes occur slowly and continuously over time."
+      ],
+      "answer": "The concept of deep time transformed geological understanding by proposing that Earth's features formed over vast periods."
+    },
+    {
+      "id": "rw-002",
+      "section": "Reading & Writing",
+      "domain": "Information and Ideas",
+      "identifier": "Supporting details",
+      "passage": "Marine biologist Sylvia Earle has dedicated her life to ocean conservation. In 1979, she set a world record by diving to a depth of 1,250 feet in a specialized suit. Beyond her diving achievements, Earle founded Mission Blue, an organization aimed at establishing marine protected areas worldwide. Her work has earned her numerous awards, including being named Time magazine's first 'Hero for the Planet' in 1998.",
+      "question": "According to the text, what is one way Sylvia Earle contributed to ocean conservation beyond her diving record?",
+      "type": "Multiple Choice",
+      "options": [
+        "She set a world record diving to 1,250 feet.",
+        "She was named a 'Hero for the Planet' by Time magazine.",
+        "She founded Mission Blue to establish marine protected areas.",
+        "She specialized in developing diving suits."
+      ],
+      "answer": "She founded Mission Blue to establish marine protected areas."
+    },
+    {
+      "id": "rw-003",
+      "section": "Reading & Writing",
+      "domain": "Craft and Structure",
+      "identifier": "Words in context",
+      "passage": "The artist's technique was considered revolutionary for its time. While her contemporaries adhered to traditional methods, she experimented with unconventional materials and bold color combinations. Critics initially dismissed her work as too radical, but eventually recognized her innovative approach as a significant departure from established norms.",
+      "question": "As used in the text, what does the word 'radical' most nearly mean?",
+      "type": "Multiple Choice",
+      "options": [
+        "Extreme or drastic",
+        "Mathematical or geometrical",
+        "Traditional or conventional",
+        "Political or ideological"
+      ],
+      "answer": "Extreme or drastic"
+    },
+    {
+      "id": "rw-004",
+      "section": "Reading & Writing",
+      "domain": "Expression of Ideas",
+      "identifier": "Rhetorical synthesis",
+      "passage": "A student is writing a research paper about renewable energy sources. The student wants to emphasize the rapid growth of solar energy adoption.",
+      "question": "Which quotation from a source would best accomplish this goal?",
+      "type": "Multiple Choice",
+      "options": [
+        "\"Solar panels convert sunlight directly into electricity through photovoltaic cells.\"",
+        "\"Global solar capacity has increased by over 20% annually for the past decade.\"",
+        "\"Solar energy is considered a clean and renewable source of power.\"",
+        "\"The cost of solar panels has decreased significantly in recent years.\""
+      ],
+      "answer": "\"Global solar capacity has increased by over 20% annually for the past decade.\""
+    },
+    {
+      "id": "rw-005",
+      "section": "Reading & Writing",
+      "domain": "Standard English Conventions",
+      "identifier": "Boundaries",
+      "passage": "The ancient library contained thousands of manuscripts, many of them were written in languages no longer spoken today.",
+      "question": "Which choice best corrects the sentence?",
+      "type": "Multiple Choice",
+      "options": [
+        "manuscripts, many of them were written",
+        "manuscripts; many of them were written",
+        "manuscripts many of them were written",
+        "manuscripts, many of which were written"
+      ],
+      "answer": "manuscripts, many of which were written"
+    },
+    {
+      "id": "math-001",
+      "section": "Math",
+      "domain": "Algebra",
+      "identifier": "Linear equations & inequalities",
+      "passage": null,
+      "question": "If 3x + 7 = 22, what is the value of x?",
+      "type": "Multiple Choice",
+      "options": [
+        "3",
+        "5",
+        "7",
+        "9"
+      ],
+      "answer": "5"
+    },
+    {
+      "id": "math-002",
+      "section": "Math",
+      "domain": "Algebra",
+      "identifier": "Systems of linear equations",
+      "passage": null,
+      "question": "What is the solution (x, y) to the system of equations?\n\n2x + y = 8\nx - y = 1",
+      "type": "Multiple Choice",
+      "options": [
+        "(2, 4)",
+        "(3, 2)",
+        "(4, 0)",
+        "(5, -2)"
+      ],
+      "answer": "(3, 2)"
+    },
+    {
+      "id": "math-003",
+      "section": "Math",
+      "domain": "Advanced Math",
+      "identifier": "Equivalent expressions",
+      "passage": null,
+      "question": "Which expression is equivalent to (x + 3)²?",
+      "type": "Multiple Choice",
+      "options": [
+        "x² + 6x + 9",
+        "x² + 3x + 9",
+        "x² + 9",
+        "x² + 6x + 6"
+      ],
+      "answer": "x² + 6x + 9"
+    },
+    {
+      "id": "math-004",
+      "section": "Math",
+      "domain": "Advanced Math",
+      "identifier": "Nonlinear functions",
+      "passage": null,
+      "question": "If f(x) = x² - 4x + 3, what is the value of f(5)?",
+      "type": "Multiple Choice",
+      "options": [
+        "4",
+        "8",
+        "12",
+        "16"
+      ],
+      "answer": "8"
+    },
+    {
+      "id": "math-005",
+      "section": "Math",
+      "domain": "Problem-Solving and Data Analysis",
+      "identifier": "Ratios, rates, proportions",
+      "passage": null,
+      "question": "A recipe calls for 2 cups of flour for every 3 cups of sugar. If you use 8 cups of flour, how many cups of sugar do you need?",
+      "type": "Multiple Choice",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "13"
+      ],
+      "answer": "12"
+    },
+    {
+      "id": "math-006",
+      "section": "Math",
+      "domain": "Problem-Solving and Data Analysis",
+      "identifier": "Percentages",
+      "passage": null,
+      "question": "A store offers a 25% discount on an item originally priced at $80. What is the sale price?",
+      "type": "Multiple Choice",
+      "options": [
+        "$55",
+        "$60",
+        "$65",
+        "$70"
+      ],
+      "answer": "$60"
+    },
+    {
+      "id": "math-007",
+      "section": "Math",
+      "domain": "Geometry and Trigonometry",
+      "identifier": "Area and volume",
+      "passage": null,
+      "question": "What is the area of a circle with a radius of 5 units? (Use π ≈ 3.14)",
+      "type": "Multiple Choice",
+      "options": [
+        "15.7 square units",
+        "31.4 square units",
+        "78.5 square units",
+        "157 square units"
+      ],
+      "answer": "78.5 square units"
+    },
+    {
+      "id": "math-008",
+      "section": "Math",
+      "domain": "Geometry and Trigonometry",
+      "identifier": "Lines, angles, and triangles",
+      "passage": null,
+      "question": "In a right triangle, if one angle measures 35°, what is the measure of the other acute angle?",
+      "type": "Multiple Choice",
+      "options": [
+        "45°",
+        "50°",
+        "55°",
+        "65°"
+      ],
+      "answer": "55°"
+    },
+    {
+      "id": "math-009",
+      "section": "Math",
+      "domain": "Algebra",
+      "identifier": "Linear equations & inequalities",
+      "passage": null,
+      "question": "If 5(x - 2) > 15, what is the smallest integer value of x?",
+      "type": "Student-Produced Response",
+      "options": null,
+      "answer": "6"
+    },
+    {
+      "id": "math-010",
+      "section": "Math",
+      "domain": "Problem-Solving and Data Analysis",
+      "identifier": "Inference from data",
+      "passage": "A survey of 200 students found that 120 students play sports, 80 students play music, and 40 students do both.",
+      "question": "How many students play sports but not music?",
+      "type": "Student-Produced Response",
+      "options": null,
+      "answer": "80"
+    }
+  ]
+}

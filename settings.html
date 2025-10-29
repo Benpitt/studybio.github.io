@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Studying Works</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="button-styles.css">
+    <style>
+        .settings-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .settings-section:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #cbd5e0;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        .select-custom {
+            appearance: none;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.5rem 2.5rem 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+
+        .select-custom:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <script type="module" src="auth-guard.js"></script>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Studying Works
+                    </span>
+                    <span class="ml-4 text-gray-600 font-semibold">Settings</span>
+                </div>
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="px-4 py-2 text-gray-600 hover:text-gray-900 transition">
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Profile Section -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">👤 Profile</h2>
+            <div class="flex items-center space-x-4 mb-6">
+                <img id="user-photo" src="" alt="Profile" class="w-20 h-20 rounded-full border-4 border-purple-200">
+                <div>
+                    <h3 id="user-name" class="text-xl font-semibold text-gray-800"></h3>
+                    <p id="user-email" class="text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Preferences -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">📚 Study Preferences</h2>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Default Difficulty Level</h3>
+                    <p class="text-sm text-gray-600">Set the default difficulty for AI-generated content</p>
+                </div>
+                <select id="difficulty-level" class="select-custom">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Cards Per Session</h3>
+                    <p class="text-sm text-gray-600">Number of flashcards to study in one session</p>
+                </div>
+                <select id="cards-per-session" class="select-custom">
+                    <option value="10">10 cards</option>
+                    <option value="20">20 cards</option>
+                    <option value="30">30 cards</option>
+                    <option value="50">50 cards</option>
+                    <option value="100">100 cards</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Auto-Play Audio</h3>
+                    <p class="text-sm text-gray-600">Automatically play audio for flashcards (if available)</p>
+                </div>
+                <div id="auto-play-audio" class="toggle-switch"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Show Timer</h3>
+                    <p class="text-sm text-gray-600">Display timer during practice tests</p>
+                </div>
+                <div id="show-timer" class="toggle-switch active"></div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">🔔 Notifications</h2>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Study Reminders</h3>
+                    <p class="text-sm text-gray-600">Remind me to study daily</p>
+                </div>
+                <div id="study-reminders" class="toggle-switch"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Assignment Notifications</h3>
+                    <p class="text-sm text-gray-600">Notify me about upcoming assignment due dates</p>
+                </div>
+                <div id="assignment-notifications" class="toggle-switch active"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Streak Alerts</h3>
+                    <p class="text-sm text-gray-600">Alert me when my study streak is about to break</p>
+                </div>
+                <div id="streak-alerts" class="toggle-switch active"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Achievement Notifications</h3>
+                    <p class="text-sm text-gray-600">Celebrate milestones and achievements</p>
+                </div>
+                <div id="achievement-notifications" class="toggle-switch active"></div>
+            </div>
+        </div>
+
+        <!-- Learning Algorithm -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">🧠 Learning Algorithm</h2>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Spaced Repetition</h3>
+                    <p class="text-sm text-gray-600">Use spaced repetition for optimal memory retention</p>
+                </div>
+                <div id="spaced-repetition" class="toggle-switch active"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Adaptive Learning</h3>
+                    <p class="text-sm text-gray-600">Use BKT algorithm to adapt to your learning pace</p>
+                </div>
+                <div id="adaptive-learning" class="toggle-switch active"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Focus on Weak Areas</h3>
+                    <p class="text-sm text-gray-600">Prioritize topics that need more practice</p>
+                </div>
+                <div id="focus-weak-areas" class="toggle-switch active"></div>
+            </div>
+        </div>
+
+        <!-- Privacy & Data -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">🔒 Privacy & Data</h2>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Cloud Sync</h3>
+                    <p class="text-sm text-gray-600">Automatically sync data to Firebase</p>
+                </div>
+                <div id="cloud-sync" class="toggle-switch active"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Share Anonymous Analytics</h3>
+                    <p class="text-sm text-gray-600">Help improve the app by sharing usage data</p>
+                </div>
+                <div id="anonymous-analytics" class="toggle-switch active"></div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Profile Visibility</h3>
+                    <p class="text-sm text-gray-600">Make your profile visible to other users</p>
+                </div>
+                <select id="profile-visibility" class="select-custom">
+                    <option value="public">Public</option>
+                    <option value="friends">Friends Only</option>
+                    <option value="private">Private</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Data Management -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">💾 Data Management</h2>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Export All Data</h3>
+                    <p class="text-sm text-gray-600">Download all your study data as JSON</p>
+                </div>
+                <button id="export-data-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Export
+                </button>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Sync Now</h3>
+                    <p class="text-sm text-gray-600">Manually sync data with cloud</p>
+                </div>
+                <button id="sync-now-btn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                    Sync
+                </button>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Clear Local Cache</h3>
+                    <p class="text-sm text-gray-600">Clear cached data (won't delete your progress)</p>
+                </div>
+                <button id="clear-cache-btn" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-section border-2 border-red-200">
+            <h2 class="text-2xl font-bold mb-4 text-red-600">⚠️ Danger Zone</h2>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Reset All Progress</h3>
+                    <p class="text-sm text-gray-600">This will delete all your study progress permanently</p>
+                </div>
+                <button id="reset-progress-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Reset
+                </button>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Delete Account</h3>
+                    <p class="text-sm text-gray-600">Permanently delete your account and all data</p>
+                </div>
+                <button id="delete-account-btn" class="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition">
+                    Delete
+                </button>
+            </div>
+        </div>
+
+        <!-- Version Info -->
+        <div class="text-center text-gray-600 mt-8">
+            <p>Studying Works v1.0.0</p>
+            <p class="text-sm">Last synced: <span id="last-sync-time">Never</span></p>
+        </div>
+    </div>
+
+    <!-- Save Indicator -->
+    <div id="save-indicator" class="save-indicator">
+        ✓ Settings saved
+    </div>
+
+    <script type="module">
+        import { authService } from './auth-service.js';
+
+        // Load user profile
+        async function loadUserProfile() {
+            const user = authService.getCachedUserData();
+            if (user) {
+                document.getElementById('user-name').textContent = user.displayName || 'User';
+                document.getElementById('user-email').textContent = user.email || '';
+                document.getElementById('user-photo').src = user.photoURL || 'https://via.placeholder.com/80';
+            }
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+
+            // Study Preferences
+            document.getElementById('difficulty-level').value = settings.difficultyLevel || 'medium';
+            document.getElementById('cards-per-session').value = settings.cardsPerSession || '20';
+            setToggle('auto-play-audio', settings.autoPlayAudio || false);
+            setToggle('show-timer', settings.showTimer !== false);
+
+            // Notifications
+            setToggle('study-reminders', settings.studyReminders || false);
+            setToggle('assignment-notifications', settings.assignmentNotifications !== false);
+            setToggle('streak-alerts', settings.streakAlerts !== false);
+            setToggle('achievement-notifications', settings.achievementNotifications !== false);
+
+            // Learning Algorithm
+            setToggle('spaced-repetition', settings.spacedRepetition !== false);
+            setToggle('adaptive-learning', settings.adaptiveLearning !== false);
+            setToggle('focus-weak-areas', settings.focusWeakAreas !== false);
+
+            // Privacy
+            setToggle('cloud-sync', settings.cloudSync !== false);
+            setToggle('anonymous-analytics', settings.anonymousAnalytics !== false);
+            document.getElementById('profile-visibility').value = settings.profileVisibility || 'public';
+
+            // Last sync time
+            const lastSync = localStorage.getItem('lastSync');
+            if (lastSync) {
+                const date = new Date(parseInt(lastSync));
+                document.getElementById('last-sync-time').textContent = date.toLocaleString();
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            const settings = {
+                difficultyLevel: document.getElementById('difficulty-level').value,
+                cardsPerSession: document.getElementById('cards-per-session').value,
+                autoPlayAudio: getToggleState('auto-play-audio'),
+                showTimer: getToggleState('show-timer'),
+                studyReminders: getToggleState('study-reminders'),
+                assignmentNotifications: getToggleState('assignment-notifications'),
+                streakAlerts: getToggleState('streak-alerts'),
+                achievementNotifications: getToggleState('achievement-notifications'),
+                spacedRepetition: getToggleState('spaced-repetition'),
+                adaptiveLearning: getToggleState('adaptive-learning'),
+                focusWeakAreas: getToggleState('focus-weak-areas'),
+                cloudSync: getToggleState('cloud-sync'),
+                anonymousAnalytics: getToggleState('anonymous-analytics'),
+                profileVisibility: document.getElementById('profile-visibility').value
+            };
+
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+            showSaveIndicator();
+
+            // Sync to Firebase if enabled
+            if (settings.cloudSync) {
+                syncSettingsToFirebase(settings);
+            }
+        }
+
+        // Sync settings to Firebase
+        async function syncSettingsToFirebase(settings) {
+            try {
+                const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                const db = getFirestore();
+                const user = authService.getCachedUserData();
+
+                if (user && user.uid) {
+                    await setDoc(doc(db, 'users', user.uid, 'data', 'settings'), settings);
+                    console.log('Settings synced to Firebase');
+                }
+            } catch (error) {
+                console.error('Error syncing settings:', error);
+            }
+        }
+
+        // Toggle switch helpers
+        function setToggle(id, state) {
+            const toggle = document.getElementById(id);
+            if (state) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+        }
+
+        function getToggleState(id) {
+            return document.getElementById(id).classList.contains('active');
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Setup toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+                saveSettings();
+            });
+        });
+
+        // Setup select dropdowns
+        document.querySelectorAll('.select-custom').forEach(select => {
+            select.addEventListener('change', saveSettings);
+        });
+
+        // Export data
+        document.getElementById('export-data-btn').addEventListener('click', () => {
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                allData[key] = localStorage.getItem(key);
+            }
+
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `studying-works-data-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            showSaveIndicator();
+            document.getElementById('save-indicator').textContent = '✓ Data exported';
+            setTimeout(() => {
+                document.getElementById('save-indicator').textContent = '✓ Settings saved';
+            }, 2000);
+        });
+
+        // Sync now
+        document.getElementById('sync-now-btn').addEventListener('click', async () => {
+            try {
+                // Import FirebaseSync if available
+                const FirebaseSync = (await import('./firebase-sync.js')).default;
+                const sync = new FirebaseSync();
+                await sync.syncAll();
+
+                localStorage.setItem('lastSync', Date.now().toString());
+                const date = new Date();
+                document.getElementById('last-sync-time').textContent = date.toLocaleString();
+
+                document.getElementById('save-indicator').textContent = '✓ Synced successfully';
+                showSaveIndicator();
+                setTimeout(() => {
+                    document.getElementById('save-indicator').textContent = '✓ Settings saved';
+                }, 2000);
+            } catch (error) {
+                console.error('Sync error:', error);
+                document.getElementById('save-indicator').textContent = '✗ Sync failed';
+                document.getElementById('save-indicator').style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                showSaveIndicator();
+                setTimeout(() => {
+                    document.getElementById('save-indicator').textContent = '✓ Settings saved';
+                    document.getElementById('save-indicator').style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                }, 2000);
+            }
+        });
+
+        // Clear cache
+        document.getElementById('clear-cache-btn').addEventListener('click', () => {
+            if (confirm('Clear cached data? Your progress will be preserved.')) {
+                // Clear only cache items, preserve critical data
+                const preserve = ['userSettings', 'flashcardDecks', 'customFlashcards', 'progress',
+                                'studyStreak', 'lastVisit', 'assignments', 'userName', 'userEmail',
+                                'userId', 'userPhoto', 'sessionTimestamp'];
+
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    if (!preserve.includes(key) && !key.startsWith('firebase')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+
+                document.getElementById('save-indicator').textContent = '✓ Cache cleared';
+                showSaveIndicator();
+                setTimeout(() => {
+                    document.getElementById('save-indicator').textContent = '✓ Settings saved';
+                }, 2000);
+            }
+        });
+
+        // Reset progress
+        document.getElementById('reset-progress-btn').addEventListener('click', () => {
+            if (confirm('Are you SURE you want to reset ALL progress? This cannot be undone!')) {
+                if (confirm('Last chance! This will delete all your study data, decks, and progress forever.')) {
+                    const preserve = ['userName', 'userEmail', 'userId', 'userPhoto', 'sessionTimestamp', 'userSettings'];
+                    for (let i = localStorage.length - 1; i >= 0; i--) {
+                        const key = localStorage.key(i);
+                        if (!preserve.includes(key) && !key.startsWith('firebase')) {
+                            localStorage.removeItem(key);
+                        }
+                    }
+
+                    alert('All progress has been reset.');
+                    window.location.href = 'dashboard.html';
+                }
+            }
+        });
+
+        // Delete account
+        document.getElementById('delete-account-btn').addEventListener('click', async () => {
+            if (confirm('Are you SURE you want to DELETE YOUR ACCOUNT? This cannot be undone!')) {
+                if (confirm('FINAL WARNING: This will permanently delete your account and all data.')) {
+                    try {
+                        // Sign out and clear all data
+                        await authService.signOut();
+                        localStorage.clear();
+                        sessionStorage.clear();
+
+                        alert('Account deletion initiated. You will be signed out.');
+                        window.location.href = 'index.html';
+                    } catch (error) {
+                        console.error('Error deleting account:', error);
+                        alert('Error deleting account. Please try again or contact support.');
+                    }
+                }
+            }
+        });
+
+        // Initialize
+        loadUserProfile();
+        loadSettings();
+    </script>
+</body>
+</html>

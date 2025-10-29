@@ -353,28 +353,31 @@
 
             function updateMasteryScore(skill, correct) {
                 const currentScore = getMasteryScore(skill);
+                const userId = localStorage.getItem('userId');
 
-                // Check if advanced BKT mode is enabled
-                const bktMode = localStorage.getItem('bkt_mode');
+                // Default BKT parameters (used when no personalized data available)
                 let learningRate = 0.1;
                 let slipRate = 0.1;
                 let guessRate = 0.2;
 
-                if (bktMode === 'advanced') {
-                    // Load personalized parameters
-                    const advancedParamsStr = localStorage.getItem('bkt_advanced_params');
-                    if (advancedParamsStr) {
-                        try {
-                            const advancedParams = JSON.parse(advancedParamsStr);
-                            if (advancedParams[skill]) {
-                                learningRate = advancedParams[skill].learn;
-                                slipRate = advancedParams[skill].slip;
-                                guessRate = advancedParams[skill].guess;
-                                console.log(`🎓 Using Advanced BKT for ${skill}:`, advancedParams[skill]);
-                            }
-                        } catch (e) {
-                            console.error('Error loading advanced parameters:', e);
+                // Try to load individualized parameters for this user
+                const userParamsStr = localStorage.getItem('bkt_user_params');
+                if (userParamsStr) {
+                    try {
+                        const allUserParams = JSON.parse(userParamsStr);
+
+                        // Look up this user's parameters
+                        if (allUserParams[userId] && allUserParams[userId][skill]) {
+                            const userSkillParams = allUserParams[userId][skill];
+                            learningRate = userSkillParams.learn;
+                            slipRate = userSkillParams.slip;
+                            guessRate = userSkillParams.guess;
+                            console.log(`🎯 Using YOUR personalized BKT for ${skill}:`, userSkillParams);
+                        } else {
+                            console.log(`📊 Using default BKT parameters for ${skill} (train model with more data)`);
                         }
+                    } catch (e) {
+                        console.error('Error loading user parameters:', e);
                     }
                 }
 
@@ -520,16 +523,38 @@
                                         <div>
                                             <div className="flex items-center gap-3 mb-2">
                                                 <h1 className="text-5xl font-bold text-white">🧠 BKT Smart Study</h1>
-                                                {localStorage.getItem('bkt_mode') === 'advanced' && (
-                                                    <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full font-bold text-sm animate-pulse-slow border-2 border-purple-300">
-                                                        🎓 Advanced Mode
-                                                    </span>
-                                                )}
+                                                {(() => {
+                                                    const userParams = localStorage.getItem('bkt_user_params');
+                                                    const userId = localStorage.getItem('userId');
+                                                    let hasPersonalParams = false;
+                                                    if (userParams) {
+                                                        try {
+                                                            const params = JSON.parse(userParams);
+                                                            hasPersonalParams = params[userId] && Object.keys(params[userId]).length > 0;
+                                                        } catch (e) {}
+                                                    }
+                                                    return hasPersonalParams && (
+                                                        <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full font-bold text-sm animate-pulse-slow border-2 border-purple-300">
+                                                            👤 Personalized Learning
+                                                        </span>
+                                                    );
+                                                })()}
                                             </div>
                                             <p className="text-xl text-blue-200">
-                                                {localStorage.getItem('bkt_mode') === 'advanced'
-                                                    ? 'Using personalized BKT parameters tailored to your learning'
-                                                    : 'AI-powered learning with Bayesian Knowledge Tracing'}
+                                                {(() => {
+                                                    const userParams = localStorage.getItem('bkt_user_params');
+                                                    const userId = localStorage.getItem('userId');
+                                                    let hasPersonalParams = false;
+                                                    if (userParams) {
+                                                        try {
+                                                            const params = JSON.parse(userParams);
+                                                            hasPersonalParams = params[userId] && Object.keys(params[userId]).length > 0;
+                                                        } catch (e) {}
+                                                    }
+                                                    return hasPersonalParams
+                                                        ? 'Using YOUR personalized BKT parameters that adapt to how YOU learn'
+                                                        : 'AI-powered learning with Bayesian Knowledge Tracing - train your model for personalization!';
+                                                })()}
                                             </p>
                                         </div>
                                         <a href="bkt-analytics.html" className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg transition-all">

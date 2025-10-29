@@ -21,7 +21,10 @@ export const appConfig = {
     autoSyncInterval: 5, // minutes
     maxRetries: 3,
     retryDelay: 1000, // milliseconds
-    debugMode: false // Set to true for development, false for production
+    // debugMode is automatically set based on environment
+    get debugMode() {
+        return !isProduction();
+    }
 };
 
 // Feature flags
@@ -45,7 +48,7 @@ export const isProduction = () => {
 
 // Helper to check if debugging is enabled
 export const isDebugMode = () => {
-    return appConfig.debugMode && !isProduction();
+    return appConfig.debugMode;
 };
 
 // Console wrapper that only logs in debug mode

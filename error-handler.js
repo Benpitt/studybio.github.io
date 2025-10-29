@@ -29,8 +29,8 @@ class ErrorHandler {
      */
     showError(message, duration = 5000) {
         // Check if we have the toast notification system
-        if (typeof window.showToast === 'function') {
-            window.showToast(message, 'error');
+        if (window.toast && typeof window.toast.error === 'function') {
+            window.toast.error(message, duration);
             return;
         }
 
@@ -73,8 +73,8 @@ class ErrorHandler {
      * Show a success message
      */
     showSuccess(message, duration = 3000) {
-        if (typeof window.showToast === 'function') {
-            window.showToast(message, 'success');
+        if (window.toast && typeof window.toast.success === 'function') {
+            window.toast.success(message, duration);
             return;
         }
 

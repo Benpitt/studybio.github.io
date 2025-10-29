@@ -222,15 +222,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { authService } from './auth-service.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
-            authDomain: "academie-9942b.firebaseapp.com",
-            projectId: "academie-9942b",
-            storageBucket: "academie-9942b.firebasestorage.app",
-            messagingSenderId: "1079518919325",
-            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
-        };
+        import { firebaseConfig } from './config.js';
+        import { errorHandler } from './error-handler.js';
 
         const app = initializeApp(firebaseConfig);
 
@@ -248,8 +241,7 @@
                 entrySection.style.opacity = '1';
 
                 if (currentUser && authService.isSessionValid()) {
-                    // User is already authenticated, show Enter button instead of redirecting
-                    console.log('User already authenticated, showing Enter button...');
+                    // User is already authenticated, show Enter button
                     document.getElementById('google-signin-container').classList.add('hidden');
                     document.getElementById('enter-container').classList.remove('hidden');
                 } else {
@@ -258,7 +250,6 @@
                     document.getElementById('enter-container').classList.add('hidden');
                 }
             } catch (error) {
-                console.error('Auth initialization error:', error);
                 // Ensure visibility even on error
                 const entrySection = document.getElementById('entry-section');
                 entrySection.classList.remove('opacity-0');
@@ -287,10 +278,9 @@
                 }
 
             } catch (error) {
-                console.error('Sign-in error:', error);
                 document.getElementById('auth-buttons').classList.remove('hidden');
                 document.getElementById('loading').classList.add('hidden');
-                alert('Sign-in failed: ' + error.message);
+                errorHandler.handleAuthError(error);
             }
         });
 
@@ -303,9 +293,9 @@
                 // Redirect to dashboard
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                console.error('Navigation error:', error);
                 document.getElementById('auth-buttons').classList.remove('hidden');
                 document.getElementById('loading').classList.add('hidden');
+                errorHandler.showError('Navigation failed. Please try again.');
             }
         });
     </script>

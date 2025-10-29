@@ -12,6 +12,8 @@ import {
     GoogleAuthProvider
 } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
+import { debugLog, debugError } from './config.js';
+
 class AuthService {
     constructor() {
         this.auth = null;
@@ -29,9 +31,9 @@ class AuthService {
         // This uses IndexedDB with fallback to localStorage
         try {
             await setPersistence(this.auth, browserLocalPersistence);
-            console.log('Firebase persistence enabled');
+            debugLog('Firebase persistence enabled');
         } catch (error) {
-            console.error('Failed to set persistence:', error);
+            debugError('Failed to set persistence:', error);
         }
 
         return this.auth;
@@ -43,7 +45,7 @@ class AuthService {
      */
     onAuthStateChange(callback) {
         if (!this.auth) {
-            console.error('Auth not initialized');
+            debugError('Auth not initialized');
             return;
         }
 
@@ -66,11 +68,11 @@ class AuthService {
                     const fiveMinutes = 5 * 60 * 1000;
 
                     if (expirationTime - now < fiveMinutes) {
-                        console.log('Token expiring soon, refreshing...');
+                        debugLog('Token expiring soon, refreshing...');
                         await user.getIdToken(true); // true = force refresh
                     }
                 } catch (error) {
-                    console.error('Token refresh error:', error);
+                    debugError('Token refresh error:', error);
                 }
 
                 callback(user, true);
@@ -165,7 +167,7 @@ class AuthService {
             await this.updateUserCache(result.user);
             return result.user;
         } catch (error) {
-            console.error('Sign in error:', error);
+            debugError('Sign in error:', error);
             throw error;
         }
     }
@@ -182,7 +184,7 @@ class AuthService {
             await this.auth.signOut();
             this.clearUserCache();
         } catch (error) {
-            console.error('Sign out error:', error);
+            debugError('Sign out error:', error);
             throw error;
         }
     }

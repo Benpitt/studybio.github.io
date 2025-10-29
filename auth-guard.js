@@ -5,6 +5,8 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { authService } from './auth-service.js';
+import { firebaseConfig } from './config.js';
+import { debugLog, debugError } from './config.js';
 
 (async function() {
     // Check if we're already on index.html (login page)
@@ -18,15 +20,6 @@ import { authService } from './auth-service.js';
     }
 
     // Initialize Firebase and auth service
-    const firebaseConfig = {
-        apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
-        authDomain: "academie-9942b.firebaseapp.com",
-        projectId: "academie-9942b",
-        storageBucket: "academie-9942b.firebasestorage.app",
-        messagingSenderId: "1079518919325",
-        appId: "1:1079518919325:web:745025bdb7b2b23645b274"
-    };
-
     const app = initializeApp(firebaseConfig);
     await authService.initializeAuth(app);
 
@@ -37,7 +30,7 @@ import { authService } from './auth-service.js';
 
     // If localStorage data is missing or expired, redirect immediately
     if (!userName || !userId || !sessionTimestamp || !authService.isSessionValid()) {
-        console.log('No valid local session, redirecting to login...');
+        debugLog('No valid local session, redirecting to login...');
         localStorage.clear();
         window.location.href = 'index.html';
         return;
@@ -49,7 +42,7 @@ import { authService } from './auth-service.js';
 
         if (!user) {
             // No Firebase user, session is invalid
-            console.log('No Firebase user found, redirecting to login...');
+            debugLog('No Firebase user found, redirecting to login...');
             localStorage.clear();
             window.location.href = 'index.html';
             return;
@@ -57,7 +50,7 @@ import { authService } from './auth-service.js';
 
         // Verify the user ID matches
         if (user.uid !== userId) {
-            console.log('User ID mismatch, clearing session...');
+            debugLog('User ID mismatch, clearing session...');
             localStorage.clear();
             window.location.href = 'index.html';
             return;
@@ -67,19 +60,19 @@ import { authService } from './auth-service.js';
         authService.onAuthStateChange((user, isAuthenticated) => {
             if (!isAuthenticated) {
                 // User signed out or token expired
-                console.log('Auth state changed: user signed out');
+                debugLog('Auth state changed: user signed out');
                 localStorage.clear();
                 window.location.href = 'index.html';
             } else {
                 // User is authenticated, ensure cache is up to date
-                console.log('Auth state verified for:', user.displayName);
+                debugLog('Auth state verified for:', user.displayName);
             }
         });
 
-        console.log('Valid session found for:', userName);
+        debugLog('Valid session found for:', userName);
 
     } catch (error) {
-        console.error('Auth verification error:', error);
+        debugError('Auth verification error:', error);
         localStorage.clear();
         window.location.href = 'index.html';
     }

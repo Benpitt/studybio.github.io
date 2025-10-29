@@ -3,6 +3,8 @@
  * Creates fluid, time-of-day based gradient animations
  */
 
+import { debugLog } from './config.js';
+
 class DynamicGradient {
     constructor() {
         // Time-of-day color palettes - Dark theme
@@ -99,7 +101,7 @@ class DynamicGradient {
         const newPalette = this.getCurrentPalette();
 
         if (!this.currentPalette || this.currentPalette.name !== newPalette.name) {
-            console.log(`🎨 Gradient transitioning to ${newPalette.name} palette`);
+            debugLog(`🎨 Gradient transitioning to ${newPalette.name} palette`);
             this.nextPalette = newPalette;
             this.currentPalette = this.currentPalette || newPalette;
         }
@@ -210,7 +212,7 @@ class DynamicGradient {
         if (this.palettes[paletteName]) {
             this.nextPalette = this.palettes[paletteName];
             this.transitionProgress = 0;
-            console.log(`🎨 Manually switching to ${paletteName} palette`);
+            debugLog(`🎨 Manually switching to ${paletteName} palette`);
         }
     }
 }

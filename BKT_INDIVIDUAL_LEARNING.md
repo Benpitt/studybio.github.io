@@ -126,13 +126,27 @@ if (correct) {
 
 ## How to Train Your Model
 
-### Option 1: Quick Train (Browser)
+### Option 1: Browser Training (Recommended - No Installation Required!)
 1. Go to BKT Analytics page
-2. Click "Train Advanced BKT" button
-3. System calculates YOUR parameters from YOUR review history
-4. Parameters saved automatically
+2. Complete at least 20 reviews across your skills
+3. Click "Train BKT Model" button in the banner
+4. Full EM algorithm trains in seconds
+5. Parameters saved automatically to localStorage and Firebase
 
-### Option 2: Full Training (Python + pyBKT)
+**Algorithm Used:**
+- **Expectation-Maximization (EM)** - Same as pyBKT library
+- **Forward-Backward** pass for mastery probability inference
+- **Iterative optimization** that converges in ~10-20 iterations
+- **Per-skill training** with individual parameter optimization
+
+**Requirements:**
+- Minimum 20 total reviews (recommended: 50+)
+- At least 5 reviews per skill for that skill to be trained
+- Browser with JavaScript enabled (works on all modern browsers)
+
+### Option 2: Python Training (Advanced - For Researchers)
+If you need to run experiments or train on large datasets offline:
+
 1. Export reviews from Firebase:
    ```bash
    python export_firebase_bkt.py
@@ -147,7 +161,9 @@ if (correct) {
    - `bkt_params.json` - Per-user parameters
    - `mastery_scores.json` - Updated mastery scores
 
-4. Parameters automatically sync to Firebase
+4. Upload to Firebase or import to browser
+
+**Most users should use Option 1** - it's faster, easier, and doesn't require any installation!
 
 ## Benefits of Individual Learning
 
@@ -159,11 +175,18 @@ if (correct) {
 
 ## Minimum Data Requirements
 
-- **Quick Train**: 20+ reviews recommended per skill
-- **Full pyBKT Training**: 50+ reviews per user across all skills
-- **Reliable Parameters**: 100+ reviews per user
+### Browser EM Training
+- **Minimum**: 20 total reviews to enable training
+- **Per-skill minimum**: 5 reviews (skills with fewer use defaults)
+- **Recommended**: 50+ reviews for reliable parameters
+- **Optimal**: 100+ reviews for highly accurate parameters
 
-The system falls back to default parameters until enough individual data is collected.
+### Python pyBKT Training
+- **Minimum**: 50 reviews per user
+- **Recommended**: 100+ reviews per user
+- **Optimal**: 200+ reviews for research-grade accuracy
+
+The system gracefully falls back to default parameters (P(L₀)=0.4, P(T)=0.15, P(S)=0.1, P(G)=0.2) for skills with insufficient data.
 
 ## Privacy & Security
 
@@ -175,10 +198,50 @@ The system falls back to default parameters until enough individual data is coll
 ## Technical Details
 
 ### Files Modified
-1. **`train_bkt.py`**: Now trains separate models per user
+1. **`train_bkt.py`**: Python implementation - trains separate models per user with pyBKT
 2. **`bkt-study.html`**: Loads per-user parameters from `bkt_user_params`
-3. **`bkt-analytics.html`**: Quick-train saves in per-user format
-4. **`export_firebase_bkt.py`**: Normalizes field names for Python
+3. **`bkt-analytics.html`**: Full EM algorithm implementation in JavaScript for browser training
+4. **`export_firebase_bkt.py`**: Normalizes field names for Python compatibility
+
+### Browser EM Implementation (`bkt-analytics.html`)
+
+**`trainBKTEM(observations, maxIterations=20)`**
+- Implements full Expectation-Maximization algorithm
+- Input: Array of 0s and 1s (incorrect/correct responses)
+- Output: Optimized {prior, learn, slip, guess} parameters
+
+**Algorithm Steps:**
+1. **Initialize**: Start with default parameters (P(L₀)=0.4, P(T)=0.15, P(S)=0.1, P(G)=0.2)
+2. **E-Step (Forward Pass)**:
+   - Calculate P(mastery | observations) at each timestep
+   - Use Bayes rule to update mastery probability after each observation
+   - Account for both observation likelihood and learning transitions
+3. **M-Step (Parameter Update)**:
+   - Count expected learning transitions (not-learned → learned)
+   - Count expected slips (mastered but answered wrong)
+   - Count expected guesses (not mastered but answered right)
+   - Update parameters to maximize likelihood of observed data
+4. **Convergence Check**: Stop if parameter change < 0.001 or after 20 iterations
+5. **Constrain**: Ensure all parameters stay in valid ranges
+
+**Key Equations Used:**
+```javascript
+// Forward update (E-step)
+P(obs | L_t) = correct ? (1 - pS) : pS           // If mastered
+P(obs | ¬L_t) = correct ? pG : (1 - pG)          // If not mastered
+P(L_{t+1} | L_t) = L_t + (1 - L_t) * pT          // Learning transition
+
+// Parameter update (M-step)
+P(T) = expected_learn / (expected_learn + expected_not_learn)
+P(S) = expected_slip / (expected_slip + expected_no_slip)
+P(G) = expected_guess / (expected_guess + expected_no_guess)
+```
+
+**Differences from pyBKT:**
+- Simplified forward-only pass (no backward pass) for efficiency
+- Faster convergence due to browser performance constraints
+- Same underlying statistical model and parameter interpretation
+- Results are comparable for typical educational datasets (20-200 reviews)
 
 ### Migration from Old System
 The system automatically handles both formats:

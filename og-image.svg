@@ -1,0 +1,13 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grad)"/>
+  <text x="600" y="250" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">🎓 studying.works</text>
+  <text x="600" y="350" font-family="Arial, sans-serif" font-size="40" fill="white" text-anchor="middle" opacity="0.9">Learn Smarter, Not Harder</text>
+  <text x="600" y="450" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle" opacity="0.8">AI-Powered Study Platform</text>
+</svg>

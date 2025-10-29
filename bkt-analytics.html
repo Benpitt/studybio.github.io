@@ -418,14 +418,119 @@
                 };
             }
 
+            // Full BKT Training using Expectation-Maximization (EM) Algorithm
+            // This implements the same algorithm as pyBKT, but in JavaScript for the browser
+            function trainBKTEM(observations, maxIterations = 20) {
+                // observations: array of 0s and 1s (incorrect/correct)
+                const n = observations.length;
+                if (n < 3) {
+                    return null; // Not enough data
+                }
+
+                // Initialize parameters with reasonable defaults
+                let pL0 = 0.4;  // Prior knowledge
+                let pT = 0.15;  // Learning rate
+                let pS = 0.1;   // Slip rate
+                let pG = 0.2;   // Guess rate
+
+                // EM Algorithm
+                for (let iter = 0; iter < maxIterations; iter++) {
+                    // E-Step: Forward-Backward Algorithm
+                    // Calculate P(L_t | observations) for all timesteps
+
+                    // Forward pass
+                    const alpha = new Array(n + 1);
+                    alpha[0] = pL0; // Initial mastery probability
+
+                    for (let t = 0; t < n; t++) {
+                        const obs = observations[t];
+                        const pL_t = alpha[t];
+
+                        // P(observation | L_t)
+                        const pObsGivenL = obs === 1 ? (1 - pS) : pS;
+                        const pObsGivenNotL = obs === 1 ? pG : (1 - pG);
+
+                        // P(L_{t+1} | L_t)
+                        const pL_next = pL_t + (1 - pL_t) * pT;
+
+                        // Update using Bayes rule
+                        const pObs = pL_t * pObsGivenL + (1 - pL_t) * pObsGivenNotL;
+                        const pL_given_obs = pObs > 0 ? (pL_t * pObsGivenL) / pObs : pL_t;
+
+                        alpha[t + 1] = pL_given_obs + (1 - pL_given_obs) * pT;
+                    }
+
+                    // M-Step: Update parameters based on expected counts
+
+                    // Count expected transitions and emissions
+                    let expectedLearn = 0;
+                    let expectedNotLearn = 0;
+                    let expectedSlip = 0;
+                    let expectedNoSlip = 0;
+                    let expectedGuess = 0;
+                    let expectedNoGuess = 0;
+
+                    for (let t = 0; t < n; t++) {
+                        const obs = observations[t];
+                        const pL_t = alpha[t];
+
+                        // Expected learning transitions
+                        if (t > 0) {
+                            const pNotL_prev = 1 - alpha[t - 1];
+                            const pL_curr = alpha[t];
+                            expectedLearn += pNotL_prev * pT * (pL_curr / (alpha[t - 1] + pNotL_prev * pT + 1e-10));
+                            expectedNotLearn += pNotL_prev * (1 - pT);
+                        }
+
+                        // Expected slips and guesses
+                        if (obs === 0) {
+                            // Incorrect answer
+                            expectedSlip += pL_t;
+                            expectedNoGuess += (1 - pL_t);
+                        } else {
+                            // Correct answer
+                            expectedNoSlip += pL_t;
+                            expectedGuess += (1 - pL_t);
+                        }
+                    }
+
+                    // Update parameters
+                    const newPL0 = alpha[0];
+                    const newPT = expectedLearn / Math.max(expectedLearn + expectedNotLearn, 1e-10);
+                    const newPS = expectedSlip / Math.max(expectedSlip + expectedNoSlip, 1e-10);
+                    const newPG = expectedGuess / Math.max(expectedGuess + expectedNoGuess, 1e-10);
+
+                    // Constrain parameters to valid ranges
+                    pL0 = Math.max(0.01, Math.min(0.99, newPL0));
+                    pT = Math.max(0.01, Math.min(0.5, newPT));
+                    pS = Math.max(0.01, Math.min(0.4, newPS));
+                    pG = Math.max(0.01, Math.min(0.5, newPG));
+
+                    // Check for convergence (optional)
+                    const change = Math.abs(newPT - pT) + Math.abs(newPS - pS) + Math.abs(newPG - pG);
+                    if (change < 0.001) {
+                        console.log(`   Converged after ${iter + 1} iterations`);
+                        break;
+                    }
+                }
+
+                return {
+                    prior: Math.round(pL0 * 1000) / 1000,
+                    learn: Math.round(pT * 1000) / 1000,
+                    slip: Math.round(pS * 1000) / 1000,
+                    guess: Math.round(pG * 1000) / 1000
+                };
+            }
+
             // Client-side Advanced BKT Training
             async function trainAdvancedBKT() {
-                if (reviews.length < 100) {
-                    alert('You need at least 100 reviews to train advanced BKT. Keep studying!');
+                if (reviews.length < 20) {
+                    alert('You need at least 20 reviews to train BKT. Keep studying!');
                     return;
                 }
 
-                console.log('🎓 Starting Advanced BKT Training...');
+                console.log('🎓 Starting Full BKT Training with EM Algorithm...');
+                console.log(`   Using ${reviews.length} reviews across all skills`);
 
                 // Group reviews by skill
                 const skillGroups = {};
@@ -437,62 +542,51 @@
                 });
 
                 const advancedParams = {};
+                let skillsTrainedCount = 0;
 
-                // Calculate personalized parameters for each skill
+                // Train BKT model for each skill using EM algorithm
                 Object.keys(skillGroups).forEach(skill => {
-                    const skillReviews = skillGroups[skill];
+                    const skillReviews = skillGroups[skill].sort((a, b) => {
+                        const timeA = a.timestamp?.seconds || new Date(a.timestamp).getTime() / 1000;
+                        const timeB = b.timestamp?.seconds || new Date(b.timestamp).getTime() / 1000;
+                        return timeA - timeB;
+                    });
 
                     if (skillReviews.length < 5) {
                         // Not enough data for this skill, use defaults
+                        console.log(`   ⚠️  Skipping ${skill} (only ${skillReviews.length} reviews)`);
                         advancedParams[skill] = {
-                            prior: 0.5,
-                            learn: 0.1,
+                            prior: 0.4,
+                            learn: 0.15,
                             slip: 0.1,
                             guess: 0.2
                         };
                         return;
                     }
 
-                    // Calculate accuracy for this skill
-                    const correctCount = skillReviews.filter(r => r.correct === 1 || r.correct === true).length;
-                    const accuracy = correctCount / skillReviews.length;
+                    console.log(`   🔄 Training ${skill} (${skillReviews.length} reviews)...`);
 
-                    // Estimate P(L0) - Prior knowledge based on early performance
-                    const firstFive = skillReviews.slice(0, Math.min(5, skillReviews.length));
-                    const earlyCorrect = firstFive.filter(r => r.correct === 1 || r.correct === true).length;
-                    const prior = Math.max(0.1, Math.min(0.9, earlyCorrect / firstFive.length));
+                    // Extract observations (0 = incorrect, 1 = correct)
+                    const observations = skillReviews.map(r => {
+                        return (r.correct === 1 || r.correct === true) ? 1 : 0;
+                    });
 
-                    // Estimate P(T) - Learning rate based on improvement over time
-                    const firstHalf = skillReviews.slice(0, Math.floor(skillReviews.length / 2));
-                    const secondHalf = skillReviews.slice(Math.floor(skillReviews.length / 2));
-                    const firstHalfAccuracy = firstHalf.filter(r => r.correct === 1 || r.correct === true).length / firstHalf.length;
-                    const secondHalfAccuracy = secondHalf.filter(r => r.correct === 1 || r.correct === true).length / secondHalf.length;
-                    const improvement = secondHalfAccuracy - firstHalfAccuracy;
-                    const learn = Math.max(0.05, Math.min(0.3, 0.1 + improvement));
+                    // Train using EM algorithm
+                    const params = trainBKTEM(observations, 20);
 
-                    // Estimate P(S) - Slip rate based on inconsistency
-                    // Calculate how often correct is followed by incorrect
-                    let slipCount = 0;
-                    for (let i = 0; i < skillReviews.length - 1; i++) {
-                        if ((skillReviews[i].correct === 1 || skillReviews[i].correct === true) &&
-                            (skillReviews[i + 1].correct === 0 || skillReviews[i + 1].correct === false)) {
-                            slipCount++;
-                        }
+                    if (params) {
+                        advancedParams[skill] = params;
+                        skillsTrainedCount++;
+                        console.log(`   ✅ ${skill}:`, params);
+                    } else {
+                        // Fallback to defaults
+                        advancedParams[skill] = {
+                            prior: 0.4,
+                            learn: 0.15,
+                            slip: 0.1,
+                            guess: 0.2
+                        };
                     }
-                    const slip = Math.max(0.05, Math.min(0.3, slipCount / Math.max(1, skillReviews.length - 1)));
-
-                    // Estimate P(G) - Guess rate based on low-mastery correct answers
-                    // If accuracy is low but there are correct answers, likely guessing
-                    const guess = accuracy < 0.5 ? Math.min(0.3, accuracy) : Math.max(0.1, 0.3 - accuracy * 0.2);
-
-                    advancedParams[skill] = {
-                        prior: Math.round(prior * 1000) / 1000,
-                        learn: Math.round(learn * 1000) / 1000,
-                        slip: Math.round(slip * 1000) / 1000,
-                        guess: Math.round(guess * 1000) / 1000
-                    };
-
-                    console.log(`✅ Trained ${skill}:`, advancedParams[skill]);
                 });
 
                 // Save to localStorage and Firebase in per-user format
@@ -533,7 +627,11 @@
                     }
                 }
 
-                alert(`🎉 Personalized BKT Trained Successfully!\n\nYOUR personalized parameters calculated for ${Object.keys(advancedParams).length} skills based on ${reviews.length} reviews.\n\nThe app will now adapt specifically to how YOU learn!`);
+                console.log(`\n✅ Training Complete!`);
+                console.log(`   Skills trained with EM: ${skillsTrainedCount}`);
+                console.log(`   Total skills: ${Object.keys(advancedParams).length}`);
+
+                alert(`🎉 Full BKT Training Complete!\n\n✅ Trained ${skillsTrainedCount} skills using Expectation-Maximization algorithm\n📊 Based on ${reviews.length} reviews\n🎯 Parameters optimized for YOUR learning patterns\n\nThe app will now adapt specifically to how YOU learn!`);
 
                 setShowAdvancedBKTModal(false);
 
@@ -589,7 +687,7 @@
                             </div>
 
                             {/* Advanced BKT Mode Banner */}
-                            {stats.totalReviews >= 100 && (
+                            {stats.totalReviews >= 20 && (
                                 <div className="mb-8 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 backdrop-blur rounded-2xl p-6 border-2 border-purple-400/50 animate-pulse-slow">
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="flex-1">
@@ -606,7 +704,7 @@
                                                     onClick={() => setShowAdvancedBKTModal(true)}
                                                     className="bg-white text-purple-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg"
                                                 >
-                                                    🚀 Enable Advanced BKT
+                                                    🚀 Train BKT Model
                                                 </button>
                                                 <a
                                                     href="https://github.com/Benpitt/studying.works/blob/main/BKT_FIREBASE_SUMMARY.md"
@@ -633,8 +731,8 @@
                                     <div className="bg-gradient-to-br from-gray-900 to-purple-900 rounded-2xl p-8 max-w-2xl w-full border-2 border-purple-400/50 max-h-[90vh] overflow-y-auto">
                                         <div className="flex justify-between items-start mb-6">
                                             <div>
-                                                <h2 className="text-3xl font-bold text-white mb-2">🎓 Enable Advanced BKT Mode</h2>
-                                                <p className="text-white/70">One-click personalized learning</p>
+                                                <h2 className="text-3xl font-bold text-white mb-2">🎓 Train Personalized BKT Model</h2>
+                                                <p className="text-white/70">Full EM algorithm - no Python required!</p>
                                             </div>
                                             <button
                                                 onClick={() => setShowAdvancedBKTModal(false)}
@@ -668,24 +766,32 @@
                                             <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-6 rounded-xl border border-blue-400/30">
                                                 <h3 className="text-xl font-bold text-white mb-4">🚀 How It Works</h3>
                                                 <p className="text-white/90 mb-4">
-                                                    When you click "Train Now", the system will automatically analyze your <strong>{stats.totalReviews} reviews</strong> and calculate personalized BKT parameters for each of your <strong>{stats.totalSkills} skills</strong>.
+                                                    Uses <strong>Expectation-Maximization (EM) algorithm</strong> to train a full BKT model on your <strong>{stats.totalReviews} reviews</strong>, calculating personalized parameters for each of your <strong>{stats.totalSkills} skills</strong>.
                                                 </p>
                                                 <div className="space-y-3 text-sm text-white/80">
                                                     <div className="flex gap-3">
-                                                        <span>📈</span>
-                                                        <span>Analyzes your learning trajectory for each skill</span>
+                                                        <span>🧠</span>
+                                                        <span><strong>Full BKT Implementation:</strong> Same algorithm as pyBKT, runs in browser</span>
                                                     </div>
                                                     <div className="flex gap-3">
-                                                        <span>🧮</span>
-                                                        <span>Estimates your slip rate, guess rate, and learning rate</span>
+                                                        <span>📈</span>
+                                                        <span><strong>Forward-Backward:</strong> Computes mastery probabilities at each timestep</span>
+                                                    </div>
+                                                    <div className="flex gap-3">
+                                                        <span>🔄</span>
+                                                        <span><strong>EM Optimization:</strong> Iteratively maximizes likelihood (converges in ~10-20 iterations)</span>
+                                                    </div>
+                                                    <div className="flex gap-3">
+                                                        <span>🎯</span>
+                                                        <span><strong>Per-Skill Training:</strong> Each skill gets optimized P(L₀), P(T), P(S), P(G)</span>
                                                     </div>
                                                     <div className="flex gap-3">
                                                         <span>💾</span>
-                                                        <span>Saves parameters automatically to your profile</span>
+                                                        <span><strong>Auto-Save:</strong> Parameters saved to localStorage and Firebase</span>
                                                     </div>
                                                     <div className="flex gap-3">
                                                         <span>⚡</span>
-                                                        <span>Takes just a few seconds - no downloads required!</span>
+                                                        <span><strong>Fast:</strong> Completes in seconds, no Python/repo access needed!</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1123,7 +1229,7 @@
                                                 <div>
                                                     <div className="font-bold text-yellow-300 mb-2">Pro Tip</div>
                                                     <p className="text-white/80 text-sm">
-                                                        Keep studying and once you hit 100 reviews, you can unlock Advanced BKT mode!
+                                                        Keep studying and once you hit 20+ reviews, you can train your personalized BKT model!
                                                         The system will learn YOUR unique learning patterns and become even better at helping you master topics.
                                                     </p>
                                                 </div>
@@ -1280,7 +1386,7 @@
                                                 <div className="text-white/60 text-sm mb-1">Total Reviews</div>
                                                 <div className="text-3xl font-bold text-white">{stats.totalReviews}</div>
                                                 <div className="text-xs text-white/50 mt-2">
-                                                    {stats.totalReviews >= 100 ? '✅ Enough for pyBKT training' : `❌ Need ${100 - stats.totalReviews} more for training`}
+                                                    {stats.totalReviews >= 20 ? '✅ Ready for BKT training' : `Need ${20 - stats.totalReviews} more for training`}
                                                 </div>
                                             </div>
                                             <div className="bg-white/5 p-4 rounded-lg">

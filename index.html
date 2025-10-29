@@ -242,6 +242,11 @@
                 // Check if user is already authenticated (from cached session)
                 const currentUser = await authService.waitForAuthState();
 
+                // Ensure the entry section is visible by removing opacity-0 class
+                const entrySection = document.getElementById('entry-section');
+                entrySection.classList.remove('opacity-0');
+                entrySection.style.opacity = '1';
+
                 if (currentUser && authService.isSessionValid()) {
                     // User is already authenticated, show Enter button instead of redirecting
                     console.log('User already authenticated, showing Enter button...');
@@ -254,6 +259,10 @@
                 }
             } catch (error) {
                 console.error('Auth initialization error:', error);
+                // Ensure visibility even on error
+                const entrySection = document.getElementById('entry-section');
+                entrySection.classList.remove('opacity-0');
+                entrySection.style.opacity = '1';
                 // On error, show Google Sign-In button
                 document.getElementById('google-signin-container').classList.remove('hidden');
                 document.getElementById('enter-container').classList.add('hidden');

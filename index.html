@@ -139,7 +139,8 @@
                     <!-- CTA Section -->
                     <div id="entry-section" class="mb-16 card-appear opacity-0 delay-700">
                         <div id="auth-buttons" class="flex flex-col items-center">
-                            <div class="group relative mb-6">
+                            <!-- Google Sign-In Button (shown when not logged in) -->
+                            <div id="google-signin-container" class="group relative mb-6">
                                 <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
                                 <button id="google-signin-btn" class="relative px-10 py-5 bg-white rounded-3xl flex items-center space-x-4 transform transition-all duration-300 hover:scale-105 shadow-2xl">
                                     <svg class="w-7 h-7" viewBox="0 0 24 24">
@@ -153,6 +154,18 @@
                                     </span>
                                 </button>
                             </div>
+
+                            <!-- Enter Button (shown when already logged in) -->
+                            <div id="enter-container" class="hidden group relative mb-6">
+                                <div class="absolute -inset-1 bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                                <button id="enter-btn" class="relative px-10 py-5 bg-white rounded-3xl flex items-center space-x-4 transform transition-all duration-300 hover:scale-105 shadow-2xl">
+                                    <span class="text-4xl">👋</span>
+                                    <span class="text-xl font-semibold text-gray-900">
+                                        Welcome Back! Click to Enter
+                                    </span>
+                                </button>
+                            </div>
+
                             <p class="text-white/70 text-sm flex items-center space-x-2">
                                 <span>✓ Free forever</span>
                                 <span class="text-white/40">•</span>
@@ -230,13 +243,20 @@
                 const currentUser = await authService.waitForAuthState();
 
                 if (currentUser && authService.isSessionValid()) {
-                    // User is already authenticated, redirect to dashboard
-                    console.log('User already authenticated, redirecting...');
-                    window.location.href = 'dashboard.html';
-                    return;
+                    // User is already authenticated, show Enter button instead of redirecting
+                    console.log('User already authenticated, showing Enter button...');
+                    document.getElementById('google-signin-container').classList.add('hidden');
+                    document.getElementById('enter-container').classList.remove('hidden');
+                } else {
+                    // User not authenticated, show Google Sign-In button
+                    document.getElementById('google-signin-container').classList.remove('hidden');
+                    document.getElementById('enter-container').classList.add('hidden');
                 }
             } catch (error) {
                 console.error('Auth initialization error:', error);
+                // On error, show Google Sign-In button
+                document.getElementById('google-signin-container').classList.remove('hidden');
+                document.getElementById('enter-container').classList.add('hidden');
             }
         }
 
@@ -262,6 +282,21 @@
                 document.getElementById('auth-buttons').classList.remove('hidden');
                 document.getElementById('loading').classList.add('hidden');
                 alert('Sign-in failed: ' + error.message);
+            }
+        });
+
+        // Enter button (for already logged in users)
+        document.getElementById('enter-btn').addEventListener('click', async () => {
+            try {
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('loading').classList.remove('hidden');
+
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Navigation error:', error);
+                document.getElementById('auth-buttons').classList.remove('hidden');
+                document.getElementById('loading').classList.add('hidden');
             }
         });
     </script>

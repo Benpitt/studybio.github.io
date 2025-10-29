@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Path configuration
-const INPUT_FILE = path.join(__dirname, '../files/SAT_Questions.json');
+const INPUT_FILE = path.join(__dirname, '../data/sat_questions.json');
 const OUTPUT_FILE = path.join(__dirname, '../files/SAT_Questions_classified.json');
 
 // Domain to Section mapping
@@ -50,21 +50,26 @@ function determineSection(item) {
  * Extract question text from various formats
  */
 function extractQuestion(item) {
-  // NEW structure
+  // NEW simple structure - question field is a string
+  if (item.question && typeof item.question === 'string') {
+    return item.question;
+  }
+
+  // NEW structure - nested question object
   if (item.question && item.question.question) {
     return item.question.question;
   }
-  
+
   // OLD structure - check for prompt first
   if (item.content && item.content.prompt) {
     return item.content.prompt;
   }
-  
+
   // OLD structure - alternative stimulus field
   if (item.content && item.content.stimulus) {
     return item.content.stimulus;
   }
-  
+
   return '';
 }
 
@@ -72,16 +77,21 @@ function extractQuestion(item) {
  * Extract passage text from various formats
  */
 function extractPassage(item) {
-  // NEW structure
+  // NEW simple structure - passage field directly
+  if (item.passage !== undefined && item.passage !== null && item.passage !== 'null') {
+    return item.passage;
+  }
+
+  // NEW structure - nested paragraph
   if (item.question && item.question.paragraph && item.question.paragraph !== 'null') {
     return item.question.paragraph;
   }
-  
+
   // OLD structure
   if (item.content && item.content.passage) {
     return item.content.passage;
   }
-  
+
   return null;
 }
 
@@ -89,11 +99,16 @@ function extractPassage(item) {
  * Determine question type
  */
 function determineType(item) {
-  // Check if it's a student-produced response (grid-in)
+  // NEW structure - use type field directly if available
+  if (item.type) {
+    return item.type;
+  }
+
+  // OLD structure - check if it's a student-produced response (grid-in)
   if (item.content && item.content.item_format === 'FITB') {
     return 'Student-Produced Response';
   }
-  
+
   return 'Multiple Choice';
 }
 
@@ -101,7 +116,20 @@ function determineType(item) {
  * Extract options/choices
  */
 function extractOptions(item) {
-  // NEW structure
+  // NEW simple structure - array of option strings
+  if (item.options && Array.isArray(item.options)) {
+    // If options is null (for Student-Produced Response), return empty array
+    if (item.options === null) {
+      return [];
+    }
+    // If options are simple strings, convert to labeled format
+    return item.options.map((text, idx) => ({
+      label: String.fromCharCode(65 + idx), // A, B, C, D
+      text: text
+    }));
+  }
+
+  // NEW structure - nested choices object
   if (item.question && item.question.choices) {
     const choices = item.question.choices;
     return Object.keys(choices).map(key => ({
@@ -109,7 +137,7 @@ function extractOptions(item) {
       text: choices[key]
     }));
   }
-  
+
   // OLD structure - choices in answer object
   if (item.content && item.content.answer && item.content.answer.choices) {
     const options = item.content.answer.choices;
@@ -118,7 +146,7 @@ function extractOptions(item) {
       text: options[key].body || options[key]
     }));
   }
-  
+
   // OLD structure - multiple_choice_options
   if (item.content && item.content.multiple_choice_options) {
     const options = item.content.multiple_choice_options;
@@ -127,7 +155,7 @@ function extractOptions(item) {
       text: options[key].body || options[key]
     }));
   }
-  
+
   return [];
 }
 
@@ -135,21 +163,26 @@ function extractOptions(item) {
  * Extract correct answer
  */
 function extractAnswer(item) {
-  // NEW structure
+  // NEW simple structure - answer field directly
+  if (item.answer) {
+    return item.answer;
+  }
+
+  // NEW structure - nested correct_answer
   if (item.question && item.question.correct_answer) {
     return item.question.correct_answer;
   }
-  
+
   // OLD structure - correct_choice in answer object
   if (item.content && item.content.answer && item.content.answer.correct_choice) {
     return item.content.answer.correct_choice.toUpperCase();
   }
-  
+
   // OLD structure - direct correct_choice
   if (item.content && item.content.correct_choice) {
     return item.content.correct_choice.toUpperCase();
   }
-  
+
   return '';
 }
 
@@ -174,16 +207,21 @@ function determineDomain(item) {
  * Determine identifier (skill)
  */
 function determineIdentifier(item) {
-  // NEW structure - try to find identifier in various places
+  // NEW simple structure - identifier field directly
+  if (item.identifier) {
+    return item.identifier;
+  }
+
+  // NEW structure - nested skill
   if (item.question && item.question.skill) {
     return item.question.skill;
   }
-  
+
   // OLD structure has skill_desc
   if (item.skill_desc) {
     return item.skill_desc;
   }
-  
+
   // Fallback to domain if no specific skill
   return determineDomain(item);
 }
@@ -250,21 +288,37 @@ function classifyQuestion(key, item) {
  */
 function classifyQuestions() {
   console.log('Reading SAT Questions from:', INPUT_FILE);
-  
+
   // Read input file
   const rawData = fs.readFileSync(INPUT_FILE, 'utf8');
-  const questions = JSON.parse(rawData);
-  
-  console.log('Total entries in input file:', Object.keys(questions).length);
-  
+  const data = JSON.parse(rawData);
+
+  // Handle different data formats
+  let questionsArray = [];
+  if (data.questions && Array.isArray(data.questions)) {
+    // New format: { "questions": [...] }
+    questionsArray = data.questions;
+    console.log('Total entries in input file:', questionsArray.length);
+  } else if (Array.isArray(data)) {
+    // Array format: [...]
+    questionsArray = data;
+    console.log('Total entries in input file:', questionsArray.length);
+  } else {
+    // Object format: { "id1": {...}, "id2": {...} }
+    questionsArray = Object.values(data);
+    console.log('Total entries in input file:', questionsArray.length);
+  }
+
   // Process each question
   const classified = [];
   let processed = 0;
   let skipped = 0;
-  
-  for (const [key, item] of Object.entries(questions)) {
+
+  for (let i = 0; i < questionsArray.length; i++) {
+    const item = questionsArray[i];
+    const key = item.id || `question_${i}`;
     const classifiedQuestion = classifyQuestion(key, item);
-    
+
     if (classifiedQuestion) {
       classified.push(classifiedQuestion);
       processed++;

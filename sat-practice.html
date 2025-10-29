@@ -409,22 +409,26 @@
             if (!domain) return 'other';
             const d = domain.toLowerCase();
 
-            // Math topics
-            if (d.includes('algebra') || d.includes('equation') || d.includes('function') || d.includes('linear')) return 'algebra';
-            if (d.includes('trig') || d.includes('sine') || d.includes('cosine')) return 'trigonometry';
-            if (d.includes('geometry') || d.includes('circle') || d.includes('triangle') || d.includes('angle')) return 'geometry';
+            // Math topics - more specific categorization
+            if (d.includes('algebra') && !d.includes('advanced')) return 'algebra';
+            if (d.includes('advanced math')) return 'advanced-math';
+            if (d.includes('problem-solving') || d.includes('data analysis')) return 'data-analysis';
+            if (d.includes('geometry') && d.includes('trig')) return 'geometry-trig';
+            if (d.includes('geometry')) return 'geometry';
+            if (d.includes('trig')) return 'trigonometry';
 
-            // English topics - use module to distinguish
-            if (module === 'english' || d.includes('english') || d.includes('grammar') || d.includes('punctuation') || d.includes('writing')) {
-                // If it mentions comprehension, inference, evidence - it's reading
-                if (d.includes('reading') || d.includes('comprehension') || d.includes('inference') || d.includes('evidence') || d.includes('central idea')) {
-                    return 'reading';
-                }
-                // Otherwise it's writing
-                return 'writing';
-            }
+            // Fallback for general math terms
+            if (d.includes('equation') || d.includes('function') || d.includes('linear')) return 'algebra';
 
+            // Reading & Writing topics
+            if (d.includes('information and ideas')) return 'information-ideas';
+            if (d.includes('craft and structure')) return 'craft-structure';
+            if (d.includes('expression of ideas')) return 'expression-ideas';
+            if (d.includes('standard english') || d.includes('conventions')) return 'english-conventions';
+
+            // Fallback for general reading/writing terms
             if (d.includes('reading') || d.includes('comprehension') || d.includes('inference')) return 'reading';
+            if (d.includes('writing') || d.includes('grammar') || d.includes('punctuation')) return 'writing';
 
             return 'other';
         }
@@ -443,11 +447,14 @@
 
             const topics = [
                 { id: 'algebra', name: 'Algebra', icon: '📐', count: getTopicCount('algebra') },
-                { id: 'trigonometry', name: 'Trigonometry', icon: '📊', count: getTopicCount('trigonometry') },
-                { id: 'geometry', name: 'Geometry', icon: '🔺', count: getTopicCount('geometry') },
-                { id: 'reading', name: 'Reading', icon: '📖', count: getTopicCount('reading') },
-                { id: 'writing', name: 'Writing', icon: '✍️', count: getTopicCount('writing') }
-            ];
+                { id: 'advanced-math', name: 'Advanced Math', icon: '🔢', count: getTopicCount('advanced-math') },
+                { id: 'data-analysis', name: 'Data Analysis', icon: '📊', count: getTopicCount('data-analysis') },
+                { id: 'geometry-trig', name: 'Geometry & Trig', icon: '🔺', count: getTopicCount('geometry-trig') },
+                { id: 'information-ideas', name: 'Information & Ideas', icon: '💡', count: getTopicCount('information-ideas') },
+                { id: 'craft-structure', name: 'Craft & Structure', icon: '🏗️', count: getTopicCount('craft-structure') },
+                { id: 'expression-ideas', name: 'Expression of Ideas', icon: '✍️', count: getTopicCount('expression-ideas') },
+                { id: 'english-conventions', name: 'English Conventions', icon: '📖', count: getTopicCount('english-conventions') }
+            ].filter(topic => topic.count > 0);
 
             const toggleTopic = (topicId) => {
                 setSelectedTopics(prev =>

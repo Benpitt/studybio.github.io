@@ -517,8 +517,8 @@
 
             // Load questions from JSON
             useEffect(() => {
-                console.log('Attempting to load SAT_Questions.json...');
-                fetch('/SAT_Questions.json')
+                console.log('Attempting to load SAT questions...');
+                fetch('data/sat_questions.json')
                     .then(res => {
                         if (!res.ok) {
                             throw new Error(`HTTP error! status: ${res.status}`);
@@ -614,8 +614,8 @@
                         setAllQuestions(questionsArray);
                     })
                     .catch(err => {
-                        console.error('Error loading SAT_Questions.json:', err.message);
-                        console.log('Using fallback sample question. Upload SAT_Questions.json to use real data.');
+                        console.error('Error loading SAT questions:', err.message);
+                        console.log('Using fallback sample question. Check data/sat_questions.json exists.');
                         // Use fallback sample questions
                         setAllQuestions([getSampleQuestion()]);
                     });

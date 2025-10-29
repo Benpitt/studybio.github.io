@@ -31,7 +31,10 @@ class SATTestGenerator {
 
     async loadQuestions() {
         try {
-            const response = await fetch('../../files/SAT_Questions_classified.json');
+            const response = await fetch('/files/SAT_Questions_classified.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             this.questions = await response.json();
             console.log('Loaded questions:', Object.keys(this.questions).length);
             return true;

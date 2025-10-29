@@ -74,25 +74,34 @@
             const [currentDeck, setCurrentDeck] = useState(null);
             const [currentGroup, setCurrentGroup] = useState(null);
             const [combinedCards, setCombinedCards] = useState([]);
-            
+
+            // Manual deck creation
+            const [newDeck, setNewDeck] = useState({
+                title: '',
+                subject: '',
+                description: '',
+                cards: [{ question: '', answer: '' }]
+            });
+            const [editingDeckId, setEditingDeckId] = useState(null);
+
             // Flashcard mode
             const [currentCard, setCurrentCard] = useState(0);
             const [showAnswer, setShowAnswer] = useState(false);
             const [cardDifficulty, setCardDifficulty] = useState({});
             const [shuffledCards, setShuffledCards] = useState([]);
-            
+
             // Practice test
             const [testQuestions, setTestQuestions] = useState([]);
             const [testAnswers, setTestAnswers] = useState({});
             const [testSubmitted, setTestSubmitted] = useState(false);
-            
+
             // Matching game
             const [matchPairs, setMatchPairs] = useState([]);
             const [selectedMatch, setSelectedMatch] = useState(null);
             const [matchedPairs, setMatchedPairs] = useState([]);
             const [matchScore, setMatchScore] = useState(0);
             const [matchAttempts, setMatchAttempts] = useState(0);
-            
+
             // Speed challenge
             const [speedQuestions, setSpeedQuestions] = useState([]);
             const [speedCurrentQ, setSpeedCurrentQ] = useState(0);
@@ -172,6 +181,93 @@
                     created: new Date().toISOString()
                 };
                 saveGroups([...groups, newGroup]);
+            }
+
+            // Manual deck creation functions
+            function startCreateDeck() {
+                setNewDeck({
+                    title: '',
+                    subject: '',
+                    description: '',
+                    cards: [{ question: '', answer: '' }]
+                });
+                setEditingDeckId(null);
+                setMode('create-deck');
+            }
+
+            function startEditDeck(deck) {
+                setNewDeck({
+                    title: deck.title,
+                    subject: deck.subject || '',
+                    description: deck.description || '',
+                    cards: deck.cards.map(c => ({ question: c.question, answer: c.answer }))
+                });
+                setEditingDeckId(deck.id);
+                setMode('create-deck');
+            }
+
+            function addCardToNewDeck() {
+                setNewDeck({
+                    ...newDeck,
+                    cards: [...newDeck.cards, { question: '', answer: '' }]
+                });
+            }
+
+            function removeCardFromNewDeck(index) {
+                if (newDeck.cards.length === 1) {
+                    alert('Deck must have at least one card');
+                    return;
+                }
+                setNewDeck({
+                    ...newDeck,
+                    cards: newDeck.cards.filter((_, i) => i !== index)
+                });
+            }
+
+            function updateNewDeckCard(index, field, value) {
+                const updatedCards = newDeck.cards.map((card, i) =>
+                    i === index ? { ...card, [field]: value } : card
+                );
+                setNewDeck({ ...newDeck, cards: updatedCards });
+            }
+
+            function saveManualDeck() {
+                // Validate
+                if (!newDeck.title.trim()) {
+                    alert('Please enter a deck title');
+                    return;
+                }
+
+                const validCards = newDeck.cards.filter(c => c.question.trim() && c.answer.trim());
+                if (validCards.length === 0) {
+                    alert('Please add at least one card with both question and answer');
+                    return;
+                }
+
+                // Create deck object
+                const deckToSave = {
+                    id: editingDeckId || Date.now(),
+                    title: newDeck.title.trim(),
+                    subject: newDeck.subject.trim() || 'General',
+                    description: newDeck.description.trim(),
+                    cards: validCards.map((c, i) => ({
+                        id: Date.now() + i,
+                        question: c.question.trim(),
+                        answer: c.answer.trim()
+                    })),
+                    created: new Date().toISOString()
+                };
+
+                // Save to decks
+                if (editingDeckId) {
+                    saveDecks(decks.map(d => d.id === editingDeckId ? deckToSave : d));
+                } else {
+                    saveDecks([...decks, deckToSave]);
+                }
+
+                // Reset and go back
+                setMode('decks');
+                setEditingDeckId(null);
             }
 
             function addDeckToGroup(groupId, deckId) {
@@ -348,6 +444,134 @@
 // PART 4: Render - Decks Library
 // Insert after "// PASTE PART 4 HERE" in Part 3
 
+            // Create/Edit Deck Mode
+            if (mode === 'create-deck') {
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">
+                                    ← Back to Library
+                                </button>
+
+                                <div className="bg-white/95 backdrop-blur rounded-3xl p-8 shadow-2xl">
+                                    <h2 className="text-4xl font-bold text-gray-800 mb-6">
+                                        {editingDeckId ? '✏️ Edit Deck' : '✨ Create New Deck'}
+                                    </h2>
+
+                                    {/* Deck Info */}
+                                    <div className="mb-6">
+                                        <label className="block text-gray-700 font-bold mb-2">Deck Title *</label>
+                                        <input
+                                            type="text"
+                                            value={newDeck.title}
+                                            onChange={(e) => setNewDeck({ ...newDeck, title: e.target.value })}
+                                            placeholder="e.g., Spanish Vocabulary, Biology Chapter 5"
+                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-gray-700 font-bold mb-2">Subject</label>
+                                            <input
+                                                type="text"
+                                                value={newDeck.subject}
+                                                onChange={(e) => setNewDeck({ ...newDeck, subject: e.target.value })}
+                                                placeholder="e.g., Spanish, Biology"
+                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-gray-700 font-bold mb-2">Description</label>
+                                            <input
+                                                type="text"
+                                                value={newDeck.description}
+                                                onChange={(e) => setNewDeck({ ...newDeck, description: e.target.value })}
+                                                placeholder="Optional description"
+                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Cards */}
+                                    <div className="mb-6">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h3 className="text-2xl font-bold text-gray-800">Flashcards</h3>
+                                            <span className="text-gray-600">{newDeck.cards.length} cards</span>
+                                        </div>
+
+                                        <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                            {newDeck.cards.map((card, index) => (
+                                                <div key={index} className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl border-2 border-blue-200">
+                                                    <div className="flex justify-between items-center mb-3">
+                                                        <span className="font-bold text-gray-700">Card {index + 1}</span>
+                                                        {newDeck.cards.length > 1 && (
+                                                            <button
+                                                                onClick={() => removeCardFromNewDeck(index)}
+                                                                className="text-red-500 hover:text-red-700 font-bold"
+                                                            >
+                                                                Remove ✕
+                                                            </button>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="mb-3">
+                                                        <label className="block text-gray-700 font-semibold mb-1 text-sm">Question *</label>
+                                                        <textarea
+                                                            value={card.question}
+                                                            onChange={(e) => updateNewDeckCard(index, 'question', e.target.value)}
+                                                            placeholder="Enter the question or prompt"
+                                                            rows="2"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-gray-700 font-semibold mb-1 text-sm">Answer *</label>
+                                                        <textarea
+                                                            value={card.answer}
+                                                            onChange={(e) => updateNewDeckCard(index, 'answer', e.target.value)}
+                                                            placeholder="Enter the answer"
+                                                            rows="2"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <button
+                                            onClick={addCardToNewDeck}
+                                            className="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:shadow-lg text-white py-3 rounded-xl font-bold transition-all"
+                                        >
+                                            ➕ Add Another Card
+                                        </button>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={() => setMode('decks')}
+                                            className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-xl font-bold transition-all"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={saveManualDeck}
+                                            className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-2xl text-white py-3 rounded-xl font-bold transition-all"
+                                        >
+                                            {editingDeckId ? '💾 Save Changes' : '🎉 Create Deck'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
             if (mode === 'decks') {
                 return (
                     <div className="min-h-screen">
@@ -359,6 +583,9 @@
                                     <div className="flex gap-3">
                                         <button onClick={createGroup} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-bold transition-all">
                                             ➕ New Group
+                                        </button>
+                                        <button onClick={startCreateDeck} className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-2xl text-white px-6 py-3 rounded-xl font-bold transition-all">
+                                            ✏️ Create Manually
                                         </button>
                                         <a href="ai-flashcards.html" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-2xl text-white px-6 py-3 rounded-xl font-bold transition-all">
                                             🤖 Create with AI
@@ -395,10 +622,15 @@
                                     <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
                                         <div className="text-8xl mb-4">📚</div>
                                         <h3 className="text-2xl font-bold text-white mb-4">No decks yet!</h3>
-                                        <p className="text-white/70 mb-6">Create your first deck with AI</p>
-                                        <a href="ai-flashcards.html" className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
-                                            🤖 Create with AI
-                                        </a>
+                                        <p className="text-white/70 mb-6">Create your first deck manually or with AI</p>
+                                        <div className="flex gap-4 justify-center">
+                                            <button onClick={startCreateDeck} className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
+                                                ✏️ Create Manually
+                                            </button>
+                                            <a href="ai-flashcards.html" className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
+                                                🤖 Create with AI
+                                            </a>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -406,7 +638,10 @@
                                             <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all">
                                                 <div className="flex justify-between items-start mb-3">
                                                     <h3 className="text-2xl font-bold text-gray-800">{deck.title}</h3>
-                                                    <button onClick={() => deleteDeck(deck.id)} className="text-red-500 hover:text-red-700">🗑️</button>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => startEditDeck(deck)} className="text-blue-500 hover:text-blue-700" title="Edit deck">✏️</button>
+                                                        <button onClick={() => deleteDeck(deck.id)} className="text-red-500 hover:text-red-700" title="Delete deck">🗑️</button>
+                                                    </div>
                                                 </div>
                                                 <p className="text-gray-600 mb-2">{deck.subject || 'General'}</p>
                                                 <p className="text-sm text-gray-500 mb-4">{deck.cards.length} cards</p>

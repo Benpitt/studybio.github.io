@@ -16,40 +16,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
-    <style>
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-        .animate-slide-in {
-            animation: slideIn 0.5s ease-out forwards;
-        }
-        .animate-pulse-custom {
-            animation: pulse 2s infinite;
-        }
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            background-size: 1000px 100%;
-            animation: shimmer 3s infinite;
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-    </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 " style="background: linear-gradient(to bottom right, #0a0a1a, #1e1b4b, #134e4a); min-height: 100vh;">
+<body>
     <script type="module" src="auth-guard.js"></script>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,28 +69,28 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        <div class="mb-4 animate-slide-in" style="animation-delay: 0.1s; opacity: 0;">
+        <div class="mb-4 animate-slide-in delay-100 opacity-0">
             <h1 id="greeting" class="text-3xl font-bold text-white mb-1">Welcome! 👋</h1>
             <p class="text-base text-blue-200">Ready to crush some studying?</p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            <div class="card-gradient-fire rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.2s;">
+            <div class="card-gradient-fire rounded-xl p-4 text-white card-hover animate-slide-in delay-200">
                 <div class="text-3xl mb-1">🔥</div>
                 <div class="text-2xl font-bold"><span id="stat-streak">0</span></div>
                 <div class="text-xs text-orange-100 font-semibold">Day Streak</div>
             </div>
-            <div class="card-gradient-blue rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.3s;">
+            <div class="card-gradient-blue rounded-xl p-4 text-white card-hover animate-slide-in delay-300">
                 <div class="text-3xl mb-1">🎴</div>
                 <div class="text-2xl font-bold"><span id="stat-cards">0</span></div>
                 <div class="text-xs text-blue-100 font-semibold">Cards Reviewed</div>
             </div>
-            <div class="card-gradient-success rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.4s;">
+            <div class="card-gradient-success rounded-xl p-4 text-white card-hover animate-slide-in delay-400">
                 <div class="text-3xl mb-1">📝</div>
                 <div class="text-2xl font-bold"><span id="stat-quizzes">0</span></div>
                 <div class="text-xs text-green-100 font-semibold">Quizzes Taken</div>
             </div>
-            <div class="card-gradient-purple rounded-xl p-4 text-white card-hover animate-slide-in" style="animation-delay: 0.5s;">
+            <div class="card-gradient-purple rounded-xl p-4 text-white card-hover animate-slide-in delay-500">
                 <div class="text-3xl mb-1">🎯</div>
                 <div class="text-2xl font-bold"><span id="stat-accuracy">0</span>%</div>
                 <div class="text-xs text-purple-100 font-semibold">Avg Accuracy</div>
@@ -131,7 +99,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2">
-                <div class="animate-slide-in" style="animation-delay: 0.6s;">
+                <div class="animate-slide-in delay-600">
                     <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
                         <span>📚</span>
                         <span class="ml-2">Study Apps</span>
@@ -262,9 +230,9 @@
             </div>
 
             <div class="space-y-4">
-                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.7s;"></div>
+                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in delay-700"></div>
 
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in" style="animation-delay: 0.8s;">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in delay-800">
                     <h3 class="text-xl font-bold text-white mb-3 flex items-center">
                         <span>🏆</span>
                         <span class="ml-2">Achievements</span>
@@ -277,7 +245,7 @@
                     </div>
                 </div>
 
-                <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in" style="animation-delay: 1s;">
+                <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in delay-800">
                     <h3 class="text-xl font-bold text-white mb-3">🚀 Quick Actions</h3>
                     <div class="space-y-2">
                         <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">

@@ -497,6 +497,35 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* Shimmer effect for card hovers */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
+}
+
 [class*="card-gradient-"]:hover .shimmer {
     opacity: 1 !important;
+}
+
+/* Pulse scale animation for elements */
+@keyframes pulse-scale {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-custom {
+    animation: pulse-scale 2s infinite;
 }

@@ -14,15 +14,8 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
     <style>
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
         @keyframes fillBar {
             from { width: 0%; }
-        }
-        .animate-slide-in {
-            animation: slideIn 0.5s ease-out forwards;
         }
         .animate-fill {
             animation: fillBar 1s ease-out forwards;
@@ -35,7 +28,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 " style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
+<body>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -62,7 +55,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div class="card-gradient-fire rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.1s;">
+            <div class="card-gradient-fire rounded-2xl p-6 text-white animate-slide-in delay-100">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-5xl">🔥</div>
                     <div class="text-3xl font-bold"><span id="total-streak">0</span></div>
@@ -71,7 +64,7 @@
                 <div class="text-sm text-orange-100 mt-1">Days in a row</div>
             </div>
 
-            <div class="card-gradient-blue rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.2s;">
+            <div class="card-gradient-blue rounded-2xl p-6 text-white animate-slide-in delay-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-5xl">🎴</div>
                     <div class="text-3xl font-bold"><span id="total-cards">0</span></div>
@@ -80,7 +73,7 @@
                 <div class="text-sm text-blue-100 mt-1">Across all subjects</div>
             </div>
 
-            <div class="card-gradient-success rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.3s;">
+            <div class="card-gradient-success rounded-2xl p-6 text-white animate-slide-in delay-300">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-5xl">📝</div>
                     <div class="text-3xl font-bold"><span id="total-quizzes">0</span></div>
@@ -89,7 +82,7 @@
                 <div class="text-sm text-green-100 mt-1">Completed</div>
             </div>
 
-            <div class="card-gradient-purple rounded-2xl p-6 text-white animate-slide-in" style="animation-delay: 0.4s;">
+            <div class="card-gradient-purple rounded-2xl p-6 text-white animate-slide-in delay-400">
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-5xl">🎯</div>
                     <div class="text-3xl font-bold"><span id="avg-accuracy">0</span>%</div>

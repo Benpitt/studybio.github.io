@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Path configuration
-const INPUT_FILE = path.join(__dirname, '../data/sat_questions.json');
+const INPUT_FILE = path.join(__dirname, '../files/SAT_Questions.json');
 const OUTPUT_FILE = path.join(__dirname, '../files/SAT_Questions_classified.json');
 
 // Domain to Section mapping

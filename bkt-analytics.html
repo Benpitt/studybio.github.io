@@ -495,29 +495,45 @@
                     console.log(`✅ Trained ${skill}:`, advancedParams[skill]);
                 });
 
-                // Save to localStorage and Firebase
-                localStorage.setItem('bkt_advanced_params', JSON.stringify(advancedParams));
-                localStorage.setItem('bkt_mode', 'advanced');
+                // Save to localStorage and Firebase in per-user format
+                const userId = localStorage.getItem('userId');
+
+                // Load existing user params or create new structure
+                let allUserParams = {};
+                const existingParamsStr = localStorage.getItem('bkt_user_params');
+                if (existingParamsStr) {
+                    try {
+                        allUserParams = JSON.parse(existingParamsStr);
+                    } catch (e) {
+                        console.error('Error loading existing params:', e);
+                    }
+                }
+
+                // Update this user's parameters
+                allUserParams[userId] = advancedParams;
+
+                // Save back to localStorage
+                localStorage.setItem('bkt_user_params', JSON.stringify(allUserParams));
+                console.log('✅ Saved personalized parameters for user:', userId);
 
                 // Save to Firebase
-                const userId = localStorage.getItem('userId');
                 if (window.firebaseReady && userId && window.db) {
                     try {
                         const { setDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
-                        const paramsDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktAdvancedParams');
+                        const paramsDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktUserParams');
                         await setDoc(paramsDocRef, {
                             params: advancedParams,
                             trainedAt: new Date(),
                             reviewCount: reviews.length,
-                            mode: 'advanced'
+                            trainingMethod: 'quick-train'
                         });
-                        console.log('✅ Advanced BKT parameters saved to Firebase');
+                        console.log('✅ Personalized BKT parameters saved to Firebase');
                     } catch (error) {
                         console.error('❌ Error saving to Firebase:', error);
                     }
                 }
 
-                alert(`🎉 Advanced BKT Trained Successfully!\n\nPersonalized parameters calculated for ${Object.keys(advancedParams).length} skills based on ${reviews.length} reviews.\n\nAdvanced mode is now active! Your study sessions will use these personalized parameters.`);
+                alert(`🎉 Personalized BKT Trained Successfully!\n\nYOUR personalized parameters calculated for ${Object.keys(advancedParams).length} skills based on ${reviews.length} reviews.\n\nThe app will now adapt specifically to how YOU learn!`);
 
                 setShowAdvancedBKTModal(false);
 

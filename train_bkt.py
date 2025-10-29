@@ -68,64 +68,114 @@ def check_data_quality(df):
     return True
 
 
-def train_bkt_model(df, num_fits=5):
-    """Train BKT model on review data"""
-    print("\n🧠 Training BKT Model...")
-    
-    # Initialize model
-    model = Model(seed=42, num_fits=num_fits)
-    
-    # Fit model
-    # multigs=True allows different learning rates per skill
-    model.fit(
-        data=df,
-        skills='skill',
-        multigs=True,
-        forgets=False  # Set to True if you want to model forgetting
-    )
-    
-    print("✅ Model trained!")
-    
-    # Get learned parameters
-    params = model.params()
-    
-    print("\n📊 Learned Parameters (per skill):")
-    print("   P(L0) = Prior knowledge")
-    print("   P(T)  = Learning rate")
-    print("   P(S)  = Slip rate (know it but get wrong)")
-    print("   P(G)  = Guess rate (don't know but get right)")
-    
-    for skill in params['skill'].unique():
-        skill_params = params[params['skill'] == skill].iloc[0]
-        print(f"\n   {skill}:")
-        print(f"      P(L0) = {skill_params['prior']:.3f}")
-        print(f"      P(T)  = {skill_params['learns']:.3f}")
-        print(f"      P(S)  = {skill_params['slips']:.3f}")
-        print(f"      P(G)  = {skill_params['guesses']:.3f}")
-    
-    return model, params
+def train_bkt_model_per_user(df, num_fits=5):
+    """Train individual BKT models for each user"""
+    print("\n🧠 Training Per-User BKT Models...")
+    print("   This allows each person to have their own learning profile!")
+
+    user_models = {}
+    user_params = {}
+
+    for user_id in df['user_id'].unique():
+        user_data = df[df['user_id'] == user_id]
+
+        print(f"\n👤 Training model for user: {user_id[:8]}...")
+        print(f"   Reviews: {len(user_data)}")
+
+        # Check if user has enough data
+        if len(user_data) < 10:
+            print(f"   ⚠️  Skipping - need at least 10 reviews per user")
+            continue
+
+        # Initialize model for this user
+        model = Model(seed=42, num_fits=num_fits)
+
+        # Fit model on this user's data only
+        try:
+            model.fit(
+                data=user_data,
+                skills='skill',
+                multigs=True,  # Different rates per skill
+                forgets=False
+            )
+
+            # Get learned parameters for this user
+            params = model.params()
+
+            # Store in dict: {skill: {learn, slip, guess, prior}}
+            user_skill_params = {}
+            for skill in params['skill'].unique():
+                skill_params = params[params['skill'] == skill].iloc[0]
+                user_skill_params[skill] = {
+                    'prior': float(skill_params['prior']),
+                    'learn': float(skill_params['learns']),
+                    'slip': float(skill_params['slips']),
+                    'guess': float(skill_params['guesses'])
+                }
+
+            user_models[user_id] = model
+            user_params[user_id] = user_skill_params
+
+            print(f"   ✅ Trained on {len(user_skill_params)} skills")
+
+        except Exception as e:
+            print(f"   ❌ Error training model: {e}")
+            continue
+
+    print(f"\n✅ Trained models for {len(user_models)} users!")
+
+    # Show example parameters
+    if user_params:
+        example_user = list(user_params.keys())[0]
+        print(f"\n📊 Example Parameters for user {example_user[:8]}:")
+        print("   P(L0) = Prior knowledge")
+        print("   P(T)  = Learning rate")
+        print("   P(S)  = Slip rate (know it but get wrong)")
+        print("   P(G)  = Guess rate (don't know but get right)")
+
+        for skill, params in list(user_params[example_user].items())[:3]:
+            print(f"\n   {skill}:")
+            print(f"      P(L0) = {params['prior']:.3f}")
+            print(f"      P(T)  = {params['learn']:.3f}")
+            print(f"      P(S)  = {params['slip']:.3f}")
+            print(f"      P(G)  = {params['guess']:.3f}")
+
+    return user_models, user_params
 
 
-def calculate_mastery_scores(model, df):
-    """Calculate current mastery score for each user-skill pair"""
-    print("\n🎯 Calculating Mastery Scores...")
-    
+def calculate_mastery_scores(user_models, df):
+    """Calculate current mastery score for each user-skill pair using their personal model"""
+    print("\n🎯 Calculating Individual Mastery Scores...")
+
     mastery = {}
-    
-    for user in df['user_id'].unique():
-        user_data = df[df['user_id'] == user]
-        mastery[user] = {}
-        
+
+    for user_id in df['user_id'].unique():
+        user_data = df[df['user_id'] == user_id]
+        mastery[user_id] = {}
+
+        # Skip if no model for this user
+        if user_id not in user_models:
+            print(f"   ⚠️  No model for user {user_id[:8]}, using default scores")
+            for skill in user_data['skill'].unique():
+                mastery[user_id][skill] = 0.5
+            continue
+
+        model = user_models[user_id]
+
         for skill in user_data['skill'].unique():
             skill_data = user_data[user_data['skill'] == skill]
-            
-            # Predict mastery after all reviews
-            predictions = model.predict(data=skill_data)
-            
-            # Get final mastery probability
-            final_mastery = predictions['state_predictions'].iloc[-1]
-            mastery[user][skill] = float(final_mastery)
-    
+
+            try:
+                # Predict mastery after all reviews using THEIR model
+                predictions = model.predict(data=skill_data)
+
+                # Get final mastery probability
+                final_mastery = predictions['state_predictions'].iloc[-1]
+                mastery[user_id][skill] = float(final_mastery)
+            except Exception as e:
+                print(f"   ⚠️  Error calculating mastery for {skill}: {e}")
+                mastery[user_id][skill] = 0.5
+
     return mastery
 
 
@@ -138,14 +188,15 @@ def export_mastery_scores(mastery, output_file='mastery_scores.json'):
     print(f"   Upload this to your app!")
 
 
-def export_model_params(params, output_file='bkt_params.json'):
-    """Export model parameters"""
-    params_dict = params.to_dict('records')
-    
+def export_model_params(user_params, output_file='bkt_params.json'):
+    """Export per-user model parameters"""
+    # Structure: {userId: {skill: {learn, slip, guess, prior}}}
+
     with open(output_file, 'w') as f:
-        json.dump(params_dict, f, indent=2)
-    
-    print(f"💾 Model parameters saved to {output_file}")
+        json.dump(user_params, f, indent=2)
+
+    print(f"💾 Per-user model parameters saved to {output_file}")
+    print(f"   Contains individualized learning profiles for {len(user_params)} users")
 
 
 def main():
@@ -175,24 +226,31 @@ def main():
         print("   Keep studying! Come back when you have 100+ reviews.")
         return
     
-    # Train model
-    model, params = train_bkt_model(df, num_fits=5)
-    
-    # Calculate mastery
-    mastery = calculate_mastery_scores(model, df)
-    
+    # Train per-user models
+    user_models, user_params = train_bkt_model_per_user(df, num_fits=5)
+
+    # Calculate mastery using individual models
+    mastery = calculate_mastery_scores(user_models, df)
+
     # Export results
     export_mastery_scores(mastery)
-    export_model_params(params)
-    
+    export_model_params(user_params)
+
     print("\n" + "=" * 50)
     print("✅ Training Complete!")
     print("=" * 50)
+    print("\n🎯 What's Different Now:")
+    print("   • Each user has their own BKT parameters")
+    print("   • Learning rates adapt to individual patterns")
+    print("   • Slip/guess rates reflect personal tendencies")
+    print("   • TRUE personalized learning!")
     print("\n📤 Next steps:")
-    print("   1. Upload mastery_scores.json to your app")
-    print("   2. Update localStorage in browser:")
-    print("      localStorage.setItem('bkt_mastery_scores', <paste contents>)")
-    print("   3. Retrain weekly as you get more data!")
+    print("   1. The app will automatically sync these from Firebase")
+    print("   2. Or manually update in browser console:")
+    print("      const params = <paste bkt_params.json>;")
+    print("      localStorage.setItem('bkt_user_params', JSON.stringify(params));")
+    print("   3. Enable advanced mode to use personalized parameters")
+    print("   4. Retrain weekly as you get more data!")
 
 
 if __name__ == '__main__':

@@ -37,12 +37,30 @@ docs = reviews_ref.stream()
 reviews = []
 for doc in docs:
     data = doc.to_dict()
-    
+
     # Convert Firestore timestamp to ISO string
     if 'timestamp' in data and data['timestamp']:
         data['timestamp'] = data['timestamp'].isoformat()
-    
-    reviews.append(data)
+
+    # Normalize field names from camelCase to snake_case for Python
+    normalized = {
+        'user_id': data.get('userId'),
+        'skill': data.get('skill'),
+        'correct': data.get('correct'),
+        'timestamp': data.get('timestamp'),
+        'card_id': data.get('cardId'),
+        'response_time': data.get('responseTime'),
+        'question_type': data.get('questionType'),
+        'time_of_day': data.get('timeOfDay'),
+        'day_of_week': data.get('dayOfWeek'),
+        'selected_option': data.get('selectedOption'),
+        'total_options': data.get('totalOptions')
+    }
+
+    # Remove None values
+    normalized = {k: v for k, v in normalized.items() if v is not None}
+
+    reviews.append(normalized)
 
 print(f"✅ Found {len(reviews)} reviews")
 
@@ -64,8 +82,8 @@ print(f"\n💾 Exported to {output_file}")
 print(f"   Total reviews: {len(reviews)}")
 
 # Show stats
-users = set(r.get('userId') for r in reviews)
-skills = set(r.get('skill') for r in reviews)
+users = set(r.get('user_id') for r in reviews if r.get('user_id'))
+skills = set(r.get('skill') for r in reviews if r.get('skill'))
 correct_count = sum(1 for r in reviews if r.get('correct') == 1)
 accuracy = (correct_count / len(reviews) * 100) if reviews else 0
 

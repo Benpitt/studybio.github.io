@@ -518,7 +518,7 @@
             // Load questions from JSON
             useEffect(() => {
                 console.log('Attempting to load SAT questions...');
-                fetch('data/sat_questions.json')
+                fetch('files/SAT_Questions_classified.json')
                     .then(res => {
                         if (!res.ok) {
                             throw new Error(`HTTP error! status: ${res.status}`);
@@ -539,10 +539,34 @@
                             console.log(`Found ${allQuestions.length} questions`);
 
                             questionsArray = allQuestions.map(q => {
-                                // Detect format: CB has 'content' property, clean format has 'question' property
+                                // Detect format: CB has 'content' property, clean format has 'question' property, classified has 'options' array
                                 const isCBFormat = q.content !== undefined;
+                                const isClassifiedFormat = q.options !== undefined && Array.isArray(q.options);
 
-                                if (isCBFormat) {
+                                if (isClassifiedFormat) {
+                                    // Parse classified format (from SAT_Questions_classified.json)
+                                    let choices = null;
+                                    if (q.options && q.options.length > 0) {
+                                        choices = q.options.map(opt => {
+                                            const label = opt.label || opt.letter || '';
+                                            const text = opt.text || opt.content || opt.body || '';
+                                            return `${label}) ${text}`;
+                                        });
+                                    }
+
+                                    return {
+                                        id: q.id,
+                                        domain: q.domain || q.identifier || 'General',
+                                        module: q.section,
+                                        question: q.question,
+                                        passage: q.passage !== 'null' && q.passage ? q.passage : null,
+                                        choices: choices,
+                                        correct: q.answer,
+                                        explanation: q.explanation || 'No explanation available',
+                                        difficulty: q.difficulty,
+                                        format: 'classified'
+                                    };
+                                } else if (isCBFormat) {
                                     // Parse CB format
                                     const content = q.content || {};
                                     const isMCQ = content.type === 'mcq';
@@ -615,7 +639,7 @@
                     })
                     .catch(err => {
                         console.error('Error loading SAT questions:', err.message);
-                        console.log('Using fallback sample question. Check data/sat_questions.json exists.');
+                        console.log('Using fallback sample question. Check files/SAT_Questions_classified.json exists.');
                         // Use fallback sample questions
                         setAllQuestions([getSampleQuestion()]);
                     });

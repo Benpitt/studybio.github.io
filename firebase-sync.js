@@ -5,6 +5,7 @@
  */
 
 import { getFirestore, doc, setDoc, getDoc, getDocs, collection, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { debugLog, debugError } from './config.js';
 
 class FirebaseSync {
     constructor(db, userId) {
@@ -26,7 +27,7 @@ class FirebaseSync {
         };
 
         await setDoc(doc(this.db, 'users', this.userId), userData, { merge: true });
-        console.log('✅ User profile synced');
+        debugLog('✅ User profile synced');
     }
 
     /**
@@ -43,7 +44,7 @@ class FirebaseSync {
             });
         }
         
-        console.log(`✅ Synced ${decks.length} flashcard decks`);
+        debugLog(`✅ Synced ${decks.length} flashcard decks`);
     }
 
     /**
@@ -60,7 +61,7 @@ class FirebaseSync {
             syncedAt: serverTimestamp()
         });
         
-        console.log('✅ Flashcard progress synced');
+        debugLog('✅ Flashcard progress synced');
     }
 
     /**
@@ -77,7 +78,7 @@ class FirebaseSync {
             syncedAt: serverTimestamp()
         });
         
-        console.log('✅ Quiz progress synced');
+        debugLog('✅ Quiz progress synced');
     }
 
     /**
@@ -94,7 +95,7 @@ class FirebaseSync {
             });
         }
         
-        console.log(`✅ Synced ${assignments.length} assignments`);
+        debugLog(`✅ Synced ${assignments.length} assignments`);
     }
 
     /**
@@ -111,14 +112,14 @@ class FirebaseSync {
             syncedAt: serverTimestamp()
         });
         
-        console.log('✅ BKT mastery scores synced');
+        debugLog('✅ BKT mastery scores synced');
     }
 
     /**
      * Sync ALL data at once
      */
     async syncAll() {
-        console.log('🔄 Starting full sync...');
+        debugLog('🔄 Starting full sync...');
         
         try {
             await this.syncUserProfile();
@@ -131,10 +132,10 @@ class FirebaseSync {
             // Mark last sync time
             localStorage.setItem('lastSync', new Date().toISOString());
             
-            console.log('✅ Full sync complete!');
+            debugLog('✅ Full sync complete!');
             return true;
         } catch (error) {
-            console.error('❌ Sync failed:', error);
+            debugError('❌ Sync failed:', error);
             return false;
         }
     }
@@ -143,7 +144,7 @@ class FirebaseSync {
      * Load data FROM Firebase TO localStorage
      */
     async loadFromFirebase() {
-        console.log('📥 Loading data from Firebase...');
+        debugLog('📥 Loading data from Firebase...');
         
         try {
             // Load user profile
@@ -190,10 +191,10 @@ class FirebaseSync {
                 localStorage.setItem('bkt_mastery_scores', JSON.stringify(masteryDoc.data().scores));
             }
 
-            console.log('✅ Data loaded from Firebase');
+            debugLog('✅ Data loaded from Firebase');
             return true;
         } catch (error) {
-            console.error('❌ Load failed:', error);
+            debugError('❌ Load failed:', error);
             return false;
         }
     }
@@ -207,7 +208,7 @@ class FirebaseSync {
 
         // Then sync every X minutes
         setInterval(() => {
-            console.log('🔄 Auto-syncing...');
+            debugLog('🔄 Auto-syncing...');
             this.syncAll();
         }, intervalMinutes * 60 * 1000);
 
@@ -216,7 +217,7 @@ class FirebaseSync {
             this.syncAll();
         });
 
-        console.log(`✅ Auto-sync enabled (every ${intervalMinutes} minutes)`);
+        debugLog(`✅ Auto-sync enabled (every ${intervalMinutes} minutes)`);
     }
 }
 

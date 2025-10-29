@@ -57,4 +57,4 @@ For more details, see our [Privacy Policy](https://studying.works/privacy.html).
 
 Claude assisted in creating this for accuracy of all details.
 
-**Last Updated:** October 2025
+**Last Updated:** October 2024

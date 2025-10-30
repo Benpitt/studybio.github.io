@@ -3,149 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - studying.works</title>
-    <meta name="description" content="Learn about studying.works - An AI-powered study platform using Bayesian Knowledge Tracing to personalize your learning experience. Built with research from UC Berkeley.">
+    <title>About - studying.works | AI-Powered Learning Platform</title>
+    <meta name="description" content="Learn about studying.works - Built for every kind of learner. Using advanced AI and cognitive science to personalize your study experience.">
     <meta name="robots" content="index, follow">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <link rel="canonical" href="https://studying.works/about.html">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
+    <style>
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bg-animated-gradient {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: glow-pulse-landing 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes glow-pulse-landing {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
-    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="dashboard.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
-                        <span>🎓</span>
-                        <span>studying.works</span>
-                    </a>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
-                        <a href="about.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">About</a>
+<body class="overflow-x-hidden">
+    <div class="min-h-screen bg-animated-gradient relative overflow-hidden">
+        <!-- Glowing orbs background -->
+        <div class="glow-orb" style="width: 400px; height: 400px; background: #667eea; top: -100px; left: -100px;"></div>
+        <div class="glow-orb" style="width: 500px; height: 500px; background: #f093fb; bottom: -150px; right: -150px; animation-delay: 2s;"></div>
+        <div class="glow-orb" style="width: 300px; height: 300px; background: #4facfe; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1s;"></div>
+
+        <!-- Main content -->
+        <div class="relative z-10">
+            <!-- Header -->
+            <nav class="bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <a href="index.html" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                            <span>🎓</span>
+                            <span>studying.works</span>
+                        </a>
+                        <div class="flex items-center space-x-4">
+                            <a href="dashboard.html" class="text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all">Dashboard</a>
+                            <a href="about.html" class="text-white font-semibold px-4 py-2 rounded-lg bg-white/10">About</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+                <div class="text-center mb-20 animate-fade-in-up">
+                    <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-8 leading-tight">
+                        Built for<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200">
+                            Every Learner
+                        </span>
+                    </h1>
+                    <p class="text-2xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+                        Using advanced AI and cognitive science to create a personalized study experience that grows with you
+                    </p>
+                </div>
+
+                <!-- Mission Statement -->
+                <div class="max-w-6xl mx-auto mb-32">
+                    <div class="glass-card rounded-3xl p-8 md:p-16 shadow-2xl">
+                        <div class="text-5xl mb-6 text-center">🎯</div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 text-center">Our Mission</h2>
+                        <p class="text-xl md:text-2xl text-white/90 leading-relaxed">
+                            Learning is different for everyone. studying.works uses research from UC Berkeley and advanced machine learning to identify your strengths, understand your challenges, and shape lessons that truly work for your mind.
+                        </p>
+                        <p class="text-xl md:text-2xl text-white/90 leading-relaxed mt-6">
+                            By combining evidence-based techniques from cognitive science with adaptive learning models, we help every learner reach their potential.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature Showcases -->
+                <div class="space-y-32 mb-32">
+                    <!-- AI Generator -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="order-2 md:order-1">
+                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
+                                <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8">
+                                    <div class="text-6xl mb-4 animate-float-slow">🤖</div>
+                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
+                                        <div class="text-white/90 text-sm font-semibold mb-2">Input:</div>
+                                        <div class="text-white/80 text-sm italic">"Photosynthesis in plants"</div>
+                                    </div>
+                                    <div class="flex items-center justify-center my-4">
+                                        <div class="text-3xl">⚡</div>
+                                    </div>
+                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                                        <div class="text-white/90 text-sm font-semibold mb-2">Output:</div>
+                                        <div class="text-white/80 text-xs">✓ 25 flashcards generated</div>
+                                        <div class="text-white/80 text-xs">✓ Multiple difficulty levels</div>
+                                        <div class="text-white/80 text-xs">✓ Ready to study</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-1 md:order-2">
+                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                                AI-Powered Content Generation
+                            </h2>
+                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
+                                Simply paste your notes or enter a topic. Our AI analyzes the content and creates comprehensive, well-structured flashcards in seconds.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">✨</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Instant Creation</div>
+                                        <div class="text-white/70">Generate hundreds of cards from your lecture notes</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">🎯</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Smart Difficulty</div>
+                                        <div class="text-white/70">Choose from easy to expert level questions</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">🔄</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Fully Editable</div>
+                                        <div class="text-white/70">Customize any card to match your learning style</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bayesian Knowledge Tracing -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                                Adaptive Learning Algorithm
+                            </h2>
+                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
+                                Our Bayesian Knowledge Tracing (BKT) algorithm analyzes your performance in real-time to predict what you know and what you need to practice.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">🧠</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Smart Predictions</div>
+                                        <div class="text-white/70">AI estimates your mastery level for each concept</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">⚡</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Faster Learning</div>
+                                        <div class="text-white/70">Focus only on topics that need improvement</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">📈</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Real-time Adaptation</div>
+                                        <div class="text-white/70">Questions adjust based on your answers</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
+                                <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl p-8">
+                                    <div class="text-6xl mb-6 animate-float-slow delay-500">🧠</div>
+                                    <div class="space-y-4">
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="flex justify-between items-center mb-2">
+                                                <span class="text-white font-semibold">Mastery Level</span>
+                                                <span class="text-green-300 text-xl font-bold">92%</span>
+                                            </div>
+                                            <div class="w-full bg-white/10 rounded-full h-3">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-500 h-3 rounded-full transition-all duration-1000" style="width: 92%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="text-white/90 text-sm mb-2">Next Question:</div>
+                                            <div class="text-white text-base font-semibold">Adaptive - Medium Difficulty</div>
+                                        </div>
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="text-white/90 text-sm mb-2">Weak Areas Identified:</div>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="bg-red-500/20 text-red-200 px-3 py-1 rounded-full text-xs">Topic A</span>
+                                                <span class="bg-yellow-500/20 text-yellow-200 px-3 py-1 rounded-full text-xs">Topic B</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SAT Practice -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="order-2 md:order-1">
+                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
+                                <div class="bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-2xl p-8">
+                                    <div class="text-6xl mb-6 animate-float-slow delay-800">📝</div>
+                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
+                                        <div class="grid grid-cols-2 gap-4 text-center">
+                                            <div>
+                                                <div class="text-3xl font-bold text-white">3,794+</div>
+                                                <div class="text-white/70 text-sm">Questions</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-3xl font-bold text-white">100%</div>
+                                                <div class="text-white/70 text-sm">Free</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-white/90 text-sm">Features:</span>
+                                        </div>
+                                        <div class="space-y-1 text-white/80 text-xs">
+                                            <div>✓ Graphing Calculator Widget</div>
+                                            <div>✓ Built-in Stopwatch</div>
+                                            <div>✓ Topic-based Practice</div>
+                                            <div>✓ Performance Analytics</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-1 md:order-2">
+                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                                Comprehensive SAT Prep
+                            </h2>
+                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
+                                Practice with over 3,794 real SAT questions covering all sections. Interactive tools and detailed analytics help you master every topic.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">📊</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">All Sections Covered</div>
+                                        <div class="text-white/70">Math, Reading & Writing with real questions</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">🧮</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Interactive Tools</div>
+                                        <div class="text-white/70">Desmos calculator and timer widgets included</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">🎯</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Topic Selection</div>
+                                        <div class="text-white/70">Focus on specific areas you want to improve</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spaced Repetition -->
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                                Spaced Repetition System
+                            </h2>
+                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
+                                Based on decades of cognitive science research, our spaced repetition algorithm shows you cards at the optimal moment for maximum retention.
+                            </p>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">🔬</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Science-Backed</div>
+                                        <div class="text-white/70">Proven to increase retention by up to 200%</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">⏰</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Perfect Timing</div>
+                                        <div class="text-white/70">Reviews scheduled just before you forget</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-2xl">💯</span>
+                                    <div>
+                                        <div class="text-white font-semibold text-lg">Long-term Memory</div>
+                                        <div class="text-white/70">Move information from short to long-term memory efficiently</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
+                                <div class="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl p-8">
+                                    <div class="text-6xl mb-6 animate-float-slow">⏱️</div>
+                                    <div class="space-y-3">
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-white/90 text-sm">Review Today</span>
+                                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">12 cards</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-white/90 text-sm">Due Tomorrow</span>
+                                                <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">8 cards</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-white/90 text-sm">This Week</span>
+                                                <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold">45 cards</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-white/90 text-sm">Mastered</span>
+                                                <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">127 cards</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+                    <div class="glass-card rounded-2xl p-8 text-center hover:scale-105 transition-transform">
+                        <div class="text-5xl mb-4">🆓</div>
+                        <div class="text-4xl font-bold text-white mb-2">100% Free</div>
+                        <p class="text-white/70">No subscriptions, no hidden costs, no ads</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-8 text-center hover:scale-105 transition-transform">
+                        <div class="text-5xl mb-4">🔓</div>
+                        <div class="text-4xl font-bold text-white mb-2">Open Source</div>
+                        <p class="text-white/70">Transparent code, community-driven development</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-8 text-center hover:scale-105 transition-transform">
+                        <div class="text-5xl mb-4">🔒</div>
+                        <div class="text-4xl font-bold text-white mb-2">Privacy First</div>
+                        <p class="text-white/70">Your data stays yours, always</p>
+                    </div>
+                </div>
+
+                <!-- CTA Section -->
+                <div class="text-center glass-card rounded-3xl p-12 md:p-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        Ready to Transform Your Learning?
+                    </h2>
+                    <p class="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+                        Join thousands of students who are studying smarter with AI-powered tools
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="index.html" class="group relative inline-block">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                            <div class="relative px-8 py-4 bg-white rounded-2xl text-gray-900 font-bold text-lg hover:scale-105 transition-transform">
+                                Get Started Free
+                            </div>
+                        </a>
+                        <a href="dashboard.html" class="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl text-white font-bold text-lg hover:bg-white/20 transition-all border border-white/20">
+                            View Dashboard
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </nav>
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="flex: 1;">
-        <div class="text-center mb-16">
-            <div class="text-8xl mb-6">🎓</div>
-            <h1 class="text-6xl font-bold text-white mb-4">studying.works</h1>
-            <p class="text-2xl text-blue-200">Turn study sessions into high scores</p>
-        </div>
-
-        <div class="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 mb-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Mission</h2>
-            <p class="text-xl text-gray-700 leading-relaxed">
-                Using advanced learning algorithms developed by researchers at the University of California, Berkeley, we're able to train machines to adapt to how you learn.
-Learning is different for everyone, and studying.works aims to create a personalized study experience that grows with you — identifying your strengths, understanding your challenges, and shaping lessons that truly work for your mind.
-
-By combining evidence-based techniques from cognitive science with adaptive learning models, studying.works helps every learner reach their potential.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="card-gradient-purple rounded-2xl p-6 text-white">
-                <div class="text-5xl mb-4">🤖</div>
-                <h3 class="text-2xl font-bold mb-2">AI Generator</h3>
-                <p class="text-white/90">Paste your notes or enter a topic. AI creates comprehensive flashcard decks in seconds.</p>
-            </div>
-
-            <div class="card-gradient-blue rounded-2xl p-6 text-white">
-                <div class="text-5xl mb-4">🎴</div>
-                <h3 class="text-2xl font-bold mb-2">Smart Flashcards</h3>
-                <p class="text-white/90">Spaced repetition shows you cards when you need them most. Study efficiently.</p>
-            </div>
-
-            <div class="card-gradient-amber rounded-2xl p-6 text-white">
-                <div class="text-5xl mb-4">📝</div>
-                <h3 class="text-2xl font-bold mb-2">SAT Practice</h3>
-                <p class="text-white/90">4,203 unique questions from OpenSAT API. Topic-based practice with calculator & stopwatch widgets.</p>
-            </div>
-
-            <div class="card-gradient-success rounded-2xl p-6 text-white">
-                <div class="text-5xl mb-4">🌍</div>
-                <h3 class="text-2xl font-bold mb-2">Community Library</h3>
-                <p class="text-white/90">Browse thousands of flashcard decks. Find what you need or share your own.</p>
-            </div>
-
-            <div class="card-gradient-fire rounded-2xl p-6 text-white">
-                <div class="text-5xl mb-4">📊</div>
-                <h3 class="text-2xl font-bold mb-2">Progress Tracking</h3>
-                <p class="text-white/90">See your study streaks, quiz scores, and improvement over time.</p>
-            </div>
-        </div>
-
-        <div class="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 mb-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">9 Study Modes</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl">
-                    <div class="text-3xl mb-2">🎴</div>
-                    <div class="font-bold text-gray-800">Flashcards</div>
+            <!-- Footer -->
+            <footer class="bg-black/30 backdrop-blur-lg border-t border-white/10 mt-32 py-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                        <div class="col-span-1 md:col-span-2">
+                            <div class="flex items-center space-x-2 mb-4">
+                                <span class="text-3xl">🎓</span>
+                                <span class="text-2xl font-bold text-white">studying.works</span>
+                            </div>
+                            <p class="text-white/70 mb-4">
+                                AI-powered study tools that adapt to your learning style. Built for students, by students.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold mb-4">Product</h3>
+                            <ul class="space-y-2">
+                                <li><a href="dashboard.html" class="text-white/70 hover:text-white transition-colors">Dashboard</a></li>
+                                <li><a href="ai-flashcards.html" class="text-white/70 hover:text-white transition-colors">AI Generator</a></li>
+                                <li><a href="custom-flashcards.html" class="text-white/70 hover:text-white transition-colors">Flashcards</a></li>
+                                <li><a href="sat-practice.html" class="text-white/70 hover:text-white transition-colors">SAT Practice</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold mb-4">Company</h3>
+                            <ul class="space-y-2">
+                                <li><a href="about.html" class="text-white/70 hover:text-white transition-colors">About</a></li>
+                                <li><a href="privacy.html" class="text-white/70 hover:text-white transition-colors">Privacy</a></li>
+                                <li><a href="terms.html" class="text-white/70 hover:text-white transition-colors">Terms</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="border-t border-white/10 pt-8 text-center text-white/60">
+                        <p>&copy; 2025 studying.works. All rights reserved.</p>
+                    </div>
                 </div>
-                <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
-                    <div class="text-3xl mb-2">📝</div>
-                    <div class="font-bold text-gray-800">Practice Test</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl">
-                    <div class="text-3xl mb-2">🎯</div>
-                    <div class="font-bold text-gray-800">Multiple Choice</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl">
-                    <div class="text-3xl mb-2">🤖</div>
-                    <div class="font-bold text-gray-800">AI Generator</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-xl">
-                    <div class="text-3xl mb-2">🎮</div>
-                    <div class="font-bold text-gray-800">Matching Game</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl">
-                    <div class="text-3xl mb-2">⚡</div>
-                    <div class="font-bold text-gray-800">Speed Challenge</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl">
-                    <div class="text-3xl mb-2">🧠</div>
-                    <div class="font-bold text-gray-800">BKT Algorithim</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-pink-50 to-red-50 rounded-xl">
-                    <div class="text-3xl mb-2">📋</div>
-                    <div class="font-bold text-gray-800">Memory Match</div>
-                </div>
-                <div class="text-center p-4 bg-gradient-to-br from-teal-50 to-green-50 rounded-xl">
-                    <div class="text-3xl mb-2">✍️</div>
-                    <div class="font-bold text-gray-800">Written Answer</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl shadow-2xl p-12 text-center">
-            <h2 class="text-4xl font-bold text-white mb-4">Ready to study smarter?</h2>
-            <p class="text-xl text-white/90 mb-8">Join students already crushing their exams</p>
-            <a href="dashboard.html" class="inline-block bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl hover:bg-purple-50 transform hover:scale-105 transition-all">
-                Go to Dashboard →
-            </a>
+            </footer>
         </div>
     </div>
 
-    <footer class="bg-black/30 backdrop-blur-lg border-t border-white/10 py-8 mt-16">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-white/60 mb-4">© 2025 studying.works. All rights reserved.</p>
-            <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-6 mb-4">
-                <a href="dashboard.html" class="text-white/80 hover:text-white transition-all font-medium">🎓 Dashboard</a>
-                <a href="ai-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🤖 AI Generator</a>
-                <a href="custom-flashcards.html" class="text-white/80 hover:text-white transition-all font-medium">🎴 My Flashcards</a>
-                <a href="community.html" class="text-white/80 hover:text-white transition-all font-medium">🌍 Community</a>
-            </div>
-            <div class="flex justify-center space-x-6 text-sm">
-                <a href="terms.html" class="text-white/60 hover:text-white transition-all">Terms of Service</a>
-                <a href="privacy.html" class="text-white/60 hover:text-white transition-all">Privacy Policy</a>
-                <a href="about.html" class="text-white/60 hover:text-white transition-all">About</a>
-            </div>
-        </div>
-    </footer>
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
 </body>

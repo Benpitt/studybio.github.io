@@ -79,16 +79,17 @@ service cloud.firestore {
     
     // BKT Reviews Collection
     match /bkt_reviews/{reviewId} {
-      // Users can read all reviews (for analytics)
-      allow read: if isSignedIn();
-      
+      // Users can ONLY read their own reviews (individual data isolation)
+      allow read: if isSignedIn()
+                  && resource.data.userId == request.auth.uid;
+
       // Users can only create reviews for themselves
-      allow create: if isSignedIn() 
+      allow create: if isSignedIn()
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.keys().hasAll(['userId', 'skill', 'correct', 'timestamp', 'cardId', 'responseTime'])
                     && request.resource.data.correct in [0, 1]
                     && request.resource.data.responseTime >= 0;
-      
+
       // No updates or deletes (immutable review history)
       allow update, delete: if false;
     }

@@ -194,12 +194,14 @@
                             setIsAuthenticated(true);
                             loadDecksAndSkills();
                             loadMasteryScores();
+                            loadUserParams();
                         } else {
                             console.log('❌ No authenticated user');
                             setIsAuthenticated(false);
                             // Still try to load from localStorage cache
                             loadDecksAndSkills();
                             loadMasteryScores();
+                            loadUserParams();
                         }
                     });
                 } else {
@@ -207,6 +209,7 @@
                     console.log('⚠️ Firebase Auth not ready, loading from cache');
                     loadDecksAndSkills();
                     loadMasteryScores();
+                    loadUserParams();
                 }
             }, []);
 
@@ -291,6 +294,62 @@
                 const saved = localStorage.getItem('bkt_mastery_scores');
                 if (saved) {
                     setMasteryScores(JSON.parse(saved));
+                }
+            }
+
+            async function loadUserParams() {
+                console.log('📥 Loading BKT user parameters from Firebase...');
+                const userId = localStorage.getItem('userId');
+
+                // Try to load from Firebase first
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        const paramsDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktUserParams');
+                        const paramsDoc = await window.firebaseGetDoc(paramsDocRef);
+
+                        if (paramsDoc.exists()) {
+                            const data = paramsDoc.data();
+                            if (data.params) {
+                                console.log('✅ Loaded YOUR personalized BKT parameters from Firebase');
+
+                                // Load existing multi-user structure from localStorage
+                                let allUserParams = {};
+                                const existingParamsStr = localStorage.getItem('bkt_user_params');
+                                if (existingParamsStr) {
+                                    try {
+                                        allUserParams = JSON.parse(existingParamsStr);
+                                    } catch (e) {
+                                        console.error('Error parsing existing params:', e);
+                                    }
+                                }
+
+                                // Update with this user's params from Firebase
+                                allUserParams[userId] = data.params;
+
+                                // Save back to localStorage
+                                localStorage.setItem('bkt_user_params', JSON.stringify(allUserParams));
+                                console.log(`   Parameters for ${Object.keys(data.params).length} skills`);
+                                return;
+                            }
+                        } else {
+                            console.log('📦 No personalized BKT parameters in Firebase yet - train your model in Analytics!');
+                        }
+                    } catch (error) {
+                        console.error('❌ Error loading user parameters from Firebase:', error);
+                    }
+                }
+
+                // Check localStorage fallback
+                const saved = localStorage.getItem('bkt_user_params');
+                if (saved) {
+                    try {
+                        const params = JSON.parse(saved);
+                        if (params[userId] && Object.keys(params[userId]).length > 0) {
+                            console.log('📦 Using BKT parameters from localStorage');
+                        }
+                    } catch (e) {
+                        console.error('Error parsing localStorage params:', e);
+                    }
                 }
             }
 

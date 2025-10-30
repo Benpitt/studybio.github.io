@@ -176,6 +176,44 @@
                     }
                 }
 
+                // Load user BKT parameters from Firebase
+                if (window.firebaseReady && userId && window.db) {
+                    try {
+                        console.log('📥 Loading BKT user parameters from Firebase...');
+                        const paramsDocRef = window.firebaseDoc(window.db, 'users', userId, 'data', 'bktUserParams');
+                        const paramsDoc = await window.firebaseGetDoc(paramsDocRef);
+
+                        if (paramsDoc.exists()) {
+                            const data = paramsDoc.data();
+                            if (data.params) {
+                                console.log('✅ Loaded YOUR personalized BKT parameters from Firebase');
+
+                                // Load existing multi-user structure from localStorage
+                                let allUserParams = {};
+                                const existingParamsStr = localStorage.getItem('bkt_user_params');
+                                if (existingParamsStr) {
+                                    try {
+                                        allUserParams = JSON.parse(existingParamsStr);
+                                    } catch (e) {
+                                        console.error('Error parsing existing params:', e);
+                                    }
+                                }
+
+                                // Update with this user's params from Firebase
+                                allUserParams[userId] = data.params;
+
+                                // Save back to localStorage
+                                localStorage.setItem('bkt_user_params', JSON.stringify(allUserParams));
+                                console.log(`   Parameters for ${Object.keys(data.params).length} skills`);
+                            }
+                        } else {
+                            console.log('📦 No personalized BKT parameters in Firebase yet - train your model below!');
+                        }
+                    } catch (error) {
+                        console.error('❌ Error loading user parameters from Firebase:', error);
+                    }
+                }
+
                 // Load reviews from Firebase
                 if (window.firebaseReady && userId && window.db) {
                     try {

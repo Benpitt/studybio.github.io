@@ -10,16 +10,19 @@
     <link rel="stylesheet" href="button-styles.css">
     <style>
         .settings-section {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 1rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
         }
 
         .settings-section:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .setting-item {
@@ -27,7 +30,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .setting-item:last-child {
@@ -66,16 +69,23 @@
 
         .select-custom {
             appearance: none;
-            background: white;
-            border: 2px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
             border-radius: 0.5rem;
             padding: 0.5rem 2.5rem 0.5rem 1rem;
             font-size: 1rem;
             cursor: pointer;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 0.5rem center;
             background-repeat: no-repeat;
             background-size: 1.5em 1.5em;
+        }
+
+        .select-custom option {
+            background: #1e1b4b;
+            color: white;
         }
 
         .select-custom:focus {
@@ -104,21 +114,22 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+<body class="min-h-screen">
     <script type="module" src="auth-guard.js"></script>
 
     <!-- Navigation Bar -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        Studying Works
+                    <span class="text-2xl font-bold text-white flex items-center space-x-2">
+                        <span>🎓</span>
+                        <span>studying.works</span>
                     </span>
-                    <span class="ml-4 text-gray-600 font-semibold">Settings</span>
+                    <span class="ml-4 text-white/60 font-semibold">Settings</span>
                 </div>
                 <div class="flex items-center">
-                    <a href="dashboard.html" class="px-4 py-2 text-gray-600 hover:text-gray-900 transition">
+                    <a href="dashboard.html" class="px-4 py-2 text-white/80 hover:text-white transition">
                         Back to Dashboard
                     </a>
                 </div>
@@ -126,27 +137,27 @@
         </div>
     </nav>
 
-    <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto px-4 py-8 pt-24">
         <!-- Profile Section -->
         <div class="settings-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">👤 Profile</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">👤 Profile</h2>
             <div class="flex items-center space-x-4 mb-6">
-                <img id="user-photo" src="" alt="Profile" class="w-20 h-20 rounded-full border-4 border-purple-200">
+                <img id="user-photo" src="" alt="Profile" class="w-20 h-20 rounded-full border-4 border-purple-500/50">
                 <div>
-                    <h3 id="user-name" class="text-xl font-semibold text-gray-800"></h3>
-                    <p id="user-email" class="text-gray-600"></p>
+                    <h3 id="user-name" class="text-xl font-semibold text-white"></h3>
+                    <p id="user-email" class="text-white/70"></p>
                 </div>
             </div>
         </div>
 
         <!-- Study Preferences -->
         <div class="settings-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">📚 Study Preferences</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">📚 Study Preferences</h2>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Default Difficulty Level</h3>
-                    <p class="text-sm text-gray-600">Set the default difficulty for AI-generated content</p>
+                    <h3 class="font-semibold text-white">Default Difficulty Level</h3>
+                    <p class="text-sm text-white/70">Set the default difficulty for AI-generated content</p>
                 </div>
                 <select id="difficulty-level" class="select-custom">
                     <option value="easy">Easy</option>
@@ -158,8 +169,8 @@
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Cards Per Session</h3>
-                    <p class="text-sm text-gray-600">Number of flashcards to study in one session</p>
+                    <h3 class="font-semibold text-white">Cards Per Session</h3>
+                    <p class="text-sm text-white/70">Number of flashcards to study in one session</p>
                 </div>
                 <select id="cards-per-session" class="select-custom">
                     <option value="10">10 cards</option>
@@ -172,16 +183,16 @@
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Auto-Play Audio</h3>
-                    <p class="text-sm text-gray-600">Automatically play audio for flashcards (if available)</p>
+                    <h3 class="font-semibold text-white">Auto-Play Audio</h3>
+                    <p class="text-sm text-white/70">Automatically play audio for flashcards (if available)</p>
                 </div>
                 <div id="auto-play-audio" class="toggle-switch"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Show Timer</h3>
-                    <p class="text-sm text-gray-600">Display timer during practice tests</p>
+                    <h3 class="font-semibold text-white">Show Timer</h3>
+                    <p class="text-sm text-white/70">Display timer during practice tests</p>
                 </div>
                 <div id="show-timer" class="toggle-switch active"></div>
             </div>
@@ -189,36 +200,28 @@
 
         <!-- Notifications -->
         <div class="settings-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">🔔 Notifications</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">🔔 Notifications</h2>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Study Reminders</h3>
-                    <p class="text-sm text-gray-600">Remind me to study daily</p>
+                    <h3 class="font-semibold text-white">Study Reminders</h3>
+                    <p class="text-sm text-white/70">Remind me to study daily</p>
                 </div>
                 <div id="study-reminders" class="toggle-switch"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Assignment Notifications</h3>
-                    <p class="text-sm text-gray-600">Notify me about upcoming assignment due dates</p>
-                </div>
-                <div id="assignment-notifications" class="toggle-switch active"></div>
-            </div>
-
-            <div class="setting-item">
-                <div>
-                    <h3 class="font-semibold text-gray-800">Streak Alerts</h3>
-                    <p class="text-sm text-gray-600">Alert me when my study streak is about to break</p>
+                    <h3 class="font-semibold text-white">Streak Alerts</h3>
+                    <p class="text-sm text-white/70">Alert me when my study streak is about to break</p>
                 </div>
                 <div id="streak-alerts" class="toggle-switch active"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Achievement Notifications</h3>
-                    <p class="text-sm text-gray-600">Celebrate milestones and achievements</p>
+                    <h3 class="font-semibold text-white">Achievement Notifications</h3>
+                    <p class="text-sm text-white/70">Celebrate milestones and achievements</p>
                 </div>
                 <div id="achievement-notifications" class="toggle-switch active"></div>
             </div>
@@ -226,28 +229,28 @@
 
         <!-- Learning Algorithm -->
         <div class="settings-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">🧠 Learning Algorithm</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">🧠 Learning Algorithm</h2>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Spaced Repetition</h3>
-                    <p class="text-sm text-gray-600">Use spaced repetition for optimal memory retention</p>
+                    <h3 class="font-semibold text-white">Spaced Repetition</h3>
+                    <p class="text-sm text-white/70">Use spaced repetition for optimal memory retention</p>
                 </div>
                 <div id="spaced-repetition" class="toggle-switch active"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Adaptive Learning</h3>
-                    <p class="text-sm text-gray-600">Use BKT algorithm to adapt to your learning pace</p>
+                    <h3 class="font-semibold text-white">Adaptive Learning</h3>
+                    <p class="text-sm text-white/70">Use BKT algorithm to adapt to your learning pace</p>
                 </div>
                 <div id="adaptive-learning" class="toggle-switch active"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Focus on Weak Areas</h3>
-                    <p class="text-sm text-gray-600">Prioritize topics that need more practice</p>
+                    <h3 class="font-semibold text-white">Focus on Weak Areas</h3>
+                    <p class="text-sm text-white/70">Prioritize topics that need more practice</p>
                 </div>
                 <div id="focus-weak-areas" class="toggle-switch active"></div>
             </div>
@@ -255,28 +258,28 @@
 
         <!-- Privacy & Data -->
         <div class="settings-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">🔒 Privacy & Data</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">🔒 Privacy & Data</h2>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Cloud Sync</h3>
-                    <p class="text-sm text-gray-600">Automatically sync data to Firebase</p>
+                    <h3 class="font-semibold text-white">Cloud Sync</h3>
+                    <p class="text-sm text-white/70">Automatically sync data to Firebase</p>
                 </div>
                 <div id="cloud-sync" class="toggle-switch active"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Share Anonymous Analytics</h3>
-                    <p class="text-sm text-gray-600">Help improve the app by sharing usage data</p>
+                    <h3 class="font-semibold text-white">Share Anonymous Analytics</h3>
+                    <p class="text-sm text-white/70">Help improve the app by sharing usage data</p>
                 </div>
                 <div id="anonymous-analytics" class="toggle-switch active"></div>
             </div>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Profile Visibility</h3>
-                    <p class="text-sm text-gray-600">Make your profile visible to other users</p>
+                    <h3 class="font-semibold text-white">Profile Visibility</h3>
+                    <p class="text-sm text-white/70">Make your profile visible to other users</p>
                 </div>
                 <select id="profile-visibility" class="select-custom">
                     <option value="public">Public</option>
@@ -288,12 +291,12 @@
 
         <!-- Data Management -->
         <div class="settings-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">💾 Data Management</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">💾 Data Management</h2>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Export All Data</h3>
-                    <p class="text-sm text-gray-600">Download all your study data as JSON</p>
+                    <h3 class="font-semibold text-white">Export All Data</h3>
+                    <p class="text-sm text-white/70">Download all your study data as JSON</p>
                 </div>
                 <button id="export-data-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                     Export
@@ -302,8 +305,8 @@
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Sync Now</h3>
-                    <p class="text-sm text-gray-600">Manually sync data with cloud</p>
+                    <h3 class="font-semibold text-white">Sync Now</h3>
+                    <p class="text-sm text-white/70">Manually sync data with cloud</p>
                 </div>
                 <button id="sync-now-btn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
                     Sync
@@ -312,8 +315,8 @@
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Clear Local Cache</h3>
-                    <p class="text-sm text-gray-600">Clear cached data (won't delete your progress)</p>
+                    <h3 class="font-semibold text-white">Clear Local Cache</h3>
+                    <p class="text-sm text-white/70">Clear cached data (won't delete your progress)</p>
                 </div>
                 <button id="clear-cache-btn" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition">
                     Clear
@@ -322,13 +325,13 @@
         </div>
 
         <!-- Danger Zone -->
-        <div class="settings-section border-2 border-red-200">
-            <h2 class="text-2xl font-bold mb-4 text-red-600">⚠️ Danger Zone</h2>
+        <div class="settings-section border-2 border-red-500/50">
+            <h2 class="text-2xl font-bold mb-4 text-red-400">⚠️ Danger Zone</h2>
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Reset All Progress</h3>
-                    <p class="text-sm text-gray-600">This will delete all your study progress permanently</p>
+                    <h3 class="font-semibold text-white">Reset All Progress</h3>
+                    <p class="text-sm text-white/70">This will delete all your study progress permanently</p>
                 </div>
                 <button id="reset-progress-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                     Reset
@@ -337,8 +340,8 @@
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-gray-800">Delete Account</h3>
-                    <p class="text-sm text-gray-600">Permanently delete your account and all data</p>
+                    <h3 class="font-semibold text-white">Delete Account</h3>
+                    <p class="text-sm text-white/70">Permanently delete your account and all data</p>
                 </div>
                 <button id="delete-account-btn" class="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition">
                     Delete
@@ -347,8 +350,8 @@
         </div>
 
         <!-- Version Info -->
-        <div class="text-center text-gray-600 mt-8">
-            <p>Studying Works v1.0.0</p>
+        <div class="text-center text-white/60 mt-8">
+            <p>studying.works v1.0.0</p>
             <p class="text-sm">Last synced: <span id="last-sync-time">Never</span></p>
         </div>
     </div>
@@ -383,7 +386,6 @@
 
             // Notifications
             setToggle('study-reminders', settings.studyReminders || false);
-            setToggle('assignment-notifications', settings.assignmentNotifications !== false);
             setToggle('streak-alerts', settings.streakAlerts !== false);
             setToggle('achievement-notifications', settings.achievementNotifications !== false);
 
@@ -413,7 +415,6 @@
                 autoPlayAudio: getToggleState('auto-play-audio'),
                 showTimer: getToggleState('show-timer'),
                 studyReminders: getToggleState('study-reminders'),
-                assignmentNotifications: getToggleState('assignment-notifications'),
                 streakAlerts: getToggleState('streak-alerts'),
                 achievementNotifications: getToggleState('achievement-notifications'),
                 spacedRepetition: getToggleState('spaced-repetition'),

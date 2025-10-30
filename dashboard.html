@@ -29,7 +29,6 @@
                     </a>
                     <div class="hidden md:flex space-x-4">
                         <a href="dashboard.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Dashboard</a>
-                        <a href="assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
                         <a href="progress.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
                         <a href="about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
                     </div>
@@ -192,39 +191,6 @@
                             </div>
                         </a>
 
-                        <!-- SAT Practice -->
-                        <a href="sat-practice.html" class="block">
-                            <div class="card-gradient-blue rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
-                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                                <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">📝</div>
-                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
-                                            NEW
-                                        </div>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">SAT Practice</h3>
-                                    <p class="text-sm text-white/80 mb-3">Full digital experience</p>
-                                </div>
-                            </div>
-                        </a>
-
-                        <!-- SAT Practice Test Generator -->
-                        <a href="dashboard/practice_test_app/index.html" class="block">
-                            <div class="card-gradient-violet rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
-                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                                <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">🎯</div>
-                                        <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
-                                            NEW
-                                        </div>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">SAT Practice Test</h3>
-                                    <p class="text-sm text-white/80 mb-3">Full-length practice tests</p>
-                                </div>
-                            </div>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -248,9 +214,6 @@
                 <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in delay-800">
                     <h3 class="text-xl font-bold text-white mb-3">🚀 Quick Actions</h3>
                     <div class="space-y-2">
-                        <a href="assignments.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
-                            ✅ Assignments
-                        </a>
                         <a href="progress.html" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
                             📊 Progress
                         </a>
@@ -339,16 +302,6 @@
                         }
                     }
 
-                    // Load assignments
-                    const assignmentsSnapshot = await getDocs(collection(this.db, 'users', this.userId, 'assignments'));
-                    const assignments = [];
-                    assignmentsSnapshot.forEach(doc => {
-                        assignments.push(doc.data());
-                    });
-                    if (assignments.length > 0) {
-                        localStorage.setItem('assignments', JSON.stringify(assignments));
-                        console.log(`✅ Loaded ${assignments.length} assignments from Firebase`);
-                    }
 
                     // Load BKT mastery scores
                     const bktMasteryDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'bktMastery'));
@@ -424,14 +377,6 @@
                 console.log('✅ Topic stats synced to Firebase');
             }
 
-            async syncAssignments() {
-                const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
-                for (const assignment of assignments) {
-                    const assignmentRef = doc(this.db, 'users', this.userId, 'assignments', assignment.id.toString());
-                    await setDoc(assignmentRef, { ...assignment, syncedAt: serverTimestamp() });
-                }
-                console.log(`✅ Synced ${assignments.length} assignments to Firebase`);
-            }
 
             async syncBKTMastery() {
                 const mastery = JSON.parse(localStorage.getItem('bkt_mastery_scores') || '{}');
@@ -449,7 +394,6 @@
                     await this.syncFlashcardProgress();
                     await this.syncQuizProgress();
                     await this.syncTopicStats();
-                    await this.syncAssignments();
                     await this.syncBKTMastery();
                     localStorage.setItem('lastSync', new Date().toISOString());
                     console.log('✅ Full sync to Firebase complete!');
@@ -577,7 +521,6 @@
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
             const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
-            const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
 
             document.getElementById('streak').textContent = streak;
             document.getElementById('stat-streak').textContent = streak;

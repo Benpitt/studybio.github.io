@@ -59,21 +59,22 @@
         }
     </style>
 </head>
-<body class="min-h-screen" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<body class="min-h-screen">
     <script type="module" src="auth-guard.js"></script>
 
     <!-- Navigation Bar -->
-    <nav class="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-50">
+    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        Studying Works
+                    <span class="text-2xl font-bold text-white flex items-center space-x-2">
+                        <span>🎓</span>
+                        <span>studying.works</span>
                     </span>
-                    <span class="ml-4 text-gray-600 font-semibold">Tutorial</span>
+                    <span class="ml-4 text-white/60 font-semibold">Tutorial</span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button id="skip-tutorial" class="px-4 py-2 text-gray-600 hover:text-gray-900 transition">
+                    <button id="skip-tutorial" class="px-4 py-2 text-white/80 hover:text-white transition">
                         Skip Tutorial
                     </button>
                     <a href="dashboard.html" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:opacity-90 transition">
@@ -84,7 +85,7 @@
         </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto px-4 py-8 pt-24">
         <!-- Progress Bar -->
         <div class="bg-white/20 rounded-full overflow-hidden mb-8">
             <div id="progress-bar" class="progress-bar" style="width: 10%"></div>
@@ -92,91 +93,91 @@
 
         <!-- Step Indicators -->
         <div class="flex justify-center space-x-4 mb-8">
-            <div class="step-indicator active" data-step="0">1</div>
-            <div class="step-indicator" data-step="1">2</div>
-            <div class="step-indicator" data-step="2">3</div>
-            <div class="step-indicator" data-step="3">4</div>
-            <div class="step-indicator" data-step="4">5</div>
-            <div class="step-indicator" data-step="5">6</div>
+            <div class="step-indicator active text-white font-bold" data-step="0">1</div>
+            <div class="step-indicator text-white font-bold" data-step="1">2</div>
+            <div class="step-indicator text-white font-bold" data-step="2">3</div>
+            <div class="step-indicator text-white font-bold" data-step="3">4</div>
+            <div class="step-indicator text-white font-bold" data-step="4">5</div>
+            <div class="step-indicator text-white font-bold" data-step="5">6</div>
         </div>
 
         <!-- Tutorial Steps -->
-        <div id="tutorial-container" class="bg-white rounded-2xl shadow-2xl p-8 min-h-[500px]">
+        <div id="tutorial-container" class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 min-h-[500px]">
 
             <!-- Step 0: Welcome -->
             <div class="tutorial-step active" data-step="0">
-                <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    Welcome to Studying Works!
+                <h1 class="text-4xl font-bold mb-4 text-white">
+                    Welcome to studying.works! 🎓
                 </h1>
-                <p class="text-xl text-gray-700 mb-6">
+                <p class="text-xl text-white/80 mb-6">
                     Your adaptive learning platform powered by AI and cognitive science.
                 </p>
                 <div class="grid md:grid-cols-2 gap-6 mt-8">
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">🎯</div>
-                        <h3 class="text-xl font-bold mb-2">Smart Learning</h3>
-                        <p class="text-gray-600">AI-powered algorithms adapt to your learning pace and identify areas needing improvement.</p>
+                        <h3 class="text-xl font-bold mb-2 text-white">Smart Learning</h3>
+                        <p class="text-white/70">AI-powered algorithms adapt to your learning pace and identify areas needing improvement.</p>
                     </div>
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">🎮</div>
-                        <h3 class="text-xl font-bold mb-2">Interactive Study</h3>
-                        <p class="text-gray-600">Multiple study modes including flashcards, games, and practice tests.</p>
+                        <h3 class="text-xl font-bold mb-2 text-white">Interactive Study</h3>
+                        <p class="text-white/70">Multiple study modes including flashcards, games, and practice tests.</p>
                     </div>
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">🤝</div>
-                        <h3 class="text-xl font-bold mb-2">Community</h3>
-                        <p class="text-gray-600">Share and discover study materials created by other learners.</p>
+                        <h3 class="text-xl font-bold mb-2 text-white">Community</h3>
+                        <p class="text-white/70">Share and discover study materials created by other learners.</p>
                     </div>
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">📊</div>
-                        <h3 class="text-xl font-bold mb-2">Track Progress</h3>
-                        <p class="text-gray-600">Monitor your learning journey with detailed analytics and insights.</p>
+                        <h3 class="text-xl font-bold mb-2 text-white">Track Progress</h3>
+                        <p class="text-white/70">Monitor your learning journey with detailed analytics and insights.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Step 1: Flashcards -->
             <div class="tutorial-step" data-step="1">
-                <h2 class="text-3xl font-bold mb-4 text-purple-600">📚 Flashcards</h2>
-                <p class="text-lg text-gray-700 mb-6">
+                <h2 class="text-3xl font-bold mb-4 text-white">📚 Flashcards</h2>
+                <p class="text-lg text-white/80 mb-6">
                     Create and study with custom flashcards using 5 different study modes.
                 </p>
-                <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
-                    <h3 class="text-xl font-bold mb-4">Available Study Modes:</h3>
+                <div class="bg-white/10 backdrop-blur rounded-xl p-6 mb-6 border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white">Available Study Modes:</h3>
                     <div class="space-y-3">
                         <div class="flex items-start space-x-3">
                             <div class="text-2xl">🔄</div>
                             <div>
-                                <h4 class="font-semibold">Flashcard Mode</h4>
-                                <p class="text-gray-600">Classic flashcard review with spaced repetition to optimize memory retention.</p>
+                                <h4 class="font-semibold text-white">Flashcard Mode</h4>
+                                <p class="text-white/70">Classic flashcard review with spaced repetition to optimize memory retention.</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-3">
                             <div class="text-2xl">📝</div>
                             <div>
-                                <h4 class="font-semibold">Practice Tests</h4>
-                                <p class="text-gray-600">Test yourself with timed quizzes to simulate exam conditions.</p>
+                                <h4 class="font-semibold text-white">Practice Tests</h4>
+                                <p class="text-white/70">Test yourself with timed quizzes to simulate exam conditions.</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-3">
                             <div class="text-2xl">🎯</div>
                             <div>
-                                <h4 class="font-semibold">Matching Game</h4>
-                                <p class="text-gray-600">Match terms with definitions in a fun, engaging format.</p>
+                                <h4 class="font-semibold text-white">Matching Game</h4>
+                                <p class="text-white/70">Match terms with definitions in a fun, engaging format.</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-3">
                             <div class="text-2xl">📁</div>
                             <div>
-                                <h4 class="font-semibold">Groups</h4>
-                                <p class="text-gray-600">Categorize and organize cards into meaningful groups.</p>
+                                <h4 class="font-semibold text-white">Groups</h4>
+                                <p class="text-white/70">Categorize and organize cards into meaningful groups.</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-3">
                             <div class="text-2xl">⭐</div>
                             <div>
-                                <h4 class="font-semibold">Difficulty Tracking</h4>
-                                <p class="text-gray-600">Automatically tracks which cards you find easy or challenging.</p>
+                                <h4 class="font-semibold text-white">Difficulty Tracking</h4>
+                                <p class="text-white/70">Automatically tracks which cards you find easy or challenging.</p>
                             </div>
                         </div>
                     </div>
@@ -188,28 +189,28 @@
 
             <!-- Step 2: AI Generator -->
             <div class="tutorial-step" data-step="2">
-                <h2 class="text-3xl font-bold mb-4 text-purple-600">🤖 AI Generator</h2>
-                <p class="text-lg text-gray-700 mb-6">
+                <h2 class="text-3xl font-bold mb-4 text-white">🤖 AI Generator</h2>
+                <p class="text-lg text-white/80 mb-6">
                     Let AI create study materials for you from your notes or any topic.
                 </p>
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">📄</div>
-                        <h3 class="text-xl font-bold mb-2">From Your Notes</h3>
-                        <p class="text-gray-600">Paste your lecture notes, textbook excerpts, or any study material, and AI will generate flashcards automatically.</p>
+                        <h3 class="text-xl font-bold mb-2 text-white">From Your Notes</h3>
+                        <p class="text-white/70">Paste your lecture notes, textbook excerpts, or any study material, and AI will generate flashcards automatically.</p>
                     </div>
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">💡</div>
-                        <h3 class="text-xl font-bold mb-2">From Topics</h3>
-                        <p class="text-gray-600">Just enter a topic (e.g., "Photosynthesis" or "World War II") and AI creates comprehensive study cards.</p>
+                        <h3 class="text-xl font-bold mb-2 text-white">From Topics</h3>
+                        <p class="text-white/70">Just enter a topic (e.g., "Photosynthesis" or "World War II") and AI creates comprehensive study cards.</p>
                     </div>
                 </div>
-                <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 mb-6">
+                <div class="bg-yellow-500/20 border-2 border-yellow-500/50 rounded-xl p-4 mb-6">
                     <div class="flex items-start space-x-3">
                         <div class="text-2xl">💡</div>
                         <div>
-                            <h4 class="font-semibold text-yellow-800">Pro Tip:</h4>
-                            <p class="text-yellow-700">Choose from multiple difficulty levels to match your learning needs - from basic concepts to advanced topics.</p>
+                            <h4 class="font-semibold text-yellow-200">Pro Tip:</h4>
+                            <p class="text-yellow-100/80">Choose from multiple difficulty levels to match your learning needs - from basic concepts to advanced topics.</p>
                         </div>
                     </div>
                 </div>
@@ -220,33 +221,33 @@
 
             <!-- Step 3: BKT Smart Study -->
             <div class="tutorial-step" data-step="3">
-                <h2 class="text-3xl font-bold mb-4 text-purple-600">🧠 BKT Smart Study</h2>
-                <p class="text-lg text-gray-700 mb-6">
+                <h2 class="text-3xl font-bold mb-4 text-white">🧠 BKT Smart Study</h2>
+                <p class="text-lg text-white/80 mb-6">
                     Experience adaptive learning powered by Bayesian Knowledge Tracing.
                 </p>
-                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 mb-6">
-                    <h3 class="text-xl font-bold mb-4">How It Works:</h3>
+                <div class="bg-white/10 backdrop-blur rounded-xl p-6 mb-6 border border-white/20">
+                    <h3 class="text-xl font-bold mb-4 text-white">How It Works:</h3>
                     <div class="space-y-4">
                         <div class="flex items-start space-x-3">
-                            <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">1</div>
-                            <p class="text-gray-700 pt-1">The AI analyzes your performance on each question and topic</p>
+                            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">1</div>
+                            <p class="text-white/80 pt-1">The AI analyzes your performance on each question and topic</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">2</div>
-                            <p class="text-gray-700 pt-1">Uses Bayesian probability to estimate your mastery level for each concept</p>
+                            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">2</div>
+                            <p class="text-white/80 pt-1">Uses Bayesian probability to estimate your mastery level for each concept</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">3</div>
-                            <p class="text-gray-700 pt-1">Intelligently selects the next question to maximize your learning efficiency</p>
+                            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">3</div>
+                            <p class="text-white/80 pt-1">Intelligently selects the next question to maximize your learning efficiency</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">4</div>
-                            <p class="text-gray-700 pt-1">Adapts in real-time as you answer, focusing on areas needing improvement</p>
+                            <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">4</div>
+                            <p class="text-white/80 pt-1">Adapts in real-time as you answer, focusing on areas needing improvement</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-6">
-                    <p class="text-green-800">
+                <div class="bg-green-500/20 border-2 border-green-500/50 rounded-xl p-4 mb-6">
+                    <p class="text-green-100">
                         <strong>Result:</strong> Learn faster and more efficiently by focusing on what you need to practice most!
                     </p>
                 </div>
@@ -257,67 +258,67 @@
 
             <!-- Step 4: Community & More -->
             <div class="tutorial-step" data-step="4">
-                <h2 class="text-3xl font-bold mb-4 text-purple-600">🌟 More Features</h2>
-                <p class="text-lg text-gray-700 mb-6">
+                <h2 class="text-3xl font-bold mb-4 text-white">🌟 More Features</h2>
+                <p class="text-lg text-white/80 mb-6">
                     Explore additional tools to enhance your learning experience.
                 </p>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">🤝</div>
-                        <h3 class="text-xl font-bold mb-2">Community</h3>
-                        <p class="text-gray-600 mb-4">Share your study decks with others or download decks created by the community. Rate and review to help others find the best materials.</p>
-                        <a href="community.html" class="text-purple-600 font-semibold hover:underline">Explore Community →</a>
+                        <h3 class="text-xl font-bold mb-2 text-white">Community</h3>
+                        <p class="text-white/70 mb-4">Share your study decks with others or download decks created by the community. Rate and review to help others find the best materials.</p>
+                        <a href="community.html" class="text-purple-300 font-semibold hover:text-purple-200 transition">Explore Community →</a>
                     </div>
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">🎮</div>
-                        <h3 class="text-xl font-bold mb-2">Memory Games</h3>
-                        <p class="text-gray-600 mb-4">Learn through play with interactive memory games that make studying fun and engaging.</p>
-                        <a href="memory-games.html" class="text-purple-600 font-semibold hover:underline">Play Games →</a>
+                        <h3 class="text-xl font-bold mb-2 text-white">Memory Games</h3>
+                        <p class="text-white/70 mb-4">Learn through play with interactive memory games that make studying fun and engaging.</p>
+                        <a href="memory-games.html" class="text-purple-300 font-semibold hover:text-purple-200 transition">Play Games →</a>
                     </div>
                     <div class="feature-card rounded-xl p-6">
                         <div class="text-4xl mb-3">📊</div>
-                        <h3 class="text-xl font-bold mb-2">SAT Practice</h3>
-                        <p class="text-gray-600 mb-4">Access 3,794+ SAT questions with full-length practice tests and detailed analytics to track your progress.</p>
-                        <a href="sat-practice.html" class="text-purple-600 font-semibold hover:underline">Practice SAT →</a>
+                        <h3 class="text-xl font-bold mb-2 text-white">Progress Tracking</h3>
+                        <p class="text-white/70 mb-4">Monitor your learning journey with detailed analytics, charts, and insights to track your improvement over time.</p>
+                        <a href="progress.html" class="text-purple-300 font-semibold hover:text-purple-200 transition">View Progress →</a>
                     </div>
                     <div class="feature-card rounded-xl p-6">
-                        <div class="text-4xl mb-3">✅</div>
-                        <h3 class="text-xl font-bold mb-2">Assignments</h3>
-                        <p class="text-gray-600 mb-4">Manage your tasks with priorities, due dates, and progress tracking to stay organized.</p>
-                        <a href="assignments.html" class="text-purple-600 font-semibold hover:underline">Manage Tasks →</a>
+                        <div class="text-4xl mb-3">🧪</div>
+                        <h3 class="text-xl font-bold mb-2 text-white">BKT Analytics</h3>
+                        <p class="text-white/70 mb-4">Deep dive into your knowledge mastery with Bayesian Knowledge Tracing analytics and visualizations.</p>
+                        <a href="bkt-analytics.html" class="text-purple-300 font-semibold hover:text-purple-200 transition">View Analytics →</a>
                     </div>
                 </div>
             </div>
 
             <!-- Step 5: Final -->
             <div class="tutorial-step" data-step="5">
-                <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <h2 class="text-3xl font-bold mb-4 text-white">
                     🎉 You're All Set!
                 </h2>
-                <p class="text-xl text-gray-700 mb-6">
-                    You now know the basics of Studying Works. Start your learning journey today!
+                <p class="text-xl text-white/80 mb-6">
+                    You now know the basics of studying.works. Start your learning journey today!
                 </p>
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 mb-6">
-                    <h3 class="text-2xl font-bold mb-4">Quick Tips:</h3>
-                    <ul class="space-y-3 text-gray-700">
+                <div class="bg-white/10 backdrop-blur rounded-xl p-8 mb-6 border border-white/20">
+                    <h3 class="text-2xl font-bold mb-4 text-white">Quick Tips:</h3>
+                    <ul class="space-y-3 text-white/80">
                         <li class="flex items-start space-x-3">
-                            <span class="text-purple-600 font-bold">•</span>
+                            <span class="text-purple-400 font-bold">•</span>
                             <span>Visit the <strong>Dashboard</strong> to see your study streak and recent activity</span>
                         </li>
                         <li class="flex items-start space-x-3">
-                            <span class="text-purple-600 font-bold">•</span>
+                            <span class="text-purple-400 font-bold">•</span>
                             <span>Check <strong>Progress</strong> to view detailed analytics and calendar tracking</span>
                         </li>
                         <li class="flex items-start space-x-3">
-                            <span class="text-purple-600 font-bold">•</span>
-                            <span>Use <strong>Assignments</strong> to stay organized with upcoming tasks</span>
+                            <span class="text-purple-400 font-bold">•</span>
+                            <span>Use <strong>BKT Smart Study</strong> for adaptive learning powered by AI</span>
                         </li>
                         <li class="flex items-start space-x-3">
-                            <span class="text-purple-600 font-bold">•</span>
+                            <span class="text-purple-400 font-bold">•</span>
                             <span>Access this tutorial anytime from the menu in your dashboard</span>
                         </li>
                         <li class="flex items-start space-x-3">
-                            <span class="text-purple-600 font-bold">•</span>
+                            <span class="text-purple-400 font-bold">•</span>
                             <span>Customize your experience in <strong>Settings</strong></span>
                         </li>
                     </ul>
@@ -326,7 +327,7 @@
                     <a href="dashboard.html" class="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:opacity-90 transition text-center font-semibold text-lg">
                         Start Learning
                     </a>
-                    <button id="restart-tutorial" class="px-6 py-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-semibold">
+                    <button id="restart-tutorial" class="px-6 py-4 bg-white/20 hover:bg-white/30 text-white rounded-lg transition font-semibold backdrop-blur">
                         Restart Tutorial
                     </button>
                 </div>
@@ -336,7 +337,7 @@
 
         <!-- Navigation Buttons -->
         <div class="flex justify-between mt-8">
-            <button id="prev-btn" class="px-6 py-3 bg-white/90 text-purple-600 rounded-lg font-semibold hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <button id="prev-btn" class="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur text-white rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed">
                 ← Previous
             </button>
             <button id="next-btn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:opacity-90 transition">

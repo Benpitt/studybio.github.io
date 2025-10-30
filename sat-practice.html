@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Practice - Studying Works</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=afe7c31454144b64b28246771a567788"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <!-- DOMPurify for HTML sanitization -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="button-styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        .draggable-widget {
+            position: fixed;
+            z-index: 1000;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: move;
+        }
+
+        .draggable-widget.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+        }
+
+        .widget-header {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .widget-content {
+            padding: 12px;
+        }
+
+        .desmos-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 4px;
+        }
+
+        .question-panel {
+            background: white;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .answer-panel {
+            background: #fafafa;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .choice-option {
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .choice-option:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+
+        .choice-option.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .choice-option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .choice-option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .topic-card {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .topic-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .topic-card.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .widget-toggle {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .widget-toggle:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+
+        .widget-toggle.active {
+            border-color: #667eea;
+            background: #eef2ff;
+            color: #667eea;
+        }
+
+        .question-id {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <script type="module" src="auth-guard.js"></script>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Math rendering utility with HTML support
+        function MathText({ text, className = "" }) {
+            const containerRef = useRef(null);
+
+            useEffect(() => {
+                if (containerRef.current && text) {
+                    try {
+                        // Sanitize HTML content with DOMPurify
+                        const cleanHTML = window.DOMPurify ? window.DOMPurify.sanitize(text, {
+                            ALLOWED_TAGS: ['p', 'span', 'div', 'br', 'strong', 'em', 'u', 'sub', 'sup', 'img', 'table', 'tr', 'td', 'th', 'ul', 'ol', 'li'],
+                            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'width', 'height'],
+                            ALLOW_DATA_ATTR: false,
+                            ADD_ATTR: ['src']
+                        }) : text;
+
+                        // Set the sanitized HTML
+                        containerRef.current.innerHTML = cleanHTML;
+
+                        // Render LaTeX math using KaTeX after HTML is set
+                        if (window.renderMathInElement) {
+                            window.renderMathInElement(containerRef.current, {
+                                delimiters: [
+                                    {left: '\\(', right: '\\)', display: false},
+                                    {left: '\\[', right: '\\]', display: true},
+                                    {left: '$', right: '$', display: false},
+                                    {left: '$$', right: '$$', display: true}
+                                ],
+                                throwOnError: false
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error rendering math/HTML:', error);
+                        containerRef.current.textContent = text;
+                    }
+                }
+            }, [text]);
+
+            return <span ref={containerRef} className={className}></span>;
+        }
+
+        function Navigation() {
+            const [userName, setUserName] = useState('Student');
+            const [userEmail, setUserEmail] = useState('');
+            const [userPhoto, setUserPhoto] = useState('https://via.placeholder.com/40');
+
+            useEffect(() => {
+                // Load user info from localStorage
+                const name = localStorage.getItem('userName') || 'Student';
+                const email = localStorage.getItem('userEmail') || '';
+                const photo = localStorage.getItem('userPhoto') || 'https://via.placeholder.com/40';
+
+                setUserName(name);
+                setUserEmail(email);
+                setUserPhoto(photo);
+            }, []);
+
+            const handleSignOut = () => {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            };
+
+            return (
+                <nav className="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between h-16">
+                            <div className="flex items-center space-x-8">
+                                <a href="dashboard.html" className="text-xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                                    <span>🎓</span>
+                                    <span>studying.works</span>
+                                </a>
+                                <div className="hidden md:flex space-x-4">
+                                    <a href="dashboard.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                                    <a href="sat-practice.html" className="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">SAT Practice</a>
+                                    <a href="custom-flashcards.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Flashcards</a>
+                                    <a href="progress.html" className="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <div className="relative group">
+                                    <button className="flex items-center space-x-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all">
+                                        <img src={userPhoto} alt="" className="w-8 h-8 rounded-full" />
+                                        <span className="text-white font-semibold hidden md:block">{userName.split(' ')[0]}</span>
+                                    </button>
+                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                                        <div className="p-4">
+                                            <p className="text-sm text-gray-600 mb-3">{userEmail}</p>
+                                            <button
+                                                onClick={handleSignOut}
+                                                className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-all"
+                                            >
+                                                Sign Out
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function DraggableWidget({ title, children, initialX, initialY, onClose }) {
+            const [position, setPosition] = useState({ x: initialX, y: initialY });
+            const [isDragging, setIsDragging] = useState(false);
+            const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+            const widgetRef = useRef(null);
+
+            const handleMouseDown = (e) => {
+                if (e.target.closest('.widget-header')) {
+                    setIsDragging(true);
+                    const rect = widgetRef.current.getBoundingClientRect();
+                    setDragOffset({
+                        x: e.clientX - rect.left,
+                        y: e.clientY - rect.top
+                    });
+                }
+            };
+
+            useEffect(() => {
+                const handleMouseMove = (e) => {
+                    if (isDragging) {
+                        setPosition({
+                            x: e.clientX - dragOffset.x,
+                            y: e.clientY - dragOffset.y
+                        });
+                    }
+                };
+
+                const handleMouseUp = () => {
+                    setIsDragging(false);
+                };
+
+                if (isDragging) {
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                }
+
+                return () => {
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                };
+            }, [isDragging, dragOffset]);
+
+            return (
+                <div
+                    ref={widgetRef}
+                    className={`draggable-widget ${isDragging ? 'dragging' : ''}`}
+                    style={{ left: `${position.x}px`, top: `${position.y}px` }}
+                    onMouseDown={handleMouseDown}
+                >
+                    <div className="widget-header">
+                        <span>{title}</span>
+                        <button onClick={onClose} className="text-white hover:text-gray-200 font-bold text-lg bg-white/20 hover:bg-white/30 px-2 rounded transition-all">×</button>
+                    </div>
+                    <div className="widget-content">
+                        {children}
+                    </div>
+                </div>
+            );
+        }
+
+        function DesmosCalculator({ mode }) {
+            const calculatorRef = useRef(null);
+            const containerRef = useRef(null);
+
+            useEffect(() => {
+                if (containerRef.current && !calculatorRef.current) {
+                    calculatorRef.current = Desmos.GraphingCalculator(containerRef.current, {
+                        keypad: true,
+                        expressions: mode === 'graphing',
+                        graphpaper: mode === 'graphing',
+                        settingsMenu: true,
+                        expressionsTopbar: mode === 'graphing'
+                    });
+                }
+
+                return () => {
+                    if (calculatorRef.current) {
+                        calculatorRef.current.destroy();
+                        calculatorRef.current = null;
+                    }
+                };
+            }, [mode]);
+
+            return <div ref={containerRef} className="desmos-container" />;
+        }
+
+        function Stopwatch() {
+            const [time, setTime] = useState(0);
+            const [isRunning, setIsRunning] = useState(false);
+            const intervalRef = useRef(null);
+
+            useEffect(() => {
+                if (isRunning) {
+                    intervalRef.current = setInterval(() => {
+                        setTime(t => t + 10);
+                    }, 10);
+                } else {
+                    if (intervalRef.current) clearInterval(intervalRef.current);
+                }
+                return () => {
+                    if (intervalRef.current) clearInterval(intervalRef.current);
+                };
+            }, [isRunning]);
+
+            const formatTime = (ms) => {
+                const minutes = Math.floor(ms / 60000);
+                const seconds = Math.floor((ms % 60000) / 1000);
+                const milliseconds = Math.floor((ms % 1000) / 10);
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+            };
+
+            return (
+                <div style={{ minWidth: '200px' }}>
+                    <div className="text-3xl font-mono font-bold text-center mb-3 text-gray-800">
+                        {formatTime(time)}
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setIsRunning(!isRunning)}
+                            className="flex-1 px-4 py-2 rounded-lg font-semibold text-white transition-all"
+                            style={{
+                                background: isRunning
+                                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                            }}
+                        >
+                            {isRunning ? 'Stop' : 'Start'}
+                        </button>
+                        <button
+                            onClick={() => { setIsRunning(false); setTime(0); }}
+                            className="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 transition-all"
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Helper function to map domain to topic
+        function getDomainTopic(domain, module) {
+            if (!domain) return 'other';
+            const d = domain.toLowerCase();
+
+            // Math topics - more specific categorization
+            if (d.includes('algebra') && !d.includes('advanced')) return 'algebra';
+            if (d.includes('advanced math')) return 'advanced-math';
+            if (d.includes('problem-solving') || d.includes('data analysis')) return 'data-analysis';
+            if (d.includes('geometry') && d.includes('trig')) return 'geometry-trig';
+            if (d.includes('geometry')) return 'geometry';
+            if (d.includes('trig')) return 'trigonometry';
+
+            // Fallback for general math terms
+            if (d.includes('equation') || d.includes('function') || d.includes('linear')) return 'algebra';
+
+            // Reading & Writing topics
+            if (d.includes('information and ideas')) return 'information-ideas';
+            if (d.includes('craft and structure')) return 'craft-structure';
+            if (d.includes('expression of ideas')) return 'expression-ideas';
+            if (d.includes('standard english') || d.includes('conventions')) return 'english-conventions';
+
+            // Fallback for general reading/writing terms
+            if (d.includes('reading') || d.includes('comprehension') || d.includes('inference')) return 'reading';
+            if (d.includes('writing') || d.includes('grammar') || d.includes('punctuation')) return 'writing';
+
+            return 'other';
+        }
+
+        function TopicSelectionMenu({ onStartTest, allQuestions }) {
+            const [selectedTopics, setSelectedTopics] = useState([]);
+            const [customCount, setCustomCount] = useState(10);
+
+            // Count questions per topic
+            const getTopicCount = (topicId) => {
+                return allQuestions.filter(q => {
+                    const qTopic = q.topic?.toLowerCase() || getDomainTopic(q.domain, q.module);
+                    return qTopic === topicId;
+                }).length;
+            };
+
+            const topics = [
+                { id: 'algebra', name: 'Algebra', icon: '📐', count: getTopicCount('algebra') },
+                { id: 'advanced-math', name: 'Advanced Math', icon: '🔢', count: getTopicCount('advanced-math') },
+                { id: 'data-analysis', name: 'Data Analysis', icon: '📊', count: getTopicCount('data-analysis') },
+                { id: 'geometry-trig', name: 'Geometry & Trig', icon: '🔺', count: getTopicCount('geometry-trig') },
+                { id: 'information-ideas', name: 'Information & Ideas', icon: '💡', count: getTopicCount('information-ideas') },
+                { id: 'craft-structure', name: 'Craft & Structure', icon: '🏗️', count: getTopicCount('craft-structure') },
+                { id: 'expression-ideas', name: 'Expression of Ideas', icon: '✍️', count: getTopicCount('expression-ideas') },
+                { id: 'english-conventions', name: 'English Conventions', icon: '📖', count: getTopicCount('english-conventions') }
+            ].filter(topic => topic.count > 0);
+
+            const toggleTopic = (topicId) => {
+                setSelectedTopics(prev =>
+                    prev.includes(topicId)
+                        ? prev.filter(id => id !== topicId)
+                        : [...prev, topicId]
+                );
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto py-12 px-6">
+                    <div className="bg-white rounded-xl shadow-lg p-8">
+                        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                            SAT Practice Test Setup
+                        </h1>
+                        <p className="text-gray-600 mb-8">Select topics and configure your practice session</p>
+
+                        <div className="mb-8">
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Select Topics</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {topics.map(topic => (
+                                    <div
+                                        key={topic.id}
+                                        onClick={() => toggleTopic(topic.id)}
+                                        className={`topic-card ${selectedTopics.includes(topic.id) ? 'selected' : ''}`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-3xl">{topic.icon}</span>
+                                                <div>
+                                                    <div className="font-bold text-gray-800">{topic.name}</div>
+                                                    <div className="text-sm text-gray-500">{topic.count} questions available</div>
+                                                </div>
+                                            </div>
+                                            <div className={`w-6 h-6 rounded-full border-2 ${selectedTopics.includes(topic.id) ? 'bg-purple-600 border-purple-600' : 'border-gray-300'}`}>
+                                                {selectedTopics.includes(topic.id) && <span className="text-white text-sm">✓</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="mb-8">
+                            <label className="block text-lg font-bold mb-3 text-gray-800">Number of Questions</label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="50"
+                                value={customCount}
+                                onChange={(e) => setCustomCount(parseInt(e.target.value) || 10)}
+                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-lg"
+                            />
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => onStartTest({ mode: 'random', topics: selectedTopics, count: customCount })}
+                                disabled={selectedTopics.length === 0}
+                                className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Start Random Test
+                            </button>
+                            <button
+                                onClick={() => onStartTest({ mode: 'custom', topics: selectedTopics, count: customCount })}
+                                disabled={selectedTopics.length === 0}
+                                className="flex-1 px-6 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Review Specific Questions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function SATApp() {
+            const [mode, setMode] = useState('menu'); // 'menu' or 'test'
+            const [allQuestions, setAllQuestions] = useState([]); // Full question bank
+            const [testQuestions, setTestQuestions] = useState([]); // Current test questions
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [userAnswers, setUserAnswers] = useState({});
+            const [isSubmitted, setIsSubmitted] = useState(false);
+            const [showCalculator, setShowCalculator] = useState(false);
+            const [showStopwatch, setShowStopwatch] = useState(false);
+            const [calculatorMode, setCalculatorMode] = useState('graphing');
+
+            // Load questions from JSON
+            useEffect(() => {
+                console.log('Attempting to load SAT questions...');
+                fetch('files/SAT_Questions_classified.json')
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! status: ${res.status}`);
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log('Raw data received');
+                        console.log('Data type:', typeof data);
+                        console.log('Is array?', Array.isArray(data));
+
+                        let questionsArray = [];
+
+                        // Handle mixed format (object with mixed CB and clean format)
+                        if (!Array.isArray(data) && typeof data === 'object') {
+                            console.log('Converting object to array');
+                            const allQuestions = Object.values(data);
+                            console.log(`Found ${allQuestions.length} questions`);
+
+                            questionsArray = allQuestions.map(q => {
+                                // Detect format: CB has 'content' property, clean format has 'question' property, classified has 'options' array
+                                const isCBFormat = q.content !== undefined;
+                                const isClassifiedFormat = q.options !== undefined && Array.isArray(q.options);
+
+                                if (isClassifiedFormat) {
+                                    // Parse classified format (from SAT_Questions_classified.json)
+                                    let choices = null;
+                                    if (q.options && q.options.length > 0) {
+                                        choices = q.options.map(opt => {
+                                            const label = opt.label || opt.letter || '';
+                                            const text = opt.text || opt.content || opt.body || '';
+                                            return `${label}) ${text}`;
+                                        });
+                                    }
+
+                                    return {
+                                        id: q.id,
+                                        domain: q.domain || q.identifier || 'General',
+                                        module: q.section,
+                                        question: q.question,
+                                        passage: q.passage !== 'null' && q.passage ? q.passage : null,
+                                        choices: choices,
+                                        correct: q.answer,
+                                        explanation: q.explanation || 'No explanation available',
+                                        difficulty: q.difficulty,
+                                        format: 'classified'
+                                    };
+                                } else if (isCBFormat) {
+                                    // Parse CB format
+                                    const content = q.content || {};
+                                    const isMCQ = content.type === 'mcq';
+
+                                    const stripHTML = (html) => {
+                                        if (!html) return '';
+                                        return html
+                                            .replace(/<math[^>]*>.*?<\/math>/gi, '[math]')
+                                            .replace(/<[^>]+>/g, '')
+                                            .replace(/&nbsp;/g, ' ')
+                                            .replace(/&rsquo;/g, "'")
+                                            .trim();
+                                    };
+
+                                    let choices = [];
+                                    if (isMCQ && content.answerOptions) {
+                                        choices = content.answerOptions.map((opt, idx) => {
+                                            const letter = String.fromCharCode(65 + idx);
+                                            return `${letter}) ${stripHTML(opt.content)}`;
+                                        });
+                                    }
+
+                                    return {
+                                        id: q.questionId || q.uId,
+                                        domain: q.primary_class_cd_desc || 'General',
+                                        module: q.module,
+                                        question: stripHTML(content.stem),
+                                        choices: isMCQ ? choices : null,
+                                        correct: (content.correct_answer || [''])[0],
+                                        explanation: stripHTML(content.rationale),
+                                        difficulty: q.difficulty,
+                                        format: 'cb'
+                                    };
+                                } else {
+                                    // Parse clean format
+                                    const qData = q.question || {};
+                                    return {
+                                        id: q.id,
+                                        domain: q.domain || 'General',
+                                        module: q.module,
+                                        question: qData.question,
+                                        passage: qData.paragraph !== 'null' ? qData.paragraph : null,
+                                        choices: qData.choices,
+                                        correct: qData.correct_answer,
+                                        explanation: qData.explanation,
+                                        difficulty: q.difficulty,
+                                        format: 'clean'
+                                    };
+                                }
+                            });
+
+                            console.log(`✅ Converted ${questionsArray.length} questions`);
+                        }
+                        // Handle simple array format
+                        else if (Array.isArray(data)) {
+                            questionsArray = data;
+                            console.log(`✅ Loaded ${data.length} questions from array`);
+                        }
+                        // Handle nested questions property
+                        else if (data.questions) {
+                            questionsArray = data.questions;
+                            console.log(`✅ Loaded ${data.questions.length} questions from data.questions`);
+                        }
+                        else {
+                            console.warn('❌ Unknown data format, using fallback');
+                            questionsArray = [getSampleQuestion()];
+                        }
+
+                        setAllQuestions(questionsArray);
+                    })
+                    .catch(err => {
+                        console.error('Error loading SAT questions:', err.message);
+                        console.log('Using fallback sample question. Check files/SAT_Questions_classified.json exists.');
+                        // Use fallback sample questions
+                        setAllQuestions([getSampleQuestion()]);
+                    });
+            }, []);
+
+            function getSampleQuestion() {
+                return {
+                    id: "sample-1",
+                    topic: "algebra",
+                    domain: "Linear Equations",
+                    question: "If 2x + 5 = 15, what is the value of x?",
+                    choices: ["A) 3", "B) 5", "C) 7", "D) 10"],
+                    correct: "B",
+                    explanation: "Subtract 5 from both sides: 2x = 10, then divide by 2: x = 5"
+                };
+            }
+
+            const handleStartTest = (config) => {
+                // Filter questions based on selected topics
+                let filteredQuestions = allQuestions.filter(q => {
+                    const qTopic = q.topic?.toLowerCase() || getDomainTopic(q.domain, q.module);
+                    return config.topics.includes(qTopic);
+                });
+
+                // Shuffle and take the specified count
+                const shuffled = filteredQuestions.sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, config.count);
+
+                setTestQuestions(selected);
+                setCurrentQuestionIndex(0);
+                setUserAnswers({});
+                setIsSubmitted(false);
+                setMode('test');
+            };
+
+            const handleAnswer = (answer) => {
+                setUserAnswers({
+                    ...userAnswers,
+                    [testQuestions[currentQuestionIndex].id]: answer
+                });
+            };
+
+            const handleNext = () => {
+                setIsSubmitted(false);
+                if (currentQuestionIndex < testQuestions.length - 1) {
+                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                }
+            };
+
+            const handlePrevious = () => {
+                setIsSubmitted(false);
+                if (currentQuestionIndex > 0) {
+                    setCurrentQuestionIndex(currentQuestionIndex - 1);
+                }
+            };
+
+            if (mode === 'menu') {
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} />;
+            }
+
+            if (allQuestions.length === 0) {
+                return (
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-center">
+                            <div className="text-6xl mb-4">📚</div>
+                            <p className="text-xl text-gray-600">Loading questions...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (testQuestions.length === 0) {
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} />;
+            }
+
+            const currentQuestion = testQuestions[currentQuestionIndex];
+
+            // Handle both OpenSAT format (nested) and simple format
+            const questionData = currentQuestion.question?.question ? currentQuestion.question : currentQuestion;
+            const passage = questionData.paragraph || currentQuestion.passage;
+            const questionText = questionData.question || currentQuestion.question;
+            const explanation = questionData.explanation || currentQuestion.explanation;
+            const choices = questionData.choices;
+            const correctAnswer = questionData.correct_answer || currentQuestion.correct;
+
+            return (
+                <>
+                    <div className="grid grid-cols-2" style={{ height: 'calc(100vh - 64px)' }}>
+                        {/* Left Panel - Question */}
+                        <div className="question-panel overflow-y-auto">
+                            <div className="mb-6">
+                                <button
+                                    onClick={() => setMode('menu')}
+                                    className="text-purple-600 hover:text-purple-700 font-semibold mb-4 bg-purple-50 hover:bg-purple-100 px-4 py-2 rounded-lg transition-all"
+                                >
+                                    ← Back to Menu
+                                </button>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-gray-800">
+                                            Question {currentQuestionIndex + 1} of {testQuestions.length}
+                                        </h1>
+                                    </div>
+                                    <div className="question-id">
+                                        ID: {currentQuestion.id}
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 mb-4">
+                                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
+                                        {currentQuestion.topic || getDomainTopic(currentQuestion.domain, currentQuestion.module)}
+                                    </span>
+                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                                        {currentQuestion.domain || 'General'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="prose max-w-none">
+                                <div className="text-lg text-gray-800 leading-relaxed mb-6 whitespace-pre-wrap">
+                                    {passage && (
+                                        <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-purple-500">
+                                            <MathText text={passage} />
+                                        </div>
+                                    )}
+                                    <div className="font-semibold text-xl mb-4">
+                                        <MathText text={questionText} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {isSubmitted && (
+                                <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                                    <h4 className="font-bold text-blue-900 mb-2">Explanation:</h4>
+                                    <p className="text-blue-800">
+                                        <MathText text={explanation || 'No explanation available.'} />
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="flex gap-3 mt-8">
+                                <button
+                                    onClick={handlePrevious}
+                                    disabled={currentQuestionIndex === 0}
+                                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-semibold transition-all"
+                                >
+                                    ← Previous
+                                </button>
+                                <button
+                                    onClick={handleNext}
+                                    disabled={currentQuestionIndex === testQuestions.length - 1}
+                                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+                                >
+                                    Next →
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Right Panel - Answers & Widgets */}
+                        <div className="answer-panel overflow-y-auto">
+                            {/* Widget Toggles */}
+                            <div className="flex gap-2 mb-6">
+                                <button
+                                    onClick={() => setShowCalculator(!showCalculator)}
+                                    className={`widget-toggle ${showCalculator ? 'active' : ''}`}
+                                >
+                                    🧮 Calculator
+                                </button>
+                                <button
+                                    onClick={() => setShowStopwatch(!showStopwatch)}
+                                    className={`widget-toggle ${showStopwatch ? 'active' : ''}`}
+                                >
+                                    ⏱️ Stopwatch
+                                </button>
+                                {showCalculator && (
+                                    <select
+                                        value={calculatorMode}
+                                        onChange={(e) => setCalculatorMode(e.target.value)}
+                                        className="px-3 py-1 border-2 border-gray-300 rounded-lg text-sm font-semibold"
+                                    >
+                                        <option value="graphing">Graphing</option>
+                                        <option value="scientific">Scientific</option>
+                                    </select>
+                                )}
+                            </div>
+
+                            {/* Answer Section */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-bold mb-4 text-gray-800">
+                                    {choices ? 'Answer Choices' : 'Your Answer'}
+                                </h3>
+
+                                {/* Multiple Choice */}
+                                {choices && (
+                                    <div className="space-y-3">
+                                        {(() => {
+                                            // Handle both array format and object format (OpenSAT)
+                                            const choicesArray = Array.isArray(choices)
+                                                ? choices
+                                                : Object.entries(choices || {}).map(([key, value]) => `${key}) ${value}`);
+
+                                            return choicesArray.map((choice, idx) => {
+                                                const letter = Array.isArray(choices)
+                                                    ? String.fromCharCode(65 + idx)
+                                                    : choice.charAt(0); // Extract A, B, C, D from "A) text"
+
+                                                const isSelected = userAnswers[currentQuestion.id] === letter;
+                                                const isCorrect = letter === correctAnswer;
+
+                                                let className = 'choice-option';
+                                                if (isSubmitted) {
+                                                    if (isCorrect) className += ' correct';
+                                                    else if (isSelected) className += ' incorrect';
+                                                } else if (isSelected) {
+                                                    className += ' selected';
+                                                }
+
+                                                const choiceText = Array.isArray(choices)
+                                                    ? choice.replace(/^[A-D]\)\s*/, '')
+                                                    : choice.substring(3); // Remove "A) " prefix
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        onClick={() => !isSubmitted && handleAnswer(letter)}
+                                                        className={className}
+                                                    >
+                                                        <span className="font-bold mr-3">{letter})</span>
+                                                        <MathText text={choiceText} />
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
+                                    </div>
+                                )}
+
+                                {/* Free Response */}
+                                {!choices && (
+                                    <div>
+                                        <input
+                                            type="text"
+                                            value={userAnswers[currentQuestion.id] || ''}
+                                            onChange={(e) => handleAnswer(e.target.value)}
+                                            disabled={isSubmitted}
+                                            placeholder="Enter your answer (number or fraction)"
+                                            className="w-full p-4 border-2 border-gray-300 rounded-lg text-lg font-medium focus:border-purple-500 focus:outline-none"
+                                        />
+                                        {isSubmitted && (
+                                            <div className="mt-3 text-sm text-gray-600">
+                                                <strong>Correct answer:</strong> {correctAnswer}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {!isSubmitted && userAnswers[currentQuestion.id] && (
+                                <button
+                                    onClick={() => setIsSubmitted(true)}
+                                    className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:opacity-90 transition-all mb-6"
+                                >
+                                    Check Answer
+                                </button>
+                            )}
+
+                            {/* Progress */}
+                            <div className="mt-6">
+                                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                                    <span>Progress</span>
+                                    <span>{Math.round(((currentQuestionIndex + 1) / testQuestions.length) * 100)}%</span>
+                                </div>
+                                <div className="bg-gray-200 rounded-full h-2">
+                                    <div
+                                        className="bg-gradient-to-r from-purple-600 to-blue-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${((currentQuestionIndex + 1) / testQuestions.length) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Draggable Widgets */}
+                    {showCalculator && (
+                        <DraggableWidget
+                            title={`Desmos ${calculatorMode === 'graphing' ? 'Graphing' : 'Scientific'} Calculator`}
+                            initialX={window.innerWidth - 500}
+                            initialY={100}
+                            onClose={() => setShowCalculator(false)}
+                        >
+                            <div style={{ width: '450px' }}>
+                                <DesmosCalculator mode={calculatorMode} />
+                            </div>
+                        </DraggableWidget>
+                    )}
+
+                    {showStopwatch && (
+                        <DraggableWidget
+                            title="Stopwatch"
+                            initialX={window.innerWidth - 280}
+                            initialY={100}
+                            onClose={() => setShowStopwatch(false)}
+                        >
+                            <Stopwatch />
+                        </DraggableWidget>
+                    )}
+                </>
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            <>
+                <Navigation />
+                <SATApp />
+            </>
+        );
+    </script>
+
+    <script src="toast-notifications.js"></script>
+</body>
+</html>

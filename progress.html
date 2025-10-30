@@ -39,7 +39,6 @@
                     </a>
                     <div class="hidden md:flex space-x-4">
                         <a href="dashboard.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
-                        <a href="assignments.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Assignments</a>
                         <a href="progress.html" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Progress</a>
                         <a href="about.html" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
                     </div>
@@ -223,17 +222,6 @@
                     }
                 }
 
-                // Load assignments
-                const assignmentsSnapshot = await getDocs(collection(db, 'users', userId, 'assignments'));
-                const assignments = [];
-                assignmentsSnapshot.forEach(doc => {
-                    assignments.push(doc.data());
-                });
-                if (assignments.length > 0) {
-                    localStorage.setItem('assignments', JSON.stringify(assignments));
-                    console.log(`✅ Loaded ${assignments.length} assignments from Firebase`);
-                }
-
                 // Load BKT reviews
                 const bktReviewsRef = collection(db, 'bkt_reviews');
                 const bktQuery = query(bktReviewsRef, where('userId', '==', userId));
@@ -292,31 +280,30 @@
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
             const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
-            const assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
 
             document.getElementById('total-streak').textContent = streak;
 
             // Count reviewed cards from cardHistory and reviewed custom cards
             const totalCards = Object.keys(cardHistory).length + customCards.filter(c => cardHistory[c.id]).length;
             document.getElementById('total-cards').textContent = totalCards;
-            
+
             let totalTests = 0;
             let totalCorrect = 0;
             let totalQuestions = 0;
-            
+
             Object.values(topicStats).forEach(stat => {
                 if (stat.total > 0) totalTests++;
                 totalCorrect += stat.correct || 0;
                 totalQuestions += stat.total || 0;
             });
-            
+
             document.getElementById('total-quizzes').textContent = totalTests;
             document.getElementById('avg-accuracy').textContent = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
             generateCalendar();
             generateTopicPerformance(topicStats);
             generateAchievements(streak, totalCards, totalTests, totalCorrect, totalQuestions);
-            generateInsights(streak, totalCards, totalTests, assignments);
+            generateInsights(streak, totalCards, totalTests);
             generateWeeklySummary(totalCards, totalTests);
             generateMilestone(totalCards, totalTests, streak);
         }
@@ -505,31 +492,24 @@
             });
         }
 
-        function generateInsights(streak, cards, quizzes, assignments) {
+        function generateInsights(streak, cards, quizzes) {
             const container = document.getElementById('insights-container');
             const insights = [];
-            
+
             if (streak >= 7) {
                 insights.push({ emoji: '🌟', title: 'Consistency Master', desc: `${streak} day streak - amazing!` });
             } else if (cards > 0 || quizzes > 0) {
                 insights.push({ emoji: '📈', title: 'Keep Going', desc: 'Build your streak!' });
             }
-            
-            if (assignments.filter(a => !a.completed).length > 0) {
-                const overdue = assignments.filter(a => !a.completed && a.dueDate && new Date(a.dueDate) < new Date()).length;
-                if (overdue > 0) {
-                    insights.push({ emoji: '🚨', title: 'Attention Needed', desc: `${overdue} overdue task${overdue > 1 ? 's' : ''}` });
-                }
-            }
-            
+
             if (cards >= 100) {
                 insights.push({ emoji: '🎴', title: 'Card Master', desc: 'Over 100 cards reviewed!' });
             }
-            
+
             if (insights.length === 0) {
                 insights.push({ emoji: '🎯', title: 'Get Started', desc: 'Start studying to see insights' });
             }
-            
+
             container.innerHTML = insights.map(i => `
                 <div class="bg-white/20 backdrop-blur rounded-xl p-4 mb-4">
                     <div class="text-3xl mb-2">${i.emoji}</div>

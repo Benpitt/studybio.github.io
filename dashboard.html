@@ -19,18 +19,18 @@
 </head>
 <body>
     <script type="module" src="auth-guard.js"></script>
-    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+    <nav class="backdrop-blur-lg bg-black/30 border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
-                    <a href="dashboard" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                    <a href="dashboard" class="text-2xl font-bold text-white font-display flex items-center space-x-2 hover:scale-105 transition-transform">
                         <span>🎓</span>
                         <span>studying.works</span>
                     </a>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="dashboard" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Dashboard</a>
-                        <a href="progress" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
-                        <a href="about" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
+                    <div class="hidden md:flex space-x-2">
+                        <a href="/" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all">Home</a>
+                        <a href="dashboard" class="text-white font-semibold px-4 py-2 rounded-lg bg-white/10">Practice</a>
+                        <a href="progress" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all">Progress</a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -67,13 +67,13 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        <div class="mb-4 animate-slide-in delay-100 opacity-0">
-            <h1 id="greeting" class="text-3xl font-bold text-white mb-1">Welcome! 👋</h1>
-            <p class="text-base text-blue-200">Ready to crush some studying?</p>
+    <div class="container mx-auto py-8 pt-24 space-y-xl">
+        <div class="mb-8 animate-slide-in delay-100 opacity-0">
+            <h1 id="greeting" class="text-4xl md:text-5xl font-bold text-white mb-2 font-display">Welcome! 👋</h1>
+            <p class="text-lg text-white/70">Ready to crush some studying?</p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
             <div class="card-gradient-fire rounded-xl p-4 text-white card-hover animate-slide-in delay-200">
                 <div class="text-3xl mb-1">🔥</div>
                 <div class="text-2xl font-bold"><span id="stat-streak">0</span></div>
@@ -96,16 +96,16 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            <div class="lg:col-span-2 space-y-md">
                 <div class="animate-slide-in delay-600">
-                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
-                        <span>📚</span>
-                        <span class="ml-2">Study Apps</span>
+                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center font-display">
+                        <span class="text-4xl">📚</span>
+                        <span class="ml-3">Study Apps</span>
                     </h2>
 
-                    <!-- iPhone-inspired 2-column grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Card grid for study apps -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- My Flashcards -->
                         <a href="custom-flashcards" class="block">
                             <div class="card-gradient-amber rounded-2xl p-6 card-hover relative overflow-hidden group h-full">

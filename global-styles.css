@@ -1,17 +1,30 @@
 /* Import modern fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-/* CRITICAL: Fix white borders on overscroll */
+/* Minimalist White Theme with Black and Orange */
 :root {
-    --gradient-color-1: #0a0a1a;
-    --gradient-color-2: #1e1b4b;
-    --gradient-color-3: #134e4a;
+    /* Color System */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-orange: #ff8f00;
+    --color-orange-light: #ffb74d;
+    --color-orange-dark: #f57c00;
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f5f5;
+    --color-gray-200: #eeeeee;
+    --color-gray-300: #e0e0e0;
+    --color-gray-400: #bdbdbd;
+    --color-gray-500: #9e9e9e;
+    --color-gray-600: #757575;
+    --color-gray-700: #616161;
+    --color-gray-800: #424242;
+    --color-gray-900: #212121;
 
     /* Typography scale */
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-display: 'Poppins', 'Inter', sans-serif;
 
-    /* Spacing scale - increased for more whitespace */
+    /* Spacing scale - minimalist with generous whitespace */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 1.5rem;
@@ -19,17 +32,17 @@
     --spacing-xl: 4rem;
     --spacing-2xl: 6rem;
 
-    /* Border radius - slightly larger for modern look */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    /* Border radius - minimal and clean */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
 
-    /* Shadows - softer and more subtle */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+    /* Shadows - subtle and minimal */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.1);
 
     /* Icon sizing */
     --icon-sm: 16px;
@@ -39,38 +52,17 @@
 }
 
 html, body {
-    background: #0a0a1a !important;
-    background-attachment: fixed !important;
-    overscroll-behavior: none;
-}
-
-html {
-    background: linear-gradient(to bottom right, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3)) fixed !important;
-    min-height: 100vh;
-    transition: background 3s ease-in-out;
+    background: var(--color-white) !important;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background: linear-gradient(to bottom right, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3)) fixed !important;
+    background: var(--color-white) !important;
     min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 3s ease-in-out;
     font-family: var(--font-sans);
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.95);
-}
-
-/* Ensure body always covers viewport */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom right, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3));
-    z-index: -1;
-    transition: background 3s ease-in-out;
+    color: var(--color-black);
 }
 
 /* Page transition animations */
@@ -319,7 +311,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
     margin: 0;
-    color: white;
+    color: var(--color-black);
 }
 
 h1 {
@@ -397,11 +389,11 @@ p {
 }
 
 .text-muted {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--color-gray-600);
 }
 
 .text-subtle {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--color-gray-500);
     font-size: 0.875rem;
 }
 
@@ -452,21 +444,19 @@ p {
     }
 }
 
-/* ===== MODERN CARD SYSTEM ===== */
+/* ===== MINIMALIST CARD SYSTEM ===== */
 .card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-lg);
     padding: var(--spacing-md);
-    box-shadow: var(--shadow-md);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
-    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-orange);
 }
 
 .card-sm {
@@ -480,9 +470,8 @@ p {
 }
 
 .card-glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-200);
 }
 
 .card-interactive {
@@ -491,59 +480,56 @@ p {
 }
 
 .card-interactive:active {
-    transform: translateY(-2px) scale(0.98);
+    transform: scale(0.98);
 }
 
 /* Question card styles for practice modes */
 .question-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.12);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    box-shadow: var(--shadow-lg);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
 }
 
 .question-card:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: var(--shadow-xl);
+    border-color: var(--color-orange);
+    box-shadow: var(--shadow-lg);
 }
 
 /* Answer option cards */
 .answer-option {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-300);
     border-radius: var(--radius-md);
     padding: var(--spacing-md);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     user-select: none;
 }
 
 .answer-option:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(124, 58, 237, 0.4);
-    transform: translateX(4px);
+    background: var(--color-gray-50);
+    border-color: var(--color-orange);
 }
 
 .answer-option.selected {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(99, 102, 241, 0.2));
-    border-color: rgba(124, 58, 237, 0.6);
-    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    background: rgba(255, 143, 0, 0.05);
+    border-color: var(--color-orange);
+    border-width: 2px;
 }
 
 .answer-option.correct {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(20, 184, 166, 0.2));
-    border-color: rgba(16, 185, 129, 0.6);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    background: rgba(76, 175, 80, 0.05);
+    border-color: #4caf50;
+    border-width: 2px;
 }
 
 .answer-option.incorrect {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(248, 113, 113, 0.2));
-    border-color: rgba(239, 68, 68, 0.6);
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    background: rgba(244, 67, 54, 0.05);
+    border-color: #f44336;
+    border-width: 2px;
 }
 
 /* ===== SPACING UTILITIES ===== */
@@ -597,19 +583,23 @@ p {
 
 /* ===== NAVIGATION STYLES ===== */
 nav {
-    backdrop-filter: blur(12px);
-    background: rgba(10, 10, 26, 0.8);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-gray-200);
+    box-shadow: var(--shadow-sm);
 }
 
 nav a {
     font-weight: 500;
     transition: all 0.2s ease;
+    color: var(--color-gray-700);
 }
 
 nav a:hover {
-    color: white;
-    transform: translateY(-1px);
+    color: var(--color-orange);
+}
+
+nav a.active {
+    color: var(--color-black);
 }
 
 /* ===== IMPROVED BUTTON ROUNDED CORNERS ===== */

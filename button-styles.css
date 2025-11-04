@@ -1,120 +1,47 @@
-/* Enhanced Button & UI Element Styles - Opposite Gradient Flow System */
-
-/* Opposite gradient animation (flows opposite to background) */
-@keyframes gradient-flow-reverse {
-    0% {
-        background-position: 100% 50%;
-    }
-    10% {
-        background-position: 85% 55%;
-    }
-    20% {
-        background-position: 65% 45%;
-    }
-    30% {
-        background-position: 50% 50%;
-    }
-    40% {
-        background-position: 35% 55%;
-    }
-    50% {
-        background-position: 20% 50%;
-    }
-    60% {
-        background-position: 5% 45%;
-    }
-    70% {
-        background-position: 25% 55%;
-    }
-    80% {
-        background-position: 50% 50%;
-    }
-    90% {
-        background-position: 75% 45%;
-    }
-    100% {
-        background-position: 100% 50%;
-    }
-}
-
-@keyframes button-glow {
-    0%, 100% {
-        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
-    }
-    50% {
-        box-shadow: 0 6px 30px rgba(124, 58, 237, 0.7);
-    }
-}
-
-@keyframes input-glow {
-    0%, 100% {
-        border-color: rgba(20, 184, 166, 0.5);
-        box-shadow: 0 0 15px rgba(20, 184, 166, 0.3);
-    }
-    50% {
-        border-color: rgba(20, 184, 166, 0.8);
-        box-shadow: 0 0 25px rgba(20, 184, 166, 0.5);
-    }
-}
+/* Minimalist Button Styles - White Theme with Orange & Black */
 
 /* ===== PRIMARY BUTTONS ===== */
 button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style),
 .btn-primary {
-    background: linear-gradient(45deg, #7c3aed, #6366f1, #14b8a6, #06b6d4, #8b5cf6);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style)::before,
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
-}
-
-button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):hover::before,
-.btn-primary:hover::before {
-    left: 100%;
+    background: var(--color-orange);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
 }
 
 button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):hover,
 .btn-primary:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 35px rgba(124, 58, 237, 0.6);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--color-orange-dark);
+    box-shadow: var(--shadow-md);
 }
 
 button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):active,
 .btn-primary:active {
-    transform: translateY(-1px) scale(0.98);
+    transform: scale(0.98);
 }
 
 /* ===== SECONDARY BUTTONS ===== */
 .btn-secondary {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6, #14b8a6, #0891b2);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: white;
+    background: var(--color-white);
+    color: var(--color-black);
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
     font-weight: 600;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
-    border-color: rgba(255, 255, 255, 0.4);
+    border-color: var(--color-orange);
+    background: var(--color-gray-50);
 }
 
 /* ===== DANGER/DELETE BUTTONS ===== */
@@ -122,34 +49,37 @@ button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):activ
 button[id*="delete"],
 button[id*="signout"],
 button[id*="remove"] {
-    background: linear-gradient(45deg, #eb3b5a, #fc5c65, #fd79a8, #ff6348) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 20s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 4px 15px rgba(235, 59, 90, 0.4) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    background: #f44336 !important;
+    color: var(--color-white) !important;
+    border: none !important;
+    border-radius: var(--radius-md) !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
 }
 
 .btn-danger:hover,
 button[id*="delete"]:hover,
 button[id*="signout"]:hover,
 button[id*="remove"]:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 8px 30px rgba(235, 59, 90, 0.7) !important;
+    background: #d32f2f !important;
 }
 
 /* ===== GHOST/TRANSPARENT BUTTONS ===== */
 .btn-ghost {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    background: transparent;
+    color: var(--color-black);
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
 .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-2px);
+    background: var(--color-gray-50);
+    border-color: var(--color-orange);
 }
 
 /* ===== INPUT FIELDS ===== */
@@ -160,11 +90,13 @@ input[type="number"],
 input[type="search"],
 textarea,
 select {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 250, 255, 0.95)) !important;
-    border: 2px solid rgba(124, 58, 237, 0.3) !important;
-    color: #1f2937 !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-gray-300) !important;
+    color: var(--color-black) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
 }
 
 input[type="text"]::placeholder,
@@ -173,8 +105,7 @@ input[type="password"]::placeholder,
 input[type="number"]::placeholder,
 input[type="search"]::placeholder,
 textarea::placeholder {
-    color: #6b7280 !important;
-    opacity: 0.7;
+    color: var(--color-gray-500) !important;
 }
 
 input[type="text"]:focus,
@@ -184,51 +115,36 @@ input[type="number"]:focus,
 input[type="search"]:focus,
 textarea:focus,
 select:focus {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(245, 250, 255, 1)) !important;
-    border: 2px solid rgba(124, 58, 237, 0.6) !important;
-    box-shadow: 0 0 25px rgba(124, 58, 237, 0.4) !important;
-    color: #111827 !important;
+    border-color: var(--color-orange) !important;
     outline: none;
-    transform: scale(1.01);
+    box-shadow: 0 0 0 3px rgba(255, 143, 0, 0.1) !important;
 }
 
 /* ===== CHECKBOX & RADIO INPUTS ===== */
 input[type="checkbox"],
 input[type="radio"] {
-    accent-color: #7c3aed;
+    accent-color: var(--color-orange);
     cursor: pointer;
     width: 20px;
     height: 20px;
 }
 
-/* ===== SPECIAL: Google Sign-In Button Enhancement ===== */
-#google-signin-btn {
-    background: linear-gradient(135deg, #ffffff, #f5faff) !important;
-    border: 3px solid transparent !important;
-    background-clip: padding-box !important;
-    position: relative !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+/* ===== SUBMIT BUTTONS ===== */
+button[type="submit"],
+input[type="submit"] {
+    background: var(--color-black);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-#google-signin-btn::after {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    background: linear-gradient(45deg, #7c3aed, #6366f1, #14b8a6, #06b6d4, #8b5cf6);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border-radius: inherit;
-    z-index: -1;
-}
-
-/* ===== LINK BUTTONS (styled as buttons) ===== */
-a.button,
-a[class*="btn-"] {
-    display: inline-block;
-    text-decoration: none;
+button[type="submit"]:hover,
+input[type="submit"]:hover {
+    background: var(--color-gray-800);
 }
 
 /* ===== DISABLED STATE ===== */
@@ -238,7 +154,6 @@ textarea:disabled,
 select:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    animation: none !important;
 }
 
 button:disabled:hover,
@@ -246,286 +161,87 @@ input:disabled:hover,
 textarea:disabled:hover,
 select:disabled:hover {
     transform: none !important;
-    box-shadow: none !important;
 }
 
-/* ===== SUBMIT BUTTONS ===== */
-button[type="submit"],
-input[type="submit"] {
-    background: linear-gradient(45deg, #0f766e, #14b8a6, #06b6d4, #0891b2);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4);
-    color: white;
-    font-weight: 700;
-}
-
-button[type="submit"]:hover,
-input[type="submit"]:hover {
-    box-shadow: 0 8px 35px rgba(15, 118, 110, 0.6);
-    transform: translateY(-3px) scale(1.02);
-}
-
-/* ===== FORM LABELS ===== */
-label {
+/* ===== MINIMALIST STAT CARDS ===== */
+.stat-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
     transition: all 0.2s ease;
 }
 
-label:has(+ input:focus),
-label:has(+ textarea:focus),
-label:has(+ select:focus) {
-    color: #7c3aed;
-    transform: translateX(2px);
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-orange);
 }
 
-/* ===== RANGE INPUTS ===== */
-input[type="range"] {
-    accent-color: #7c3aed;
+/* Orange accent stat card */
+.stat-card-orange {
+    border-left: 4px solid var(--color-orange);
+}
+
+/* ===== STUDY APP CARDS ===== */
+.study-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all 0.2s ease;
     cursor: pointer;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-    background: linear-gradient(135deg, #7c3aed, #14b8a6);
-    cursor: pointer;
+.study-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-orange);
+    transform: translateY(-2px);
 }
 
-/* ===== SELECT DROPDOWNS ===== */
-select {
-    cursor: pointer;
-    background-image: linear-gradient(45deg, transparent 50%, #7c3aed 50%),
-                      linear-gradient(135deg, #7c3aed 50%, transparent 50%);
-    background-position: calc(100% - 20px) calc(1em + 2px),
-                         calc(100% - 15px) calc(1em + 2px);
-    background-size: 5px 5px, 5px 5px;
-    background-repeat: no-repeat;
+.study-card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-orange);
 }
 
-/* ===== LOADING STATES ===== */
-.loading-gradient {
-    background: linear-gradient(45deg, #7c3aed, #6366f1, #14b8a6, #8b5cf6);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 2s ease-in-out infinite;
+/* ===== BADGES ===== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 
-/* ===== RESPONSIVE TOUCH STATES (Mobile) ===== */
-@media (hover: none) and (pointer: coarse) {
-    button:active,
-    .btn-primary:active,
-    .btn-secondary:active {
-        transform: scale(0.95);
-    }
+.badge-orange {
+    background: var(--color-orange);
+    color: var(--color-white);
+}
+
+.badge-outline {
+    background: transparent;
+    border: 1px solid var(--color-gray-300);
+    color: var(--color-gray-700);
 }
 
 /* ===== FILE INPUTS ===== */
 input[type="file"]::file-selector-button {
-    background: linear-gradient(45deg, #7c3aed, #14b8a6);
-    background-size: 200% 200%;
-    animation: gradient-flow-reverse 15s ease infinite;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    background: var(--color-orange);
+    color: var(--color-white);
+    border: none;
     padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 input[type="file"]::file-selector-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-}
-
-/* ========================================== */
-/* ===== ANIMATED GRADIENT CARDS ===== */
-/* ========================================== */
-
-/* Fire/Streak Card - Orange to Red with warm tones */
-.card-gradient-fire {
-    background: linear-gradient(45deg, #f97316, #fb923c, #ef4444, #ff6b6b, #fbbf24) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(249, 115, 22, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-fire:hover {
-    box-shadow: 0 15px 45px rgba(249, 115, 22, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Blue/Cyan Card - Cool blue tones */
-.card-gradient-blue {
-    background: linear-gradient(45deg, #3b82f6, #06b6d4, #0ea5e9, #38bdf8, #60a5fa) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-blue:hover {
-    box-shadow: 0 15px 45px rgba(59, 130, 246, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Success/Green Card - Green to teal tones */
-.card-gradient-success {
-    background: linear-gradient(45deg, #10b981, #14b8a6, #22c55e, #34d399, #2dd4bf) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-success:hover {
-    box-shadow: 0 15px 45px rgba(16, 185, 129, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Purple/Pink Card - Purple to pink tones */
-.card-gradient-purple {
-    background: linear-gradient(45deg, #a855f7, #ec4899, #d946ef, #f472b6, #c084fc) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-purple:hover {
-    box-shadow: 0 15px 45px rgba(168, 85, 247, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Amber/Orange Card - Warm amber to orange */
-.card-gradient-amber {
-    background: linear-gradient(45deg, #f59e0b, #f97316, #fb923c, #fbbf24, #fdba74) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-amber:hover {
-    box-shadow: 0 15px 45px rgba(245, 158, 11, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Indigo/Violet Card - Deep indigo to purple */
-.card-gradient-indigo {
-    background: linear-gradient(45deg, #4f46e5, #6366f1, #7c3aed, #8b5cf6, #a78bfa) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-indigo:hover {
-    box-shadow: 0 15px 45px rgba(79, 70, 229, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Violet/Fuchsia Card - Bright violet to hot pink */
-.card-gradient-violet {
-    background: linear-gradient(45deg, #7c3aed, #a855f7, #d946ef, #e879f9, #f0abfc) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-violet:hover {
-    box-shadow: 0 15px 45px rgba(124, 58, 237, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Rose/Pink Card - Rose to pink */
-.card-gradient-rose {
-    background: linear-gradient(45deg, #e11d48, #f43f5e, #fb7185, #fda4af, #fecdd3) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(225, 29, 72, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-rose:hover {
-    box-shadow: 0 15px 45px rgba(225, 29, 72, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Emerald/Lime Card - Emerald to lime green */
-.card-gradient-emerald {
-    background: linear-gradient(45deg, #059669, #10b981, #34d399, #6ee7b7, #a7f3d0) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(5, 150, 105, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-emerald:hover {
-    box-shadow: 0 15px 45px rgba(5, 150, 105, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Sky/Cyan Card - Sky blue to cyan */
-.card-gradient-sky {
-    background: linear-gradient(45deg, #0284c7, #0ea5e9, #38bdf8, #7dd3fc, #bae6fd) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    box-shadow: 0 10px 30px rgba(2, 132, 199, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.card-gradient-sky:hover {
-    box-shadow: 0 15px 45px rgba(2, 132, 199, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-4px) !important;
-}
-
-/* Apply to all gradient cards */
-[class*="card-gradient-"] {
-    position: relative;
-    overflow: hidden;
-}
-
-/* Shimmer effect for card hovers */
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-    100% {
-        background-position: 1000px 0;
-    }
-}
-
-.shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    background-size: 1000px 100%;
-    animation: shimmer 3s infinite;
-}
-
-[class*="card-gradient-"]:hover .shimmer {
-    opacity: 1 !important;
-}
-
-/* Pulse scale animation for elements */
-@keyframes pulse-scale {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-.animate-pulse-custom {
-    animation: pulse-scale 2s infinite;
+    background: var(--color-orange-dark);
 }

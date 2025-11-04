@@ -21,48 +21,48 @@
 </head>
 <body>
     <script type="module" src="auth-guard.js"></script>
-    <nav class="backdrop-blur-lg bg-black/30 border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
+    <nav class="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 shadow-sm animate-slide-in">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
-                    <a href="dashboard" class="text-2xl font-bold text-white font-display flex items-center space-x-2 hover:scale-105 transition-transform">
+                    <a href="dashboard" class="text-2xl font-bold text-black font-display flex items-center space-x-2 hover:text-orange-500 transition-all">
                         <span>🎓</span>
                         <span>studying.works</span>
                     </a>
                     <div class="hidden md:flex space-x-2">
-                        <a href="/" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all icon-text">
+                        <a href="/" class="text-gray-700 hover:text-orange-500 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all icon-text">
                             <i data-lucide="home" class="icon icon-sm"></i>
                             <span>Home</span>
                         </a>
-                        <a href="dashboard" class="text-white font-semibold px-4 py-2 rounded-lg bg-white/10 icon-text">
+                        <a href="dashboard" class="text-orange-500 font-semibold px-4 py-2 rounded-lg bg-orange-50 icon-text">
                             <i data-lucide="book-open" class="icon icon-sm"></i>
                             <span>Practice</span>
                         </a>
-                        <a href="progress" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all icon-text">
+                        <a href="progress" class="text-gray-700 hover:text-orange-500 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-all icon-text">
                             <i data-lucide="trending-up" class="icon icon-sm"></i>
                             <span>Progress</span>
                         </a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-2 bg-orange-500/20 px-4 py-2 rounded-full border border-orange-500/50">
-                        <span class="text-2xl animate-pulse-custom">🔥</span>
-                        <span class="text-white font-bold"><span id="streak">0</span> Day Streak</span>
+                    <div class="hidden md:flex items-center space-x-2 bg-orange-50 px-4 py-2 rounded-full border border-orange-200">
+                        <span class="text-2xl">🔥</span>
+                        <span class="text-black font-bold"><span id="streak">0</span> Day Streak</span>
                     </div>
                     <div class="relative group">
-                        <button class="flex items-center space-x-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all">
-                            <img id="user-photo" src="https://via.placeholder.com/40" alt="User profile photo" class="w-8 h-8 rounded-full">
-                            <span id="user-name-nav" class="text-white font-semibold hidden md:block">User</span>
+                        <button class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full transition-all border border-gray-200">
+                            <img id="user-photo" src="https://via.placeholder.com/40" alt="User profile photo" class="w-8 h-8 rounded-full border-2 border-orange-500">
+                            <span id="user-name-nav" class="text-black font-semibold hidden md:block">User</span>
                         </button>
-                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                             <div class="p-4">
                                 <p id="user-email" class="text-sm text-gray-600 mb-3"></p>
                                 <div class="space-y-2 mb-3">
-                                    <a href="tutorial" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-purple-50 rounded-lg transition-all">
+                                    <a href="tutorial" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 rounded-lg transition-all">
                                         <span>📚</span>
                                         <span>Tutorial</span>
                                     </a>
-                                    <a href="settings" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition-all">
+                                    <a href="settings" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 rounded-lg transition-all">
                                         <span>⚙️</span>
                                         <span>Settings</span>
                                     </a>
@@ -78,56 +78,52 @@
         </div>
     </nav>
 
-    <div class="container mx-auto py-8 pt-24 space-y-xl">
+    <div class="container mx-auto py-8 pt-24 space-y-xl bg-gray-50 min-h-screen">
         <div class="mb-8 animate-slide-in delay-100 opacity-0">
-            <h1 id="greeting" class="text-4xl md:text-5xl font-bold text-white mb-2 font-display">Welcome! 👋</h1>
-            <p class="text-lg text-white/70">Ready to crush some studying?</p>
+            <h1 id="greeting" class="text-4xl md:text-5xl font-bold text-black mb-2 font-display">Welcome! 👋</h1>
+            <p class="text-lg text-gray-600">Ready to crush some studying?</p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-            <div class="card-gradient-fire rounded-xl p-6 text-white card-hover animate-slide-in delay-200">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                        <i data-lucide="flame" class="icon icon-lg"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all animate-slide-in delay-200 stat-card-orange">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">🔥</span>
+                    <i data-lucide="flame" class="icon icon-lg text-orange-500"></i>
                 </div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-streak">0</span></div>
-                <div class="text-sm text-white/90 font-medium">Day Streak</div>
+                <div class="text-3xl font-bold mb-1 text-black"><span id="stat-streak">0</span></div>
+                <div class="text-sm text-gray-600 font-medium">Day Streak</div>
             </div>
-            <div class="card-gradient-blue rounded-xl p-6 text-white card-hover animate-slide-in delay-300">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                        <i data-lucide="credit-card" class="icon icon-lg"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md hover:border-orange-500 transition-all animate-slide-in delay-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">🎴</span>
+                    <i data-lucide="credit-card" class="icon icon-lg text-gray-400"></i>
                 </div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-cards">0</span></div>
-                <div class="text-sm text-white/90 font-medium">Cards Reviewed</div>
+                <div class="text-3xl font-bold mb-1 text-black"><span id="stat-cards">0</span></div>
+                <div class="text-sm text-gray-600 font-medium">Cards Reviewed</div>
             </div>
-            <div class="card-gradient-success rounded-xl p-6 text-white card-hover animate-slide-in delay-400">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                        <i data-lucide="clipboard-check" class="icon icon-lg"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md hover:border-orange-500 transition-all animate-slide-in delay-400">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">📝</span>
+                    <i data-lucide="clipboard-check" class="icon icon-lg text-gray-400"></i>
                 </div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-quizzes">0</span></div>
-                <div class="text-sm text-white/90 font-medium">Quizzes Taken</div>
+                <div class="text-3xl font-bold mb-1 text-black"><span id="stat-quizzes">0</span></div>
+                <div class="text-sm text-gray-600 font-medium">Quizzes Taken</div>
             </div>
-            <div class="card-gradient-purple rounded-xl p-6 text-white card-hover animate-slide-in delay-500">
-                <div class="flex items-start justify-between mb-4">
-                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                        <i data-lucide="target" class="icon icon-lg"></i>
-                    </div>
+            <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md hover:border-orange-500 transition-all animate-slide-in delay-500">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">🎯</span>
+                    <i data-lucide="target" class="icon icon-lg text-gray-400"></i>
                 </div>
-                <div class="text-3xl font-bold mb-1"><span id="stat-accuracy">0</span>%</div>
-                <div class="text-sm text-white/90 font-medium">Avg Accuracy</div>
+                <div class="text-3xl font-bold mb-1 text-black"><span id="stat-accuracy">0</span>%</div>
+                <div class="text-sm text-gray-600 font-medium">Avg Accuracy</div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             <div class="lg:col-span-2 space-y-md">
                 <div class="animate-slide-in delay-600">
-                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center font-display icon-text">
-                        <i data-lucide="layout-grid" class="icon icon-xl"></i>
+                    <h2 class="text-3xl font-bold text-black mb-6 flex items-center font-display icon-text">
+                        <i data-lucide="layout-grid" class="icon icon-xl text-orange-500"></i>
                         <span>Study Apps</span>
                     </h2>
 
@@ -135,19 +131,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- My Flashcards -->
                         <a href="custom-flashcards" class="block group">
-                            <div class="card-gradient-amber rounded-2xl p-6 card-hover relative overflow-hidden h-full">
-                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                                <div class="relative z-10 flex flex-col h-full">
+                            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-orange-500 transition-all h-full study-card">
+                                <div class="flex flex-col h-full">
                                     <div class="flex items-start justify-between mb-4">
-                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                                            <i data-lucide="layers" class="icon icon-xl"></i>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-4xl">📚</span>
+                                            <i data-lucide="layers" class="icon icon-lg text-orange-500"></i>
                                         </div>
-                                        <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
+                                        <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold text-xs">
                                             CUSTOM
-                                        </div>
+                                        </span>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-2">My Flashcards</h3>
-                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                    <h3 class="text-xl font-bold text-black mb-2">My Flashcards</h3>
+                                    <p class="text-sm text-gray-600 flex items-center gap-2">
                                         <i data-lucide="zap" class="icon icon-sm"></i>
                                         <span>5 study modes • Spaced repetition</span>
                                     </p>
@@ -157,19 +153,19 @@
 
                         <!-- BKT Smart Study -->
                         <a href="bkt-study" class="block group">
-                            <div class="card-gradient-indigo rounded-2xl p-6 card-hover relative overflow-hidden h-full">
-                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                                <div class="relative z-10 flex flex-col h-full">
+                            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-orange-500 transition-all h-full study-card">
+                                <div class="flex flex-col h-full">
                                     <div class="flex items-start justify-between mb-4">
-                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                                            <i data-lucide="brain" class="icon icon-xl"></i>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-4xl">🧠</span>
+                                            <i data-lucide="brain" class="icon icon-lg text-orange-500"></i>
                                         </div>
-                                        <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
+                                        <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full font-bold text-xs">
                                             BETA
-                                        </div>
+                                        </span>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-2">BKT Smart Study</h3>
-                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                    <h3 class="text-xl font-bold text-black mb-2">BKT Smart Study</h3>
+                                    <p class="text-sm text-gray-600 flex items-center gap-2">
                                         <i data-lucide="sparkles" class="icon icon-sm"></i>
                                         <span>AI Learning Algorithm</span>
                                     </p>
@@ -179,20 +175,20 @@
 
                         <!-- AI Generator -->
                         <a href="ai-flashcards" class="block group">
-                            <div class="card-gradient-violet rounded-2xl p-6 card-hover relative overflow-hidden h-full">
-                                <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
-                                <div class="relative z-10 flex flex-col h-full">
+                            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-lg hover:border-orange-500 transition-all h-full study-card">
+                                <div class="flex flex-col h-full">
                                     <div class="flex items-start justify-between mb-4">
-                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                                            <i data-lucide="wand-2" class="icon icon-xl"></i>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-4xl">🤖</span>
+                                            <i data-lucide="wand-2" class="icon icon-lg text-orange-500"></i>
                                         </div>
-                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs icon-text">
+                                        <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold text-xs flex items-center gap-1">
                                             <i data-lucide="sparkles" class="icon icon-sm"></i>
                                             AI
-                                        </div>
+                                        </span>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-2">AI Generator</h3>
-                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                    <h3 class="text-xl font-bold text-black mb-2">AI Generator</h3>
+                                    <p class="text-sm text-gray-600 flex items-center gap-2">
                                         <i data-lucide="zap" class="icon icon-sm"></i>
                                         <span>Create flashcards instantly</span>
                                     </p>

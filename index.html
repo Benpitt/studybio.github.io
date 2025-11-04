@@ -64,7 +64,7 @@
         }
 
         .bg-animated-gradient {
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe, #00f2fe);
+            background: linear-gradient(-45deg, #ff8f00, #ff6f00, #ffb74d, #ffa726, #ff9800);
             background-size: 400% 400%;
             animation: gradient-shift 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             transition: background 2s ease-in-out;
@@ -95,7 +95,7 @@
         }
 
         .text-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff8f00 0%, #ff6f00 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -106,9 +106,9 @@
 
     <div class="min-h-screen bg-animated-gradient relative overflow-hidden">
         <!-- Glowing orbs background -->
-        <div class="glow-orb" style="width: 400px; height: 400px; background: #667eea; top: -100px; left: -100px;"></div>
-        <div class="glow-orb" style="width: 500px; height: 500px; background: #f093fb; bottom: -150px; right: -150px; animation-delay: 2s;"></div>
-        <div class="glow-orb" style="width: 300px; height: 300px; background: #4facfe; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1s;"></div>
+        <div class="glow-orb" style="width: 400px; height: 400px; background: #ff8f00; top: -100px; left: -100px;"></div>
+        <div class="glow-orb" style="width: 500px; height: 500px; background: #ff6f00; bottom: -150px; right: -150px; animation-delay: 2s;"></div>
+        <div class="glow-orb" style="width: 300px; height: 300px; background: #ffb74d; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1s;"></div>
 
         <!-- Main content -->
         <div class="relative z-10 min-h-screen flex flex-col">
@@ -140,7 +140,7 @@
                     <div class="space-y-md">
                         <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-8 animate-fade-in-up opacity-0 delay-400 leading-tight font-display" style="line-height: 1.1;">
                             Learn Smarter,<br>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200">
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-orange-300 to-orange-500">
                                 Not Harder
                             </span>
                         </h1>
@@ -154,7 +154,7 @@
                         <div id="auth-buttons" class="flex flex-col items-center">
                             <!-- Google Sign-In Button (shown when not logged in) -->
                             <div id="google-signin-container" class="group relative mb-6">
-                                <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                                <div class="absolute -inset-1 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
                                 <button id="google-signin-btn" class="relative px-10 py-5 bg-white rounded-3xl flex items-center space-x-4 transform transition-all duration-300 hover:scale-105 shadow-2xl">
                                     <svg class="w-7 h-7" viewBox="0 0 24 24">
                                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -170,7 +170,7 @@
 
                             <!-- Enter Button (shown when already logged in) -->
                             <div id="enter-container" class="hidden group relative mb-6">
-                                <div class="absolute -inset-1 bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                                <div class="absolute -inset-1 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
                                 <button id="enter-btn" class="relative px-10 py-5 bg-white rounded-3xl flex items-center space-x-4 transform transition-all duration-300 hover:scale-105 shadow-2xl">
                                     <span class="text-4xl">👋</span>
                                     <span class="text-xl font-semibold text-gray-900">
@@ -217,7 +217,7 @@
                     <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-center animate-fade-in-up opacity-0 delay-1100">
                         <div class="order-2 md:order-1">
                             <div class="card-glass rounded-2xl p-8 md:p-10 shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300">
-                                <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-8 mb-6">
+                                <div class="bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-xl p-8 mb-6">
                                     <div class="text-6xl mb-4 animate-float-slow">🎴</div>
                                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
                                         <div class="text-white/90 text-lg font-semibold mb-2">Question:</div>
@@ -298,34 +298,34 @@
                         </div>
                         <div>
                             <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl p-8">
+                                <div class="bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-2xl p-8">
                                     <div class="text-6xl mb-6 animate-float-slow delay-500">🧠</div>
                                     <div class="space-y-4">
                                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                                             <div class="flex justify-between items-center mb-2">
                                                 <span class="text-white font-semibold">Biology</span>
-                                                <span class="text-green-300">85%</span>
+                                                <span class="text-orange-300">85%</span>
                                             </div>
                                             <div class="w-full bg-white/10 rounded-full h-2">
-                                                <div class="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                                <div class="bg-gradient-to-r from-orange-400 to-orange-500 h-2 rounded-full" style="width: 85%"></div>
                                             </div>
                                         </div>
                                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                                             <div class="flex justify-between items-center mb-2">
                                                 <span class="text-white font-semibold">Chemistry</span>
-                                                <span class="text-yellow-300">62%</span>
+                                                <span class="text-amber-300">62%</span>
                                             </div>
                                             <div class="w-full bg-white/10 rounded-full h-2">
-                                                <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full" style="width: 62%"></div>
+                                                <div class="bg-gradient-to-r from-amber-400 to-amber-500 h-2 rounded-full" style="width: 62%"></div>
                                             </div>
                                         </div>
                                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                                             <div class="flex justify-between items-center mb-2">
                                                 <span class="text-white font-semibold">Physics</span>
-                                                <span class="text-blue-300">73%</span>
+                                                <span class="text-orange-300">73%</span>
                                             </div>
                                             <div class="w-full bg-white/10 rounded-full h-2">
-                                                <div class="bg-gradient-to-r from-blue-400 to-blue-500 h-2 rounded-full" style="width: 73%"></div>
+                                                <div class="bg-gradient-to-r from-orange-400 to-orange-500 h-2 rounded-full" style="width: 73%"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -338,29 +338,29 @@
                     <div class="grid md:grid-cols-2 gap-12 items-center animate-fade-in-up opacity-0 delay-1500">
                         <div class="order-2 md:order-1">
                             <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl p-8">
+                                <div class="bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-2xl p-8">
                                     <div class="text-6xl mb-6 animate-float-slow delay-800">📊</div>
                                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
                                         <div class="text-white/90 text-sm font-semibold mb-4">Weekly Progress</div>
                                         <div class="flex items-end justify-between h-32 gap-2">
                                             <div class="flex flex-col items-center flex-1">
-                                                <div class="w-full bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg" style="height: 60%"></div>
+                                                <div class="w-full bg-gradient-to-t from-orange-500 to-amber-400 rounded-t-lg" style="height: 60%"></div>
                                                 <span class="text-white/60 text-xs mt-2">Mon</span>
                                             </div>
                                             <div class="flex flex-col items-center flex-1">
-                                                <div class="w-full bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg" style="height: 80%"></div>
+                                                <div class="w-full bg-gradient-to-t from-orange-500 to-amber-400 rounded-t-lg" style="height: 80%"></div>
                                                 <span class="text-white/60 text-xs mt-2">Tue</span>
                                             </div>
                                             <div class="flex flex-col items-center flex-1">
-                                                <div class="w-full bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg" style="height: 45%"></div>
+                                                <div class="w-full bg-gradient-to-t from-orange-500 to-amber-400 rounded-t-lg" style="height: 45%"></div>
                                                 <span class="text-white/60 text-xs mt-2">Wed</span>
                                             </div>
                                             <div class="flex flex-col items-center flex-1">
-                                                <div class="w-full bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg" style="height: 100%"></div>
+                                                <div class="w-full bg-gradient-to-t from-orange-500 to-amber-400 rounded-t-lg" style="height: 100%"></div>
                                                 <span class="text-white/60 text-xs mt-2">Thu</span>
                                             </div>
                                             <div class="flex flex-col items-center flex-1">
-                                                <div class="w-full bg-gradient-to-t from-purple-500 to-pink-500 rounded-t-lg" style="height: 70%"></div>
+                                                <div class="w-full bg-gradient-to-t from-orange-500 to-amber-400 rounded-t-lg" style="height: 70%"></div>
                                                 <span class="text-white/60 text-xs mt-2">Fri</span>
                                             </div>
                                         </div>
@@ -476,7 +476,7 @@
                             Join students who are already studying smarter. Get started in seconds—no credit card required.
                         </p>
                         <div class="group relative inline-block">
-                            <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                            <div class="absolute -inset-1 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
                             <button onclick="document.getElementById('google-signin-btn').click()" class="relative px-12 py-6 bg-white rounded-3xl text-xl font-semibold text-gray-900 transform transition-all duration-300 hover:scale-105 shadow-2xl">
                                 Start Learning for Free
                             </button>

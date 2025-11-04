@@ -78,7 +78,7 @@
         </div>
     </nav>
 
-    <div class="container mx-auto py-8 pt-24 space-y-xl bg-gray-50 min-h-screen">
+    <div class="container mx-auto py-8 pt-24 space-y-xl min-h-screen" style="background: linear-gradient(180deg, #ffffff 0%, #fffbf5 50%, #fff5e6 100%); background-attachment: fixed;">
         <div class="mb-8 animate-slide-in delay-100 opacity-0">
             <h1 id="greeting" class="text-4xl md:text-5xl font-bold text-black mb-2 font-display">Welcome! 👋</h1>
             <p class="text-lg text-gray-600">Ready to crush some studying?</p>
@@ -198,7 +198,7 @@
 
                         <!-- Community Library -->
                         <a href="community" class="block group">
-                            <div class="card-gradient-sky rounded-2xl p-6 card-hover relative overflow-hidden h-full">
+                            <div class="card-gradient-orange rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
                                     <div class="flex items-start justify-between mb-4">
@@ -220,7 +220,7 @@
 
                         <!-- Memory Games -->
                         <a href="memory-games" class="block group">
-                            <div class="card-gradient-rose rounded-2xl p-6 card-hover relative overflow-hidden h-full">
+                            <div class="card-gradient-warm rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
                                     <div class="flex items-start justify-between mb-4">
@@ -242,7 +242,7 @@
 
                         <!-- SAT Practice -->
                         <a href="sat-practice" class="block group">
-                            <div class="card-gradient-blue rounded-2xl p-6 card-hover relative overflow-hidden h-full">
+                            <div class="card-gradient-dark rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
                                     <div class="flex items-start justify-between mb-4">
@@ -267,24 +267,24 @@
             </div>
 
             <div class="space-y-4">
-                <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in delay-700"></div>
+                <div id="goal-card" class="glass-card-gradient rounded-2xl p-5 card-hover animate-slide-in delay-700"></div>
 
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in delay-800">
-                    <h3 class="text-xl font-bold text-white mb-4 flex items-center icon-text">
-                        <i data-lucide="trophy" class="icon icon-lg"></i>
+                <div class="glass-card-gradient rounded-2xl p-5 card-hover animate-slide-in delay-800">
+                    <h3 class="text-xl font-bold text-black mb-4 flex items-center icon-text">
+                        <i data-lucide="trophy" class="icon icon-lg text-orange-500"></i>
                         <span>Achievements</span>
                     </h3>
                     <div id="achievements-list" class="space-y-2">
-                        <div class="text-center py-6 text-white/60 text-sm">
+                        <div class="text-center py-6 text-gray-500 text-sm">
                             <div class="flex justify-center mb-3">
-                                <i data-lucide="target" class="icon icon-xl"></i>
+                                <i data-lucide="target" class="icon icon-xl text-gray-400"></i>
                             </div>
                             <p>Complete a quiz to unlock achievements!</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in delay-800">
+                <div class="card-gradient-orange rounded-2xl p-5 card-hover animate-slide-in delay-800">
                     <h3 class="text-xl font-bold text-white mb-4 flex items-center icon-text">
                         <i data-lucide="zap" class="icon icon-lg"></i>
                         <span>Quick Actions</span>
@@ -650,15 +650,15 @@
             const goal = totalCards > 0 ? Math.min(100, Math.round((totalCards / 20) * 100)) : 0;
             const goalCard = document.getElementById('goal-card');
             goalCard.innerHTML = `
-                <h3 class="text-xl font-bold text-white mb-3 flex items-center">
+                <h3 class="text-xl font-bold text-black mb-3 flex items-center">
                     <span>🎯</span>
                     <span class="ml-2">Today's Goal</span>
                 </h3>
-                <p class="text-white/80 text-sm mb-3">${totalCards > 0 ? 'Keep reviewing!' : 'Review 20 flashcards'}</p>
-                <div class="bg-white/10 rounded-full h-3 overflow-hidden">
-                    <div class="bg-gradient-to-r from-green-400 to-teal-400 h-full rounded-full transition-all duration-1000" style="width: ${goal}%"></div>
+                <p class="text-gray-700 text-sm mb-3">${totalCards > 0 ? 'Keep reviewing!' : 'Review 20 flashcards'}</p>
+                <div class="bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-400 to-orange-500 h-full rounded-full transition-all duration-1000" style="width: ${goal}%"></div>
                 </div>
-                <p class="text-white/60 text-xs mt-2">${totalCards} / 20 cards</p>
+                <p class="text-gray-600 text-xs mt-2">${totalCards} / 20 cards</p>
             `;
 
             loadAchievements(streak, totalCards, totalTests, totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0);
@@ -681,30 +681,30 @@
             
             if (achievements.length > 0) {
                 container.innerHTML = achievements.slice(0, 3).map(a => `
-                    <div class="flex items-center space-x-2 p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
+                    <div class="flex items-center space-x-2 p-2 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-lg border border-orange-500/30">
                         <div class="text-3xl">${a.emoji}</div>
                         <div>
-                            <div class="font-bold text-white text-sm">${a.name}</div>
-                            <div class="text-xs text-white/70">${a.desc}</div>
+                            <div class="font-bold text-black text-sm">${a.name}</div>
+                            <div class="text-xs text-gray-600">${a.desc}</div>
                         </div>
                     </div>
                 `).join('');
             }
         }
     </script>
-    <footer class="bg-black/30 backdrop-blur-lg border-t border-white/10 py-8 mt-16">
+    <footer class="bg-white border-t border-gray-200 py-8 mt-16">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-white/60 mb-4">© 2025 studying.works. All rights reserved.</p>
+            <p class="text-gray-600 mb-4">© 2025 studying.works. All rights reserved.</p>
             <div class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-6 mb-4">
-                <a href="dashboard" class="text-white/80 hover:text-white transition-all font-medium">🎓 Dashboard</a>
-                <a href="ai-flashcards" class="text-white/80 hover:text-white transition-all font-medium">🤖 AI Generator</a>
-                <a href="custom-flashcards" class="text-white/80 hover:text-white transition-all font-medium">🎴 My Flashcards</a>
-                <a href="community" class="text-white/80 hover:text-white transition-all font-medium">🌍 Community</a>
+                <a href="dashboard" class="text-gray-700 hover:text-orange-500 transition-all font-medium">🎓 Dashboard</a>
+                <a href="ai-flashcards" class="text-gray-700 hover:text-orange-500 transition-all font-medium">🤖 AI Generator</a>
+                <a href="custom-flashcards" class="text-gray-700 hover:text-orange-500 transition-all font-medium">🎴 My Flashcards</a>
+                <a href="community" class="text-gray-700 hover:text-orange-500 transition-all font-medium">🌍 Community</a>
             </div>
             <div class="flex justify-center space-x-6 text-sm">
-                <a href="terms" class="text-white/60 hover:text-white transition-all">Terms of Service</a>
-                <a href="privacy" class="text-white/60 hover:text-white transition-all">Privacy Policy</a>
-                <a href="about" class="text-white/60 hover:text-white transition-all">About</a>
+                <a href="terms" class="text-gray-600 hover:text-orange-500 transition-all">Terms of Service</a>
+                <a href="privacy" class="text-gray-600 hover:text-orange-500 transition-all">Privacy Policy</a>
+                <a href="about" class="text-gray-600 hover:text-orange-500 transition-all">About</a>
             </div>
         </div>
     </footer>

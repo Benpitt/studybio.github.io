@@ -509,134 +509,171 @@
             const [showStopwatch, setShowStopwatch] = useState(false);
             const [calculatorMode, setCalculatorMode] = useState('graphing');
 
-            // Load questions from JSON
+            // Load questions from SAT API
             useEffect(() => {
-                console.log('Attempting to load SAT questions...');
-                fetch('data/sat_questions.json')
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error(`HTTP error! status: ${res.status}`);
+                console.log('Attempting to load SAT questions from API...');
+
+                // Fetch questions from all SAT domains
+                // Domain codes: H (Heart of Algebra), P (Problem Solving), A (Advanced Math),
+                // G (Geometry), I (Information & Ideas), C (Craft & Structure), E (Expression), S (Standard English)
+                const domains = ['H', 'P', 'A', 'G', 'I', 'C', 'E', 'S'];
+
+                const fetchQuestions = async () => {
+                    try {
+                        let allQuestionsFromAPI = [];
+
+                        // Fetch questions from all domains
+                        for (const domain of domains) {
+                            try {
+                                const response = await fetch(`https://practicesat.vercel.app/api/get-questions?domains=${domain}`);
+                                if (response.ok) {
+                                    const data = await response.json();
+                                    console.log(`✅ Loaded questions for domain ${domain}:`, data);
+
+                                    // Parse the API response and convert to our format
+                                    const questions = parseAPIResponse(data, domain);
+                                    allQuestionsFromAPI = [...allQuestionsFromAPI, ...questions];
+                                } else {
+                                    console.warn(`Failed to fetch domain ${domain}:`, response.status);
+                                }
+                            } catch (domainError) {
+                                console.warn(`Error fetching domain ${domain}:`, domainError.message);
+                            }
                         }
-                        return res.json();
-                    })
-                    .then(data => {
-                        console.log('Raw data received');
-                        console.log('Data type:', typeof data);
-                        console.log('Is array?', Array.isArray(data));
+
+                        if (allQuestionsFromAPI.length > 0) {
+                            console.log(`✅ Total questions loaded from API: ${allQuestionsFromAPI.length}`);
+                            setAllQuestions(allQuestionsFromAPI);
+                        } else {
+                            console.warn('No questions loaded from API, trying fallback...');
+                            await loadFallbackQuestions();
+                        }
+                    } catch (err) {
+                        console.error('Error loading from API:', err.message);
+                        await loadFallbackQuestions();
+                    }
+                };
+
+                // Function to parse API response into our question format
+                const parseAPIResponse = (data, domain) => {
+                    let questions = [];
+
+                    // Handle different response formats
+                    let questionsArray = [];
+                    if (Array.isArray(data)) {
+                        questionsArray = data;
+                    } else if (data.questions && Array.isArray(data.questions)) {
+                        questionsArray = data.questions;
+                    } else if (data.data && Array.isArray(data.data)) {
+                        questionsArray = data.data;
+                    } else if (typeof data === 'object') {
+                        questionsArray = Object.values(data);
+                    }
+
+                    questions = questionsArray.map((q, idx) => {
+                        // Extract question data from various possible formats
+                        const questionText = q.question || q.stem || q.questionText || q.text || '';
+                        const passage = q.passage || q.context || q.paragraph || null;
+                        const choices = q.choices || q.options || q.answerChoices || q.answers || null;
+                        const correctAnswer = q.answer || q.correctAnswer || q.correct || '';
+                        const explanation = q.explanation || q.rationale || q.solution || 'No explanation available';
+                        const questionId = q.id || q.questionId || `${domain}-${idx}`;
+
+                        // Map domain codes to topic names
+                        const domainMap = {
+                            'H': 'algebra',
+                            'P': 'data-analysis',
+                            'A': 'advanced-math',
+                            'G': 'geometry-trig',
+                            'I': 'information-ideas',
+                            'C': 'craft-structure',
+                            'E': 'expression-ideas',
+                            'S': 'english-conventions'
+                        };
+
+                        const topic = q.topic || domainMap[domain] || 'other';
+                        const domainName = q.domain || q.category || getDomainName(domain);
+
+                        // Format choices if they exist
+                        let formattedChoices = null;
+                        if (choices) {
+                            if (Array.isArray(choices)) {
+                                formattedChoices = choices.map((choice, i) => {
+                                    const letter = String.fromCharCode(65 + i); // A, B, C, D
+                                    const text = typeof choice === 'string' ? choice : choice.text || choice.content || '';
+                                    return text.startsWith(letter + ')') ? text : `${letter}) ${text}`;
+                                });
+                            } else if (typeof choices === 'object') {
+                                formattedChoices = Object.entries(choices).map(([key, value]) => {
+                                    const letter = key.toUpperCase();
+                                    return `${letter}) ${value}`;
+                                });
+                            }
+                        }
+
+                        return {
+                            id: questionId,
+                            topic: topic,
+                            domain: domainName,
+                            question: questionText,
+                            passage: passage,
+                            choices: formattedChoices,
+                            correct: correctAnswer,
+                            explanation: explanation,
+                            difficulty: q.difficulty || 'medium',
+                            format: 'api'
+                        };
+                    });
+
+                    return questions.filter(q => q.question); // Only return questions with actual question text
+                };
+
+                // Helper function to get domain name from code
+                const getDomainName = (code) => {
+                    const names = {
+                        'H': 'Heart of Algebra',
+                        'P': 'Problem-Solving and Data Analysis',
+                        'A': 'Advanced Math',
+                        'G': 'Geometry and Trigonometry',
+                        'I': 'Information and Ideas',
+                        'C': 'Craft and Structure',
+                        'E': 'Expression of Ideas',
+                        'S': 'Standard English Conventions'
+                    };
+                    return names[code] || 'General';
+                };
+
+                // Fallback to local JSON file if API fails
+                const loadFallbackQuestions = async () => {
+                    try {
+                        console.log('Loading fallback questions from local file...');
+                        const res = await fetch('data/sat_questions.json');
+                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                        const data = await res.json();
 
                         let questionsArray = [];
-
-                        // Handle mixed format (object with mixed CB and clean format)
-                        if (!Array.isArray(data) && typeof data === 'object') {
-                            console.log('Converting object to array');
-                            const allQuestions = Object.values(data);
-                            console.log(`Found ${allQuestions.length} questions`);
-
-                            questionsArray = allQuestions.map(q => {
-                                // Detect format: CB has 'content' property, clean format has 'question' property, classified has 'options' array
-                                const isCBFormat = q.content !== undefined;
-                                const isClassifiedFormat = q.options !== undefined && Array.isArray(q.options);
-
-                                if (isClassifiedFormat) {
-                                    // Parse classified format (from SAT_Questions_classified.json)
-                                    let choices = null;
-                                    if (q.options && q.options.length > 0) {
-                                        choices = q.options.map(opt => {
-                                            const label = opt.label || opt.letter || '';
-                                            const text = opt.text || opt.content || opt.body || '';
-                                            return `${label}) ${text}`;
-                                        });
-                                    }
-
-                                    return {
-                                        id: q.id,
-                                        domain: q.domain || q.identifier || 'General',
-                                        module: q.section,
-                                        question: q.question,
-                                        passage: q.passage !== 'null' && q.passage ? q.passage : null,
-                                        choices: choices,
-                                        correct: q.answer,
-                                        explanation: q.explanation || 'No explanation available',
-                                        difficulty: q.difficulty,
-                                        format: 'classified'
-                                    };
-                                } else if (isCBFormat) {
-                                    // Parse CB format
-                                    const content = q.content || {};
-                                    const isMCQ = content.type === 'mcq';
-
-                                    const stripHTML = (html) => {
-                                        if (!html) return '';
-                                        return html
-                                            .replace(/<math[^>]*>.*?<\/math>/gi, '[math]')
-                                            .replace(/<[^>]+>/g, '')
-                                            .replace(/&nbsp;/g, ' ')
-                                            .replace(/&rsquo;/g, "'")
-                                            .trim();
-                                    };
-
-                                    let choices = [];
-                                    if (isMCQ && content.answerOptions) {
-                                        choices = content.answerOptions.map((opt, idx) => {
-                                            const letter = String.fromCharCode(65 + idx);
-                                            return `${letter}) ${stripHTML(opt.content)}`;
-                                        });
-                                    }
-
-                                    return {
-                                        id: q.questionId || q.uId,
-                                        domain: q.primary_class_cd_desc || 'General',
-                                        module: q.module,
-                                        question: stripHTML(content.stem),
-                                        choices: isMCQ ? choices : null,
-                                        correct: (content.correct_answer || [''])[0],
-                                        explanation: stripHTML(content.rationale),
-                                        difficulty: q.difficulty,
-                                        format: 'cb'
-                                    };
-                                } else {
-                                    // Parse clean format
-                                    const qData = q.question || {};
-                                    return {
-                                        id: q.id,
-                                        domain: q.domain || 'General',
-                                        module: q.module,
-                                        question: qData.question,
-                                        passage: qData.paragraph !== 'null' ? qData.paragraph : null,
-                                        choices: qData.choices,
-                                        correct: qData.correct_answer,
-                                        explanation: qData.explanation,
-                                        difficulty: q.difficulty,
-                                        format: 'clean'
-                                    };
-                                }
-                            });
-
-                            console.log(`✅ Converted ${questionsArray.length} questions`);
-                        }
-                        // Handle simple array format
-                        else if (Array.isArray(data)) {
+                        if (Array.isArray(data)) {
                             questionsArray = data;
-                            console.log(`✅ Loaded ${data.length} questions from array`);
-                        }
-                        // Handle nested questions property
-                        else if (data.questions) {
+                        } else if (data.questions) {
                             questionsArray = data.questions;
-                            console.log(`✅ Loaded ${data.questions.length} questions from data.questions`);
-                        }
-                        else {
-                            console.warn('❌ Unknown data format, using fallback');
-                            questionsArray = [getSampleQuestion()];
+                        } else if (typeof data === 'object') {
+                            questionsArray = Object.values(data);
                         }
 
-                        setAllQuestions(questionsArray);
-                    })
-                    .catch(err => {
-                        console.error('Error loading SAT questions:', err.message);
-                        console.log('Using fallback sample question. Check data/sat_questions.json exists.');
-                        // Use fallback sample questions
+                        if (questionsArray.length > 0) {
+                            console.log(`✅ Loaded ${questionsArray.length} fallback questions`);
+                            setAllQuestions(questionsArray);
+                        } else {
+                            console.warn('Using sample questions');
+                            setAllQuestions([getSampleQuestion()]);
+                        }
+                    } catch (fallbackErr) {
+                        console.error('Fallback also failed:', fallbackErr.message);
                         setAllQuestions([getSampleQuestion()]);
-                    });
+                    }
+                };
+
+                fetchQuestions();
             }, []);
 
             function getSampleQuestion() {

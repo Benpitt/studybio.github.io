@@ -11,6 +11,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @keyframes gradient-shift {
             0% { background-position: 0% 50%; }
@@ -439,5 +441,12 @@
 
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
 </body>
 </html>

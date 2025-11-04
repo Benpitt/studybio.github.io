@@ -38,6 +38,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* Landing page specific styles */
         @keyframes gradient-shift {
@@ -419,35 +421,47 @@
                         A complete suite of study tools designed for the modern learner
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up opacity-0 delay-1900">
-                        <div class="glass-card feature-card rounded-2xl p-6">
-                            <div class="text-5xl mb-4">🎴</div>
-                            <h3 class="text-white font-bold text-lg mb-2">AI Flashcards</h3>
-                            <p class="text-white/70 text-sm">Generate smart flashcards instantly from any topic with AI assistance</p>
+                        <div class="glass-card feature-card rounded-2xl p-8 group hover:bg-white/15 transition-all">
+                            <div class="p-4 bg-white/10 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="layers" class="icon icon-xl text-white"></i>
+                            </div>
+                            <h3 class="text-white font-bold text-xl mb-3">AI Flashcards</h3>
+                            <p class="text-white/80 text-base">Generate smart flashcards instantly from any topic with AI assistance</p>
                         </div>
-                        <div class="glass-card feature-card rounded-2xl p-6">
-                            <div class="text-5xl mb-4">🧠</div>
-                            <h3 class="text-white font-bold text-lg mb-2">Adaptive Quizzes</h3>
-                            <p class="text-white/70 text-sm">Questions that adjust to your skill level using Bayesian Knowledge Tracing</p>
+                        <div class="glass-card feature-card rounded-2xl p-8 group hover:bg-white/15 transition-all">
+                            <div class="p-4 bg-white/10 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="brain" class="icon icon-xl text-white"></i>
+                            </div>
+                            <h3 class="text-white font-bold text-xl mb-3">Adaptive Quizzes</h3>
+                            <p class="text-white/80 text-base">Questions that adjust to your skill level using Bayesian Knowledge Tracing</p>
                         </div>
-                        <div class="glass-card feature-card rounded-2xl p-6">
-                            <div class="text-5xl mb-4">📊</div>
-                            <h3 class="text-white font-bold text-lg mb-2">Progress Analytics</h3>
-                            <p class="text-white/70 text-sm">Detailed insights into your learning patterns and mastery levels</p>
+                        <div class="glass-card feature-card rounded-2xl p-8 group hover:bg-white/15 transition-all">
+                            <div class="p-4 bg-white/10 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="bar-chart-3" class="icon icon-xl text-white"></i>
+                            </div>
+                            <h3 class="text-white font-bold text-xl mb-3">Progress Analytics</h3>
+                            <p class="text-white/80 text-base">Detailed insights into your learning patterns and mastery levels</p>
                         </div>
-                        <div class="glass-card feature-card rounded-2xl p-6">
-                            <div class="text-5xl mb-4">🔄</div>
-                            <h3 class="text-white font-bold text-lg mb-2">Spaced Repetition</h3>
-                            <p class="text-white/70 text-sm">Scientifically-proven method to improve long-term retention</p>
+                        <div class="glass-card feature-card rounded-2xl p-8 group hover:bg-white/15 transition-all">
+                            <div class="p-4 bg-white/10 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="repeat" class="icon icon-xl text-white"></i>
+                            </div>
+                            <h3 class="text-white font-bold text-xl mb-3">Spaced Repetition</h3>
+                            <p class="text-white/80 text-base">Scientifically-proven method to improve long-term retention</p>
                         </div>
-                        <div class="glass-card feature-card rounded-2xl p-6">
-                            <div class="text-5xl mb-4">👥</div>
-                            <h3 class="text-white font-bold text-lg mb-2">Community Decks</h3>
-                            <p class="text-white/70 text-sm">Access thousands of pre-made study sets from other learners</p>
+                        <div class="glass-card feature-card rounded-2xl p-8 group hover:bg-white/15 transition-all">
+                            <div class="p-4 bg-white/10 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="users" class="icon icon-xl text-white"></i>
+                            </div>
+                            <h3 class="text-white font-bold text-xl mb-3">Community Decks</h3>
+                            <p class="text-white/80 text-base">Access thousands of pre-made study sets from other learners</p>
                         </div>
-                        <div class="glass-card feature-card rounded-2xl p-6">
-                            <div class="text-5xl mb-4">📱</div>
-                            <h3 class="text-white font-bold text-lg mb-2">Cross-Platform</h3>
-                            <p class="text-white/70 text-sm">Study anywhere, anytime on any device with cloud sync</p>
+                        <div class="glass-card feature-card rounded-2xl p-8 group hover:bg-white/15 transition-all">
+                            <div class="p-4 bg-white/10 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="smartphone" class="icon icon-xl text-white"></i>
+                            </div>
+                            <h3 class="text-white font-bold text-xl mb-3">Cross-Platform</h3>
+                            <p class="text-white/80 text-base">Study anywhere, anytime on any device with cloud sync</p>
                         </div>
                     </div>
                 </div>
@@ -563,5 +577,13 @@
 
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        // Initialize Lucide icons after page load
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
 </body>
 </html>

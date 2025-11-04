@@ -11,25 +11,31 @@
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-display: 'Poppins', 'Inter', sans-serif;
 
-    /* Spacing scale */
+    /* Spacing scale - increased for more whitespace */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 3rem;
-    --spacing-2xl: 4rem;
+    --spacing-lg: 2.5rem;
+    --spacing-xl: 4rem;
+    --spacing-2xl: 6rem;
 
-    /* Border radius */
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
+    /* Border radius - slightly larger for modern look */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
 
-    /* Shadows */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.25);
+    /* Shadows - softer and more subtle */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+
+    /* Icon sizing */
+    --icon-sm: 16px;
+    --icon-md: 20px;
+    --icon-lg: 24px;
+    --icon-xl: 32px;
 }
 
 html, body {
@@ -623,4 +629,51 @@ textarea,
 select {
     border-radius: var(--radius-md);
     font-family: var(--font-sans);
+}
+
+/* ===== LUCIDE ICON UTILITIES ===== */
+.icon {
+    width: var(--icon-md);
+    height: var(--icon-md);
+    stroke-width: 2;
+    vertical-align: middle;
+}
+
+.icon-sm {
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+}
+
+.icon-lg {
+    width: var(--icon-lg);
+    height: var(--icon-lg);
+}
+
+.icon-xl {
+    width: var(--icon-xl);
+    height: var(--icon-xl);
+}
+
+/* Icon with text alignment */
+.icon-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Animated icons */
+.icon-hover-rotate {
+    transition: transform 0.3s ease;
+}
+
+.icon-hover-rotate:hover {
+    transform: rotate(15deg);
+}
+
+.icon-hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.icon-hover-scale:hover {
+    transform: scale(1.1);
 }

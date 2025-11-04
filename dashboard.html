@@ -16,6 +16,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <script type="module" src="auth-guard.js"></script>
@@ -28,9 +30,18 @@
                         <span>studying.works</span>
                     </a>
                     <div class="hidden md:flex space-x-2">
-                        <a href="/" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all">Home</a>
-                        <a href="dashboard" class="text-white font-semibold px-4 py-2 rounded-lg bg-white/10">Practice</a>
-                        <a href="progress" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all">Progress</a>
+                        <a href="/" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all icon-text">
+                            <i data-lucide="home" class="icon icon-sm"></i>
+                            <span>Home</span>
+                        </a>
+                        <a href="dashboard" class="text-white font-semibold px-4 py-2 rounded-lg bg-white/10 icon-text">
+                            <i data-lucide="book-open" class="icon icon-sm"></i>
+                            <span>Practice</span>
+                        </a>
+                        <a href="progress" class="text-white/80 hover:text-white font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-all icon-text">
+                            <i data-lucide="trending-up" class="icon icon-sm"></i>
+                            <span>Progress</span>
+                        </a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -74,136 +85,183 @@
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-            <div class="card-gradient-fire rounded-xl p-4 text-white card-hover animate-slide-in delay-200">
-                <div class="text-3xl mb-1">🔥</div>
-                <div class="text-2xl font-bold"><span id="stat-streak">0</span></div>
-                <div class="text-xs text-orange-100 font-semibold">Day Streak</div>
+            <div class="card-gradient-fire rounded-xl p-6 text-white card-hover animate-slide-in delay-200">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <i data-lucide="flame" class="icon icon-lg"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold mb-1"><span id="stat-streak">0</span></div>
+                <div class="text-sm text-white/90 font-medium">Day Streak</div>
             </div>
-            <div class="card-gradient-blue rounded-xl p-4 text-white card-hover animate-slide-in delay-300">
-                <div class="text-3xl mb-1">🎴</div>
-                <div class="text-2xl font-bold"><span id="stat-cards">0</span></div>
-                <div class="text-xs text-blue-100 font-semibold">Cards Reviewed</div>
+            <div class="card-gradient-blue rounded-xl p-6 text-white card-hover animate-slide-in delay-300">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <i data-lucide="credit-card" class="icon icon-lg"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold mb-1"><span id="stat-cards">0</span></div>
+                <div class="text-sm text-white/90 font-medium">Cards Reviewed</div>
             </div>
-            <div class="card-gradient-success rounded-xl p-4 text-white card-hover animate-slide-in delay-400">
-                <div class="text-3xl mb-1">📝</div>
-                <div class="text-2xl font-bold"><span id="stat-quizzes">0</span></div>
-                <div class="text-xs text-green-100 font-semibold">Quizzes Taken</div>
+            <div class="card-gradient-success rounded-xl p-6 text-white card-hover animate-slide-in delay-400">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <i data-lucide="clipboard-check" class="icon icon-lg"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold mb-1"><span id="stat-quizzes">0</span></div>
+                <div class="text-sm text-white/90 font-medium">Quizzes Taken</div>
             </div>
-            <div class="card-gradient-purple rounded-xl p-4 text-white card-hover animate-slide-in delay-500">
-                <div class="text-3xl mb-1">🎯</div>
-                <div class="text-2xl font-bold"><span id="stat-accuracy">0</span>%</div>
-                <div class="text-xs text-purple-100 font-semibold">Avg Accuracy</div>
+            <div class="card-gradient-purple rounded-xl p-6 text-white card-hover animate-slide-in delay-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <i data-lucide="target" class="icon icon-lg"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold mb-1"><span id="stat-accuracy">0</span>%</div>
+                <div class="text-sm text-white/90 font-medium">Avg Accuracy</div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             <div class="lg:col-span-2 space-y-md">
                 <div class="animate-slide-in delay-600">
-                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center font-display">
-                        <span class="text-4xl">📚</span>
-                        <span class="ml-3">Study Apps</span>
+                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center font-display icon-text">
+                        <i data-lucide="layout-grid" class="icon icon-xl"></i>
+                        <span>Study Apps</span>
                     </h2>
 
                     <!-- Card grid for study apps -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- My Flashcards -->
-                        <a href="custom-flashcards" class="block">
-                            <div class="card-gradient-amber rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                        <a href="custom-flashcards" class="block group">
+                            <div class="card-gradient-amber rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">📚</div>
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                            <i data-lucide="layers" class="icon icon-xl"></i>
+                                        </div>
                                         <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
                                             CUSTOM
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">My Flashcards</h3>
-                                    <p class="text-sm text-white/80 mb-3">5 study modes • Spaced repetition</p>
+                                    <h3 class="text-xl font-bold text-white mb-2">My Flashcards</h3>
+                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                        <i data-lucide="zap" class="icon icon-sm"></i>
+                                        <span>5 study modes • Spaced repetition</span>
+                                    </p>
                                 </div>
                             </div>
                         </a>
 
                         <!-- BKT Smart Study -->
-                        <a href="bkt-study" class="block">
-                            <div class="card-gradient-indigo rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                        <a href="bkt-study" class="block group">
+                            <div class="card-gradient-indigo rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">🧠</div>
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                            <i data-lucide="brain" class="icon icon-xl"></i>
+                                        </div>
                                         <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
                                             BETA
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">BKT Smart Study</h3>
-                                    <p class="text-sm text-white/80 mb-3">AI Learning Algorithm</p>
+                                    <h3 class="text-xl font-bold text-white mb-2">BKT Smart Study</h3>
+                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                        <i data-lucide="sparkles" class="icon icon-sm"></i>
+                                        <span>AI Learning Algorithm</span>
+                                    </p>
                                 </div>
                             </div>
                         </a>
 
                         <!-- AI Generator -->
-                        <a href="ai-flashcards" class="block">
-                            <div class="card-gradient-violet rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                        <a href="ai-flashcards" class="block group">
+                            <div class="card-gradient-violet rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">🤖</div>
-                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
-                                            ✨ AI
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                            <i data-lucide="wand-2" class="icon icon-xl"></i>
+                                        </div>
+                                        <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs icon-text">
+                                            <i data-lucide="sparkles" class="icon icon-sm"></i>
+                                            AI
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">AI Generator</h3>
-                                    <p class="text-sm text-white/80 mb-3">Create flashcards instantly</p>
+                                    <h3 class="text-xl font-bold text-white mb-2">AI Generator</h3>
+                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                        <i data-lucide="zap" class="icon icon-sm"></i>
+                                        <span>Create flashcards instantly</span>
+                                    </p>
                                 </div>
                             </div>
                         </a>
 
                         <!-- Community Library -->
-                        <a href="community" class="block">
-                            <div class="card-gradient-sky rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                        <a href="community" class="block group">
+                            <div class="card-gradient-sky rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">🌍</div>
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                            <i data-lucide="users" class="icon icon-xl"></i>
+                                        </div>
                                         <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
                                             NEW
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">Community</h3>
-                                    <p class="text-sm text-white/80 mb-3">Share & discover decks</p>
+                                    <h3 class="text-xl font-bold text-white mb-2">Community</h3>
+                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                        <i data-lucide="share-2" class="icon icon-sm"></i>
+                                        <span>Share & discover decks</span>
+                                    </p>
                                 </div>
                             </div>
                         </a>
 
                         <!-- Memory Games -->
-                        <a href="memory-games" class="block">
-                            <div class="card-gradient-rose rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                        <a href="memory-games" class="block group">
+                            <div class="card-gradient-rose rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">🎮</div>
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                            <i data-lucide="gamepad-2" class="icon icon-xl"></i>
+                                        </div>
                                         <div class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs">
                                             NEW
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">Memory Games</h3>
-                                    <p class="text-sm text-white/80 mb-3">Learn through play</p>
+                                    <h3 class="text-xl font-bold text-white mb-2">Memory Games</h3>
+                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                        <i data-lucide="puzzle" class="icon icon-sm"></i>
+                                        <span>Learn through play</span>
+                                    </p>
                                 </div>
                             </div>
                         </a>
 
                         <!-- SAT Practice -->
-                        <a href="sat-practice" class="block">
-                            <div class="card-gradient-blue rounded-2xl p-6 card-hover relative overflow-hidden group h-full">
+                        <a href="sat-practice" class="block group">
+                            <div class="card-gradient-blue rounded-2xl p-6 card-hover relative overflow-hidden h-full">
                                 <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100"></div>
                                 <div class="relative z-10 flex flex-col h-full">
-                                    <div class="flex items-start justify-between mb-3">
-                                        <div class="text-5xl">📝</div>
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                                            <i data-lucide="file-text" class="icon icon-xl"></i>
+                                        </div>
                                         <div class="bg-green-400 text-green-900 px-3 py-1 rounded-full font-bold text-xs">
-                                            NEW
+                                            4,203
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white mb-1">SAT Practice</h3>
-                                    <p class="text-sm text-white/80 mb-3">Full digital experience</p>
+                                    <h3 class="text-xl font-bold text-white mb-2">SAT Practice</h3>
+                                    <p class="text-sm text-white/90 flex items-center gap-2">
+                                        <i data-lucide="graduation-cap" class="icon icon-sm"></i>
+                                        <span>Official SAT questions</span>
+                                    </p>
                                 </div>
                             </div>
                         </a>
@@ -216,23 +274,29 @@
                 <div id="goal-card" class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in delay-700"></div>
 
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 card-hover animate-slide-in delay-800">
-                    <h3 class="text-xl font-bold text-white mb-3 flex items-center">
-                        <span>🏆</span>
-                        <span class="ml-2">Achievements</span>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center icon-text">
+                        <i data-lucide="trophy" class="icon icon-lg"></i>
+                        <span>Achievements</span>
                     </h3>
                     <div id="achievements-list" class="space-y-2">
                         <div class="text-center py-6 text-white/60 text-sm">
-                            <div class="text-4xl mb-2">🎯</div>
+                            <div class="flex justify-center mb-3">
+                                <i data-lucide="target" class="icon icon-xl"></i>
+                            </div>
                             <p>Complete a quiz to unlock achievements!</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-gradient-violet rounded-2xl p-5 card-hover animate-slide-in delay-800">
-                    <h3 class="text-xl font-bold text-white mb-3">🚀 Quick Actions</h3>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center icon-text">
+                        <i data-lucide="zap" class="icon icon-lg"></i>
+                        <span>Quick Actions</span>
+                    </h3>
                     <div class="space-y-2">
-                        <a href="progress" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
-                            📊 Progress
+                        <a href="progress" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-3 rounded-xl text-white text-sm font-semibold transition-all icon-text">
+                            <i data-lucide="bar-chart-3" class="icon icon-sm"></i>
+                            <span>View Progress</span>
                         </a>
                         <a href="bkt-analytics" class="block bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all">
                             🧠 BKT Analytics
@@ -650,5 +714,13 @@
     </footer>
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        // Initialize Lucide icons after page load
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
 </body>
 </html>

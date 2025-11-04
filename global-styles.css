@@ -786,6 +786,85 @@ select {
     box-shadow: var(--shadow-lg);
 }
 
+/* Additional fall-themed gradient cards */
+.card-gradient-fire {
+    background: linear-gradient(135deg, #ff6f00 0%, #ff8f00 50%, #ffa726 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-amber {
+    background: linear-gradient(135deg, #ffa726 0%, #ffb74d 50%, #ffcc80 100%);
+    color: #4a2c00;
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-brown {
+    background: linear-gradient(135deg, #795548 0%, #8d6e63 50%, #a1887f 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-rust {
+    background: linear-gradient(135deg, #d84315 0%, #ff5722 50%, #ff7043 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+/* Legacy gradient classes updated with fall colors */
+.card-gradient-blue {
+    background: linear-gradient(135deg, #6d4c41 0%, #8d6e63 50%, #a1887f 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-success {
+    background: linear-gradient(135deg, #558b2f 0%, #689f38 50%, #7cb342 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-purple {
+    background: linear-gradient(135deg, #4e342e 0%, #6d4c41 50%, #8d6e63 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-indigo {
+    background: linear-gradient(135deg, #bf360c 0%, #d84315 50%, #e64a19 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-rose {
+    background: linear-gradient(135deg, #c62828 0%, #d32f2f 50%, #e53935 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-sky {
+    background: linear-gradient(135deg, #ff8f00 0%, #ffa726 50%, #ffb74d 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
+.card-gradient-violet {
+    background: linear-gradient(135deg, #6a1b9a 0%, #7b1fa2 50%, #8e24aa 100%);
+    color: var(--color-white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+}
+
 /* Gradient overlay on white background */
 .gradient-overlay {
     position: relative;

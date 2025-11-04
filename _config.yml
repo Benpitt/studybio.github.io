@@ -1,0 +1,27 @@
+# Jekyll configuration for studying.works
+# This enables clean URLs without .html extensions on GitHub Pages
+
+# Permalink style (remove trailing .html)
+permalink: pretty
+
+# Exclude files from processing
+exclude:
+  - node_modules/
+  - package.json
+  - package-lock.json
+  - scripts/
+  - README.md
+  - .gitignore
+
+# Include dotfiles if needed
+include:
+  - .htaccess
+
+# Plugins (GitHub Pages supports these by default)
+plugins:
+  - jekyll-relative-links
+
+# Relative links configuration
+relative_links:
+  enabled: true
+  collections: false

@@ -1,8 +1,35 @@
+/* Import modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 /* CRITICAL: Fix white borders on overscroll */
 :root {
     --gradient-color-1: #0a0a1a;
     --gradient-color-2: #1e1b4b;
     --gradient-color-3: #134e4a;
+
+    /* Typography scale */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Poppins', 'Inter', sans-serif;
+
+    /* Spacing scale */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 4rem;
+
+    /* Border radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.25);
 }
 
 html, body {
@@ -22,6 +49,9 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     transition: background 3s ease-in-out;
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 /* Ensure body always covers viewport */
@@ -275,4 +305,322 @@ nav {
 
 .delay-1700 {
     animation-delay: 1.7s;
+}
+
+/* ===== TYPOGRAPHY SYSTEM ===== */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: white;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+h5 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+h6 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.text-base {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.6;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 1.4;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.text-subtle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+}
+
+/* ===== CENTERED LAYOUT SYSTEM ===== */
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+.container-sm {
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+.container-md {
+    width: 100%;
+    max-width: 768px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+.container-lg {
+    width: 100%;
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    .container,
+    .container-sm,
+    .container-md,
+    .container-lg {
+        padding-left: var(--spacing-lg);
+        padding-right: var(--spacing-lg);
+    }
+}
+
+/* ===== MODERN CARD SYSTEM ===== */
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-sm {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+}
+
+.card-lg {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+}
+
+.card-glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.card-interactive {
+    cursor: pointer;
+    user-select: none;
+}
+
+.card-interactive:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* Question card styles for practice modes */
+.question-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.question-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Answer option cards */
+.answer-option {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+.answer-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(124, 58, 237, 0.4);
+    transform: translateX(4px);
+}
+
+.answer-option.selected {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(99, 102, 241, 0.2));
+    border-color: rgba(124, 58, 237, 0.6);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+}
+
+.answer-option.correct {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(20, 184, 166, 0.2));
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.answer-option.incorrect {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(248, 113, 113, 0.2));
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== SPACING UTILITIES ===== */
+.space-y-sm > * + * {
+    margin-top: var(--spacing-sm);
+}
+
+.space-y-md > * + * {
+    margin-top: var(--spacing-md);
+}
+
+.space-y-lg > * + * {
+    margin-top: var(--spacing-lg);
+}
+
+.space-y-xl > * + * {
+    margin-top: var(--spacing-xl);
+}
+
+.gap-sm {
+    gap: var(--spacing-sm);
+}
+
+.gap-md {
+    gap: var(--spacing-md);
+}
+
+.gap-lg {
+    gap: var(--spacing-lg);
+}
+
+/* ===== RESPONSIVE UTILITIES ===== */
+@media (max-width: 767px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    .container {
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
+    }
+}
+
+/* ===== NAVIGATION STYLES ===== */
+nav {
+    backdrop-filter: blur(12px);
+    background: rgba(10, 10, 26, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+nav a {
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+nav a:hover {
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* ===== IMPROVED BUTTON ROUNDED CORNERS ===== */
+button,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-ghost {
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-family: var(--font-sans);
+}
+
+/* ===== IMPROVED INPUT ROUNDED CORNERS ===== */
+input,
+textarea,
+select {
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
 }

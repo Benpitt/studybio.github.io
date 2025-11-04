@@ -110,28 +110,39 @@
 
         <!-- Main content -->
         <div class="relative z-10 min-h-screen flex flex-col">
-            <!-- Header -->
-            <header class="p-6 md:p-8">
-                <div class="max-w-7xl mx-auto flex justify-between items-center">
-                    <div class="flex items-center space-x-3 animate-slide-in-left opacity-0 delay-200">
-                        <span class="text-5xl">🎓</span>
-                        <span class="text-2xl md:text-3xl font-bold text-white">studying.works</span>
+            <!-- Simplified Navigation -->
+            <nav class="sticky top-0 z-50 backdrop-filter backdrop-blur-md bg-white/5 border-b border-white/10">
+                <div class="container mx-auto px-6 py-4">
+                    <div class="flex justify-between items-center">
+                        <!-- Logo -->
+                        <a href="/" class="flex items-center space-x-3 group animate-slide-in-left opacity-0 delay-200">
+                            <span class="text-4xl transition-transform duration-300 group-hover:scale-110">🎓</span>
+                            <span class="text-xl md:text-2xl font-bold text-white font-display">studying.works</span>
+                        </a>
+
+                        <!-- Navigation Links -->
+                        <div class="hidden md:flex items-center space-x-8 animate-fade-in-up opacity-0 delay-300">
+                            <a href="/" class="text-white/90 hover:text-white font-medium transition-all duration-200">Home</a>
+                            <a href="/about" class="text-white/90 hover:text-white font-medium transition-all duration-200">About</a>
+                        </div>
+
+                        <!-- Mobile menu would go here if needed -->
                     </div>
                 </div>
-            </header>
+            </nav>
 
             <!-- Hero Section -->
-            <main class="flex-1 px-4 py-12">
+            <main class="flex-1 container mx-auto py-16 md:py-24">
                 <!-- Hero -->
-                <div class="max-w-6xl mx-auto text-center mb-20">
-                    <div class="mb-8">
-                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 animate-fade-in-up opacity-0 delay-300 leading-tight">
+                <div class="text-center mb-32 space-y-lg">
+                    <div class="space-y-md">
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-8 animate-fade-in-up opacity-0 delay-400 leading-tight font-display" style="line-height: 1.1;">
                             Learn Smarter,<br>
                             <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200">
                                 Not Harder
                             </span>
                         </h1>
-                        <p class="text-xl md:text-2xl text-white/90 font-light mb-4 animate-fade-in-up opacity-0 delay-500 max-w-3xl mx-auto">
+                        <p class="text-xl md:text-2xl text-white/90 font-light mb-8 animate-fade-in-up opacity-0 delay-500 max-w-3xl mx-auto" style="line-height: 1.6;">
                             AI-powered study tools that adapt to your learning style. Create flashcards, take adaptive quizzes, and track your progress—all in one place.
                         </p>
                     </div>
@@ -182,29 +193,29 @@
                     </div>
 
                     <!-- Stats Section -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-20 animate-fade-in-up opacity-0 delay-900">
-                        <div class="glass-card rounded-2xl p-6">
-                            <div class="text-4xl font-bold text-white mb-2">100% Free</div>
-                            <p class="text-white/70">No hidden costs or subscriptions</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto animate-fade-in-up opacity-0 delay-900">
+                        <div class="card-glass rounded-xl p-8 text-center hover:scale-105 transition-transform duration-300">
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-3 font-display">100% Free</div>
+                            <p class="text-white/70 text-base">No hidden costs or subscriptions</p>
                         </div>
-                        <div class="glass-card rounded-2xl p-6">
-                            <div class="text-4xl font-bold text-white mb-2">AI-Powered</div>
-                            <p class="text-white/70">Smart algorithms that learn with you</p>
+                        <div class="card-glass rounded-xl p-8 text-center hover:scale-105 transition-transform duration-300">
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-3 font-display">AI-Powered</div>
+                            <p class="text-white/70 text-base">Smart algorithms that learn with you</p>
                         </div>
-                        <div class="glass-card rounded-2xl p-6">
-                            <div class="text-4xl font-bold text-white mb-2">Open Source</div>
-                            <p class="text-white/70">Transparent and community-driven</p>
+                        <div class="card-glass rounded-xl p-8 text-center hover:scale-105 transition-transform duration-300">
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-3 font-display">Open Source</div>
+                            <p class="text-white/70 text-base">Transparent and community-driven</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Feature Showcases -->
-                <div class="max-w-7xl mx-auto space-y-32 mb-32">
+                <div class="container mx-auto space-y-24 md:space-y-32 mb-32">
                     <!-- Feature 1: AI Flashcards -->
-                    <div class="grid md:grid-cols-2 gap-12 items-center animate-fade-in-up opacity-0 delay-1100">
+                    <div class="grid md:grid-cols-2 gap-8 md:gap-16 items-center animate-fade-in-up opacity-0 delay-1100">
                         <div class="order-2 md:order-1">
-                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8 mb-6">
+                            <div class="card-glass rounded-2xl p-8 md:p-10 shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300">
+                                <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-8 mb-6">
                                     <div class="text-6xl mb-4 animate-float-slow">🎴</div>
                                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
                                         <div class="text-white/90 text-lg font-semibold mb-2">Question:</div>
@@ -217,11 +228,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="order-1 md:order-2">
-                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        <div class="order-1 md:order-2 space-y-md">
+                            <h2 class="text-4xl md:text-5xl font-bold text-white font-display" style="line-height: 1.2;">
                                 AI-Generated Flashcards
                             </h2>
-                            <p class="text-xl text-white/80 mb-6">
+                            <p class="text-xl text-white/80" style="line-height: 1.6;">
                                 Simply enter a topic, and our AI creates comprehensive flashcards instantly. Perfect for visual learners and last-minute study sessions.
                             </p>
                             <ul class="space-y-3">

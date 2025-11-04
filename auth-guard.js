@@ -9,8 +9,8 @@ import { firebaseConfig } from './config.js';
 import { debugLog, debugError } from './config.js';
 
 (async function() {
-    // Check if we're already on index.html (login page)
-    const isLoginPage = window.location.pathname.includes('index.html') ||
+    // Check if we're already on index (login page)
+    const isLoginPage = window.location.pathname.includes('index') ||
                         window.location.pathname === '/' ||
                         window.location.pathname === '';
 
@@ -32,7 +32,7 @@ import { debugLog, debugError } from './config.js';
     if (!userName || !userId || !sessionTimestamp || !authService.isSessionValid()) {
         debugLog('No valid local session, redirecting to login...');
         localStorage.clear();
-        window.location.href = 'index.html';
+        window.location.href = '/';
         return;
     }
 
@@ -44,7 +44,7 @@ import { debugLog, debugError } from './config.js';
             // No Firebase user, session is invalid
             debugLog('No Firebase user found, redirecting to login...');
             localStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = '/';
             return;
         }
 
@@ -52,7 +52,7 @@ import { debugLog, debugError } from './config.js';
         if (user.uid !== userId) {
             debugLog('User ID mismatch, clearing session...');
             localStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = '/';
             return;
         }
 
@@ -62,7 +62,7 @@ import { debugLog, debugError } from './config.js';
                 // User signed out or token expired
                 debugLog('Auth state changed: user signed out');
                 localStorage.clear();
-                window.location.href = 'index.html';
+                window.location.href = '/';
             } else {
                 // User is authenticated, ensure cache is up to date
                 debugLog('Auth state verified for:', user.displayName);
@@ -74,6 +74,6 @@ import { debugLog, debugError } from './config.js';
     } catch (error) {
         debugError('Auth verification error:', error);
         localStorage.clear();
-        window.location.href = 'index.html';
+        window.location.href = '/';
     }
 })();

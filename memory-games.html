@@ -135,43 +135,103 @@
         }
 
         /* Deck Selection */
-        .deck-selector {
-            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            padding: 48px;
-            backdrop-filter: blur(20px);
+        .deck-selection-header {
+            text-align: center;
+            margin-bottom: 48px;
         }
 
-        .deck-selector h2 {
-            font-size: 2rem;
+        .deck-selection-header h2 {
+            font-size: 2.5rem;
             font-weight: 800;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.02em;
         }
 
-        .deck-selector select {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            padding: 18px 24px;
+        .deck-selection-header p {
             font-size: 1.1rem;
-            color: white;
-            transition: all 0.3s;
+            color: var(--muted);
         }
 
-        .deck-selector select:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(14,165,164,0.2);
+        .deck-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .deck-selector select option {
-            background: #1a1a1f;
+        .deck-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px 28px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deck-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+        }
+
+        .deck-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(14,165,164,0.3), rgba(168,85,247,0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .deck-card:hover::before {
+            opacity: 1;
+        }
+
+        .deck-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(14,165,164,0.3));
+        }
+
+        .deck-title {
+            font-size: 1.4rem;
+            font-weight: 700;
             color: white;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .deck-count {
+            font-size: 0.95rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .deck-badge {
+            display: inline-block;
+            background: rgba(14,165,164,0.2);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
         }
 
         /* Game Container */
@@ -439,11 +499,12 @@
 
         <!-- Deck Selection -->
         <div id="deck-selection" class="mb-12">
-            <div class="deck-selector">
+            <div class="deck-selection-header">
                 <h2>Select a Deck</h2>
-                <select id="deck-select" class="w-full">
-                    <option value="">Choose a deck to play...</option>
-                </select>
+                <p>Choose a flashcard deck to start playing memory games</p>
+            </div>
+            <div id="deck-grid" class="deck-grid">
+                <!-- Decks will be loaded here -->
             </div>
         </div>
 
@@ -481,7 +542,7 @@
                     <div class="game-glow"></div>
                     <span class="game-icon">🎯</span>
                     <h3 class="game-title">Match Madness</h3>
-                    <p class="game-desc">Drag terms to match with definitions quickly</p>
+                    <p class="game-desc">Click to match questions with answers against the clock</p>
                     <div class="game-meta">
                         <span>⏱️ 90 seconds</span>
                         <span>🔥 Fast-paced</span>
@@ -541,21 +602,64 @@
         // Load decks
         function loadDecks() {
             const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
-            const select = document.getElementById('deck-select');
-            
-            decks.forEach((deck, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `${deck.title} (${deck.cards.length} cards)`;
-                select.appendChild(option);
-            });
+            const deckGrid = document.getElementById('deck-grid');
 
-            select.addEventListener('change', (e) => {
-                if (e.target.value) {
-                    currentDeck = decks[e.target.value];
-                    document.getElementById('game-selection').classList.remove('hidden');
-                }
+            if (decks.length === 0) {
+                deckGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
+                        <h3 style="font-size: 1.5rem; color: white; margin-bottom: 12px;">No Decks Found</h3>
+                        <p style="color: var(--muted); font-size: 1.1rem;">Create a flashcard deck first to play memory games</p>
+                        <a href="custom-flashcards" class="btn-play-again" style="display: inline-block; margin-top: 24px; text-decoration: none;">
+                            Create Your First Deck
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get deck icons based on title keywords
+            function getDeckIcon(title) {
+                const lower = title.toLowerCase();
+                if (lower.includes('biology') || lower.includes('science')) return '🧬';
+                if (lower.includes('math') || lower.includes('calculus') || lower.includes('algebra')) return '📐';
+                if (lower.includes('history')) return '🌍';
+                if (lower.includes('language') || lower.includes('spanish') || lower.includes('french')) return '🗣️';
+                if (lower.includes('code') || lower.includes('programming') || lower.includes('python') || lower.includes('javascript')) return '💻';
+                if (lower.includes('chemistry')) return '⚗️';
+                if (lower.includes('physics')) return '⚛️';
+                if (lower.includes('literature') || lower.includes('english')) return '📖';
+                if (lower.includes('music')) return '🎵';
+                if (lower.includes('art')) return '🎨';
+                return '📚';
+            }
+
+            decks.forEach((deck, index) => {
+                const deckCard = document.createElement('div');
+                deckCard.className = 'deck-card';
+                deckCard.onclick = () => selectDeck(index);
+
+                deckCard.innerHTML = `
+                    <span class="deck-icon">${getDeckIcon(deck.title)}</span>
+                    <h3 class="deck-title">${deck.title}</h3>
+                    <div class="deck-count">
+                        <span>📇 ${deck.cards.length} cards</span>
+                    </div>
+                    <span class="deck-badge">Ready to play</span>
+                `;
+
+                deckGrid.appendChild(deckCard);
             });
+        }
+
+        function selectDeck(index) {
+            const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
+            currentDeck = decks[index];
+            document.getElementById('deck-selection').classList.add('hidden');
+            document.getElementById('game-selection').classList.remove('hidden');
+
+            // Scroll to game selection
+            document.getElementById('game-selection').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function startGame(gameType) {
@@ -572,8 +676,13 @@
         function backToSelection() {
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.add('hidden');
-            document.getElementById('game-selection').classList.remove('hidden');
+            document.getElementById('game-selection').classList.add('hidden');
+            document.getElementById('deck-selection').classList.remove('hidden');
+            currentDeck = null;
             gameState = {};
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function restartGame() {

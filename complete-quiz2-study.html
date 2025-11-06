@@ -190,7 +190,7 @@
                                     </div>
                                     <div className="text-center">
                                         <div className="text-4xl mb-2">🔥</div>
-                                        <div className="text-2xl font-bold text-orange-600">{studyStreak}</div>
+                                        <div className="text-2xl font-bold text-pink-600">{studyStreak}</div>
                                         <div className="text-sm text-gray-600">Day Streak</div>
                                     </div>
                                 </div>
@@ -220,7 +220,7 @@
                                     <div className="text-sm opacity-90">20 MC questions</div>
                                 </button>
 
-                                <button onClick={() => setMode('confidence')} className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                <button onClick={() => setMode('confidence')} className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                                     <div className="text-4xl mb-2">🎯</div>
                                     <div className="text-xl">Confidence Tracker</div>
                                     <div className="text-sm opacity-90">Rate your knowledge</div>
@@ -232,7 +232,7 @@
                                     <div className="text-sm opacity-90">All details & charts</div>
                                 </button>
 
-                                <button onClick={() => setMode('compare')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                <button onClick={() => setMode('compare')} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                                     <div className="text-4xl mb-2">⚖️</div>
                                     <div className="text-xl">Compare & Contrast</div>
                                     <div className="text-sm opacity-90">DNA vs RNA, etc.</div>
@@ -503,7 +503,7 @@
             // COMPARE MODE
             if (mode === 'compare') {
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-cyan-400 to-blue-500 p-4">
                         <div className="max-w-5xl mx-auto">
                             <div className="flex justify-between items-center mb-6">
                                 <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
@@ -537,7 +537,7 @@
                 const topicsList = ['Carbohydrates', 'Proteins', 'Lipids', 'Nucleic Acids', 'Reactions', 'Atomic Structure', 'Polarity', 'Data Analysis', 'Experimental Design'];
                 
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-red-500 to-pink-500 p-4">
                         <div className="max-w-4xl mx-auto">
                             <div className="flex justify-between items-center mb-6">
                                 <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
@@ -557,7 +557,7 @@
                                                         onClick={() => setConfidence({...confidence, [topic]: level})}
                                                         className={`w-10 h-10 rounded-full font-bold transition-all ${
                                                             confidence[topic] === level
-                                                                ? 'bg-orange-500 text-white scale-110'
+                                                                ? 'bg-pink-500 text-white scale-110'
                                                                 : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                                         }`}
                                                     >

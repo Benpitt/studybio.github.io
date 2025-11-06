@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-2 bg-orange-500/20 px-4 py-2 rounded-full border border-orange-500/50">
+                    <div class="hidden md:flex items-center space-x-2 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/50">
                         <span class="text-2xl animate-pulse-custom">🔥</span>
                         <span class="text-white font-bold"><span id="streak">0</span> Day Streak</span>
                     </div>
@@ -77,7 +77,7 @@
             <div class="card-gradient-fire rounded-xl p-4 text-white card-hover animate-slide-in delay-200">
                 <div class="text-3xl mb-1">🔥</div>
                 <div class="text-2xl font-bold"><span id="stat-streak">0</span></div>
-                <div class="text-xs text-orange-100 font-semibold">Day Streak</div>
+                <div class="text-xs text-red-100 font-semibold">Day Streak</div>
             </div>
             <div class="card-gradient-blue rounded-xl p-4 text-white card-hover animate-slide-in delay-300">
                 <div class="text-3xl mb-1">🎴</div>
@@ -621,7 +621,7 @@
             
             if (achievements.length > 0) {
                 container.innerHTML = achievements.slice(0, 3).map(a => `
-                    <div class="flex items-center space-x-2 p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
+                    <div class="flex items-center space-x-2 p-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg border border-purple-500/30">
                         <div class="text-3xl">${a.emoji}</div>
                         <div>
                             <div class="font-bold text-white text-sm">${a.name}</div>

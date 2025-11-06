@@ -649,7 +649,7 @@ function BiochemistryMasterApp() {
 
           <button
             onClick={() => setMode('identify')}
-            className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all"
+            className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all"
           >
             <Eye className="w-8 h-8" />
             <div className="text-left">
@@ -660,7 +660,7 @@ function BiochemistryMasterApp() {
 
           <button
             onClick={() => setMode('reactions')}
-            className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all md:col-span-2"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all md:col-span-2"
           >
             <Flask className="w-8 h-8" />
             <div className="text-left">
@@ -749,8 +749,8 @@ function BiochemistryMasterApp() {
                   </ul>
                 </div>
 
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <h3 className="font-bold text-lg text-orange-800 mb-2">📝 Examples:</h3>
+                <div className="bg-pink-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-lg text-pink-800 mb-2">📝 Examples:</h3>
                   <p className="text-gray-700">{macro.examples}</p>
                 </div>
 
@@ -1094,7 +1094,7 @@ function BiochemistryMasterApp() {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-red-500 to-pink-500 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <button
@@ -1167,7 +1167,7 @@ function BiochemistryMasterApp() {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-cyan-400 to-blue-500 p-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <button
@@ -1182,7 +1182,7 @@ function BiochemistryMasterApp() {
           </div>
 
           <div className="bg-white rounded-3xl shadow-2xl p-8">
-            <div className={`${reaction.type === 'dehydration' ? 'bg-orange-100' : 'bg-blue-100'} p-4 rounded-xl mb-6`}>
+            <div className={`${reaction.type === 'dehydration' ? 'bg-pink-100' : 'bg-blue-100'} p-4 rounded-xl mb-6`}>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">
                 {reaction.type === 'dehydration' ? '🔥 Dehydration Synthesis' : '💧 Hydrolysis'}
               </h2>
@@ -1262,8 +1262,8 @@ function BiochemistryMasterApp() {
             <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl">
               <h4 className="font-bold text-gray-800 mb-3">Quick Reference:</h4>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <div className="bg-orange-100 p-4 rounded-lg">
-                  <h5 className="font-bold text-orange-800 mb-2">Dehydration Synthesis</h5>
+                <div className="bg-pink-100 p-4 rounded-lg">
+                  <h5 className="font-bold text-pink-800 mb-2">Dehydration Synthesis</h5>
                   <ul className="space-y-1 text-gray-700">
                     <li>• Builds polymers from monomers</li>
                     <li>• Removes H₂O (water)</li>

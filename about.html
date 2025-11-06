@@ -14,239 +14,342 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
     <style>
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        :root{
+            --bg:#0b0b0d;
+            --muted:#9aa3b2;
+            --accent:#0ea5a4;
+            --accent-purple:#a855f7;
+            --glass: rgba(255,255,255,0.06);
+        }
+        html,body{height:100%; scroll-behavior:smooth;}
+        body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; background:var(--bg); color:white; -webkit-font-smoothing:antialiased;}
+
+        /* Hero section matching index */
+        .about-hero{
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20vh 5vw 12vh;
+            position:relative;
+            overflow:hidden;
+            text-align:center;
         }
 
-        .bg-animated-gradient {
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe, #00f2fe);
-            background-size: 400% 400%;
-            animation: gradient-shift 15s ease infinite;
+        /* 3D Product Cards */
+        .product-showcase{
+            perspective:1600px;
+            position:relative;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .product-card-lg{
+            width:100%;
+            max-width:650px;
+            height:450px;
+            border-radius:28px;
+            background:linear-gradient(180deg,#0f1720 0%, #071017 100%);
+            box-shadow: 0 50px 100px rgba(2,6,23,0.9);
+            border:1px solid rgba(255,255,255,0.05);
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            transform-style:preserve-3d;
+            transition:transform 450ms cubic-bezier(.2,.9,.3,1);
+            position:relative;
         }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
+        .card-screen{
+            flex:1;
+            padding:32px;
+            display:flex;
+            flex-direction:column;
+            position:relative;
+            z-index:1;
         }
 
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            animation: glow-pulse-landing 8s ease-in-out infinite;
-            pointer-events: none;
+        .card-deco{position:absolute;inset:0;pointer-events:none;z-index:0;}
+        .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.2}
+        .orb.a{width:420px;height:420px;background:#06b6d4;right:-140px;top:-120px}
+        .orb.b{width:320px;height:320px;background:#7c3aed;left:-120px;bottom:-80px;opacity:.15}
+        .orb.c{width:280px;height:280px;background:#0ea5a4;right:-80px;bottom:-100px;opacity:.18}
+
+        .glow-orb{
+            position:absolute;
+            border-radius:50%;
+            filter:blur(120px);
+            opacity:0.2;
+            pointer-events:none;
+            animation:float 8s ease-in-out infinite;
         }
 
-        @keyframes glow-pulse-landing {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
+        @keyframes float{
+            0%, 100%{transform:translate(0,0) scale(1)}
+            50%{transform:translate(20px, -20px) scale(1.05)}
+        }
+
+        /* Showcase sections */
+        .showcase-section{
+            min-height:90vh;
+            display:flex;
+            align-items:center;
+            padding:10vh 5vw;
+            position:relative;
+        }
+
+        .showcase-container{
+            max-width:1400px;
+            margin:0 auto;
+            width:100%;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:80px;
+            align-items:center;
+        }
+
+        @media (max-width:1100px){
+            .showcase-container{
+                grid-template-columns:1fr;
+                gap:60px;
+            }
+            .product-card-lg{
+                margin:0 auto;
+                max-width:100%;
+                height:auto;
+                min-height:400px;
+            }
         }
     </style>
 </head>
 <body class="overflow-x-hidden">
+
     <div class="min-h-screen bg-animated-gradient relative overflow-hidden">
         <!-- Glowing orbs background -->
-        <div class="glow-orb" style="width: 400px; height: 400px; background: #667eea; top: -100px; left: -100px;"></div>
-        <div class="glow-orb" style="width: 500px; height: 500px; background: #f093fb; bottom: -150px; right: -150px; animation-delay: 2s;"></div>
-        <div class="glow-orb" style="width: 300px; height: 300px; background: #4facfe; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1s;"></div>
+        <div class="glow-orb" style="width: 500px; height: 500px; background: #667eea; top: 10%; left: 5%;"></div>
+        <div class="glow-orb" style="width: 600px; height: 600px; background: #f093fb; bottom: 20%; right: 10%; animation-delay: 2s;"></div>
+        <div class="glow-orb" style="width: 400px; height: 400px; background: #4facfe; top: 40%; right: 20%; animation-delay: 1s;"></div>
+        <div class="glow-orb" style="width: 450px; height: 450px; background: #0ea5a4; top: 60%; left: 10%; animation-delay: 3s;"></div>
 
         <!-- Main content -->
         <div class="relative z-10">
             <!-- Header -->
-            <nav class="bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between h-16">
-                        <a href="index" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
-                            <span>🎓</span>
-                            <span>studying.works</span>
-                        </a>
-                        <div class="flex items-center space-x-4">
-                            <a href="dashboard" class="text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all">Dashboard</a>
-                            <a href="about" class="text-white font-semibold px-4 py-2 rounded-lg bg-white/10">About</a>
-                        </div>
+            <header class="p-6 md:p-8 fixed top-0 left-0 right-0 z-50" style="backdrop-filter:blur(20px); background:rgba(11,11,13,0.7);">
+                <div class="max-w-7xl mx-auto flex justify-between items-center">
+                    <a href="index" class="flex items-center space-x-3 text-2xl font-bold text-white hover:scale-105 transition-transform">
+                        <span class="text-4xl">🎓</span>
+                        <span>studying.works</span>
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <a href="dashboard" class="text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all font-semibold">Dashboard</a>
+                        <a href="about" class="text-white px-4 py-2 rounded-lg bg-white/10 font-semibold">About</a>
                     </div>
                 </div>
-            </nav>
+            </header>
 
             <!-- Hero Section -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-                <div class="text-center mb-20 animate-fade-in-up">
-                    <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-8 leading-tight">
-                        Built for<br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200">
-                            Every Learner
-                        </span>
+            <section class="about-hero">
+                <div class="apex-content" style="max-width:1400px;margin:0 auto;">
+                    <div class="eyebrow" style="font-size:1rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:20px;">Why studying.works</div>
+                    <h1 style="font-size:clamp(3rem, 8vw, 7rem);font-weight:900;line-height:1.05;letter-spacing:-0.03em;margin:0 auto 32px;max-width:20ch;background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                        Built for every kind of learner.
                     </h1>
-                    <p class="text-2xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-                        Using advanced AI and cognitive science to create a personalized study experience that grows with you
+                    <p style="font-size:clamp(1.2rem, 2vw, 1.75rem);color:#cbd5e1;max-width:48ch;margin:0 auto 48px;line-height:1.4;font-weight:400;">
+                        Using advanced AI and cognitive science to create a personalized study experience that grows with you.
                     </p>
-                </div>
 
-                <!-- Mission Statement -->
-                <div class="max-w-6xl mx-auto mb-32">
-                    <div class="glass-card rounded-3xl p-8 md:p-16 shadow-2xl">
-                        <div class="text-5xl mb-6 text-center">🎯</div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 text-center">Our Mission</h2>
-                        <p class="text-xl md:text-2xl text-white/90 leading-relaxed">
+                    <!-- Mission Card -->
+                    <div class="card card-gradient-accent" style="max-width:900px;margin:0 auto;padding:60px 40px;">
+                        <div class="text-5xl mb-4 text-center">🎯</div>
+                        <h2 class="heading-sm text-center mb-4">Our Mission</h2>
+                        <p class="body-lg" style="color:#e2e8f0;">
                             Learning is different for everyone. studying.works uses research from UC Berkeley and advanced machine learning to identify your strengths, understand your challenges, and shape lessons that truly work for your mind.
                         </p>
-                        <p class="text-xl md:text-2xl text-white/90 leading-relaxed mt-6">
+                        <p class="body-lg mt-4" style="color:#e2e8f0;">
                             By combining evidence-based techniques from cognitive science with adaptive learning models, we help every learner reach their potential.
                         </p>
                     </div>
                 </div>
+            </section>
 
-                <!-- Feature Showcases -->
-                <div class="space-y-32 mb-32">
-                    <!-- AI Generator -->
-                    <div class="grid md:grid-cols-2 gap-12 items-center">
-                        <div class="order-2 md:order-1">
-                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8">
-                                    <div class="text-6xl mb-4 animate-float-slow">🤖</div>
-                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
-                                        <div class="text-white/90 text-sm font-semibold mb-2">Input:</div>
-                                        <div class="text-white/80 text-sm italic">"Photosynthesis in plants"</div>
-                                    </div>
-                                    <div class="flex items-center justify-center my-4">
-                                        <div class="text-3xl">⚡</div>
-                                    </div>
-                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                                        <div class="text-white/90 text-sm font-semibold mb-2">Output:</div>
-                                        <div class="text-white/80 text-xs">✓ 25 flashcards generated</div>
-                                        <div class="text-white/80 text-xs">✓ Multiple difficulty levels</div>
-                                        <div class="text-white/80 text-xs">✓ Ready to study</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-1 md:order-2">
-                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-                                AI-Powered Content Generation
-                            </h2>
-                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
-                                Simply paste your notes or enter a topic. Our AI analyzes the content and creates comprehensive, well-structured flashcards in seconds.
-                            </p>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">✨</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Instant Creation</div>
-                                        <div class="text-white/70">Generate hundreds of cards from your lecture notes</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">🎯</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Smart Difficulty</div>
-                                        <div class="text-white/70">Choose from easy to expert level questions</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">🔄</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Fully Editable</div>
-                                        <div class="text-white/70">Customize any card to match your learning style</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Feature 1: AI Generator -->
+            <section class="showcase-section">
+                <div class="showcase-container">
+                    <div class="showcase-content">
+                        <div class="eyebrow">AI-Powered</div>
+                        <h2 class="heading-lg mb-6">Instant flashcard generation.</h2>
+                        <p class="body-lg mb-6">
+                            Simply paste your notes or enter a topic. Our AI analyzes the content and creates comprehensive, well-structured flashcards in seconds.
+                        </p>
+                        <ul class="showcase-features" style="list-style:none;padding:0;margin:0;">
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                AI extracts key concepts automatically
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Generates contextual questions and answers
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Adapts difficulty to your knowledge level
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Fully editable and customizable
+                            </li>
+                        </ul>
                     </div>
-
-                    <!-- Bayesian Knowledge Tracing -->
-                    <div class="grid md:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-                                Adaptive Learning Algorithm
-                            </h2>
-                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
-                                Our Bayesian Knowledge Tracing (BKT) algorithm analyzes your performance in real-time to predict what you know and what you need to practice.
-                            </p>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">🧠</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Smart Predictions</div>
-                                        <div class="text-white/70">AI estimates your mastery level for each concept</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">⚡</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Faster Learning</div>
-                                        <div class="text-white/70">Focus only on topics that need improvement</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">📈</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Real-time Adaptation</div>
-                                        <div class="text-white/70">Questions adjust based on your answers</div>
-                                    </div>
-                                </div>
+                    <div class="product-showcase">
+                        <div class="product-card-lg" data-card="ai-gen">
+                            <div class="card-deco">
+                                <div class="orb a"></div>
+                                <div class="orb b"></div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl p-8">
-                                    <div class="text-6xl mb-6 animate-float-slow delay-500">🧠</div>
-                                    <div class="space-y-4">
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="flex justify-between items-center mb-2">
-                                                <span class="text-white font-semibold">Mastery Level</span>
-                                                <span class="text-green-300 text-xl font-bold">92%</span>
-                                            </div>
-                                            <div class="w-full bg-white/10 rounded-full h-3">
-                                                <div class="bg-gradient-to-r from-green-400 to-green-500 h-3 rounded-full transition-all duration-1000" style="width: 92%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="text-white/90 text-sm mb-2">Next Question:</div>
-                                            <div class="text-white text-base font-semibold">Adaptive - Medium Difficulty</div>
-                                        </div>
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="text-white/90 text-sm mb-2">Weak Areas Identified:</div>
-                                            <div class="flex flex-wrap gap-2">
-                                                <span class="bg-red-500/20 text-red-200 px-3 py-1 rounded-full text-xs">Topic A</span>
-                                                <span class="bg-yellow-500/20 text-yellow-200 px-3 py-1 rounded-full text-xs">Topic B</span>
-                                            </div>
+                            <div class="card-screen">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                                    <div style="background:rgba(255,255,255,0.06);padding:10px 16px;border-radius:999px;color:var(--muted);font-weight:700;font-size:0.95rem;border:1px solid rgba(255,255,255,0.05);">AI Generator</div>
+                                    <div style="font-weight:900;font-size:2rem;background:linear-gradient(135deg, var(--accent), #60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">25 cards</div>
+                                </div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;">
+                                        <div style="color:var(--muted);font-size:0.85rem;font-weight:600;margin-bottom:12px;">INPUT</div>
+                                        <div style="color:#cbd5e1;font-size:0.95rem;font-style:italic;">"Photosynthesis in plants"</div>
+                                    </div>
+                                    <div style="text-align:center;font-size:2rem;">⚡</div>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;">
+                                        <div style="color:var(--muted);font-size:0.85rem;font-weight:600;margin-bottom:8px;">OUTPUT</div>
+                                        <div style="color:#cbd5e1;font-size:0.85rem;display:flex;flex-direction:column;gap:4px;">
+                                            <div>✓ 25 flashcards generated</div>
+                                            <div>✓ Multiple difficulty levels</div>
+                                            <div>✓ Ready to study</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- SAT Practice -->
-                    <div class="grid md:grid-cols-2 gap-12 items-center">
-                        <div class="order-2 md:order-1">
-                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl p-8">
-                                    <div class="text-6xl mb-6 animate-float-slow delay-800">📝</div>
-                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4">
-                                        <div class="grid grid-cols-2 gap-4 text-center">
-                                            <div>
-                                                <div class="text-3xl font-bold text-white">3,794+</div>
-                                                <div class="text-white/70 text-sm">Questions</div>
-                                            </div>
-                                            <div>
-                                                <div class="text-3xl font-bold text-white">100%</div>
-                                                <div class="text-white/70 text-sm">Free</div>
-                                            </div>
+            <!-- Feature 2: BKT -->
+            <section class="showcase-section" style="background:linear-gradient(180deg, transparent 0%, rgba(168,85,247,0.03) 50%, transparent 100%);">
+                <div class="showcase-container">
+                    <div class="product-showcase" style="order:0;">
+                        <div class="product-card-lg" data-card="bkt">
+                            <div class="card-deco">
+                                <div class="orb a"></div>
+                                <div class="orb c"></div>
+                            </div>
+                            <div class="card-screen">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                                    <div style="background:rgba(255,255,255,0.06);padding:10px 16px;border-radius:999px;color:var(--muted);font-weight:700;font-size:0.95rem;border:1px solid rgba(255,255,255,0.05);">BKT Algorithm</div>
+                                    <div style="font-weight:900;font-size:2rem;background:linear-gradient(135deg, var(--accent), #60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">92%</div>
+                                </div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;">
+                                        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                                            <span style="color:#cbd5e1;font-weight:600;">Mastery Level</span>
+                                            <span style="color:#22c55e;font-weight:900;font-size:1.2rem;">92%</span>
+                                        </div>
+                                        <div style="height:12px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;">
+                                            <div style="height:100%;background:linear-gradient(90deg, #0ea5a4, #06b6d4);width:92%;border-radius:999px;"></div>
                                         </div>
                                     </div>
-                                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-white/90 text-sm">Features:</span>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;">
+                                        <div style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;">Next Question</div>
+                                        <div style="color:white;font-weight:600;">Adaptive - Medium Difficulty</div>
+                                    </div>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;">
+                                        <div style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;">Weak Areas</div>
+                                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                            <span style="background:rgba(239,68,68,0.2);color:#fca5a5;padding:6px 12px;border-radius:999px;font-size:0.8rem;font-weight:600;">Topic A</span>
+                                            <span style="background:rgba(251,191,36,0.2);color:#fcd34d;padding:6px 12px;border-radius:999px;font-size:0.8rem;font-weight:600;">Topic B</span>
                                         </div>
-                                        <div class="space-y-1 text-white/80 text-xs">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="showcase-content" style="order:1;">
+                        <div class="eyebrow">Intelligent Learning</div>
+                        <h2 class="heading-lg mb-6">Adaptive algorithm that learns you.</h2>
+                        <p class="body-lg mb-6">
+                            Our Bayesian Knowledge Tracing (BKT) algorithm analyzes your performance in real-time to predict what you know and what you need to practice.
+                        </p>
+                        <ul class="showcase-features" style="list-style:none;padding:0;margin:0;">
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                AI estimates your mastery level for each concept
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Focus only on topics that need improvement
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Questions adapt based on your answers
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Faster learning with real-time adaptation
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature 3: SAT Practice -->
+            <section class="showcase-section">
+                <div class="showcase-container">
+                    <div class="showcase-content">
+                        <div class="eyebrow">Test Prep</div>
+                        <h2 class="heading-lg mb-6">Comprehensive SAT preparation.</h2>
+                        <p class="body-lg mb-6">
+                            Practice with over 3,794 real SAT questions covering all sections. Interactive tools and detailed analytics help you master every topic.
+                        </p>
+                        <ul class="showcase-features" style="list-style:none;padding:0;margin:0;">
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                3,794+ real SAT questions
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Desmos graphing calculator widget
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Built-in stopwatch and timer
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Topic-based practice and analytics
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="product-showcase">
+                        <div class="product-card-lg" data-card="sat">
+                            <div class="card-deco">
+                                <div class="orb b"></div>
+                                <div class="orb c"></div>
+                            </div>
+                            <div class="card-screen">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                                    <div style="background:rgba(255,255,255,0.06);padding:10px 16px;border-radius:999px;color:var(--muted);font-weight:700;font-size:0.95rem;border:1px solid rgba(255,255,255,0.05);">SAT Practice</div>
+                                    <div style="font-weight:900;font-size:2rem;background:linear-gradient(135deg, var(--accent), #60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">3,794+</div>
+                                </div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                        <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;text-align:center;">
+                                            <div style="font-size:1.8rem;font-weight:900;color:white;">3,794+</div>
+                                            <div style="color:var(--muted);font-size:0.8rem;">Questions</div>
+                                        </div>
+                                        <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;text-align:center;">
+                                            <div style="font-size:1.8rem;font-weight:900;color:white;">100%</div>
+                                            <div style="color:var(--muted);font-size:0.8rem;">Free</div>
+                                        </div>
+                                    </div>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;">
+                                        <div style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;font-weight:600;">Features</div>
+                                        <div style="color:#cbd5e1;font-size:0.85rem;display:flex;flex-direction:column;gap:4px;">
                                             <div>✓ Graphing Calculator Widget</div>
                                             <div>✓ Built-in Stopwatch</div>
                                             <div>✓ Topic-based Practice</div>
@@ -256,153 +359,126 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="order-1 md:order-2">
-                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-                                Comprehensive SAT Prep
-                            </h2>
-                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
-                                Practice with over 3,794 real SAT questions covering all sections. Interactive tools and detailed analytics help you master every topic.
-                            </p>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">📊</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">All Sections Covered</div>
-                                        <div class="text-white/70">Math, Reading & Writing with real questions</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">🧮</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Interactive Tools</div>
-                                        <div class="text-white/70">Desmos calculator and timer widgets included</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">🎯</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Topic Selection</div>
-                                        <div class="text-white/70">Focus on specific areas you want to improve</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Spaced Repetition -->
-                    <div class="grid md:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-                                Spaced Repetition System
-                            </h2>
-                            <p class="text-xl text-white/80 mb-6 leading-relaxed">
-                                Based on decades of cognitive science research, our spaced repetition algorithm shows you cards at the optimal moment for maximum retention.
-                            </p>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">🔬</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Science-Backed</div>
-                                        <div class="text-white/70">Proven to increase retention by up to 200%</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">⏰</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Perfect Timing</div>
-                                        <div class="text-white/70">Reviews scheduled just before you forget</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <span class="text-2xl">💯</span>
-                                    <div>
-                                        <div class="text-white font-semibold text-lg">Long-term Memory</div>
-                                        <div class="text-white/70">Move information from short to long-term memory efficiently</div>
-                                    </div>
-                                </div>
+            <!-- Feature 4: Spaced Repetition -->
+            <section class="showcase-section" style="background:linear-gradient(180deg, transparent 0%, rgba(14,165,164,0.03) 50%, transparent 100%);">
+                <div class="showcase-container">
+                    <div class="product-showcase" style="order:0;">
+                        <div class="product-card-lg" data-card="spaced">
+                            <div class="card-deco">
+                                <div class="orb a"></div>
+                                <div class="orb b"></div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="glass-card rounded-3xl p-8 md:p-12 shadow-2xl">
-                                <div class="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl p-8">
-                                    <div class="text-6xl mb-6 animate-float-slow">⏱️</div>
-                                    <div class="space-y-3">
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-white/90 text-sm">Review Today</span>
-                                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">12 cards</span>
-                                            </div>
+                            <div class="card-screen">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                                    <div style="background:rgba(255,255,255,0.06);padding:10px 16px;border-radius:999px;color:var(--muted);font-weight:700;font-size:0.95rem;border:1px solid rgba(255,255,255,0.05);">Spaced Rep</div>
+                                    <div style="font-weight:900;font-size:2rem;background:linear-gradient(135deg, var(--accent), #60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">127</div>
+                                </div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="color:#cbd5e1;font-size:0.9rem;">Review Today</span>
+                                            <span style="background:#22c55e;color:white;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;">12 cards</span>
                                         </div>
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-white/90 text-sm">Due Tomorrow</span>
-                                                <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">8 cards</span>
-                                            </div>
+                                    </div>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="color:#cbd5e1;font-size:0.9rem;">Due Tomorrow</span>
+                                            <span style="background:#3b82f6;color:white;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;">8 cards</span>
                                         </div>
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-white/90 text-sm">This Week</span>
-                                                <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold">45 cards</span>
-                                            </div>
+                                    </div>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="color:#cbd5e1;font-size:0.9rem;">This Week</span>
+                                            <span style="background:#a855f7;color:white;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;">45 cards</span>
                                         </div>
-                                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-white/90 text-sm">Mastered</span>
-                                                <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">127 cards</span>
-                                            </div>
+                                    </div>
+                                    <div style="background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="color:#cbd5e1;font-size:0.9rem;">Mastered</span>
+                                            <span style="background:#eab308;color:white;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;">127 cards</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="showcase-content" style="order:1;">
+                        <div class="eyebrow">Science-Backed</div>
+                        <h2 class="heading-lg mb-6">Spaced repetition that works.</h2>
+                        <p class="body-lg mb-6">
+                            Based on decades of cognitive science research, our spaced repetition algorithm shows you cards at the optimal moment for maximum retention.
+                        </p>
+                        <ul class="showcase-features" style="list-style:none;padding:0;margin:0;">
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Proven to increase retention by up to 200%
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Reviews scheduled just before you forget
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Move information to long-term memory efficiently
+                            </li>
+                            <li style="padding:12px 0;font-size:1.1rem;color:#cbd5e1;display:flex;align-items:center;gap:12px;">
+                                <span style="color:var(--accent);font-weight:900;font-size:1.4rem;">✓</span>
+                                Perfect timing for optimal learning
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            </section>
 
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
-                    <div class="glass-card rounded-2xl p-8 text-center hover:scale-105 transition-transform">
-                        <div class="text-5xl mb-4">🆓</div>
-                        <div class="text-4xl font-bold text-white mb-2">100% Free</div>
-                        <p class="text-white/70">No subscriptions, no hidden costs, no ads</p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-8 text-center hover:scale-105 transition-transform">
-                        <div class="text-5xl mb-4">🔓</div>
-                        <div class="text-4xl font-bold text-white mb-2">Open Source</div>
-                        <p class="text-white/70">Transparent code, community-driven development</p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-8 text-center hover:scale-105 transition-transform">
-                        <div class="text-5xl mb-4">🔒</div>
-                        <div class="text-4xl font-bold text-white mb-2">Privacy First</div>
-                        <p class="text-white/70">Your data stays yours, always</p>
+            <!-- Values Section -->
+            <section style="padding:12vh 5vw;text-align:center;">
+                <div class="container">
+                    <h2 class="heading-lg mb-8">Why choose studying.works?</h2>
+                    <div class="grid grid-3 gap-4">
+                        <div class="card text-center" style="padding:48px 32px;">
+                            <div class="text-5xl mb-4">🆓</div>
+                            <h3 class="heading-sm mb-2">100% Free</h3>
+                            <p class="text-muted">No subscriptions, no hidden costs, no ads. Forever.</p>
+                        </div>
+                        <div class="card text-center" style="padding:48px 32px;">
+                            <div class="text-5xl mb-4">🔓</div>
+                            <h3 class="heading-sm mb-2">Open Source</h3>
+                            <p class="text-muted">Transparent code, community-driven development.</p>
+                        </div>
+                        <div class="card text-center" style="padding:48px 32px;">
+                            <div class="text-5xl mb-4">🔒</div>
+                            <h3 class="heading-sm mb-2">Privacy First</h3>
+                            <p class="text-muted">Your data stays yours, always. No tracking, no selling.</p>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- CTA Section -->
-                <div class="text-center glass-card rounded-3xl p-12 md:p-16">
-                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
-                        Ready to Transform Your Learning?
-                    </h2>
-                    <p class="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                        Join thousands of students who are studying smarter with AI-powered tools
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="index" class="group relative inline-block">
-                            <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
-                            <div class="relative px-8 py-4 bg-white rounded-2xl text-gray-900 font-bold text-lg hover:scale-105 transition-transform">
-                                Get Started Free
-                            </div>
-                        </a>
-                        <a href="dashboard" class="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl text-white font-bold text-lg hover:bg-white/20 transition-all border border-white/20">
-                            View Dashboard
-                        </a>
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <div class="cta-box">
+                    <div class="card-deco">
+                        <div class="orb a"></div>
+                        <div class="orb b"></div>
                     </div>
+                    <h2 class="cta-title">Ready to transform how you learn?</h2>
+                    <p class="cta-subtitle">Join thousands of students studying smarter.</p>
+                    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+                        <a href="index" class="btn-primary" style="text-decoration:none;">Get Started for Free</a>
+                        <a href="dashboard" class="btn-secondary" style="text-decoration:none;">View Dashboard</a>
+                    </div>
+                    <p style="margin-top:24px;color:var(--muted);font-size:0.95rem;">No credit card required • Free forever • Open source</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Footer -->
-            <footer class="bg-black/30 backdrop-blur-lg border-t border-white/10 mt-32 py-12">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <footer class="p-6 text-center" style="padding-top:80px;padding-bottom:80px;">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-left">
                         <div class="col-span-1 md:col-span-2">
                             <div class="flex items-center space-x-2 mb-4">
                                 <span class="text-3xl">🎓</span>
@@ -431,12 +507,42 @@
                         </div>
                     </div>
                     <div class="border-t border-white/10 pt-8 text-center text-white/60">
-                        <p>&copy; 2025 studying.works. All rights reserved.</p>
+                        <p>&copy; 2025 studying.works. Built by Ben Hocquet</p>
                     </div>
                 </div>
             </footer>
         </div>
     </div>
+
+    <script>
+        // 3D card tilt effects
+        (function(){
+            const cards = document.querySelectorAll('[data-card]');
+            cards.forEach(card => {
+                const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+                function onMove(e){
+                    const evt = e.touches ? e.touches[0] : e;
+                    const rect = card.getBoundingClientRect();
+                    const x = (evt.clientX - rect.left) / rect.width;
+                    const y = (evt.clientY - rect.top) / rect.height;
+                    const rx = clamp((y - 0.5) * 10, -15, 15);
+                    const ry = clamp((x - 0.5) * -10, -15, 15);
+                    const scale = 1.02;
+                    card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;
+                }
+
+                function onLeave(){
+                    card.style.transform = '';
+                }
+
+                card.addEventListener('mousemove', onMove);
+                card.addEventListener('touchmove', onMove);
+                card.addEventListener('mouseleave', onLeave);
+                card.addEventListener('touchend', onLeave);
+            });
+        })();
+    </script>
 
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>

@@ -11,45 +11,404 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
     <style>
+        :root {
+            --bg: #0b0b0d;
+            --muted: #9aa3b2;
+            --accent: #0ea5a4;
+            --accent-purple: #a855f7;
+            --glass: rgba(255,255,255,0.06);
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: white;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Glowing orbs background */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.2;
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+        }
+
+        /* 3D Game Selection Cards */
         .game-card {
-            transition: all 0.3s ease;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px 32px;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
+
         .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-12px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
         }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(14,165,164,0.3), rgba(168,85,247,0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-glow {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .game-card:hover .game-glow {
+            opacity: 0.25;
+        }
+
+        .game-card:nth-child(1) .game-glow { background: #0ea5a4; top: -80px; right: -80px; }
+        .game-card:nth-child(2) .game-glow { background: #06b6d4; top: -80px; right: -80px; }
+        .game-card:nth-child(3) .game-glow { background: #10b981; top: -80px; right: -80px; }
+        .game-card:nth-child(4) .game-glow { background: #f59e0b; top: -80px; right: -80px; }
+
+        .game-icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 4px 12px rgba(14,165,164,0.4));
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.1);
+        }
+
+        .game-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .game-desc {
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+        }
+
+        .game-meta {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Deck Selection */
+        .deck-selector {
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px;
+            backdrop-filter: blur(20px);
+        }
+
+        .deck-selector h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .deck-selector select {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .deck-selector select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(14,165,164,0.2);
+        }
+
+        .deck-selector select option {
+            background: #1a1a1f;
+            color: white;
+        }
+
+        /* Game Container */
+        .game-container-box {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px;
+            backdrop-filter: blur(20px);
+        }
+
+        /* 3D Flip Cards for Memory Game */
         .flip-card {
             perspective: 1000px;
             cursor: pointer;
+            height: 140px;
         }
+
         .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
             transition: transform 0.6s;
             transform-style: preserve-3d;
         }
+
         .flip-card.flipped .flip-card-inner {
             transform: rotateY(180deg);
         }
+
         .flip-card-front, .flip-card-back {
-            backface-visibility: hidden;
             position: absolute;
             width: 100%;
             height: 100%;
+            backface-visibility: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 16px;
+            padding: 16px;
         }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, rgba(14,165,164,0.2), rgba(6,182,212,0.2));
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
         .flip-card-back {
+            background: linear-gradient(135deg, #ffffff, #f0f9ff);
             transform: rotateY(180deg);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
+
         .matched {
-            opacity: 0.5;
             pointer-events: none;
+        }
+
+        .flip-card.matched {
+            opacity: 0.4;
+        }
+
+        /* Buttons */
+        .btn-back {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.25);
+            transform: translateX(-4px);
+        }
+
+        .btn-play-again {
+            background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 20px 50px rgba(14,165,164,0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-play-again:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 60px rgba(14,165,164,0.5);
+        }
+
+        .btn-choice {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+        }
+
+        .btn-choice:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        /* Header styling */
+        .page-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .page-eyebrow {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .page-title {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.35rem;
+            color: #cbd5e1;
+            max-width: 48ch;
+            margin: 0 auto;
+        }
+
+        /* Stats and Timer */
+        .game-stats, .game-timer {
+            background: rgba(255,255,255,0.08);
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Results */
+        .results-box {
+            background: linear-gradient(135deg, rgba(14,165,164,0.15) 0%, rgba(168,85,247,0.15) 100%);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 28px;
+            padding: 80px 60px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .results-emoji {
+            font-size: 6rem;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 4px 12px rgba(14,165,164,0.4));
+        }
+
+        .results-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-stats {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        /* Input styling */
+        input[type="text"] {
+            background: rgba(255,255,255,0.95);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 14px;
+            padding: 20px 24px;
+            font-size: 1.2rem;
+            color: #111;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(14,165,164,0.2);
+        }
+
+        /* 3D Card Tilt Effect */
+        @media (min-width: 768px) {
+            .game-card {
+                transition: transform 0.1s;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-container-box {
+                padding: 24px;
+            }
+            .deck-selector {
+                padding: 32px 24px;
+            }
+            .results-box {
+                padding: 48px 32px;
+            }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
+<body>
     <script type="module" src="auth-guard.js"></script>
-    
+
+    <!-- Glowing orbs background -->
+    <div class="glow-orb" style="width: 500px; height: 500px; background: #0ea5a4; top: 10%; left: 5%;"></div>
+    <div class="glow-orb" style="width: 600px; height: 600px; background: #a855f7; bottom: 20%; right: 10%; animation-delay: 2s;"></div>
+    <div class="glow-orb" style="width: 400px; height: 400px; background: #06b6d4; top: 40%; right: 20%; animation-delay: 1s;"></div>
+    <div class="glow-orb" style="width: 450px; height: 450px; background: #10b981; top: 60%; left: 15%; animation-delay: 3s;"></div>
+
     <!-- Navigation -->
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,69 +429,74 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24" style="position: relative; z-index: 10;">
         <!-- Header -->
-        <div class="mb-8 text-center">
-            <h1 class="text-5xl font-bold text-white mb-2">🎮 Memory Games</h1>
-            <p class="text-xl text-blue-200">Learn through play - alternative to traditional flashcards</p>
+        <div class="page-header">
+            <div class="page-eyebrow">Interactive Learning</div>
+            <h1 class="page-title">Memory Games</h1>
+            <p class="page-subtitle">Learn through play. Master through repetition. Excel through engagement.</p>
         </div>
 
         <!-- Deck Selection -->
-        <div id="deck-selection" class="mb-8">
-            <div class="bg-white/10 backdrop-blur rounded-2xl p-6">
-                <h2 class="text-2xl font-bold text-white mb-4">Select a Deck</h2>
-                <select id="deck-select" class="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 text-lg">
+        <div id="deck-selection" class="mb-12">
+            <div class="deck-selector">
+                <h2>Select a Deck</h2>
+                <select id="deck-select" class="w-full">
                     <option value="">Choose a deck to play...</option>
                 </select>
             </div>
         </div>
 
         <!-- Game Selection -->
-        <div id="game-selection" class="hidden mb-8">
-            <h2 class="text-3xl font-bold text-white mb-6 text-center">Choose Your Game</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
+        <div id="game-selection" class="hidden mb-12">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center" style="letter-spacing: -0.02em;">Choose Your Game</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
                 <!-- Memory Match -->
-                <div class="game-card card-gradient-purple rounded-2xl p-6 cursor-pointer" onclick="startGame('memory-match')">
-                    <div class="text-6xl mb-4 text-center">🎴</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Memory Match</h3>
-                    <p class="text-white/90 mb-4">Flip cards and match terms with definitions</p>
-                    <div class="text-sm text-white/80">
-                        <span class="block">⏱️ Untimed</span>
-                        <span class="block">🧠 Focus & Memory</span>
+                <div class="game-card" onclick="startGame('memory-match')">
+                    <div class="game-glow"></div>
+                    <span class="game-icon">🎴</span>
+                    <h3 class="game-title">Memory Match</h3>
+                    <p class="game-desc">Flip cards and match terms with definitions</p>
+                    <div class="game-meta">
+                        <span>⏱️ Untimed</span>
+                        <span>🧠 Focus & Memory</span>
                     </div>
                 </div>
 
                 <!-- Type Race -->
-                <div class="game-card card-gradient-blue rounded-2xl p-6 cursor-pointer" onclick="startGame('type-race')">
-                    <div class="text-6xl mb-4 text-center">⌨️</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Type Race</h3>
-                    <p class="text-white/90 mb-4">Type the correct answer as fast as you can</p>
-                    <div class="text-sm text-white/80">
-                        <span class="block">⏱️ Timed</span>
-                        <span class="block">🎯 Active Recall</span>
+                <div class="game-card" onclick="startGame('type-race')">
+                    <div class="game-glow"></div>
+                    <span class="game-icon">⌨️</span>
+                    <h3 class="game-title">Type Race</h3>
+                    <p class="game-desc">Type the correct answer as fast as you can</p>
+                    <div class="game-meta">
+                        <span>⏱️ Timed</span>
+                        <span>🎯 Active Recall</span>
                     </div>
                 </div>
 
                 <!-- Match Madness -->
-                <div class="game-card card-gradient-success rounded-2xl p-6 cursor-pointer" onclick="startGame('match-madness')">
-                    <div class="text-6xl mb-4 text-center">🎯</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Match Madness</h3>
-                    <p class="text-white/90 mb-4">Drag terms to match with definitions quickly</p>
-                    <div class="text-sm text-white/80">
-                        <span class="block">⏱️ 90 seconds</span>
-                        <span class="block">🔥 Fast-paced</span>
+                <div class="game-card" onclick="startGame('match-madness')">
+                    <div class="game-glow"></div>
+                    <span class="game-icon">🎯</span>
+                    <h3 class="game-title">Match Madness</h3>
+                    <p class="game-desc">Drag terms to match with definitions quickly</p>
+                    <div class="game-meta">
+                        <span>⏱️ 90 seconds</span>
+                        <span>🔥 Fast-paced</span>
                     </div>
                 </div>
 
                 <!-- Multiple Choice Arena -->
-                <div class="game-card card-gradient-fire rounded-2xl p-6 cursor-pointer" onclick="startGame('mc-arena')">
-                    <div class="text-6xl mb-4 text-center">🎲</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Quiz Arena</h3>
-                    <p class="text-white/90 mb-4">Multiple choice with streak multipliers</p>
-                    <div class="text-sm text-white/80">
-                        <span class="block">⏱️ 60 seconds</span>
-                        <span class="block">⚡ Combo System</span>
+                <div class="game-card" onclick="startGame('mc-arena')">
+                    <div class="game-glow"></div>
+                    <span class="game-icon">🎲</span>
+                    <h3 class="game-title">Quiz Arena</h3>
+                    <p class="game-desc">Multiple choice with streak multipliers</p>
+                    <div class="game-meta">
+                        <span>⏱️ 60 seconds</span>
+                        <span>⚡ Combo System</span>
                     </div>
                 </div>
 
@@ -141,13 +505,13 @@
 
         <!-- Game Container -->
         <div id="game-container" class="hidden">
-            <div class="bg-white/10 backdrop-blur rounded-2xl p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <button onclick="backToSelection()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all">
+            <div class="game-container-box">
+                <div class="flex justify-between items-center mb-8">
+                    <button onclick="backToSelection()" class="btn-back">
                         ← Back
                     </button>
-                    <div id="game-stats" class="text-white text-lg font-bold"></div>
-                    <div id="game-timer" class="text-white text-2xl font-bold"></div>
+                    <div id="game-stats" class="game-stats text-lg font-bold"></div>
+                    <div id="game-timer" class="game-timer text-xl font-bold"></div>
                 </div>
                 <div id="game-content"></div>
             </div>
@@ -155,13 +519,13 @@
 
         <!-- Results -->
         <div id="results-container" class="hidden">
-            <div class="bg-white/10 backdrop-blur rounded-2xl p-8 text-center">
+            <div class="results-box">
                 <div id="results-content"></div>
-                <div class="flex gap-4 justify-center mt-8">
-                    <button onclick="backToSelection()" class="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg transition-all font-bold">
+                <div class="flex gap-6 justify-center mt-8">
+                    <button onclick="backToSelection()" class="btn-choice">
                         Choose Another Game
                     </button>
-                    <button onclick="restartGame()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg transition-all font-bold">
+                    <button onclick="restartGame()" class="btn-play-again">
                         Play Again
                     </button>
                 </div>
@@ -305,11 +669,11 @@
             const time = Math.floor((Date.now() - gameState.startTime) / 1000);
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
-            
+
             document.getElementById('results-content').innerHTML = `
-                <div class="text-6xl mb-4">🎉</div>
-                <h2 class="text-4xl font-bold text-white mb-4">Game Complete!</h2>
-                <div class="text-2xl text-white/90 space-y-2">
+                <div class="results-emoji">🎉</div>
+                <h2 class="results-title">Game Complete!</h2>
+                <div class="results-stats">
                     <p>⏱️ Time: ${time} seconds</p>
                     <p>🎯 Moves: ${gameState.moves}</p>
                     <p>⭐ Efficiency: ${Math.max(100 - gameState.moves * 5, 0)}%</p>
@@ -346,13 +710,13 @@
                         <p class="text-3xl text-white font-bold">${card.question}</p>
                     </div>
                     <input type="text" id="type-answer"
-                           class="w-full max-w-2xl p-4 text-xl rounded-lg"
+                           class="w-full max-w-2xl"
                            placeholder="Type your answer..." autofocus>
                     <button onclick="checkTypeRaceAnswer()"
-                            class="mt-4 btn-primary text-white px-8 py-3 rounded-lg font-bold text-xl">
-                        Submit
+                            class="mt-6 btn-play-again">
+                        Submit Answer
                     </button>
-                    <p class="text-white/60 mt-4">Press Enter to submit</p>
+                    <p class="text-white/60 mt-4 text-sm">Press Enter to submit</p>
                 </div>
             `;
             
@@ -390,14 +754,14 @@
         function endTypeRace() {
             const time = Math.floor((Date.now() - gameState.startTime) / 1000);
             const accuracy = Math.round((gameState.correct / gameState.cards.length) * 100);
-            
+
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
-            
+
             document.getElementById('results-content').innerHTML = `
-                <div class="text-6xl mb-4">${accuracy >= 70 ? '🎉' : '💪'}</div>
-                <h2 class="text-4xl font-bold text-white mb-4">Type Race Complete!</h2>
-                <div class="text-2xl text-white/90 space-y-2">
+                <div class="results-emoji">${accuracy >= 70 ? '🎉' : '💪'}</div>
+                <h2 class="results-title">Type Race Complete!</h2>
+                <div class="results-stats">
                     <p>⏱️ Time: ${time} seconds</p>
                     <p>✅ Correct: ${gameState.correct}/${gameState.cards.length}</p>
                     <p>🎯 Accuracy: ${accuracy}%</p>
@@ -426,18 +790,18 @@
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-3">
-                        <h3 class="text-xl font-bold text-white mb-4">Questions</h3>
+                        <h3 class="text-2xl font-bold text-white mb-6" style="background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Questions</h3>
                         ${questions.map(q => `
-                            <div class="bg-white/20 p-4 rounded-lg text-white cursor-pointer hover:bg-white/30 transition-all"
+                            <div class="bg-white/10 border border-white/15 p-5 rounded-xl text-white cursor-pointer hover:bg-white/15 hover:border-white/25 transition-all"
                                  data-id="${q.id}" data-type="q" onclick="selectMatchCard(this)">
                                 ${q.text}
                             </div>
                         `).join('')}
                     </div>
                     <div class="space-y-3">
-                        <h3 class="text-xl font-bold text-white mb-4">Answers</h3>
+                        <h3 class="text-2xl font-bold text-white mb-6" style="background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Answers</h3>
                         ${answers.map(a => `
-                            <div class="bg-white/20 p-4 rounded-lg text-white cursor-pointer hover:bg-white/30 transition-all"
+                            <div class="bg-white/10 border border-white/15 p-5 rounded-xl text-white cursor-pointer hover:bg-white/15 hover:border-white/25 transition-all"
                                  data-id="${a.id}" data-type="a" onclick="selectMatchCard(this)">
                                 ${a.text}
                             </div>
@@ -452,30 +816,36 @@
         let matchSelected = null;
         function selectMatchCard(element) {
             if (element.classList.contains('matched')) return;
-            
+
             if (!matchSelected) {
                 matchSelected = element;
-                element.classList.add('ring-4', 'ring-yellow-400');
+                element.style.boxShadow = '0 0 0 4px rgba(251, 191, 36, 0.5)';
             } else {
                 const id1 = matchSelected.dataset.id;
                 const id2 = element.dataset.id;
                 const type1 = matchSelected.dataset.type;
                 const type2 = element.dataset.type;
-                
+
                 if (type1 !== type2 && id1 === id2) {
                     // Match!
-                    matchSelected.classList.add('matched', 'bg-green-500');
-                    element.classList.add('matched', 'bg-green-500');
+                    matchSelected.classList.add('matched');
+                    matchSelected.style.background = 'rgba(16, 185, 129, 0.3)';
+                    matchSelected.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                    matchSelected.style.boxShadow = '';
+                    element.classList.add('matched');
+                    element.style.background = 'rgba(16, 185, 129, 0.3)';
+                    element.style.borderColor = 'rgba(16, 185, 129, 0.5)';
                     gameState.matched++;
                     document.getElementById('game-stats').textContent = `Matched: ${gameState.matched}/${gameState.cards.length}`;
-                    
+
                     if (gameState.matched === gameState.cards.length) {
                         clearInterval(gameState.timerInterval);
                         endMatchMadness();
                     }
+                } else {
+                    matchSelected.style.boxShadow = '';
                 }
-                
-                matchSelected.classList.remove('ring-4', 'ring-yellow-400');
+
                 matchSelected = null;
             }
         }
@@ -498,11 +868,11 @@
             const time = Math.floor((Date.now() - gameState.startTime) / 1000);
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
-            
+
             document.getElementById('results-content').innerHTML = `
-                <div class="text-6xl mb-4">${gameState.matched === gameState.cards.length ? '🎉' : '⏰'}</div>
-                <h2 class="text-4xl font-bold text-white mb-4">${gameState.matched === gameState.cards.length ? 'Perfect!' : 'Time\'s Up!'}</h2>
-                <div class="text-2xl text-white/90 space-y-2">
+                <div class="results-emoji">${gameState.matched === gameState.cards.length ? '🎉' : '⏰'}</div>
+                <h2 class="results-title">${gameState.matched === gameState.cards.length ? 'Perfect!' : 'Time\'s Up!'}</h2>
+                <div class="results-stats">
                     <p>⏱️ Time: ${time}/${gameState.timeLimit} seconds</p>
                     <p>✅ Matched: ${gameState.matched}/${gameState.cards.length}</p>
                     <p>🎯 Score: ${Math.round((gameState.matched / gameState.cards.length) * (gameState.timeLimit / time) * 100)}pts</p>
@@ -562,7 +932,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
                         ${allAnswers.map((answer, idx) => `
                             <button onclick="checkMCAnswer('${jsEscape(answer)}', '${jsEscape(correctAnswer)}')"
-                                    class="bg-white/20 hover:bg-white/30 p-6 rounded-xl text-white text-lg transition-all">
+                                    class="bg-white/10 border border-white/15 hover:bg-white/15 hover:border-white/25 p-6 rounded-xl text-white text-lg transition-all font-medium">
                                 ${answer}
                             </button>
                         `).join('')}
@@ -605,14 +975,14 @@
         function endMCArena() {
             clearInterval(gameState.timerInterval);
             const accuracy = Math.round((gameState.correct / gameState.currentIndex) * 100) || 0;
-            
+
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
-            
+
             document.getElementById('results-content').innerHTML = `
-                <div class="text-6xl mb-4">${gameState.score >= 200 ? '🏆' : '🎯'}</div>
-                <h2 class="text-4xl font-bold text-white mb-4">Quiz Arena Complete!</h2>
-                <div class="text-2xl text-white/90 space-y-2">
+                <div class="results-emoji">${gameState.score >= 200 ? '🏆' : '🎯'}</div>
+                <h2 class="results-title">Quiz Arena Complete!</h2>
+                <div class="results-stats">
                     <p>🏆 Score: ${gameState.score} points</p>
                     <p>✅ Correct: ${gameState.correct}/${gameState.currentIndex}</p>
                     <p>🎯 Accuracy: ${accuracy}%</p>
@@ -623,6 +993,33 @@
 
         // Initialize
         loadDecks();
+
+        // 3D Card Tilt Effect for Game Selection Cards
+        (function() {
+            const gameCards = document.querySelectorAll('.game-card');
+            gameCards.forEach(card => {
+                const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+                function onMove(e) {
+                    const evt = e.touches ? e.touches[0] : e;
+                    const rect = card.getBoundingClientRect();
+                    const x = (evt.clientX - rect.left) / rect.width;
+                    const y = (evt.clientY - rect.top) / rect.height;
+                    const rx = clamp((y - 0.5) * 8, -10, 10);
+                    const ry = clamp((x - 0.5) * -8, -10, 10);
+                    card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(-12px)`;
+                }
+
+                function onLeave() {
+                    card.style.transform = '';
+                }
+
+                card.addEventListener('mousemove', onMove);
+                card.addEventListener('touchmove', onMove);
+                card.addEventListener('mouseleave', onLeave);
+                card.addEventListener('touchend', onLeave);
+            });
+        })();
     </script>
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>

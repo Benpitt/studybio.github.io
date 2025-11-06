@@ -213,7 +213,7 @@
                             <div className="text-gray-800">—</div>
                             <div className="relative">
                                 <div className="text-gray-800">C</div>
-                                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-orange-600 text-lg">R</div>
+                                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-pink-600 text-lg">R</div>
                                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-sm text-gray-600">H</div>
                             </div>
                             <div className="text-gray-800">—</div>
@@ -238,7 +238,7 @@
                             </div>
                             <div className="text-2xl">—</div>
                             <div className="text-center">
-                                <div className="bg-orange-400 border-4 border-orange-600 rounded w-20 h-20 flex items-center justify-center font-bold text-white text-xs">Base</div>
+                                <div className="bg-pink-400 border-4 border-pink-600 rounded w-20 h-20 flex items-center justify-center font-bold text-white text-xs">Base</div>
                                 <div className="text-xs mt-1 font-semibold">A, T, G, C, U</div>
                             </div>
                         </div>
@@ -355,12 +355,12 @@
                                     <div>Practice Test</div>
                                     <div className="text-sm opacity-90">15 questions</div>
                                 </button>
-                                <button onClick={() => setMode('identify')} className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                <button onClick={() => setMode('identify')} className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                                     <div className="text-3xl mb-2">👁️</div>
                                     <div>Identify Structures</div>
                                     <div className="text-sm opacity-90">Visual recognition</div>
                                 </button>
-                                <button onClick={() => setMode('reactions')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all md:col-span-2">
+                                <button onClick={() => setMode('reactions')} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all md:col-span-2">
                                     <div className="text-3xl mb-2">⚗️</div>
                                     <div>Reaction Practice</div>
                                     <div className="text-sm opacity-90">Dehydration & Hydrolysis</div>
@@ -417,8 +417,8 @@
                                                 {macro.functions.map((func, idx) => <li key={idx} className="text-gray-700">• {func}</li>)}
                                             </ul>
                                         </div>
-                                        <div className="bg-orange-50 p-4 rounded-lg">
-                                            <h3 className="font-bold text-lg text-orange-800 mb-2">📝 Examples:</h3>
+                                        <div className="bg-pink-50 p-4 rounded-lg">
+                                            <h3 className="font-bold text-lg text-pink-800 mb-2">📝 Examples:</h3>
                                             <p className="text-gray-700">{macro.examples}</p>
                                         </div>
                                         <div className="bg-pink-50 p-4 rounded-lg">
@@ -613,7 +613,7 @@
                 };
 
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-red-400 to-pink-500 p-4">
                         <div className="max-w-4xl mx-auto">
                             <div className="flex justify-between items-center mb-6">
                                 <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
@@ -656,14 +656,14 @@
                 const reaction = reactionQuestions[reactionIdx];
 
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-cyan-400 to-blue-500 p-4">
                         <div className="max-w-5xl mx-auto">
                             <div className="flex justify-between items-center mb-6">
                                 <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
                                 <div className="bg-white px-4 py-2 rounded-lg font-semibold">{reactionIdx + 1}/{reactionQuestions.length}</div>
                             </div>
                             <div className="bg-white rounded-3xl shadow-2xl p-8">
-                                <div className={`${reaction.type === 'dehydration' ? 'bg-orange-100' : 'bg-blue-100'} p-4 rounded-xl mb-6`}>
+                                <div className={`${reaction.type === 'dehydration' ? 'bg-pink-100' : 'bg-blue-100'} p-4 rounded-xl mb-6`}>
                                     <h2 className="text-2xl font-bold text-gray-800 mb-2">{reaction.type === 'dehydration' ? '🔥 Dehydration Synthesis' : '💧 Hydrolysis'}</h2>
                                     <p className="text-gray-700">{reaction.type === 'dehydration' ? 'Building by REMOVING water' : 'Breaking by ADDING water'}</p>
                                 </div>
@@ -707,8 +707,8 @@
                                 <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl">
                                     <h4 className="font-bold text-gray-800 mb-3">Quick Reference:</h4>
                                     <div className="grid md:grid-cols-2 gap-4 text-sm">
-                                        <div className="bg-orange-100 p-4 rounded-lg">
-                                            <h5 className="font-bold text-orange-800 mb-2">Dehydration Synthesis</h5>
+                                        <div className="bg-pink-100 p-4 rounded-lg">
+                                            <h5 className="font-bold text-pink-800 mb-2">Dehydration Synthesis</h5>
                                             <ul className="space-y-1 text-gray-700">
                                                 <li>• Builds polymers</li>
                                                 <li>• Removes H₂O</li>

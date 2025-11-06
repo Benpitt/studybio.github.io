@@ -60,7 +60,7 @@
                     <div class="text-3xl font-bold"><span id="total-streak">0</span></div>
                 </div>
                 <div class="text-lg font-semibold">Current Streak</div>
-                <div class="text-sm text-orange-100 mt-1">Days in a row</div>
+                <div class="text-sm text-red-100 mt-1">Days in a row</div>
             </div>
 
             <div class="card-gradient-blue rounded-2xl p-6 text-white animate-slide-in delay-200">
@@ -470,7 +470,7 @@
                 
                 if (a.unlocked) {
                     // Unlocked - colorful and glowing
-                    div.className = 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 text-center border border-yellow-500/30 hover:scale-105 transition-transform cursor-pointer';
+                    div.className = 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-4 text-center border border-purple-500/30 hover:scale-105 transition-transform cursor-pointer';
                     div.innerHTML = `
                         <div class="text-5xl mb-2 animate-bounce">${a.emoji}</div>
                         <div class="text-white font-bold text-sm">${a.name}</div>

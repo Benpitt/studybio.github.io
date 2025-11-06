@@ -181,7 +181,7 @@
                                     <div className="text-sm opacity-90">All details & charts</div>
                                 </button>
 
-                                <button onClick={() => setMode('quickquiz')} className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                <button onClick={() => setMode('quickquiz')} className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                                     <div className="text-3xl mb-2">⚡</div>
                                     <div className="text-lg">Quick Quiz</div>
                                     <div className="text-sm opacity-90">10 random questions</div>
@@ -193,7 +193,7 @@
                                     <div className="text-sm opacity-90">Complete the charts</div>
                                 </button>
 
-                                <button onClick={() => setMode('compare')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                                <button onClick={() => setMode('compare')} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
                                     <div className="text-3xl mb-2">⚖️</div>
                                     <div className="text-lg">Compare & Contrast</div>
                                     <div className="text-sm opacity-90">DNA vs RNA, etc.</div>
@@ -428,20 +428,20 @@
 
                                 {/* Polysaccharides */}
                                 <div className="bg-white rounded-2xl shadow-xl p-6">
-                                    <h3 className="text-3xl font-bold text-orange-600 mb-4">🌾 Polysaccharides</h3>
+                                    <h3 className="text-3xl font-bold text-pink-600 mb-4">🌾 Polysaccharides</h3>
                                     <div className="grid md:grid-cols-3 gap-4">
-                                        <div className="bg-orange-50 p-4 rounded-lg">
-                                            <p className="font-bold text-orange-800 mb-2">Starch</p>
+                                        <div className="bg-pink-50 p-4 rounded-lg">
+                                            <p className="font-bold text-pink-800 mb-2">Starch</p>
                                             <p className="text-gray-700 text-sm">Plant storage carbohydrate</p>
                                             <p className="text-gray-700 text-sm">Branched & unbranched chains</p>
                                         </div>
-                                        <div className="bg-orange-50 p-4 rounded-lg">
-                                            <p className="font-bold text-orange-800 mb-2">Cellulose</p>
+                                        <div className="bg-pink-50 p-4 rounded-lg">
+                                            <p className="font-bold text-pink-800 mb-2">Cellulose</p>
                                             <p className="text-gray-700 text-sm">Plant cell wall structure</p>
                                             <p className="text-gray-700 text-sm">Unbranched with H-bonds</p>
                                         </div>
-                                        <div className="bg-orange-50 p-4 rounded-lg">
-                                            <p className="font-bold text-orange-800 mb-2">Glycogen</p>
+                                        <div className="bg-pink-50 p-4 rounded-lg">
+                                            <p className="font-bold text-pink-800 mb-2">Glycogen</p>
                                             <p className="text-gray-700 text-sm">Animal storage carbohydrate</p>
                                             <p className="text-gray-700 text-sm">Highly branched</p>
                                         </div>
@@ -476,14 +476,14 @@
 
                 if (quizDone) {
                     return (
-                        <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4 flex items-center justify-center">
+                        <div className="min-h-screen bg-gradient-to-br from-red-500 to-pink-500 p-4 flex items-center justify-center">
                             <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center">
                                 <div className="text-6xl mb-4">🎉</div>
                                 <h2 className="text-4xl font-bold text-gray-800 mb-4">Quiz Complete!</h2>
                                 <p className="text-2xl text-gray-600 mb-8">You answered {Object.keys(userAnswers).length} out of 10 questions</p>
                                 <div className="flex gap-4">
                                     <button onClick={() => setMode('menu')} className="flex-1 bg-gray-600 text-white py-3 px-6 rounded-xl font-semibold">Back to Menu</button>
-                                    <button onClick={() => { setQuizDone(false); setCurrentQ(0); setUserAnswers({}); setQuizQuestions([]); }} className="flex-1 bg-orange-600 text-white py-3 px-6 rounded-xl font-semibold">Take Again</button>
+                                    <button onClick={() => { setQuizDone(false); setCurrentQ(0); setUserAnswers({}); setQuizQuestions([]); }} className="flex-1 bg-pink-600 text-white py-3 px-6 rounded-xl font-semibold">Take Again</button>
                                 </div>
                             </div>
                         </div>
@@ -494,7 +494,7 @@
                 const hasAnswered = userAnswers[currentQ] !== undefined;
 
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-orange-400 to-red-500 p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-red-500 to-pink-500 p-4">
                         <div className="max-w-4xl mx-auto">
                             <div className="flex justify-between items-center mb-6">
                                 <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>
@@ -503,7 +503,7 @@
 
                             <div className="bg-white rounded-3xl shadow-2xl p-8">
                                 <div className="mb-4">
-                                    <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-semibold">{q.topic}</span>
+                                    <span className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-semibold">{q.topic}</span>
                                 </div>
                                 <h3 className="text-2xl font-bold text-gray-800 mb-6">{q.question}</h3>
 
@@ -516,7 +516,7 @@
                                             <p className="text-gray-700 whitespace-pre-line">{q.answer}</p>
                                         </div>
                                         {currentQ < 9 ? (
-                                            <button onClick={() => setCurrentQ(currentQ + 1)} className="w-full bg-orange-600 text-white py-4 rounded-xl font-semibold">Next Question →</button>
+                                            <button onClick={() => setCurrentQ(currentQ + 1)} className="w-full bg-pink-600 text-white py-4 rounded-xl font-semibold">Next Question →</button>
                                         ) : (
                                             <button onClick={() => setQuizDone(true)} className="w-full bg-green-600 text-white py-4 rounded-xl font-semibold">Finish Quiz</button>
                                         )}
@@ -635,7 +635,7 @@
                 const comp = comparisons[currentComp];
 
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-cyan-400 to-blue-500 p-4">
                         <div className="max-w-5xl mx-auto">
                             <div className="flex justify-between items-center mb-6">
                                 <button onClick={() => setMode('menu')} className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold">← Menu</button>

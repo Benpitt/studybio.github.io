@@ -14,6 +14,27 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
     <style>
+        :root {
+            --bg: #0b0b0d;
+            --muted: #9aa3b2;
+            --accent: #0ea5a4;
+            --accent-purple: #a855f7;
+            --glass: rgba(255,255,255,0.06);
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: white;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+        }
+
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -37,10 +58,160 @@
         .flip-card-back {
             transform: rotateY(180deg);
         }
+
+        /* Dark deck cards */
+        .deck-card-dark {
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 28px 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deck-card-dark:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+        }
+
+        .deck-card-dark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(14,165,164,0.3), rgba(168,85,247,0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .deck-card-dark:hover::before {
+            opacity: 1;
+        }
+
+        .deck-icon-large {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 12px rgba(14,165,164,0.3));
+        }
+
+        .deck-title-dark {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .deck-subject-dark {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .deck-count-dark {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .group-badge {
+            background: rgba(168,85,247,0.2);
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #c084fc;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+            margin-right: 4px;
+        }
+
+        .btn-study {
+            background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(14,165,164,0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .btn-study:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(14,165,164,0.4);
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .action-icon-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-icon-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        .group-select-dark {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: white;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .group-select-dark:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(14,165,164,0.2);
+        }
+
+        .group-select-dark option {
+            background: #1a1a1f;
+            color: white;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="min-height: 100vh;">
+<body>
     <script type="module" src="auth-guard.js"></script>
+
+    <!-- Glowing orbs background -->
+    <div style="position: fixed; width: 500px; height: 500px; background: #0ea5a4; top: 10%; left: 5%; border-radius: 50%; filter: blur(120px); opacity: 0.2; pointer-events: none; animation: float 8s ease-in-out infinite;"></div>
+    <div style="position: fixed; width: 600px; height: 600px; background: #a855f7; bottom: 20%; right: 10%; border-radius: 50%; filter: blur(120px); opacity: 0.2; pointer-events: none; animation: float 8s ease-in-out infinite; animation-delay: 2s;"></div>
+    <div style="position: fixed; width: 400px; height: 400px; background: #06b6d4; top: 40%; right: 20%; border-radius: 50%; filter: blur(120px); opacity: 0.2; pointer-events: none; animation: float 8s ease-in-out infinite; animation-delay: 1s;"></div>
+    <div style="position: fixed; width: 450px; height: 450px; background: #10b981; top: 60%; left: 15%; border-radius: 50%; filter: blur(120px); opacity: 0.2; pointer-events: none; animation: float 8s ease-in-out infinite; animation-delay: 3s;"></div>
+
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -574,16 +745,32 @@
                 );
             }
 
+            // Helper to get deck icons
+            function getDeckIcon(title, subject) {
+                const text = (title + ' ' + subject).toLowerCase();
+                if (text.includes('biology') || text.includes('science')) return '🧬';
+                if (text.includes('math') || text.includes('calculus') || text.includes('algebra')) return '📐';
+                if (text.includes('history')) return '🌍';
+                if (text.includes('language') || text.includes('spanish') || text.includes('french')) return '🗣️';
+                if (text.includes('code') || text.includes('programming') || text.includes('python') || text.includes('javascript')) return '💻';
+                if (text.includes('chemistry')) return '⚗️';
+                if (text.includes('physics')) return '⚛️';
+                if (text.includes('literature') || text.includes('english')) return '📖';
+                if (text.includes('music')) return '🎵';
+                if (text.includes('art')) return '🎨';
+                return '📚';
+            }
+
             if (mode === 'decks') {
                 return (
-                    <div className="min-h-screen">
+                    <div className="min-h-screen" style={{position: 'relative', zIndex: 10}}>
                         <Navigation />
                         <div className="pt-20 p-6">
                             <div className="max-w-7xl mx-auto">
-                                <div className="flex justify-between items-center mb-8">
-                                    <h1 className="text-5xl font-bold text-white">📚 My Flashcards</h1>
+                                <div className="flex justify-between items-center mb-12">
+                                    <h1 className="text-5xl font-bold header-gradient" style={{letterSpacing: '-0.02em'}}>My Flashcards</h1>
                                     <div className="flex gap-3">
-                                        <button onClick={createGroup} className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-xl font-bold transition-all">
+                                        <button onClick={createGroup} style={{background: 'rgba(168,85,247,0.2)', border: '1px solid rgba(168,85,247,0.3)', color: '#c084fc'}} className="px-6 py-3 rounded-xl font-bold transition-all hover:bg-purple-500/30">
                                             ➕ New Group
                                         </button>
                                         <button onClick={startCreateDeck} className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-2xl text-white px-6 py-3 rounded-xl font-bold transition-all">
@@ -596,20 +783,21 @@
                                 </div>
 
                                 {groups.length > 0 && (
-                                    <div className="mb-8">
-                                        <h2 className="text-3xl font-bold text-white mb-4">📁 Groups</h2>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="mb-12">
+                                        <h2 className="text-3xl font-bold text-white mb-6">📁 Groups</h2>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             {groups.map(group => {
                                                 const groupDecks = decks.filter(d => group.deckIds.includes(d.id));
                                                 const totalCards = groupDecks.reduce((sum, d) => sum + d.cards.length, 0);
                                                 return (
-                                                    <div key={group.id} className="card-gradient-indigo rounded-2xl p-6 text-white">
-                                                        <div className="flex justify-between items-start mb-3">
-                                                            <h3 className="text-2xl font-bold">📁 {group.name}</h3>
-                                                            <button onClick={() => deleteGroup(group.id)} className="text-white/70 hover:text-white">❌</button>
+                                                    <div key={group.id} className="deck-card-dark">
+                                                        <div className="flex justify-between items-start mb-4">
+                                                            <span className="deck-icon-large">📁</span>
+                                                            <button onClick={() => deleteGroup(group.id)} className="action-icon-btn">❌</button>
                                                         </div>
-                                                        <p className="text-white/80 mb-4">{groupDecks.length} decks • {totalCards} cards</p>
-                                                        <button onClick={() => setMode('menu-g-' + group.id)} className="w-full bg-white text-purple-600 py-2 rounded-lg font-bold hover:bg-purple-50 transition-all">
+                                                        <h3 className="deck-title-dark">{group.name}</h3>
+                                                        <p className="deck-count-dark">{groupDecks.length} decks • {totalCards} cards</p>
+                                                        <button onClick={() => setMode('menu-g-' + group.id)} className="btn-study">
                                                             Study Group →
                                                         </button>
                                                     </div>
@@ -619,12 +807,12 @@
                                     </div>
                                 )}
 
-                                <h2 className="text-3xl font-bold text-white mb-4">🎴 All Decks</h2>
+                                <h2 className="text-3xl font-bold text-white mb-6">🎴 All Decks</h2>
                                 {decks.length === 0 ? (
-                                    <div className="bg-white/10 backdrop-blur rounded-2xl p-12 text-center">
-                                        <div className="text-8xl mb-4">📚</div>
-                                        <h3 className="text-2xl font-bold text-white mb-4">No decks yet!</h3>
-                                        <p className="text-white/70 mb-6">Create your first deck manually or with AI</p>
+                                    <div style={{background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)', border: '1px solid rgba(255,255,255,0.1)'}} className="backdrop-blur rounded-3xl p-16 text-center">
+                                        <div className="text-8xl mb-6" style={{filter: 'drop-shadow(0 4px 12px rgba(14,165,164,0.3))'}}>📚</div>
+                                        <h3 className="text-3xl font-bold text-white mb-4">No decks yet!</h3>
+                                        <p style={{color: 'var(--muted)'}} className="text-lg mb-8">Create your first deck manually or with AI</p>
                                         <div className="flex gap-4 justify-center">
                                             <button onClick={startCreateDeck} className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all">
                                                 ✏️ Create Manually
@@ -636,38 +824,44 @@
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        {decks.map(deck => (
-                                            <div key={deck.id} className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all">
-                                                <div className="flex justify-between items-start mb-3">
-                                                    <h3 className="text-2xl font-bold text-gray-800">{deck.title}</h3>
-                                                    <div className="flex gap-2">
-                                                        <button onClick={() => startEditDeck(deck)} className="text-blue-500 hover:text-blue-700" title="Edit deck">✏️</button>
-                                                        <button onClick={() => deleteDeck(deck.id)} className="text-red-500 hover:text-red-700" title="Delete deck">🗑️</button>
-                                                    </div>
-                                                </div>
-                                                <p className="text-gray-600 mb-2">{deck.subject || 'General'}</p>
-                                                <p className="text-sm text-gray-500 mb-4">{deck.cards.length} cards</p>
-
-                                                <div className="mb-4">
-                                                    <select onChange={(e) => e.target.value && addDeckToGroup(parseInt(e.target.value), deck.id)} className="w-full px-3 py-2 border rounded-lg text-sm mb-2">
-                                                        <option value="">Add to group...</option>
-                                                        {groups.map(g => (
-                                                            <option key={g.id} value={g.id}>{g.name}</option>
-                                                        ))}
-                                                    </select>
-                                                    {groups.filter(g => g.deckIds.includes(deck.id)).map(g => (
-                                                        <div key={g.id} className="flex items-center justify-between bg-purple-50 px-3 py-1 rounded text-sm mb-1">
-                                                            <span>📁 {g.name}</span>
-                                                            <button onClick={() => removeDeckFromGroup(g.id, deck.id)} className="text-red-500">×</button>
+                                        {decks.map(deck => {
+                                            const deckGroups = groups.filter(g => g.deckIds.includes(deck.id));
+                                            return (
+                                                <div key={deck.id} className="deck-card-dark">
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <span className="deck-icon-large">{getDeckIcon(deck.title, deck.subject)}</span>
+                                                        <div className="flex gap-2">
+                                                            <button onClick={() => startEditDeck(deck)} className="action-icon-btn" title="Edit deck">✏️</button>
+                                                            <button onClick={() => deleteDeck(deck.id)} className="action-icon-btn" title="Delete deck">🗑️</button>
                                                         </div>
-                                                    ))}
-                                                </div>
+                                                    </div>
+                                                    <div className="deck-subject-dark">{deck.subject || 'General'}</div>
+                                                    <h3 className="deck-title-dark">{deck.title}</h3>
+                                                    <p className="deck-count-dark">📇 {deck.cards.length} cards</p>
 
-                                                <button onClick={() => setMode('menu-d-' + deck.id)} className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all">
-                                                    Study →
-                                                </button>
-                                            </div>
-                                        ))}
+                                                    <div className="mb-4">
+                                                        <select onChange={(e) => e.target.value && addDeckToGroup(parseInt(e.target.value), deck.id)} className="group-select-dark">
+                                                            <option value="">Add to group...</option>
+                                                            {groups.map(g => (
+                                                                <option key={g.id} value={g.id}>{g.name}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {deckGroups.map(g => (
+                                                                <span key={g.id} className="group-badge">
+                                                                    📁 {g.name}
+                                                                    <button onClick={() => removeDeckFromGroup(g.id, deck.id)} style={{color: 'inherit', marginLeft: '4px'}}>×</button>
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    <button onClick={() => setMode('menu-d-' + deck.id)} className="btn-study">
+                                                        Study →
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>

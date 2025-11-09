@@ -7,31 +7,36 @@ service cloud.firestore {
     function isSignedIn() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
-    
+
+    // Check if user is an admin (email-based whitelist)
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'hocquetb@winchesterthurston.org';
+    }
+
     // Community Decks Collection
     match /communityDecks/{deckId} {
       // Anyone can read community decks
       allow read: if true;
-      
+
       // Only authenticated users can create decks
-      allow create: if isSignedIn() 
+      allow create: if isSignedIn()
                     && request.resource.data.authorId == request.auth.uid
                     && request.resource.data.keys().hasAll(['title', 'author', 'authorId', 'cards', 'downloads', 'created'])
                     && request.resource.data.cards is list
                     && request.resource.data.cards.size() > 0
                     && request.resource.data.cards.size() <= 100; // Max 100 cards per deck
-      
-      // Only deck owner can update their own decks
-      allow update: if isSignedIn() 
-                    && resource.data.authorId == request.auth.uid;
-      
-      // Only deck owner can delete their own decks
-      allow delete: if isSignedIn() 
-                    && resource.data.authorId == request.auth.uid;
+
+      // Deck owner or admin can update decks
+      allow update: if isSignedIn()
+                    && (resource.data.authorId == request.auth.uid || isAdmin());
+
+      // Deck owner or admin can delete decks
+      allow delete: if isSignedIn()
+                    && (resource.data.authorId == request.auth.uid || isAdmin());
     }
     
     // User Progress Collection (future use)
@@ -143,11 +148,17 @@ FIREBASE SECURITY RULES SETUP INSTRUCTIONS:
 These rules ensure:
 ✅ Users must be signed in to create content
 ✅ Users can only edit/delete their own content
+✅ Admin users can moderate all community decks (update/delete)
 ✅ Community content is publicly readable
 ✅ Data validation prevents malformed entries
 ✅ Rate limiting via Firestore quotas
 ✅ Protection against unauthorized access
 
-IMPORTANT: Test mode rules expire after 30 days. 
+ADMIN FUNCTIONALITY:
+The isAdmin() function checks the user's email against a whitelist.
+Admins can delete any community deck for moderation purposes.
+To add more admins, update the isAdmin() function in the rules.
+
+IMPORTANT: Test mode rules expire after 30 days.
 Deploy these production rules immediately!
 */

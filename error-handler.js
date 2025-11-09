@@ -14,13 +14,28 @@ class ErrorHandler {
         // Handle uncaught errors
         window.addEventListener('error', (event) => {
             debugError('Uncaught error:', event.error);
-            this.showError('An unexpected error occurred. Please refresh the page.');
+            this.showError('An unexpected error occurred. Refresh the page to continue. If the issue persists, try clearing your browser cache.');
         });
 
         // Handle unhandled promise rejections
         window.addEventListener('unhandledrejection', (event) => {
             debugError('Unhandled promise rejection:', event.reason);
-            this.showError('Something went wrong. Please try again.');
+
+            // Try to provide more specific error messages based on the rejection reason
+            if (event.reason && typeof event.reason === 'string') {
+                if (event.reason.includes('network') || event.reason.includes('fetch')) {
+                    this.showError('Network error detected. Check your internet connection and try again.');
+                } else if (event.reason.includes('permission') || event.reason.includes('denied')) {
+                    this.showError('Permission denied. Sign out and sign in again to continue.');
+                } else {
+                    this.showError('Something went wrong. Refresh the page and try again.');
+                }
+            } else if (event.reason && event.reason.code) {
+                // Handle Firebase errors
+                this.handleFirebaseError(event.reason);
+            } else {
+                this.showError('Something went wrong. Refresh the page and try again. If the problem continues, try a different browser.');
+            }
         });
     }
 
@@ -116,14 +131,15 @@ class ErrorHandler {
      */
     handleAuthError(error) {
         debugError('Auth error:', error);
-        
+
         const errorMessages = {
-            'auth/popup-closed-by-user': 'Sign-in was cancelled. Please try again.',
-            'auth/network-request-failed': 'Network error. Please check your connection.',
-            'auth/too-many-requests': 'Too many attempts. Please try again later.',
-            'auth/user-disabled': 'This account has been disabled.',
-            'auth/invalid-credential': 'Invalid credentials. Please try again.',
-            'default': 'Sign-in failed. Please try again.'
+            'auth/popup-closed-by-user': 'Sign-in was cancelled. Click "Sign in with Google" to try again.',
+            'auth/network-request-failed': 'Network error detected. Check your internet connection and refresh the page.',
+            'auth/too-many-requests': 'Too many sign-in attempts. Wait a few minutes, then try again.',
+            'auth/user-disabled': 'This account has been disabled. Contact support for assistance.',
+            'auth/invalid-credential': 'Invalid credentials provided. Make sure you\'re using the correct Google account.',
+            'auth/account-exists-with-different-credential': 'An account already exists with the same email. Try signing in with a different method.',
+            'default': 'Sign-in failed. Refresh the page and try again.'
         };
 
         const message = errorMessages[error.code] || errorMessages.default;
@@ -135,13 +151,17 @@ class ErrorHandler {
      */
     handleFirebaseError(error) {
         debugError('Firebase error:', error);
-        
+
         const errorMessages = {
-            'permission-denied': 'Permission denied. Please sign in again.',
-            'unavailable': 'Service temporarily unavailable. Please try again.',
-            'not-found': 'Data not found.',
-            'already-exists': 'This item already exists.',
-            'default': 'An error occurred. Please try again.'
+            'permission-denied': 'Permission denied. Your session may have expired - please sign out and sign in again.',
+            'unavailable': 'Service temporarily unavailable. Check your internet connection and try again in a moment.',
+            'not-found': 'Requested data not found. It may have been deleted or moved.',
+            'already-exists': 'This item already exists. Try using a different name or ID.',
+            'resource-exhausted': 'Too many requests. Wait a moment and try again.',
+            'cancelled': 'Operation was cancelled. Refresh the page and try again.',
+            'deadline-exceeded': 'Operation took too long. Check your connection and try again.',
+            'unauthenticated': 'Not signed in. Please sign in to continue.',
+            'default': 'An error occurred. Refresh the page and try again.'
         };
 
         const message = errorMessages[error.code] || errorMessages.default;
@@ -152,7 +172,27 @@ class ErrorHandler {
      * Handle network errors
      */
     handleNetworkError() {
-        this.showError('Network error. Please check your internet connection.');
+        this.showError('Network error detected. Check your internet connection, then refresh the page or try again.');
+    }
+
+    /**
+     * Handle storage errors
+     */
+    handleStorageError(error) {
+        debugError('Storage error:', error);
+
+        if (error.name === 'QuotaExceededError') {
+            this.showError('Storage quota exceeded. Clear browser data or use private browsing to free up space.');
+        } else {
+            this.showError('Storage error occurred. Try clearing your browser cache or using a different browser.');
+        }
+    }
+
+    /**
+     * Handle validation errors
+     */
+    handleValidationError(message) {
+        this.showError(`Validation error: ${message}. Please check your input and try again.`);
     }
 }
 

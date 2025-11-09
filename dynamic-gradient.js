@@ -44,6 +44,8 @@ class DynamicGradient {
         this.currentPalette = null;
         this.nextPalette = null;
         this.transitionProgress = 0;
+        this.paletteUpdateInterval = null;
+        this.animationFrameId = null;
         this.init();
     }
 
@@ -55,10 +57,30 @@ class DynamicGradient {
         this.applyGradient();
 
         // Update palette every minute
-        setInterval(() => this.updatePalette(), 60000);
+        this.paletteUpdateInterval = setInterval(() => this.updatePalette(), 60000);
 
         // Smoothly animate color transitions
         this.animateColorTransition();
+
+        // Cleanup on page unload to prevent memory leaks
+        window.addEventListener('beforeunload', () => this.destroy());
+        window.addEventListener('pagehide', () => this.destroy());
+    }
+
+    destroy() {
+        // Clear interval
+        if (this.paletteUpdateInterval) {
+            clearInterval(this.paletteUpdateInterval);
+            this.paletteUpdateInterval = null;
+        }
+
+        // Cancel animation frame
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        debugLog('🎨 DynamicGradient cleaned up');
     }
 
     getCurrentPalette() {
@@ -201,7 +223,7 @@ class DynamicGradient {
             }
 
             this.applyGradient();
-            requestAnimationFrame(animate);
+            this.animationFrameId = requestAnimationFrame(animate);
         };
 
         animate();

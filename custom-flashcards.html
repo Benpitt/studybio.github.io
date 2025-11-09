@@ -10,6 +10,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="learning-profile-utils.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -57,6 +58,23 @@
         }
         .flip-card-back {
             transform: rotateY(180deg);
+        }
+
+        .recommended-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* Dark deck cards */
@@ -999,25 +1017,37 @@
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <button onClick={() => startMode('flashcards', deck, group)} className="card-gradient-blue hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('flashcards', deck, group)} className="card-gradient-blue hover:scale-105 p-8 rounded-2xl text-white transition-all" style={{position: 'relative'}}>
+                                        {window.isRecommendedMode && window.isRecommendedMode('flashcards') && (
+                                            <div className="recommended-badge">⭐ Recommended</div>
+                                        )}
                                         <div className="text-6xl mb-3">🎴</div>
                                         <div className="text-2xl font-bold">Flashcards</div>
                                         <div className="text-sm opacity-80">Spaced repetition</div>
                                     </button>
 
-                                    <button onClick={() => startMode('practice', deck, group)} className="card-gradient-purple hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('practice', deck, group)} className="card-gradient-purple hover:scale-105 p-8 rounded-2xl text-white transition-all" style={{position: 'relative'}}>
+                                        {window.isRecommendedMode && window.isRecommendedMode('practice-test') && (
+                                            <div className="recommended-badge">⭐ Recommended</div>
+                                        )}
                                         <div className="text-6xl mb-3">📝</div>
                                         <div className="text-2xl font-bold">Practice Test</div>
                                         <div className="text-sm opacity-80">15 questions</div>
                                     </button>
 
-                                    <button onClick={() => startMode('match', deck, group)} className="card-gradient-success hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('match', deck, group)} className="card-gradient-success hover:scale-105 p-8 rounded-2xl text-white transition-all" style={{position: 'relative'}}>
+                                        {window.isRecommendedMode && window.isRecommendedMode('matching') && (
+                                            <div className="recommended-badge">⭐ Recommended</div>
+                                        )}
                                         <div className="text-6xl mb-3">🎯</div>
                                         <div className="text-2xl font-bold">Matching</div>
                                         <div className="text-sm opacity-80">Match pairs</div>
                                     </button>
 
-                                    <button onClick={() => startMode('speed', deck, group)} className="card-gradient-fire hover:scale-105 p-8 rounded-2xl text-white transition-all">
+                                    <button onClick={() => startMode('speed', deck, group)} className="card-gradient-fire hover:scale-105 p-8 rounded-2xl text-white transition-all" style={{position: 'relative'}}>
+                                        {window.isRecommendedMode && window.isRecommendedMode('speed-challenge') && (
+                                            <div className="recommended-badge">⭐ Recommended</div>
+                                        )}
                                         <div className="text-6xl mb-3">⚡</div>
                                         <div className="text-2xl font-bold">Speed Challenge</div>
                                         <div className="text-sm opacity-80">10 seconds each</div>
@@ -1453,6 +1483,39 @@
 
         ReactDOM.render(<CustomFlashcardsApp />, document.getElementById('root'));
     </script>
+
+    <!-- Learning Profile Integration -->
+    <script>
+        // Expose learning profile functions to window for React components
+        if (typeof isRecommendedMode !== 'undefined') {
+            window.isRecommendedMode = isRecommendedMode;
+        }
+        if (typeof getPersonalizedSettings !== 'undefined') {
+            window.getPersonalizedSettings = getPersonalizedSettings;
+        }
+        if (typeof getTTSManager !== 'undefined') {
+            window.getTTSManager = getTTSManager;
+        }
+        if (typeof hasChallenge !== 'undefined') {
+            window.hasChallenge = hasChallenge;
+        }
+
+        // Apply distraction-free mode if needed
+        if (typeof getPersonalizedSettings !== 'undefined') {
+            const settings = getPersonalizedSettings();
+            if (settings && settings.distractionFreeMode) {
+                // Apply distraction-free styles
+                document.body.style.setProperty('--animation-duration', '0s');
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } }
+                    .animate-slide-in { animation: none !important; }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+    </script>
+
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
 </body>

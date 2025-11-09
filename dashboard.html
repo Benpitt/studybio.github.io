@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="learning-profile-utils.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -96,6 +97,30 @@
                 <div class="text-3xl mb-1">🎯</div>
                 <div class="text-2xl font-bold"><span id="stat-accuracy">0</span>%</div>
                 <div class="text-xs text-purple-100 font-semibold">Avg Accuracy</div>
+            </div>
+        </div>
+
+        <!-- Learning Profile Prompt (shows for new users) -->
+        <div id="learning-profile-prompt" class="mb-6 animate-slide-in delay-550" style="display: none;">
+            <div class="relative rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cg fill=%27%23fff%27 fill-opacity=%271%27 fill-rule=%27evenodd%27%3E%3Cpath d=%27M0 40L40 0H20L0 20M40 40V20L20 40%27/%3E%3C/g%3E%3C/svg%3E');"></div>
+                <div class="relative p-6 flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="text-6xl">🧠</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-1">Personalize Your Learning</h3>
+                            <p class="text-white/90 text-sm">Take a quick quiz to optimize your study experience based on your learning style</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="take-quiz-btn" onclick="window.location.href='learning-profile-quiz.html'" class="bg-white text-purple-700 hover:bg-gray-100 font-bold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl hover:scale-105">
+                            Take Quiz (3 min)
+                        </button>
+                        <button id="dismiss-prompt-btn" class="bg-white/20 hover:bg-white/30 text-white font-semibold px-4 py-3 rounded-lg transition-all">
+                            Maybe Later
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -720,6 +745,40 @@
             </div>
         </div>
     </footer>
+
+    <!-- Learning Profile Prompt Handler -->
+    <script>
+        // Check if user has completed learning profile quiz
+        function checkLearningProfile() {
+            if (typeof hasLearningProfile !== 'undefined') {
+                const hasProfile = hasLearningProfile();
+                const dismissed = localStorage.getItem('learningProfilePromptDismissed');
+                const prompt = document.getElementById('learning-profile-prompt');
+
+                if (!hasProfile && dismissed !== 'true' && prompt) {
+                    prompt.style.display = 'block';
+                }
+            }
+        }
+
+        // Handle dismiss button
+        document.addEventListener('DOMContentLoaded', () => {
+            const dismissBtn = document.getElementById('dismiss-prompt-btn');
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', () => {
+                    localStorage.setItem('learningProfilePromptDismissed', 'true');
+                    const prompt = document.getElementById('learning-profile-prompt');
+                    if (prompt) {
+                        prompt.style.display = 'none';
+                    }
+                });
+            }
+
+            // Check and show prompt
+            checkLearningProfile();
+        });
+    </script>
+
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
 </body>

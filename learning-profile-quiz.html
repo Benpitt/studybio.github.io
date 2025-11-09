@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Profile Quiz - Studying Works</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .quiz-card {
+            transition: all 0.3s ease;
+        }
+        .quiz-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .option-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .option-card:hover {
+            background-color: #f3f4f6;
+        }
+        .option-card.selected {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const QUIZ_QUESTIONS = [
+            {
+                id: 1,
+                category: 'learning-style',
+                question: 'When learning something new, I prefer to:',
+                options: [
+                    { text: 'See diagrams, charts, or written instructions', value: 'visual', weight: 3 },
+                    { text: 'Listen to someone explain it to me', value: 'auditory', weight: 3 },
+                    { text: 'Try it hands-on and learn by doing', value: 'kinesthetic', weight: 3 },
+                    { text: 'A combination of the above', value: 'mixed', weight: 1 }
+                ]
+            },
+            {
+                id: 2,
+                category: 'learning-style',
+                question: 'I remember things best when:',
+                options: [
+                    { text: 'I can see them written down or visualized', value: 'visual', weight: 3 },
+                    { text: 'I hear them explained or discussed', value: 'auditory', weight: 3 },
+                    { text: 'I physically interact with the material', value: 'kinesthetic', weight: 3 },
+                    { text: 'It varies depending on the topic', value: 'mixed', weight: 1 }
+                ]
+            },
+            {
+                id: 3,
+                category: 'learning-style',
+                question: 'When studying, I find it most helpful to:',
+                options: [
+                    { text: 'Use color-coded notes, mind maps, or flashcards', value: 'visual', weight: 2 },
+                    { text: 'Read aloud or discuss with others', value: 'auditory', weight: 2 },
+                    { text: 'Take breaks to move around or use physical objects', value: 'kinesthetic', weight: 2 },
+                    { text: 'Mix different approaches', value: 'mixed', weight: 1 }
+                ]
+            },
+            {
+                id: 4,
+                category: 'focus',
+                question: 'When trying to focus on studying or work, I:',
+                options: [
+                    { text: 'Can concentrate easily for long periods', value: 'none', weight: 0 },
+                    { text: 'Sometimes get distracted but can refocus quickly', value: 'mild', weight: 1 },
+                    { text: 'Often find my mind wandering or feel restless', value: 'moderate', weight: 2 },
+                    { text: 'Have significant difficulty staying focused', value: 'high', weight: 3 }
+                ]
+            },
+            {
+                id: 5,
+                category: 'focus',
+                question: 'I work best in an environment that is:',
+                options: [
+                    { text: 'Completely quiet with minimal distractions', value: 'high', weight: 2 },
+                    { text: 'With some background noise or activity', value: 'mild', weight: 1 },
+                    { text: 'Busy and stimulating', value: 'none', weight: 0 },
+                    { text: 'It depends on the task', value: 'moderate', weight: 1 }
+                ]
+            },
+            {
+                id: 6,
+                category: 'reading',
+                question: 'When reading text, I:',
+                options: [
+                    { text: 'Read smoothly without issues', value: 'none', weight: 0 },
+                    { text: 'Sometimes mix up similar-looking letters or words', value: 'mild', weight: 1 },
+                    { text: 'Often need to re-read sentences to understand them', value: 'moderate', weight: 2 },
+                    { text: 'Find reading tiring and frequently lose my place', value: 'high', weight: 3 }
+                ]
+            },
+            {
+                id: 7,
+                category: 'reading',
+                question: 'When encountering unfamiliar words, I:',
+                options: [
+                    { text: 'Can usually sound them out easily', value: 'none', weight: 0 },
+                    { text: 'Sometimes struggle with pronunciation', value: 'mild', weight: 1 },
+                    { text: 'Often have difficulty reading unfamiliar words', value: 'moderate', weight: 2 },
+                    { text: 'Prefer listening to text rather than reading it', value: 'high', weight: 3 }
+                ]
+            },
+            {
+                id: 8,
+                category: 'processing',
+                question: 'When given multiple instructions, I:',
+                options: [
+                    { text: 'Can remember and follow them all easily', value: 'none', weight: 0 },
+                    { text: 'Need to hear them repeated or written down', value: 'mild', weight: 1 },
+                    { text: 'Often forget some steps if not written down', value: 'moderate', weight: 2 },
+                    { text: 'Need instructions broken down into single steps', value: 'high', weight: 3 }
+                ]
+            },
+            {
+                id: 9,
+                category: 'processing',
+                question: 'When solving problems or learning new concepts, I:',
+                options: [
+                    { text: 'Grasp them quickly', value: 'none', weight: 0 },
+                    { text: 'Need a bit of extra time to process', value: 'mild', weight: 1 },
+                    { text: 'Require more time and repetition than others', value: 'moderate', weight: 2 },
+                    { text: 'Benefit from step-by-step explanations', value: 'high', weight: 2 }
+                ]
+            },
+            {
+                id: 10,
+                category: 'memory',
+                question: 'When trying to remember information, I:',
+                options: [
+                    { text: 'Can recall it easily', value: 'none', weight: 0 },
+                    { text: 'Sometimes need prompts or cues', value: 'mild', weight: 1 },
+                    { text: 'Often need to review material multiple times', value: 'moderate', weight: 2 },
+                    { text: 'Find it challenging even with repeated study', value: 'high', weight: 3 }
+                ]
+            },
+            {
+                id: 11,
+                category: 'organization',
+                question: 'When organizing my study materials or tasks, I:',
+                options: [
+                    { text: 'Keep everything well-organized naturally', value: 'none', weight: 0 },
+                    { text: 'Try to stay organized but sometimes slip', value: 'mild', weight: 1 },
+                    { text: 'Often feel overwhelmed by organizing', value: 'moderate', weight: 2 },
+                    { text: 'Struggle significantly with keeping things organized', value: 'high', weight: 3 }
+                ]
+            },
+            {
+                id: 12,
+                category: 'time-management',
+                question: 'When estimating how long a task will take, I:',
+                options: [
+                    { text: 'Am usually accurate', value: 'none', weight: 0 },
+                    { text: 'Sometimes misjudge the time needed', value: 'mild', weight: 1 },
+                    { text: 'Often underestimate or lose track of time', value: 'moderate', weight: 2 },
+                    { text: 'Frequently struggle with time management', value: 'high', weight: 3 }
+                ]
+            }
+        ];
+
+        function LearningProfileQuiz({ onComplete, isRetake = false }) {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [showIntro, setShowIntro] = useState(!isRetake);
+            const [showResults, setShowResults] = useState(false);
+            const [profile, setProfile] = useState(null);
+
+            const handleAnswer = (questionId, optionValue, weight, category) => {
+                const newAnswers = {
+                    ...answers,
+                    [questionId]: { value: optionValue, weight, category }
+                };
+                setAnswers(newAnswers);
+
+                // Auto-advance to next question
+                setTimeout(() => {
+                    if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
+                        setCurrentQuestion(currentQuestion + 1);
+                    } else {
+                        calculateProfile(newAnswers);
+                    }
+                }, 300);
+            };
+
+            const calculateProfile = (finalAnswers) => {
+                const scores = {
+                    visual: 0,
+                    auditory: 0,
+                    kinesthetic: 0,
+                    mixed: 0,
+                    focus: 0,
+                    reading: 0,
+                    processing: 0,
+                    memory: 0,
+                    organization: 0,
+                    timeManagement: 0
+                };
+
+                Object.values(finalAnswers).forEach(answer => {
+                    const { value, weight, category } = answer;
+
+                    if (category === 'learning-style') {
+                        scores[value] += weight;
+                    } else if (category === 'focus') {
+                        if (value !== 'none') scores.focus += weight;
+                    } else if (category === 'reading') {
+                        if (value !== 'none') scores.reading += weight;
+                    } else if (category === 'processing') {
+                        if (value !== 'none') scores.processing += weight;
+                    } else if (category === 'memory') {
+                        if (value !== 'none') scores.memory += weight;
+                    } else if (category === 'organization') {
+                        if (value !== 'none') scores.organization += weight;
+                    } else if (category === 'time-management') {
+                        if (value !== 'none') scores.timeManagement += weight;
+                    }
+                });
+
+                // Determine primary learning style
+                let primaryStyle = 'visual';
+                let maxStyleScore = scores.visual;
+
+                if (scores.auditory > maxStyleScore) {
+                    primaryStyle = 'auditory';
+                    maxStyleScore = scores.auditory;
+                }
+                if (scores.kinesthetic > maxStyleScore) {
+                    primaryStyle = 'kinesthetic';
+                    maxStyleScore = scores.kinesthetic;
+                }
+                if (scores.mixed > maxStyleScore) {
+                    primaryStyle = 'mixed';
+                }
+
+                // Determine learning challenges (threshold of 2+ for mild, 4+ for moderate, 6+ for high)
+                const challenges = [];
+                if (scores.focus >= 2) challenges.push({ type: 'focus', level: scores.focus >= 5 ? 'high' : scores.focus >= 3 ? 'moderate' : 'mild' });
+                if (scores.reading >= 2) challenges.push({ type: 'reading', level: scores.reading >= 5 ? 'high' : scores.reading >= 3 ? 'moderate' : 'mild' });
+                if (scores.processing >= 2) challenges.push({ type: 'processing', level: scores.processing >= 5 ? 'high' : scores.processing >= 3 ? 'moderate' : 'mild' });
+                if (scores.memory >= 2) challenges.push({ type: 'memory', level: scores.memory >= 5 ? 'high' : scores.memory >= 3 ? 'moderate' : 'mild' });
+                if (scores.organization >= 2) challenges.push({ type: 'organization', level: scores.organization >= 5 ? 'high' : scores.organization >= 3 ? 'moderate' : 'mild' });
+                if (scores.timeManagement >= 2) challenges.push({ type: 'timeManagement', level: scores.timeManagement >= 5 ? 'high' : scores.timeManagement >= 3 ? 'moderate' : 'mild' });
+
+                const newProfile = {
+                    learningStyle: primaryStyle,
+                    styleScores: {
+                        visual: scores.visual,
+                        auditory: scores.auditory,
+                        kinesthetic: scores.kinesthetic,
+                        mixed: scores.mixed
+                    },
+                    challenges,
+                    dateCompleted: new Date().toISOString()
+                };
+
+                setProfile(newProfile);
+                saveProfile(newProfile);
+                setShowResults(true);
+            };
+
+            const saveProfile = (profileData) => {
+                try {
+                    localStorage.setItem('learningProfile', JSON.stringify(profileData));
+                    console.log('Learning profile saved to local storage');
+                } catch (error) {
+                    console.error('Error saving learning profile:', error);
+                }
+            };
+
+            const getChallengeDescription = (challenge) => {
+                const descriptions = {
+                    focus: 'Difficulty maintaining attention',
+                    reading: 'Reading comprehension challenges',
+                    processing: 'Processing speed differences',
+                    memory: 'Memory retention needs',
+                    organization: 'Organization support',
+                    timeManagement: 'Time management support'
+                };
+                return descriptions[challenge.type] || challenge.type;
+            };
+
+            const getStyleIcon = (style) => {
+                const icons = {
+                    visual: 'fa-eye',
+                    auditory: 'fa-ear-listen',
+                    kinesthetic: 'fa-hand',
+                    mixed: 'fa-layer-group'
+                };
+                return icons[style] || 'fa-user';
+            };
+
+            const getStyleDescription = (style) => {
+                const descriptions = {
+                    visual: 'You learn best through seeing - diagrams, charts, written materials, and visual aids help you understand and retain information.',
+                    auditory: 'You learn best through listening - verbal explanations, discussions, and audio materials are most effective for you.',
+                    kinesthetic: 'You learn best through doing - hands-on activities, physical movement, and practical application help you understand.',
+                    mixed: 'You benefit from a variety of learning approaches - using multiple methods helps you learn most effectively.'
+                };
+                return descriptions[style] || '';
+            };
+
+            if (showIntro) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4">
+                        <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
+                            <div className="text-center mb-6">
+                                <i className="fas fa-brain text-6xl text-blue-500 mb-4"></i>
+                                <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Your Learning Profile Quiz</h1>
+                                <p className="text-gray-600">Let's personalize your learning experience!</p>
+                            </div>
+
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                                <h2 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                                    <i className="fas fa-shield-halved mr-2"></i>
+                                    Your Privacy Matters
+                                </h2>
+                                <ul className="text-sm text-blue-800 space-y-2">
+                                    <li className="flex items-start">
+                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-600"></i>
+                                        <span>All your responses are stored <strong>locally on your device only</strong></span>
+                                    </li>
+                                    <li className="flex items-start">
+                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-600"></i>
+                                        <span>No data is uploaded to any server or shared with anyone</span>
+                                    </li>
+                                    <li className="flex items-start">
+                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-600"></i>
+                                        <span>You can retake or delete this profile anytime from Settings</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="space-y-4 mb-6">
+                                <h3 className="font-semibold text-gray-800">This quiz will help us understand:</h3>
+                                <ul className="space-y-2 text-gray-700">
+                                    <li className="flex items-center">
+                                        <i className="fas fa-palette mr-3 text-purple-500"></i>
+                                        Your preferred learning style (Visual, Auditory, or Kinesthetic)
+                                    </li>
+                                    <li className="flex items-center">
+                                        <i className="fas fa-wrench mr-3 text-green-500"></i>
+                                        How we can best support your learning needs
+                                    </li>
+                                    <li className="flex items-center">
+                                        <i className="fas fa-star mr-3 text-yellow-500"></i>
+                                        Which study tools and features to recommend for you
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="text-center text-sm text-gray-600 mb-6">
+                                <p>This will take about 3-5 minutes. Answer honestly - there are no wrong answers!</p>
+                            </div>
+
+                            <button
+                                onClick={() => setShowIntro(false)}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                            >
+                                Start Quiz <i className="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (showResults && profile) {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+                        <div className="max-w-4xl mx-auto py-8">
+                            <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+                                <div className="text-center mb-8">
+                                    <i className="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+                                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Your Learning Profile is Ready!</h1>
+                                    <p className="text-gray-600">We've personalized your experience based on your responses</p>
+                                </div>
+
+                                <div className="mb-8">
+                                    <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                        <i className={`fas ${getStyleIcon(profile.learningStyle)} mr-3 text-blue-600`}></i>
+                                        Your Learning Style: {profile.learningStyle.charAt(0).toUpperCase() + profile.learningStyle.slice(1)}
+                                    </h2>
+                                    <p className="text-gray-700 mb-4">{getStyleDescription(profile.learningStyle)}</p>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {Object.entries(profile.styleScores).map(([style, score]) => (
+                                            <div key={style} className="bg-gray-50 rounded-lg p-4 text-center">
+                                                <i className={`fas ${getStyleIcon(style)} text-2xl mb-2 ${profile.learningStyle === style ? 'text-blue-600' : 'text-gray-400'}`}></i>
+                                                <div className="font-semibold text-gray-800 capitalize">{style}</div>
+                                                <div className="text-sm text-gray-600">Score: {score}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {profile.challenges && profile.challenges.length > 0 && (
+                                    <div className="mb-8">
+                                        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                            <i className="fas fa-hands-helping mr-3 text-purple-600"></i>
+                                            Personalized Support
+                                        </h2>
+                                        <p className="text-gray-700 mb-4">We'll customize your experience to help with:</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {profile.challenges.map((challenge, index) => (
+                                                <div key={index} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="font-semibold text-purple-900">{getChallengeDescription(challenge)}</span>
+                                                        <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
+                                                            {challenge.level}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+                                    <h3 className="font-semibold text-green-900 mb-3 flex items-center">
+                                        <i className="fas fa-sparkles mr-2"></i>
+                                        What's Next?
+                                    </h3>
+                                    <ul className="text-sm text-green-800 space-y-2">
+                                        <li className="flex items-start">
+                                            <i className="fas fa-check mr-2 mt-1 text-green-600"></i>
+                                            <span>You'll see <strong>"Recommended"</strong> badges on study modes that match your learning style</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <i className="fas fa-check mr-2 mt-1 text-green-600"></i>
+                                            <span>Your study interface will be optimized based on your needs</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <i className="fas fa-check mr-2 mt-1 text-green-600"></i>
+                                            <span>You can retake this quiz anytime from your Settings</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => {
+                                            if (onComplete) onComplete(profile);
+                                            else window.location.href = '/dashboard.html';
+                                        }}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                                    >
+                                        <i className="fas fa-home mr-2"></i>
+                                        Go to Dashboard
+                                    </button>
+                                    <button
+                                        onClick={() => window.location.href = '/settings.html'}
+                                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200"
+                                    >
+                                        <i className="fas fa-cog mr-2"></i>
+                                        View Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const question = QUIZ_QUESTIONS[currentQuestion];
+            const progress = ((currentQuestion + 1) / QUIZ_QUESTIONS.length) * 100;
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+                    <div className="max-w-3xl mx-auto py-8">
+                        <div className="mb-6">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm font-semibold text-gray-700">
+                                    Question {currentQuestion + 1} of {QUIZ_QUESTIONS.length}
+                                </span>
+                                <span className="text-sm text-gray-600">{Math.round(progress)}% Complete</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                    className="progress-bar bg-blue-600 h-2 rounded-full"
+                                    style={{ width: `${progress}%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-8 quiz-card">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6">{question.question}</h2>
+
+                            <div className="space-y-3">
+                                {question.options.map((option, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => handleAnswer(question.id, option.value, option.weight, question.category)}
+                                        className={`option-card border-2 border-gray-200 rounded-lg p-4 ${
+                                            answers[question.id]?.value === option.value ? 'selected' : ''
+                                        }`}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4">
+                                                <span className="font-semibold text-gray-700">{String.fromCharCode(65 + index)}</span>
+                                            </div>
+                                            <span className="text-gray-800">{option.text}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {currentQuestion > 0 && (
+                                <button
+                                    onClick={() => setCurrentQuestion(currentQuestion - 1)}
+                                    className="mt-6 text-gray-600 hover:text-gray-800 font-semibold"
+                                >
+                                    <i className="fas fa-arrow-left mr-2"></i>
+                                    Previous Question
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            return <LearningProfileQuiz />;
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

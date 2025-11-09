@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -149,6 +150,95 @@
                     <h3 id="user-name" class="text-xl font-semibold text-white"></h3>
                     <p id="user-email" class="text-white/70"></p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Learning Profile -->
+        <div class="settings-section" id="learning-profile-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-white">🧠 Learning Profile</h2>
+                <button id="take-quiz-btn" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition font-semibold">
+                    Take Quiz
+                </button>
+            </div>
+
+            <div id="profile-empty-state" class="text-center py-8" style="display: none;">
+                <div class="text-6xl mb-4">🎯</div>
+                <h3 class="text-xl font-semibold text-white mb-2">Personalize Your Learning Experience</h3>
+                <p class="text-white/70 mb-4">Take a quick quiz to help us understand your learning style and needs</p>
+                <div class="bg-blue-500/20 border border-blue-500/40 rounded-lg p-4 mb-4 max-w-xl mx-auto">
+                    <p class="text-sm text-white/90 flex items-start">
+                        <span class="mr-2">🔒</span>
+                        <span><strong>100% Private:</strong> All data is stored locally on your device and never uploaded</span>
+                    </p>
+                </div>
+                <button onclick="window.location.href='learning-profile-quiz.html'" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition font-semibold">
+                    Start Learning Profile Quiz
+                </button>
+            </div>
+
+            <div id="profile-content" style="display: none;">
+                <div class="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/40 rounded-lg p-6 mb-4">
+                    <div class="flex items-center mb-4">
+                        <div id="profile-icon" class="text-5xl mr-4"></div>
+                        <div>
+                            <h3 id="profile-style-title" class="text-2xl font-bold text-white"></h3>
+                            <p id="profile-style-desc" class="text-white/80 text-sm"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        <div class="bg-black/20 rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">👁️</div>
+                            <div class="text-xs text-white/70">Visual</div>
+                            <div id="visual-score" class="text-lg font-bold text-white"></div>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">👂</div>
+                            <div class="text-xs text-white/70">Auditory</div>
+                            <div id="auditory-score" class="text-lg font-bold text-white"></div>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">✋</div>
+                            <div class="text-xs text-white/70">Kinesthetic</div>
+                            <div id="kinesthetic-score" class="text-lg font-bold text-white"></div>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3 text-center">
+                            <div class="text-2xl mb-1">🎨</div>
+                            <div class="text-xs text-white/70">Mixed</div>
+                            <div id="mixed-score" class="text-lg font-bold text-white"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="challenges-section" style="display: none;">
+                    <h4 class="font-semibold text-white mb-3 flex items-center">
+                        <span class="mr-2">🎯</span>
+                        Personalized Support Active
+                    </h4>
+                    <div id="challenges-list" class="space-y-2 mb-4"></div>
+                </div>
+
+                <div class="bg-green-500/20 border border-green-500/40 rounded-lg p-4 mb-4">
+                    <h4 class="font-semibold text-white mb-2 flex items-center">
+                        <span class="mr-2">✨</span>
+                        Active Customizations
+                    </h4>
+                    <ul id="customizations-list" class="text-sm text-white/90 space-y-1"></ul>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="window.location.href='learning-profile-quiz.html'" class="flex-1 px-4 py-2 bg-purple-600/50 text-white rounded-lg hover:bg-purple-600 transition">
+                        Retake Quiz
+                    </button>
+                    <button id="delete-profile-btn" class="flex-1 px-4 py-2 bg-red-600/50 text-white rounded-lg hover:bg-red-600 transition">
+                        Delete Profile
+                    </button>
+                </div>
+
+                <p class="text-xs text-white/60 mt-3 text-center">
+                    Profile completed on <span id="profile-date"></span>
+                </p>
             </div>
         </div>
 
@@ -363,6 +453,8 @@
         ✓ Settings saved
     </div>
 
+    <script src="learning-profile-utils.js"></script>
+
     <script type="module">
         import { authService } from './auth-service.js';
 
@@ -375,6 +467,137 @@
                 document.getElementById('user-photo').src = user.photoURL || 'https://via.placeholder.com/80';
             }
         }
+
+        // Load learning profile
+        function loadLearningProfile() {
+            const profile = getLearningProfile();
+            const emptyState = document.getElementById('profile-empty-state');
+            const profileContent = document.getElementById('profile-content');
+            const takeQuizBtn = document.getElementById('take-quiz-btn');
+
+            if (!profile) {
+                emptyState.style.display = 'block';
+                profileContent.style.display = 'none';
+                takeQuizBtn.textContent = 'Take Quiz';
+            } else {
+                emptyState.style.display = 'none';
+                profileContent.style.display = 'block';
+                takeQuizBtn.textContent = 'Retake Quiz';
+
+                // Display learning style
+                const styleInfo = getLearningStyleInfo(profile.learningStyle);
+                const iconMap = {
+                    visual: '👁️',
+                    auditory: '👂',
+                    kinesthetic: '✋',
+                    mixed: '🎨'
+                };
+
+                document.getElementById('profile-icon').textContent = iconMap[profile.learningStyle] || '🧠';
+                document.getElementById('profile-style-title').textContent = styleInfo.title;
+                document.getElementById('profile-style-desc').textContent = styleInfo.description;
+
+                // Display scores
+                document.getElementById('visual-score').textContent = profile.styleScores.visual;
+                document.getElementById('auditory-score').textContent = profile.styleScores.auditory;
+                document.getElementById('kinesthetic-score').textContent = profile.styleScores.kinesthetic;
+                document.getElementById('mixed-score').textContent = profile.styleScores.mixed;
+
+                // Display challenges
+                const challengesSection = document.getElementById('challenges-section');
+                const challengesList = document.getElementById('challenges-list');
+
+                if (profile.challenges && profile.challenges.length > 0) {
+                    challengesSection.style.display = 'block';
+                    challengesList.innerHTML = '';
+
+                    profile.challenges.forEach(challenge => {
+                        const challengeInfo = getChallengeDescription(challenge.type);
+                        const div = document.createElement('div');
+                        div.className = 'bg-purple-500/20 border border-purple-500/40 rounded-lg p-3 flex items-center justify-between';
+                        div.innerHTML = `
+                            <div class="flex items-center">
+                                <i class="fas ${challengeInfo.icon} mr-3 text-purple-300"></i>
+                                <span class="text-white font-medium">${challengeInfo.title}</span>
+                            </div>
+                            <span class="text-xs bg-purple-600 text-white px-2 py-1 rounded-full">${challenge.level}</span>
+                        `;
+                        challengesList.appendChild(div);
+                    });
+                } else {
+                    challengesSection.style.display = 'none';
+                }
+
+                // Display active customizations
+                const customizationsList = document.getElementById('customizations-list');
+                customizationsList.innerHTML = '';
+
+                const personalizedSettings = getPersonalizedSettings();
+                const customizations = [];
+
+                if (personalizedSettings.enableTextToSpeech) {
+                    customizations.push('🔊 Text-to-speech enabled');
+                }
+                if (personalizedSettings.distractionFreeMode) {
+                    customizations.push('🎯 Distraction-free mode active');
+                }
+                if (personalizedSettings.showVisualAids) {
+                    customizations.push('👁️ Enhanced visual aids');
+                }
+                if (personalizedSettings.enableBreakReminders) {
+                    customizations.push('⏰ Break reminders enabled');
+                }
+                if (personalizedSettings.largerFonts) {
+                    customizations.push('🔤 Larger fonts for readability');
+                }
+                if (personalizedSettings.enableSpacedRepetition) {
+                    customizations.push('📅 Spaced repetition optimized');
+                }
+                if (personalizedSettings.recommendedModes.length > 0) {
+                    customizations.push(`⭐ ${personalizedSettings.recommendedModes.length} study modes recommended`);
+                }
+
+                if (customizations.length === 0) {
+                    customizations.push('✓ Profile active, customizations applied');
+                }
+
+                customizations.forEach(text => {
+                    const li = document.createElement('li');
+                    li.textContent = text;
+                    customizationsList.appendChild(li);
+                });
+
+                // Display date
+                const date = new Date(profile.dateCompleted);
+                document.getElementById('profile-date').textContent = date.toLocaleDateString();
+            }
+        }
+
+        // Delete learning profile
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteProfileBtn = document.getElementById('delete-profile-btn');
+            if (deleteProfileBtn) {
+                deleteProfileBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete your learning profile? This will remove all personalization settings.')) {
+                        deleteLearningProfile();
+                        loadLearningProfile();
+                        showSaveIndicator();
+                        document.getElementById('save-indicator').textContent = '✓ Profile deleted';
+                        setTimeout(() => {
+                            document.getElementById('save-indicator').textContent = '✓ Settings saved';
+                        }, 2000);
+                    }
+                });
+            }
+
+            // Take/Retake quiz button
+            const takeQuizBtn = document.getElementById('take-quiz-btn');
+            if (takeQuizBtn) {
+                takeQuizBtn.addEventListener('click', () => {
+                    window.location.href = 'learning-profile-quiz.html';
+                });
+            }
+        });
 
         // Load settings from localStorage
         function loadSettings() {
@@ -604,6 +827,7 @@
         // Initialize
         loadUserProfile();
         loadSettings();
+        loadLearningProfile();
     </script>
 </body>
 </html>

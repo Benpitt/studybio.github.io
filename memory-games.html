@@ -776,6 +776,16 @@
 
         function endMemoryMatch() {
             const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const efficiency = Math.max(100 - gameState.moves * 5, 0);
+
+            // Save progress
+            saveGameProgress('memory-match', {
+                time: time,
+                moves: gameState.moves,
+                efficiency: efficiency,
+                completed: true
+            });
+
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
 
@@ -785,7 +795,7 @@
                 <div class="results-stats">
                     <p>⏱️ Time: ${time} seconds</p>
                     <p>🎯 Moves: ${gameState.moves}</p>
-                    <p>⭐ Efficiency: ${Math.max(100 - gameState.moves * 5, 0)}%</p>
+                    <p>⭐ Efficiency: ${efficiency}%</p>
                 </div>
             `;
         }
@@ -863,6 +873,17 @@
         function endTypeRace() {
             const time = Math.floor((Date.now() - gameState.startTime) / 1000);
             const accuracy = Math.round((gameState.correct / gameState.cards.length) * 100);
+            const speed = parseFloat((gameState.cards.length / time * 60).toFixed(1));
+
+            // Save progress
+            saveGameProgress('type-race', {
+                time: time,
+                correct: gameState.correct,
+                total: gameState.cards.length,
+                accuracy: accuracy,
+                speed: speed,
+                completed: true
+            });
 
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
@@ -874,7 +895,7 @@
                     <p>⏱️ Time: ${time} seconds</p>
                     <p>✅ Correct: ${gameState.correct}/${gameState.cards.length}</p>
                     <p>🎯 Accuracy: ${accuracy}%</p>
-                    <p>⚡ Speed: ${(gameState.cards.length / time * 60).toFixed(1)} cards/min</p>
+                    <p>⚡ Speed: ${speed} cards/min</p>
                 </div>
             `;
         }
@@ -975,6 +996,17 @@
 
         function endMatchMadness() {
             const time = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const score = Math.round((gameState.matched / gameState.cards.length) * (gameState.timeLimit / time) * 100);
+
+            // Save progress
+            saveGameProgress('match-madness', {
+                time: time,
+                matched: gameState.matched,
+                total: gameState.cards.length,
+                score: score,
+                completed: gameState.matched === gameState.cards.length
+            });
+
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
 
@@ -984,7 +1016,7 @@
                 <div class="results-stats">
                     <p>⏱️ Time: ${time}/${gameState.timeLimit} seconds</p>
                     <p>✅ Matched: ${gameState.matched}/${gameState.cards.length}</p>
-                    <p>🎯 Score: ${Math.round((gameState.matched / gameState.cards.length) * (gameState.timeLimit / time) * 100)}pts</p>
+                    <p>🎯 Score: ${score}pts</p>
                 </div>
             `;
         }
@@ -1084,6 +1116,17 @@
         function endMCArena() {
             clearInterval(gameState.timerInterval);
             const accuracy = Math.round((gameState.correct / gameState.currentIndex) * 100) || 0;
+            const bestStreak = gameState.streak || 0;
+
+            // Save progress
+            saveGameProgress('mc-arena', {
+                score: gameState.score,
+                correct: gameState.correct,
+                total: gameState.currentIndex,
+                accuracy: accuracy,
+                bestStreak: bestStreak,
+                completed: true
+            });
 
             document.getElementById('game-container').classList.add('hidden');
             document.getElementById('results-container').classList.remove('hidden');
@@ -1095,9 +1138,112 @@
                     <p>🏆 Score: ${gameState.score} points</p>
                     <p>✅ Correct: ${gameState.correct}/${gameState.currentIndex}</p>
                     <p>🎯 Accuracy: ${accuracy}%</p>
-                    <p>🔥 Best Streak: ${Math.max(...[gameState.streak])}x</p>
+                    <p>🔥 Best Streak: ${bestStreak}x</p>
                 </div>
             `;
+        }
+
+        // ===== PROGRESS TRACKING =====
+        function saveGameProgress(gameType, stats) {
+            // Load existing progress
+            const progress = JSON.parse(localStorage.getItem('memoryGamesProgress') || '{}');
+
+            // Initialize structure if needed
+            if (!progress.totalGames) progress.totalGames = 0;
+            if (!progress.byGame) progress.byGame = {};
+            if (!progress.byGame[gameType]) {
+                progress.byGame[gameType] = {
+                    played: 0,
+                    bestScore: 0,
+                    bestTime: Infinity,
+                    bestMoves: Infinity,
+                    bestAccuracy: 0,
+                    bestStreak: 0,
+                    avgAccuracy: 0,
+                    totalCorrect: 0,
+                    totalQuestions: 0
+                };
+            }
+
+            const gameProgress = progress.byGame[gameType];
+            gameProgress.played++;
+            progress.totalGames++;
+
+            // Update bests based on game type
+            if (gameType === 'memory-match') {
+                if (stats.time < gameProgress.bestTime || gameProgress.bestTime === Infinity) {
+                    gameProgress.bestTime = stats.time;
+                }
+                if (stats.moves < gameProgress.bestMoves || gameProgress.bestMoves === Infinity) {
+                    gameProgress.bestMoves = stats.moves;
+                }
+                if (stats.efficiency > gameProgress.bestScore) {
+                    gameProgress.bestScore = stats.efficiency;
+                }
+            } else if (gameType === 'type-race') {
+                if (stats.time < gameProgress.bestTime || gameProgress.bestTime === Infinity) {
+                    gameProgress.bestTime = stats.time;
+                }
+                if (stats.accuracy > gameProgress.bestAccuracy) {
+                    gameProgress.bestAccuracy = stats.accuracy;
+                }
+                gameProgress.totalCorrect += stats.correct;
+                gameProgress.totalQuestions += stats.total;
+                gameProgress.avgAccuracy = Math.round((gameProgress.totalCorrect / gameProgress.totalQuestions) * 100);
+            } else if (gameType === 'match-madness') {
+                if (stats.score > gameProgress.bestScore) {
+                    gameProgress.bestScore = stats.score;
+                }
+                if (stats.completed && (stats.time < gameProgress.bestTime || gameProgress.bestTime === Infinity)) {
+                    gameProgress.bestTime = stats.time;
+                }
+            } else if (gameType === 'mc-arena') {
+                if (stats.score > gameProgress.bestScore) {
+                    gameProgress.bestScore = stats.score;
+                }
+                if (stats.bestStreak > gameProgress.bestStreak) {
+                    gameProgress.bestStreak = stats.bestStreak;
+                }
+                if (stats.accuracy > gameProgress.bestAccuracy) {
+                    gameProgress.bestAccuracy = stats.accuracy;
+                }
+                gameProgress.totalCorrect += stats.correct;
+                gameProgress.totalQuestions += stats.total;
+                gameProgress.avgAccuracy = Math.round((gameProgress.totalCorrect / gameProgress.totalQuestions) * 100);
+            }
+
+            progress.lastPlayed = new Date().toISOString();
+
+            // Save to localStorage
+            localStorage.setItem('memoryGamesProgress', JSON.stringify(progress));
+            console.log(`✅ Saved ${gameType} progress:`, stats);
+
+            // Update study streak (if game completed)
+            if (stats.completed !== false) {
+                updateStudyStreak();
+            }
+        }
+
+        function updateStudyStreak() {
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem('lastVisit');
+
+            if (lastVisit !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                let currentStreak = parseInt(localStorage.getItem('studyStreak') || '0');
+
+                if (lastVisit === yesterday.toDateString()) {
+                    currentStreak++;
+                } else if (!lastVisit || lastVisit < yesterday.toDateString()) {
+                    currentStreak = 1;
+                }
+
+                localStorage.setItem('studyStreak', currentStreak.toString());
+                localStorage.setItem('lastVisit', today);
+                console.log(`🔥 Study streak updated: ${currentStreak} days`);
+            }
         }
 
         // Initialize

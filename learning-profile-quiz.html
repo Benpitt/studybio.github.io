@@ -6,31 +6,78 @@
     <title>Learning Profile Quiz - Studying Works</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="apple-style.css">
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="button-styles.css">
     <style>
+        :root {
+            --gradient-color-1: #0a0a1a;
+            --gradient-color-2: #1e1b4b;
+            --gradient-color-3: #134e4a;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-3)) fixed !important;
+            min-height: 100vh;
+        }
+
         .quiz-card {
-            transition: all 0.3s ease;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .quiz-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.2);
         }
         .option-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 2px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
             transition: all 0.2s ease;
             cursor: pointer;
         }
         .option-card:hover {
-            background-color: #f3f4f6;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateX(4px);
         }
         .option-card.selected {
-            background-color: #dbeafe;
-            border-color: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
         }
         .progress-bar {
+            background: linear-gradient(90deg, #3b82f6, #06b6d4, #0ea5e9);
+            background-size: 200% 100%;
+            animation: gradient-flow 3s ease infinite;
             transition: width 0.3s ease;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.5);
+        }
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .intro-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+        }
+        .privacy-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(14, 165, 164, 0.15) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .results-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
     <div id="root"></div>
 
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -319,59 +366,59 @@
             if (showIntro) {
                 return (
                     <div className="min-h-screen flex items-center justify-center p-4">
-                        <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
+                        <div className="max-w-2xl w-full intro-card rounded-2xl shadow-2xl p-8">
                             <div className="text-center mb-6">
-                                <i className="fas fa-brain text-6xl text-blue-500 mb-4"></i>
-                                <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Your Learning Profile Quiz</h1>
-                                <p className="text-gray-600">Let's personalize your learning experience!</p>
+                                <i className="fas fa-brain text-6xl mb-4" style={{color: '#06b6d4'}}></i>
+                                <h1 className="text-3xl font-bold text-white mb-2">Welcome to Your Learning Profile Quiz</h1>
+                                <p className="text-gray-300">Let's personalize your learning experience!</p>
                             </div>
 
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                                <h2 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                            <div className="privacy-card rounded-xl p-6 mb-6">
+                                <h2 className="text-lg font-semibold text-white mb-3 flex items-center">
                                     <i className="fas fa-shield-halved mr-2"></i>
                                     Your Privacy Matters
                                 </h2>
-                                <ul className="text-sm text-blue-800 space-y-2">
+                                <ul className="text-sm text-blue-200 space-y-2">
                                     <li className="flex items-start">
-                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-600"></i>
+                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-400"></i>
                                         <span>All your responses are stored <strong>locally on your device only</strong></span>
                                     </li>
                                     <li className="flex items-start">
-                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-600"></i>
+                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-400"></i>
                                         <span>No data is uploaded to any server or shared with anyone</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-600"></i>
+                                        <i className="fas fa-check-circle mt-1 mr-2 text-blue-400"></i>
                                         <span>You can retake or delete this profile anytime from Settings</span>
                                     </li>
                                 </ul>
                             </div>
 
                             <div className="space-y-4 mb-6">
-                                <h3 className="font-semibold text-gray-800">This quiz will help us understand:</h3>
-                                <ul className="space-y-2 text-gray-700">
+                                <h3 className="font-semibold text-white">This quiz will help us understand:</h3>
+                                <ul className="space-y-2 text-gray-200">
                                     <li className="flex items-center">
-                                        <i className="fas fa-palette mr-3 text-purple-500"></i>
+                                        <i className="fas fa-palette mr-3 text-purple-400"></i>
                                         Your preferred learning style (Visual, Auditory, or Kinesthetic)
                                     </li>
                                     <li className="flex items-center">
-                                        <i className="fas fa-wrench mr-3 text-green-500"></i>
+                                        <i className="fas fa-wrench mr-3 text-green-400"></i>
                                         How we can best support your learning needs
                                     </li>
                                     <li className="flex items-center">
-                                        <i className="fas fa-star mr-3 text-yellow-500"></i>
+                                        <i className="fas fa-star mr-3 text-yellow-400"></i>
                                         Which study tools and features to recommend for you
                                     </li>
                                 </ul>
                             </div>
 
-                            <div className="text-center text-sm text-gray-600 mb-6">
+                            <div className="text-center text-sm text-gray-300 mb-6">
                                 <p>This will take about 3-5 minutes. Answer honestly - there are no wrong answers!</p>
                             </div>
 
                             <button
                                 onClick={() => setShowIntro(false)}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                                className="w-full card-gradient-blue text-white font-bold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
                             >
                                 Start Quiz <i className="fas fa-arrow-right ml-2"></i>
                             </button>
@@ -382,28 +429,28 @@
 
             if (showResults && profile) {
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+                    <div className="min-h-screen p-4">
                         <div className="max-w-4xl mx-auto py-8">
-                            <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+                            <div className="results-card rounded-2xl shadow-2xl p-8 mb-6">
                                 <div className="text-center mb-8">
-                                    <i className="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
-                                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Your Learning Profile is Ready!</h1>
-                                    <p className="text-gray-600">We've personalized your experience based on your responses</p>
+                                    <i className="fas fa-check-circle text-6xl text-green-400 mb-4"></i>
+                                    <h1 className="text-3xl font-bold text-white mb-2">Your Learning Profile is Ready!</h1>
+                                    <p className="text-gray-300">We've personalized your experience based on your responses</p>
                                 </div>
 
                                 <div className="mb-8">
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                                        <i className={`fas ${getStyleIcon(profile.learningStyle)} mr-3 text-blue-600`}></i>
+                                    <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+                                        <i className={`fas ${getStyleIcon(profile.learningStyle)} mr-3 text-blue-400`}></i>
                                         Your Learning Style: {profile.learningStyle.charAt(0).toUpperCase() + profile.learningStyle.slice(1)}
                                     </h2>
-                                    <p className="text-gray-700 mb-4">{getStyleDescription(profile.learningStyle)}</p>
+                                    <p className="text-gray-200 mb-4">{getStyleDescription(profile.learningStyle)}</p>
 
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         {Object.entries(profile.styleScores).map(([style, score]) => (
-                                            <div key={style} className="bg-gray-50 rounded-lg p-4 text-center">
-                                                <i className={`fas ${getStyleIcon(style)} text-2xl mb-2 ${profile.learningStyle === style ? 'text-blue-600' : 'text-gray-400'}`}></i>
-                                                <div className="font-semibold text-gray-800 capitalize">{style}</div>
-                                                <div className="text-sm text-gray-600">Score: {score}</div>
+                                            <div key={style} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 text-center">
+                                                <i className={`fas ${getStyleIcon(style)} text-2xl mb-2 ${profile.learningStyle === style ? 'text-blue-400' : 'text-gray-400'}`}></i>
+                                                <div className="font-semibold text-white capitalize">{style}</div>
+                                                <div className="text-sm text-gray-300">Score: {score}</div>
                                             </div>
                                         ))}
                                     </div>
@@ -411,17 +458,17 @@
 
                                 {profile.challenges && profile.challenges.length > 0 && (
                                     <div className="mb-8">
-                                        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                                            <i className="fas fa-hands-helping mr-3 text-purple-600"></i>
+                                        <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+                                            <i className="fas fa-hands-helping mr-3 text-purple-400"></i>
                                             Personalized Support
                                         </h2>
-                                        <p className="text-gray-700 mb-4">We'll customize your experience to help with:</p>
+                                        <p className="text-gray-200 mb-4">We'll customize your experience to help with:</p>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {profile.challenges.map((challenge, index) => (
-                                                <div key={index} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                                <div key={index} className="bg-purple-500/20 border border-purple-400/40 rounded-lg p-4 backdrop-blur-sm">
                                                     <div className="flex items-center justify-between">
-                                                        <span className="font-semibold text-purple-900">{getChallengeDescription(challenge)}</span>
-                                                        <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
+                                                        <span className="font-semibold text-white">{getChallengeDescription(challenge)}</span>
+                                                        <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full">
                                                             {challenge.level}
                                                         </span>
                                                     </div>
@@ -431,22 +478,22 @@
                                     </div>
                                 )}
 
-                                <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
-                                    <h3 className="font-semibold text-green-900 mb-3 flex items-center">
+                                <div className="bg-green-500/20 border border-green-400/40 rounded-lg p-6 mb-6 backdrop-blur-sm">
+                                    <h3 className="font-semibold text-white mb-3 flex items-center">
                                         <i className="fas fa-sparkles mr-2"></i>
                                         What's Next?
                                     </h3>
-                                    <ul className="text-sm text-green-800 space-y-2">
+                                    <ul className="text-sm text-green-100 space-y-2">
                                         <li className="flex items-start">
-                                            <i className="fas fa-check mr-2 mt-1 text-green-600"></i>
+                                            <i className="fas fa-check mr-2 mt-1 text-green-400"></i>
                                             <span>You'll see <strong>"Recommended"</strong> badges on study modes that match your learning style</span>
                                         </li>
                                         <li className="flex items-start">
-                                            <i className="fas fa-check mr-2 mt-1 text-green-600"></i>
+                                            <i className="fas fa-check mr-2 mt-1 text-green-400"></i>
                                             <span>Your study interface will be optimized based on your needs</span>
                                         </li>
                                         <li className="flex items-start">
-                                            <i className="fas fa-check mr-2 mt-1 text-green-600"></i>
+                                            <i className="fas fa-check mr-2 mt-1 text-green-400"></i>
                                             <span>You can retake this quiz anytime from your Settings</span>
                                         </li>
                                     </ul>
@@ -458,14 +505,14 @@
                                             if (onComplete) onComplete(profile);
                                             else window.location.href = '/dashboard.html';
                                         }}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                                        className="flex-1 card-gradient-blue text-white font-bold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
                                     >
                                         <i className="fas fa-home mr-2"></i>
                                         Go to Dashboard
                                     </button>
                                     <button
                                         onClick={() => window.location.href = '/settings.html'}
-                                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200"
+                                        className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
                                     >
                                         <i className="fas fa-cog mr-2"></i>
                                         View Settings
@@ -481,40 +528,40 @@
             const progress = ((currentQuestion + 1) / QUIZ_QUESTIONS.length) * 100;
 
             return (
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+                <div className="min-h-screen p-4">
                     <div className="max-w-3xl mx-auto py-8">
                         <div className="mb-6">
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-sm font-semibold text-gray-700">
+                                <span className="text-sm font-semibold text-white">
                                     Question {currentQuestion + 1} of {QUIZ_QUESTIONS.length}
                                 </span>
-                                <span className="text-sm text-gray-600">{Math.round(progress)}% Complete</span>
+                                <span className="text-sm text-gray-300">{Math.round(progress)}% Complete</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-white/10 rounded-full h-2">
                                 <div
-                                    className="progress-bar bg-blue-600 h-2 rounded-full"
+                                    className="progress-bar h-2 rounded-full"
                                     style={{ width: `${progress}%` }}
                                 ></div>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-lg p-8 quiz-card">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-6">{question.question}</h2>
+                        <div className="quiz-card rounded-2xl shadow-2xl p-8">
+                            <h2 className="text-2xl font-bold text-white mb-6">{question.question}</h2>
 
                             <div className="space-y-3">
                                 {question.options.map((option, index) => (
                                     <div
                                         key={index}
                                         onClick={() => handleAnswer(question.id, option.value, option.weight, question.category)}
-                                        className={`option-card border-2 border-gray-200 rounded-lg p-4 ${
+                                        className={`option-card rounded-xl p-4 ${
                                             answers[question.id]?.value === option.value ? 'selected' : ''
                                         }`}
                                     >
                                         <div className="flex items-center">
-                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4">
-                                                <span className="font-semibold text-gray-700">{String.fromCharCode(65 + index)}</span>
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-4">
+                                                <span className="font-semibold text-white">{String.fromCharCode(65 + index)}</span>
                                             </div>
-                                            <span className="text-gray-800">{option.text}</span>
+                                            <span className="text-white">{option.text}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -523,7 +570,7 @@
                             {currentQuestion > 0 && (
                                 <button
                                     onClick={() => setCurrentQuestion(currentQuestion - 1)}
-                                    className="mt-6 text-gray-600 hover:text-gray-800 font-semibold"
+                                    className="mt-6 text-gray-300 hover:text-white font-semibold transition"
                                 >
                                     <i className="fas fa-arrow-left mr-2"></i>
                                     Previous Question

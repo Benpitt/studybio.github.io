@@ -355,6 +355,99 @@ function getTTSManager() {
     return ttsManager;
 }
 
+// Apply personalization to the page
+function applyPersonalization() {
+    const settings = getPersonalizedSettings();
+    if (!settings) return;
+
+    const style = document.createElement('style');
+    style.id = 'personalization-styles';
+
+    let css = '';
+
+    // Larger fonts for reading challenges
+    if (settings.largerFonts) {
+        css += `
+            body { font-size: 18px !important; }
+            .flashcard-text, .question-text, .answer-text {
+                font-size: 1.25em !important;
+                line-height: 1.6 !important;
+            }
+            p { font-size: 1.1em !important; }
+            h1 { font-size: 2.5em !important; }
+            h2 { font-size: 2em !important; }
+            h3 { font-size: 1.75em !important; }
+        `;
+    }
+
+    // Visual enhancements for visual learners
+    if (settings.showVisualAids) {
+        css += `
+            .quiz-option, .flashcard, .answer-choice {
+                border-left: 4px solid transparent;
+                transition: all 0.3s ease;
+            }
+            .quiz-option:nth-child(1) { border-left-color: #ef4444; }
+            .quiz-option:nth-child(2) { border-left-color: #3b82f6; }
+            .quiz-option:nth-child(3) { border-left-color: #10b981; }
+            .quiz-option:nth-child(4) { border-left-color: #f59e0b; }
+            .quiz-option:nth-child(5) { border-left-color: #a855f7; }
+
+            .correct-answer {
+                background: linear-gradient(90deg, rgba(16, 185, 129, 0.2) 0%, transparent 100%) !important;
+                border-left-color: #10b981 !important;
+                border-left-width: 6px !important;
+            }
+            .incorrect-answer {
+                background: linear-gradient(90deg, rgba(239, 68, 68, 0.2) 0%, transparent 100%) !important;
+                border-left-color: #ef4444 !important;
+                border-left-width: 6px !important;
+            }
+        `;
+    }
+
+    // Distraction-free mode
+    if (settings.distractionFreeMode) {
+        css += `
+            @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } }
+            @keyframes gradient-flow { 0%, 100% { background-position: 0% 50%; } }
+            @keyframes pulse { 0%, 100% { opacity: 1; } }
+            .animate-slide-in { animation: none !important; }
+            .shimmer { display: none !important; }
+        `;
+    }
+
+    // Reduce animations
+    if (settings.reduceAnimations) {
+        css += `
+            *, *::before, *::after {
+                animation-duration: 0.01s !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01s !important;
+            }
+        `;
+    }
+
+    style.textContent = css;
+
+    // Remove old personalization styles if they exist
+    const oldStyle = document.getElementById('personalization-styles');
+    if (oldStyle) {
+        oldStyle.remove();
+    }
+
+    document.head.appendChild(style);
+}
+
+// Apply personalization when the page loads
+if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyPersonalization);
+    } else {
+        applyPersonalization();
+    }
+}
+
 // Export functions for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
@@ -373,6 +466,7 @@ if (typeof module !== 'undefined' && module.exports) {
         getChallengeDescription,
         getLearningStyleInfo,
         getTTSManager,
-        TextToSpeechManager
+        TextToSpeechManager,
+        applyPersonalization
     };
 }

@@ -343,6 +343,26 @@
                         }
                     }
 
+                    // Load Memory Games progress
+                    const memoryGamesDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'memoryGamesProgress'));
+                    if (memoryGamesDoc.exists()) {
+                        const data = memoryGamesDoc.data();
+                        if (data.progress) {
+                            localStorage.setItem('memoryGamesProgress', JSON.stringify(data.progress));
+                            console.log('✅ Memory Games progress loaded from Firebase');
+                        }
+                    }
+
+                    // Load SAT progress
+                    const satProgressDoc = await getDoc(doc(this.db, 'users', this.userId, 'data', 'satProgress'));
+                    if (satProgressDoc.exists()) {
+                        const data = satProgressDoc.data();
+                        if (data.progress) {
+                            localStorage.setItem('satProgress', JSON.stringify(data.progress));
+                            console.log('✅ SAT progress loaded from Firebase');
+                        }
+                    }
+
                     console.log('✅ All data loaded from Firebase!');
                     return true;
                 } catch (error) {
@@ -406,6 +426,22 @@
                 console.log('✅ BKT mastery scores synced to Firebase');
             }
 
+            async syncMemoryGamesProgress() {
+                const progress = JSON.parse(localStorage.getItem('memoryGamesProgress') || '{}');
+                if (Object.keys(progress).length === 0) return;
+                const progressRef = doc(this.db, 'users', this.userId, 'data', 'memoryGamesProgress');
+                await setDoc(progressRef, { progress: progress, syncedAt: serverTimestamp() });
+                console.log('✅ Memory Games progress synced to Firebase');
+            }
+
+            async syncSATProgress() {
+                const progress = JSON.parse(localStorage.getItem('satProgress') || '{}');
+                if (Object.keys(progress).length === 0) return;
+                const progressRef = doc(this.db, 'users', this.userId, 'data', 'satProgress');
+                await setDoc(progressRef, { progress: progress, syncedAt: serverTimestamp() });
+                console.log('✅ SAT progress synced to Firebase');
+            }
+
             async syncAll() {
                 console.log('🔄 Syncing to Firebase...');
                 try {
@@ -415,6 +451,8 @@
                     await this.syncQuizProgress();
                     await this.syncTopicStats();
                     await this.syncBKTMastery();
+                    await this.syncMemoryGamesProgress();
+                    await this.syncSATProgress();
                     localStorage.setItem('lastSync', new Date().toISOString());
                     console.log('✅ Full sync to Firebase complete!');
                     return true;
@@ -541,6 +579,8 @@
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
             const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
+            const memoryGames = JSON.parse(localStorage.getItem('memoryGamesProgress') || '{}');
+            const satProgress = JSON.parse(localStorage.getItem('satProgress') || '{}');
 
             document.getElementById('streak').textContent = streak;
             document.getElementById('stat-streak').textContent = streak;
@@ -562,16 +602,38 @@
             let totalTests = 0;
             let totalCorrect = 0;
             let totalQuestions = 0;
-            
+
+            // Include quiz stats
             Object.values(topicStats).forEach(stat => {
                 if (stat.total > 0) totalTests++;
                 totalCorrect += stat.correct || 0;
                 totalQuestions += stat.total || 0;
             });
-            
+
+            // Include Memory Games
+            const memoryGamesPlayed = memoryGames.totalGames || 0;
+            totalTests += memoryGamesPlayed;
+
+            // Add Memory Games accuracy (if available)
+            if (memoryGames.byGame) {
+                Object.values(memoryGames.byGame).forEach(game => {
+                    if (game.totalQuestions > 0) {
+                        totalCorrect += game.totalCorrect || 0;
+                        totalQuestions += game.totalQuestions || 0;
+                    }
+                });
+            }
+
+            // Include SAT Practice
+            if (satProgress.totalQuestions) {
+                totalTests += Math.ceil(satProgress.totalQuestions / 10); // Count every 10 questions as 1 "test"
+                totalCorrect += satProgress.totalCorrect || 0;
+                totalQuestions += satProgress.totalQuestions || 0;
+            }
+
             document.getElementById('stat-quizzes').textContent = totalTests;
-            document.getElementById('stat-accuracy').textContent = totalQuestions > 0 
-                ? Math.round((totalCorrect / totalQuestions) * 100) 
+            document.getElementById('stat-accuracy').textContent = totalQuestions > 0
+                ? Math.round((totalCorrect / totalQuestions) * 100)
                 : 0;
 
             const bioStats = topicStats['Biological Molecules'] || { correct: 0, total: 0 };
@@ -604,13 +666,16 @@
                 <p class="text-white/60 text-xs mt-2">${totalCards} / 20 cards</p>
             `;
 
-            loadAchievements(streak, totalCards, totalTests, totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0);
+            loadAchievements(streak, totalCards, totalTests, totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0, memoryGamesPlayed, satProgress.totalQuestions || 0);
         }
 
-        function loadAchievements(streak, cards, quizzes, accuracy) {
+        function loadAchievements(streak, cards, quizzes, accuracy, memoryGames, satQuestions) {
             const achievements = [];
             const container = document.getElementById('achievements-list');
-            
+
+            memoryGames = memoryGames || 0;
+            satQuestions = satQuestions || 0;
+
             if (streak >= 1) achievements.push({ emoji: '🔥', name: 'First Day', desc: 'Study streak started!' });
             if (streak >= 7) achievements.push({ emoji: '📅', name: 'Week Warrior', desc: '7 day streak!' });
             if (streak >= 30) achievements.push({ emoji: '📆', name: 'Monthly Master', desc: '30 day streak!' });
@@ -619,6 +684,10 @@
             if (cards >= 100) achievements.push({ emoji: '💯', name: 'Century Club', desc: '100+ cards!' });
             if (quizzes >= 1) achievements.push({ emoji: '📝', name: 'Test Taker', desc: 'First quiz complete' });
             if (quizzes >= 5) achievements.push({ emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes done' });
+            if (memoryGames >= 1) achievements.push({ emoji: '🎮', name: 'Game On!', desc: 'First memory game' });
+            if (memoryGames >= 10) achievements.push({ emoji: '🕹️', name: 'Gamer', desc: '10+ games played' });
+            if (satQuestions >= 1) achievements.push({ emoji: '📝', name: 'SAT Starter', desc: 'First SAT question' });
+            if (satQuestions >= 25) achievements.push({ emoji: '📚', name: 'SAT Studier', desc: '25+ questions' });
             if (accuracy >= 90) achievements.push({ emoji: '⭐', name: 'Perfectionist', desc: '90%+ accuracy' });
             if (accuracy >= 80) achievements.push({ emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy' });
             

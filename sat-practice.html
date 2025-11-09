@@ -742,6 +742,75 @@
                 });
             };
 
+            const saveSATProgress = (questionData, userAnswer, isCorrect) => {
+                // Get existing progress
+                const progress = JSON.parse(localStorage.getItem('satProgress') || '{}');
+
+                // Initialize if needed
+                if (!progress.totalTests) progress.totalTests = 0;
+                if (!progress.totalQuestions) progress.totalQuestions = 0;
+                if (!progress.totalCorrect) progress.totalCorrect = 0;
+                if (!progress.byTopic) progress.byTopic = {};
+
+                // Determine topic from question
+                const topic = questionData.topic?.toLowerCase() || getDomainTopic(questionData.domain, questionData.module);
+
+                // Initialize topic if needed
+                if (!progress.byTopic[topic]) {
+                    progress.byTopic[topic] = {
+                        attempted: 0,
+                        correct: 0,
+                        accuracy: 0
+                    };
+                }
+
+                // Update stats
+                progress.totalQuestions++;
+                progress.byTopic[topic].attempted++;
+
+                if (isCorrect) {
+                    progress.totalCorrect++;
+                    progress.byTopic[topic].correct++;
+                }
+
+                // Calculate accuracy
+                progress.byTopic[topic].accuracy = Math.round(
+                    (progress.byTopic[topic].correct / progress.byTopic[topic].attempted) * 100
+                );
+
+                progress.lastPracticed = new Date().toISOString();
+
+                // Save to localStorage
+                localStorage.setItem('satProgress', JSON.stringify(progress));
+
+                // Update study streak
+                updateStudyStreak();
+
+                console.log(`✅ SAT progress saved - Topic: ${topic}, Correct: ${isCorrect}`);
+            };
+
+            const updateStudyStreak = () => {
+                const today = new Date().toDateString();
+                const lastVisit = localStorage.getItem('lastVisit');
+
+                if (lastVisit !== today) {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+
+                    let currentStreak = parseInt(localStorage.getItem('studyStreak') || '0');
+
+                    if (lastVisit === yesterday.toDateString()) {
+                        currentStreak++;
+                    } else if (!lastVisit || lastVisit < yesterday.toDateString()) {
+                        currentStreak = 1;
+                    }
+
+                    localStorage.setItem('studyStreak', currentStreak.toString());
+                    localStorage.setItem('lastVisit', today);
+                    console.log(`🔥 Study streak updated: ${currentStreak} days`);
+                }
+            };
+
             const handleNext = () => {
                 setIsSubmitted(false);
                 if (currentQuestionIndex < testQuestions.length - 1) {
@@ -957,7 +1026,13 @@
 
                             {!isSubmitted && userAnswers[currentQuestion.id] && (
                                 <button
-                                    onClick={() => setIsSubmitted(true)}
+                                    onClick={() => {
+                                        setIsSubmitted(true);
+                                        // Save progress when answer is checked
+                                        const userAns = userAnswers[currentQuestion.id];
+                                        const isCorrect = userAns === correctAnswer;
+                                        saveSATProgress(currentQuestion, userAns, isCorrect);
+                                    }}
                                     className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:opacity-90 transition-all mb-6"
                                 >
                                     Check Answer

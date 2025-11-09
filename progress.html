@@ -150,6 +150,30 @@
 
                 <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.7s;">
                     <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <span>🎮</span>
+                        <span class="ml-2">Memory Games</span>
+                    </h2>
+                    <div id="memory-games-stats"></div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.75s;">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <span>📝</span>
+                        <span class="ml-2">SAT Practice</span>
+                    </h2>
+                    <div id="sat-stats"></div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.77s;">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <span>🧠</span>
+                        <span class="ml-2">BKT Mastery</span>
+                    </h2>
+                    <div id="bkt-mastery-stats"></div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 animate-slide-in" style="animation-delay: 0.8s;">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
                         <span>🏆</span>
                         <span class="ml-2">Achievements Unlocked</span>
                     </h2>
@@ -265,6 +289,26 @@
                     }
                 }
 
+                // Load Memory Games progress
+                const memoryGamesDoc = await getDoc(doc(db, 'users', userId, 'data', 'memoryGamesProgress'));
+                if (memoryGamesDoc.exists()) {
+                    const data = memoryGamesDoc.data();
+                    if (data.progress) {
+                        localStorage.setItem('memoryGamesProgress', JSON.stringify(data.progress));
+                        console.log('✅ Memory Games progress loaded from Firebase');
+                    }
+                }
+
+                // Load SAT progress
+                const satProgressDoc = await getDoc(doc(db, 'users', userId, 'data', 'satProgress'));
+                if (satProgressDoc.exists()) {
+                    const data = satProgressDoc.data();
+                    if (data.progress) {
+                        localStorage.setItem('satProgress', JSON.stringify(data.progress));
+                        console.log('✅ SAT progress loaded from Firebase');
+                    }
+                }
+
                 console.log('✅ All progress data loaded from Firebase!');
                 return true;
             } catch (error) {
@@ -296,6 +340,8 @@
             const cardHistory = JSON.parse(localStorage.getItem('cardHistory') || '{}');
             const customCards = JSON.parse(localStorage.getItem('customFlashcards') || '[]');
             const topicStats = JSON.parse(localStorage.getItem('topicStats') || '{}');
+            const memoryGames = JSON.parse(localStorage.getItem('memoryGamesProgress') || '{}');
+            const satProgress = JSON.parse(localStorage.getItem('satProgress') || '{}');
 
             document.getElementById('total-streak').textContent = streak;
 
@@ -307,21 +353,37 @@
             let totalCorrect = 0;
             let totalQuestions = 0;
 
+            // Include quiz stats
             Object.values(topicStats).forEach(stat => {
                 if (stat.total > 0) totalTests++;
                 totalCorrect += stat.correct || 0;
                 totalQuestions += stat.total || 0;
             });
 
+            // Include Memory Games stats
+            const memoryGamesPlayed = memoryGames.totalGames || 0;
+
+            // Include SAT Practice stats
+            const satQuestionsAnswered = satProgress.totalQuestions || 0;
+            const satCorrect = satProgress.totalCorrect || 0;
+
+            // Update total tests to include Memory Games and SAT questions
+            totalTests += memoryGamesPlayed;
+            totalQuestions += satQuestionsAnswered;
+            totalCorrect += satCorrect;
+
             document.getElementById('total-quizzes').textContent = totalTests;
             document.getElementById('avg-accuracy').textContent = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
             generateCalendar();
-            generateTopicPerformance(topicStats);
-            generateAchievements(streak, totalCards, totalTests, totalCorrect, totalQuestions);
+            generateTopicPerformance(topicStats, satProgress);
+            generateAchievements(streak, totalCards, totalTests, totalCorrect, totalQuestions, memoryGamesPlayed, satQuestionsAnswered);
             generateInsights(streak, totalCards, totalTests);
             generateWeeklySummary(totalCards, totalTests);
             generateMilestone(totalCards, totalTests, streak);
+            generateMemoryGamesStats(memoryGames);
+            generateSATStats(satProgress);
+            generateBKTMasteryStats();
         }
 
         function generateCalendar() {
@@ -404,48 +466,74 @@
             }
         }
 
-        function generateTopicPerformance(topicStats) {
+        function generateTopicPerformance(topicStats, satProgress) {
             const container = document.getElementById('topic-performance');
-            
-            if (Object.keys(topicStats).length === 0) {
-                container.innerHTML = '<p class="text-white/60 text-center py-8">Complete a quiz to see topic mastery!</p>';
-                return;
-            }
-            
-            // Get actual topics from stats
-            const topics = Object.keys(topicStats).filter(t => topicStats[t] && topicStats[t].total > 0);
-            
-            if (topics.length === 0) {
-                container.innerHTML = '<p class="text-white/60 text-center py-8">Complete a quiz to see topic mastery!</p>';
-                return;
-            }
-            
-            const colors = ['blue', 'green', 'yellow', 'purple', 'pink', 'orange', 'cyan', 'red', 'indigo'];
-            
-            topics.forEach((topicName, index) => {
+            container.innerHTML = '';
+
+            const topics = [];
+
+            // Add quiz topics
+            Object.keys(topicStats).forEach(topicName => {
                 const stats = topicStats[topicName];
-                const percentage = Math.round((stats.correct / stats.total) * 100);
+                if (stats && stats.total > 0) {
+                    topics.push({
+                        name: topicName,
+                        correct: stats.correct,
+                        total: stats.total,
+                        percentage: Math.round((stats.correct / stats.total) * 100),
+                        source: 'Quiz'
+                    });
+                }
+            });
+
+            // Add SAT topics
+            if (satProgress && satProgress.byTopic) {
+                Object.keys(satProgress.byTopic).forEach(topicName => {
+                    const stats = satProgress.byTopic[topicName];
+                    if (stats && stats.attempted > 0) {
+                        topics.push({
+                            name: `SAT: ${topicName}`,
+                            correct: stats.correct,
+                            total: stats.attempted,
+                            percentage: stats.accuracy,
+                            source: 'SAT'
+                        });
+                    }
+                });
+            }
+
+            if (topics.length === 0) {
+                container.innerHTML = '<p class="text-white/60 text-center py-8">Complete a quiz or SAT practice to see topic mastery!</p>';
+                return;
+            }
+
+            const colors = ['blue', 'green', 'yellow', 'purple', 'pink', 'orange', 'cyan', 'red', 'indigo'];
+
+            topics.forEach((topic, index) => {
                 const color = colors[index % colors.length];
-                
+
                 const div = document.createElement('div');
                 div.className = 'mb-4';
                 div.innerHTML = `
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-white font-semibold">${topicName}</span>
-                        <span class="text-white/80 text-sm">${stats.correct}/${stats.total} (${percentage}%)</span>
+                        <span class="text-white font-semibold">${topic.name}</span>
+                        <span class="text-white/80 text-sm">${topic.correct}/${topic.total} (${topic.percentage}%)</span>
                     </div>
                     <div class="bg-white/20 rounded-full h-3 overflow-hidden">
-                        <div class="bg-gradient-to-r from-${color}-400 to-${color}-600 h-3 rounded-full animate-fill" style="width: ${percentage}%"></div>
+                        <div class="bg-gradient-to-r from-${color}-400 to-${color}-600 h-3 rounded-full animate-fill" style="width: ${topic.percentage}%"></div>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function generateAchievements(streak, cards, quizzes, correct, total) {
+        function generateAchievements(streak, cards, quizzes, correct, total, memoryGames, satQuestions) {
             const container = document.getElementById('achievements-grid');
             const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-            
+
+            memoryGames = memoryGames || 0;
+            satQuestions = satQuestions || 0;
+
             // Define ALL achievements with unlock requirements
             const allAchievements = [
                 // Streak achievements
@@ -455,7 +543,7 @@
                 { emoji: '💪', name: 'Fortnight Fighter', desc: '14 day streak', unlocked: streak >= 14, requirement: '14 day streak' },
                 { emoji: '📆', name: 'Monthly Master', desc: '30 day streak', unlocked: streak >= 30, requirement: '30 day streak' },
                 { emoji: '👑', name: 'Century King', desc: '100 day streak', unlocked: streak >= 100, requirement: '100 day streak' },
-                
+
                 // Card review achievements
                 { emoji: '🎴', name: 'Getting Started', desc: '10+ cards reviewed', unlocked: cards >= 10, requirement: 'Review 10 cards' },
                 { emoji: '📚', name: 'Half Century', desc: '50+ cards reviewed', unlocked: cards >= 50, requirement: 'Review 50 cards' },
@@ -463,14 +551,26 @@
                 { emoji: '🌟', name: 'Super Studier', desc: '250+ cards', unlocked: cards >= 250, requirement: 'Review 250 cards' },
                 { emoji: '⭐', name: 'Master Reviewer', desc: '500+ cards', unlocked: cards >= 500, requirement: 'Review 500 cards' },
                 { emoji: '💎', name: 'Legend', desc: '1000+ cards', unlocked: cards >= 1000, requirement: 'Review 1000 cards' },
-                
+
                 // Quiz achievements
                 { emoji: '📝', name: 'Test Taker', desc: 'First quiz complete', unlocked: quizzes >= 1, requirement: 'Complete 1 quiz' },
                 { emoji: '🎯', name: 'Quiz Master', desc: '5+ quizzes', unlocked: quizzes >= 5, requirement: 'Complete 5 quizzes' },
                 { emoji: '🏆', name: 'Quiz Champion', desc: '10+ quizzes', unlocked: quizzes >= 10, requirement: 'Complete 10 quizzes' },
                 { emoji: '👨‍🎓', name: 'Quiz Expert', desc: '25+ quizzes', unlocked: quizzes >= 25, requirement: 'Complete 25 quizzes' },
                 { emoji: '🎓', name: 'Quiz Legend', desc: '50+ quizzes', unlocked: quizzes >= 50, requirement: 'Complete 50 quizzes' },
-                
+
+                // Memory Games achievements
+                { emoji: '🎮', name: 'Game On!', desc: 'First memory game', unlocked: memoryGames >= 1, requirement: 'Play 1 game' },
+                { emoji: '🕹️', name: 'Gamer', desc: '10+ games played', unlocked: memoryGames >= 10, requirement: 'Play 10 games' },
+                { emoji: '🏅', name: 'Game Master', desc: '25+ games played', unlocked: memoryGames >= 25, requirement: 'Play 25 games' },
+                { emoji: '👾', name: 'Game Legend', desc: '50+ games played', unlocked: memoryGames >= 50, requirement: 'Play 50 games' },
+
+                // SAT Practice achievements
+                { emoji: '📝', name: 'SAT Starter', desc: 'First SAT question', unlocked: satQuestions >= 1, requirement: 'Answer 1 question' },
+                { emoji: '📚', name: 'SAT Studier', desc: '25+ SAT questions', unlocked: satQuestions >= 25, requirement: 'Answer 25 questions' },
+                { emoji: '🎯', name: 'SAT Pro', desc: '50+ SAT questions', unlocked: satQuestions >= 50, requirement: 'Answer 50 questions' },
+                { emoji: '🏆', name: 'SAT Expert', desc: '100+ SAT questions', unlocked: satQuestions >= 100, requirement: 'Answer 100 questions' },
+
                 // Accuracy achievements
                 { emoji: '🎯', name: 'Good Start', desc: '70%+ accuracy', unlocked: accuracy >= 70, requirement: 'Get 70% accuracy' },
                 { emoji: '🌟', name: 'High Achiever', desc: '80%+ accuracy', unlocked: accuracy >= 80, requirement: 'Get 80% accuracy' },
@@ -564,7 +664,7 @@
         function generateMilestone(cards, quizzes, streak) {
             const container = document.getElementById('milestone-content');
             let milestone = { emoji: '🎯', name: 'Get Started', desc: 'Complete your first activity', progress: 0, total: 1 };
-            
+
             if (cards < 100) {
                 milestone = { emoji: '💯', name: 'Century Club', desc: '100 cards reviewed', progress: cards, total: 100 };
             } else if (quizzes < 10) {
@@ -574,7 +674,7 @@
             } else {
                 milestone = { emoji: '👑', name: 'Legendary', desc: "You've mastered it all!", progress: 100, total: 100 };
             }
-            
+
             const percentage = Math.round((milestone.progress / milestone.total) * 100);
             container.innerHTML = `
                 <div class="text-center mb-4">
@@ -587,6 +687,144 @@
                 </div>
                 <div class="text-white text-sm text-center">${milestone.progress} / ${milestone.total}</div>
             `;
+        }
+
+        function generateMemoryGamesStats(memoryGames) {
+            const container = document.getElementById('memory-games-stats');
+
+            if (!memoryGames || !memoryGames.totalGames || memoryGames.totalGames === 0) {
+                container.innerHTML = '<p class="text-white/60 text-center py-8">Play memory games to see your stats!</p>';
+                return;
+            }
+
+            const gameNames = {
+                'memory-match': 'Memory Match',
+                'type-race': 'Type Race',
+                'match-madness': 'Match Madness',
+                'mc-arena': 'Quiz Arena'
+            };
+
+            const gameIcons = {
+                'memory-match': '🎴',
+                'type-race': '⌨️',
+                'match-madness': '🎯',
+                'mc-arena': '🎲'
+            };
+
+            let html = `<div class="mb-4"><p class="text-white/80 text-sm">Total Games Played: <span class="font-bold text-white">${memoryGames.totalGames}</span></p></div>`;
+
+            if (memoryGames.byGame) {
+                html += '<div class="grid grid-cols-2 gap-3">';
+
+                Object.keys(memoryGames.byGame).forEach(gameType => {
+                    const game = memoryGames.byGame[gameType];
+                    if (game.played > 0) {
+                        html += `
+                            <div class="bg-white/10 rounded-lg p-3">
+                                <div class="text-2xl mb-1">${gameIcons[gameType] || '🎮'}</div>
+                                <div class="text-white font-semibold text-sm mb-1">${gameNames[gameType] || gameType}</div>
+                                <div class="text-white/70 text-xs">Played: ${game.played}</div>
+                                ${game.bestScore > 0 ? `<div class="text-white/70 text-xs">Best: ${game.bestScore}${gameType === 'memory-match' ? '%' : 'pts'}</div>` : ''}
+                                ${game.bestAccuracy > 0 ? `<div class="text-white/70 text-xs">Accuracy: ${game.bestAccuracy}%</div>` : ''}
+                            </div>
+                        `;
+                    }
+                });
+
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function generateSATStats(satProgress) {
+            const container = document.getElementById('sat-stats');
+
+            if (!satProgress || !satProgress.totalQuestions || satProgress.totalQuestions === 0) {
+                container.innerHTML = '<p class="text-white/60 text-center py-8">Practice SAT questions to see your stats!</p>';
+                return;
+            }
+
+            const overallAccuracy = Math.round((satProgress.totalCorrect / satProgress.totalQuestions) * 100);
+
+            let html = `
+                <div class="bg-white/10 rounded-lg p-4 mb-4">
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-3xl font-bold text-white">${satProgress.totalQuestions}</div>
+                            <div class="text-white/70 text-sm">Questions</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-white">${overallAccuracy}%</div>
+                            <div class="text-white/70 text-sm">Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (satProgress.byTopic && Object.keys(satProgress.byTopic).length > 0) {
+                html += '<div class="space-y-3">';
+
+                Object.keys(satProgress.byTopic).forEach(topic => {
+                    const stats = satProgress.byTopic[topic];
+                    if (stats.attempted > 0) {
+                        html += `
+                            <div class="bg-white/10 rounded-lg p-3">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-white font-semibold text-sm capitalize">${topic}</span>
+                                    <span class="text-white/80 text-xs">${stats.correct}/${stats.attempted}</span>
+                                </div>
+                                <div class="bg-white/20 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full" style="width: ${stats.accuracy}%"></div>
+                                </div>
+                                <div class="text-white/70 text-xs mt-1">${stats.accuracy}% accuracy</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function generateBKTMasteryStats() {
+            const container = document.getElementById('bkt-mastery-stats');
+            const bktMastery = JSON.parse(localStorage.getItem('bkt_mastery_scores') || '{}');
+
+            if (!bktMastery || Object.keys(bktMastery).length === 0) {
+                container.innerHTML = '<p class="text-white/60 text-center py-8">Use BKT Smart Study to see mastery scores!</p>';
+                return;
+            }
+
+            let html = '<div class="space-y-3">';
+
+            Object.keys(bktMastery).forEach(topic => {
+                const mastery = bktMastery[topic];
+                const masteryPercent = Math.round(mastery * 100);
+
+                // Determine color based on mastery level
+                let colorClass = 'from-red-400 to-red-600';
+                if (masteryPercent >= 80) colorClass = 'from-green-400 to-green-600';
+                else if (masteryPercent >= 60) colorClass = 'from-yellow-400 to-yellow-600';
+                else if (masteryPercent >= 40) colorClass = 'from-orange-400 to-orange-600';
+
+                html += `
+                    <div class="bg-white/10 rounded-lg p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-white font-semibold text-sm capitalize">${topic}</span>
+                            <span class="text-white/80 text-xs">${masteryPercent}%</span>
+                        </div>
+                        <div class="bg-white/20 rounded-full h-2">
+                            <div class="bg-gradient-to-r ${colorClass} h-2 rounded-full transition-all duration-500" style="width: ${masteryPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
         }
     </script>
     <!-- Dynamic Gradient System -->

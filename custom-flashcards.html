@@ -839,24 +839,7 @@
                                                     <h3 className="deck-title-dark">{deck.title}</h3>
                                                     <p className="deck-count-dark">📇 {deck.cards.length} cards</p>
 
-                                                    <div className="mb-4">
-                                                        <select onChange={(e) => e.target.value && addDeckToGroup(parseInt(e.target.value), deck.id)} className="group-select-dark">
-                                                            <option value="">Add to group...</option>
-                                                            {groups.map(g => (
-                                                                <option key={g.id} value={g.id}>{g.name}</option>
-                                                            ))}
-                                                        </select>
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {deckGroups.map(g => (
-                                                                <span key={g.id} className="group-badge">
-                                                                    📁 {g.name}
-                                                                    <button onClick={() => removeDeckFromGroup(g.id, deck.id)} style={{color: 'inherit', marginLeft: '4px'}}>×</button>
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-
-                                                    <button onClick={() => setMode('menu-d-' + deck.id)} className="btn-study">
+                                                    <button onClick={() => setMode('menu-d-' + deck.id)} className="btn-study" style={{marginTop: '16px'}}>
                                                         Study →
                                                     </button>
                                                 </div>

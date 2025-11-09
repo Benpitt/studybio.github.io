@@ -461,6 +461,7 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-to-main">Skip to main content</a>
     <script type="module" src="auth-guard.js"></script>
 
     <!-- Glowing orbs background -->
@@ -489,7 +490,20 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24" style="position: relative; z-index: 10;">
+    <!-- Breadcrumb -->
+    <div class="bg-black/20 backdrop-blur-sm border-b border-white/5" style="position: relative; z-index: 40;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="dashboard" class="text-white/60 hover:text-white transition-colors">Dashboard</a>
+                <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="text-white font-medium">Memory Games</span>
+            </nav>
+        </div>
+    </div>
+
+    <div id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24" style="position: relative; z-index: 10;">
         <!-- Header -->
         <div class="page-header">
             <div class="page-eyebrow">Interactive Learning</div>
@@ -606,13 +620,20 @@
 
             if (decks.length === 0) {
                 deckGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-                        <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
-                        <h3 style="font-size: 1.5rem; color: white; margin-bottom: 12px;">No Decks Found</h3>
-                        <p style="color: var(--muted); font-size: 1.1rem;">Create a flashcard deck first to play memory games</p>
-                        <a href="custom-flashcards" class="btn-play-again" style="display: inline-block; margin-top: 24px; text-decoration: none;">
-                            Create Your First Deck
-                        </a>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 80px 20px; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="font-size: 5rem; margin-bottom: 24px; animation: float 3s ease-in-out infinite;">🎮</div>
+                        <h3 style="font-size: 2rem; color: white; margin-bottom: 16px; font-weight: 700;">No Decks to Play With Yet</h3>
+                        <p style="color: var(--muted); font-size: 1.2rem; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                            Create your first flashcard deck to unlock fun memory games and boost your learning!
+                        </p>
+                        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                            <a href="custom-flashcards" class="btn-play-again" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; text-decoration: none; font-size: 1.1rem; font-weight: 600;">
+                                ✏️ Create Manually
+                            </a>
+                            <a href="ai-flashcards" class="btn-play-again" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; text-decoration: none; font-size: 1.1rem; font-weight: 600; background: linear-gradient(135deg, #a855f7, #ec4899);">
+                                🤖 Create with AI
+                            </a>
+                        </div>
                     </div>
                 `;
                 return;

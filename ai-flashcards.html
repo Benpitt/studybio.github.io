@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="loading-animations.css">
 </head>
 <body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500" style="background: linear-gradient(to bottom right, #111827, #1e3a8a, #581c87); min-height: 100vh;">
+    <a href="#main-content" class="skip-to-main">Skip to main content</a>
     <script src="toast-notifications.js"></script>
     <script type="module" src="auth-guard.js"></script>
     <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50">
@@ -38,7 +39,20 @@
         </div>
     </nav>
 
-    <div class="pt-24 p-4 pb-20">
+    <!-- Breadcrumb -->
+    <div class="bg-black/20 backdrop-blur-sm border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="dashboard" class="text-white/60 hover:text-white transition-colors">Dashboard</a>
+                <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="text-white font-medium">AI Generator</span>
+            </nav>
+        </div>
+    </div>
+
+    <div id="main-content" class="pt-24 p-4 pb-20">
         <div class="max-w-6xl mx-auto">
             <!-- Header -->
             <div class="text-center mb-8">

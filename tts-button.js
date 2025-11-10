@@ -48,7 +48,7 @@ class TTSButton {
                 border: none;
                 color: white;
                 padding: 8px 12px;
-                border-radius: 8px;
+                border-radius: 12px;
                 cursor: pointer;
                 font-size: 14px;
                 transition: all 0.2s ease;

@@ -81,7 +81,7 @@
         .apex-headline{
             font-size:clamp(3rem, 8vw, 7rem);
             font-weight:900;
-            line-height:1.05;
+            line-height:1.15;
             letter-spacing:-0.03em;
             margin:0 auto 32px;
             max-width:20ch;
@@ -89,6 +89,7 @@
             -webkit-background-clip:text;
             -webkit-text-fill-color:transparent;
             background-clip:text;
+            padding-bottom:0.1em;
         }
 
         .apex-subhead{
@@ -558,12 +559,20 @@
         }
 
         /* Typewriter effect */
+        #typewriter-text{
+            display:inline-block;
+            min-height:1.2em;
+            min-width:20ch;
+            text-align:left;
+        }
+
         .typewriter-cursor{
             display:inline-block;
             width:3px;
             margin-left:4px;
             background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
             animation:blink 1s step-end infinite;
+            vertical-align:baseline;
         }
 
         @keyframes blink{
@@ -1088,7 +1097,17 @@
     <!-- Typewriter Effect -->
     <script>
         (function(){
-            const phrases = [
+            // Fisher-Yates shuffle algorithm
+            function shuffleArray(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            const allPhrases = [
                 "curious minds",
                 "big thinkers",
                 "dreamers",
@@ -1137,9 +1156,11 @@
                 "learners who see the world differently",
                 "those who never stop learning",
                 "the ones still figuring it out",
-                "learners who don't fit the mold",
-                "every kind of learner."
+                "learners who don't fit the mold"
             ];
+
+            // Randomize and ensure "every kind of learner." is first
+            const phrases = ["every kind of learner.", ...shuffleArray(allPhrases)];
 
             const typewriterElement = document.getElementById('typewriter-text');
             let phraseIndex = 0;

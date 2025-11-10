@@ -1498,7 +1498,8 @@
             if (mode === 'speed') {
                 if (!speedActive) {
                     const maxScore = speedQuestions.length * 10;
-                    const percentage = Math.round((speedScore / maxScore) * 100);
+                    const correctCount = speedQuestions.length - speedMistakes.length;
+                    const accuracyPercentage = Math.round((correctCount / speedQuestions.length) * 100);
 
                     return (
                         <div className="min-h-screen">
@@ -1509,8 +1510,8 @@
                                         <div className="text-center mb-8">
                                             <div className="text-8xl mb-4">⚡</div>
                                             <h2 className="text-4xl font-bold mb-4 text-gray-900">Challenge Complete!</h2>
-                                            <p className="text-2xl text-gray-600 mb-2">Final Score: {speedScore} / {maxScore}</p>
-                                            <p className="text-xl text-gray-500 mb-4">{percentage}% • {speedQuestions.length - speedMistakes.length}/{speedQuestions.length} correct</p>
+                                            <p className="text-2xl text-gray-600 mb-2">Time Score: {speedScore} / {maxScore} points</p>
+                                            <p className="text-xl text-gray-500 mb-4">Accuracy: {accuracyPercentage}% • {correctCount}/{speedQuestions.length} correct</p>
                                         </div>
 
                                         {speedMistakes.length > 0 && (

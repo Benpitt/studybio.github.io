@@ -16,6 +16,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="learning-profile-utils.js"></script>
+    <script src="flashcard-storage.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -323,7 +324,7 @@
                         decks.push(doc.data());
                     });
                     if (decks.length > 0) {
-                        localStorage.setItem('flashcardDecks', JSON.stringify(decks));
+                        await window.flashcardStorage.saveAllDecks(decks);
                         console.log(`✅ Loaded ${decks.length} flashcard decks from Firebase`);
                     }
 

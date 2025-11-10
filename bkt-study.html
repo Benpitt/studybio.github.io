@@ -9,6 +9,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="flashcard-storage.js"></script>
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
     
@@ -258,7 +259,7 @@
 
                         if (firebaseDecks.length > 0) {
                             console.log(`✅ Loaded ${firebaseDecks.length} decks from Firebase`);
-                            localStorage.setItem('flashcardDecks', JSON.stringify(firebaseDecks));
+                            await window.flashcardStorage.saveAllDecks(firebaseDecks);
                             setDecks(firebaseDecks);
 
                             // Auto-tag cards with skills based on deck

@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="learning-profile-utils.js"></script>
     <script src="tts-button.js"></script>
+    <script src="flashcard-storage.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -376,11 +377,14 @@
 
             // Init
             useEffect(() => {
-                loadDecks();
-                loadGroups();
-                loadMistakes();
-                const savedDiff = localStorage.getItem('customCardDifficulty');
-                if (savedDiff) setCardDifficulty(JSON.parse(savedDiff));
+                async function initData() {
+                    await loadDecks();
+                    await loadGroups();
+                    loadMistakes();
+                    const savedDiff = localStorage.getItem('customCardDifficulty');
+                    if (savedDiff) setCardDifficulty(JSON.parse(savedDiff));
+                }
+                initData();
             }, []);
 
             // Speed timer
@@ -396,14 +400,14 @@
             // PART 2: Storage & Group Management Functions
 // Insert after "// PASTE PART 2 HERE" in Part 1
 
-            function loadDecks() {
-                const saved = localStorage.getItem('flashcardDecks');
-                if (saved) setDecks(JSON.parse(saved));
+            async function loadDecks() {
+                const decks = await window.flashcardStorage.getAllDecks();
+                setDecks(decks);
             }
 
-            function loadGroups() {
-                const saved = localStorage.getItem('flashcardGroups');
-                if (saved) setGroups(JSON.parse(saved));
+            async function loadGroups() {
+                const groups = await window.flashcardStorage.getAllGroups();
+                setGroups(groups);
             }
 
             function loadMistakes() {
@@ -411,33 +415,25 @@
                 if (saved) setMistakeBank(JSON.parse(saved));
             }
 
-            function saveDecks(newDecks) {
+            async function saveDecks(newDecks) {
                 try {
-                    localStorage.setItem('flashcardDecks', JSON.stringify(newDecks));
+                    await window.flashcardStorage.saveAllDecks(newDecks);
                     setDecks(newDecks);
                     return true;
                 } catch (e) {
-                    if (e.name === 'QuotaExceededError' || e.code === 22) {
-                        alert('Failed to save: Storage quota exceeded. Your flashcard deck is too large. Try reducing the number of cards or the length of card content.');
-                    } else {
-                        alert('Failed to save flashcards: ' + e.message);
-                    }
+                    alert('Failed to save flashcards: ' + e.message);
                     console.error('Error saving decks:', e);
                     return false;
                 }
             }
 
-            function saveGroups(newGroups) {
+            async function saveGroups(newGroups) {
                 try {
-                    localStorage.setItem('flashcardGroups', JSON.stringify(newGroups));
+                    await window.flashcardStorage.saveAllGroups(newGroups);
                     setGroups(newGroups);
                     return true;
                 } catch (e) {
-                    if (e.name === 'QuotaExceededError' || e.code === 22) {
-                        alert('Failed to save: Storage quota exceeded. Try reducing your flashcard data.');
-                    } else {
-                        alert('Failed to save groups: ' + e.message);
-                    }
+                    alert('Failed to save groups: ' + e.message);
                     console.error('Error saving groups:', e);
                     return false;
                 }
@@ -453,9 +449,9 @@
                 setShowDeleteConfirm(true);
             }
 
-            function confirmDeleteDeck() {
+            async function confirmDeleteDeck() {
                 if (deckToDelete) {
-                    saveDecks(decks.filter(d => d.id !== deckToDelete.id));
+                    await saveDecks(decks.filter(d => d.id !== deckToDelete.id));
                     setShowDeleteConfirm(false);
                     setDeckToDelete(null);
                 }
@@ -466,7 +462,7 @@
                 setDeckToDelete(null);
             }
 
-            function createGroup() {
+            async function createGroup() {
                 const name = prompt('Enter group name:');
                 if (!name) return;
 
@@ -476,7 +472,7 @@
                     deckIds: [],
                     created: new Date().toISOString()
                 };
-                saveGroups([...groups, newGroup]);
+                await saveGroups([...groups, newGroup]);
             }
 
             // Manual deck creation functions
@@ -527,7 +523,7 @@
                 setNewDeck({ ...newDeck, cards: updatedCards });
             }
 
-            function saveManualDeck() {
+            async function saveManualDeck() {
                 // Validate
                 if (!newDeck.title.trim()) {
                     alert('Please enter a deck title');
@@ -557,9 +553,9 @@
                 // Save to decks
                 let saveSuccess = false;
                 if (editingDeckId) {
-                    saveSuccess = saveDecks(decks.map(d => d.id === editingDeckId ? deckToSave : d));
+                    saveSuccess = await saveDecks(decks.map(d => d.id === editingDeckId ? deckToSave : d));
                 } else {
-                    saveSuccess = saveDecks([...decks, deckToSave]);
+                    saveSuccess = await saveDecks([...decks, deckToSave]);
                 }
 
                 // Only reset and go back if save was successful
@@ -569,29 +565,29 @@
                 }
             }
 
-            function addDeckToGroup(groupId, deckId) {
+            async function addDeckToGroup(groupId, deckId) {
                 const newGroups = groups.map(g => {
                     if (g.id === groupId) {
                         return { ...g, deckIds: [...new Set([...g.deckIds, deckId])] };
                     }
                     return g;
                 });
-                saveGroups(newGroups);
+                await saveGroups(newGroups);
             }
 
-            function removeDeckFromGroup(groupId, deckId) {
+            async function removeDeckFromGroup(groupId, deckId) {
                 const newGroups = groups.map(g => {
                     if (g.id === groupId) {
                         return { ...g, deckIds: g.deckIds.filter(id => id !== deckId) };
                     }
                     return g;
                 });
-                saveGroups(newGroups);
+                await saveGroups(newGroups);
             }
 
-            function deleteGroup(groupId) {
+            async function deleteGroup(groupId) {
                 if (confirm('Delete this group? (Decks will not be deleted)')) {
-                    saveGroups(groups.filter(g => g.id !== groupId));
+                    await saveGroups(groups.filter(g => g.id !== groupId));
                 }
             }
 

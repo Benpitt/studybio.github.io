@@ -212,8 +212,26 @@ class FirebaseSync {
             this.syncAll();
         }, intervalMinutes * 60 * 1000);
 
-        // Sync before page unload
+        // Use Page Visibility API for better sync detection (more reliable than beforeunload)
+        let syncTimeout;
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // User is leaving/switching tabs - sync immediately
+                clearTimeout(syncTimeout);
+                debugLog('📤 Page hidden - syncing data...');
+                this.syncAll();
+            } else {
+                // User came back - sync after a short delay
+                syncTimeout = setTimeout(() => {
+                    debugLog('📥 Page visible - syncing data...');
+                    this.syncAll();
+                }, 1000);
+            }
+        });
+
+        // Keep beforeunload as backup (but note: async operations may not complete)
         window.addEventListener('beforeunload', () => {
+            // Try to sync, but browser may kill the page before completion
             this.syncAll();
         });
 

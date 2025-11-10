@@ -421,6 +421,13 @@
                 try {
                     await window.flashcardStorage.saveAllDecks(newDecks);
                     setDecks(newDecks);
+
+                    // Trigger Firebase sync after successful save
+                    if (window.firebaseSync) {
+                        console.log('💾 Triggering Firebase sync after deck save...');
+                        window.firebaseSync.syncAll();
+                    }
+
                     return true;
                 } catch (e) {
                     alert('Failed to save flashcards: ' + e.message);
@@ -1667,5 +1674,124 @@
 
     <!-- Dynamic Gradient System -->
     <script src="dynamic-gradient.js"></script>
+
+    <!-- Firebase Integration for Data Sync -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
+            authDomain: "academie-9942b.firebaseapp.com",
+            projectId: "academie-9942b",
+            storageBucket: "academie-9942b.firebasestorageapp",
+            messagingSenderId: "1079518919325",
+            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // FirebaseSync class for custom flashcards
+        class FlashcardFirebaseSync {
+            constructor(db, userId) {
+                this.db = db;
+                this.userId = userId;
+                this.isSyncing = false;
+                this.pendingSync = false;
+            }
+
+            async syncFlashcardDecks() {
+                if (!this.userId) return;
+
+                try {
+                    const decks = await window.flashcardStorage.getAllDecks();
+
+                    for (const deck of decks) {
+                        const deckRef = doc(this.db, 'users', this.userId, 'flashcardDecks', deck.id.toString());
+                        await setDoc(deckRef, {
+                            ...deck,
+                            syncedAt: serverTimestamp()
+                        });
+                    }
+
+                    console.log(`✅ Synced ${decks.length} flashcard decks to Firebase`);
+                    return true;
+                } catch (error) {
+                    console.error('❌ Firebase sync failed:', error);
+                    return false;
+                }
+            }
+
+            async syncAll() {
+                if (this.isSyncing) {
+                    this.pendingSync = true;
+                    return;
+                }
+
+                this.isSyncing = true;
+                try {
+                    await this.syncFlashcardDecks();
+
+                    if (this.pendingSync) {
+                        this.pendingSync = false;
+                        setTimeout(() => this.syncAll(), 100);
+                    }
+                } finally {
+                    this.isSyncing = false;
+                }
+            }
+
+            // Sync with guarantee - blocks until complete
+            syncNow() {
+                if (!this.userId) return Promise.resolve();
+                return this.syncAll();
+            }
+        }
+
+        let firebaseSync = null;
+
+        // Initialize Firebase sync when user is authenticated
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                firebaseSync = new FlashcardFirebaseSync(db, user.uid);
+                console.log('✅ Firebase sync initialized for custom flashcards');
+
+                // Sync every 3 minutes
+                setInterval(() => {
+                    if (firebaseSync) {
+                        console.log('🔄 Auto-syncing flashcards...');
+                        firebaseSync.syncAll();
+                    }
+                }, 3 * 60 * 1000);
+
+                // Initial sync
+                setTimeout(() => firebaseSync.syncAll(), 1000);
+
+                // Use Page Visibility API for better save detection
+                let syncTimeout;
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        // User is leaving the page - sync immediately
+                        clearTimeout(syncTimeout);
+                        if (firebaseSync) {
+                            console.log('📤 Page hidden - syncing flashcards...');
+                            firebaseSync.syncNow();
+                        }
+                    } else {
+                        // User came back - sync after a delay
+                        syncTimeout = setTimeout(() => {
+                            if (firebaseSync) firebaseSync.syncAll();
+                        }, 1000);
+                    }
+                });
+
+                // Expose to window for React components to use
+                window.firebaseSync = firebaseSync;
+            }
+        });
+    </script>
 </body>
 </html>

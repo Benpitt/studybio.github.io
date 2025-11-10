@@ -816,16 +816,34 @@ CRITICAL: Your response must contain ONLY the JSON object. No introductory text,
 
             const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
             decks.push(deck);
-            localStorage.setItem('flashcardDecks', JSON.stringify(decks));
 
-            if (window.toast) {
-                toast.success('Deck saved! Redirecting to My Flashcards...');
-            } else {
-                alert('Deck saved! Redirecting to My Flashcards...');
+            try {
+                localStorage.setItem('flashcardDecks', JSON.stringify(decks));
+
+                if (window.toast) {
+                    toast.success('Deck saved! Redirecting to My Flashcards...');
+                } else {
+                    alert('Deck saved! Redirecting to My Flashcards...');
+                }
+                setTimeout(() => {
+                    window.location.href = 'custom-flashcards.html';
+                }, 1500);
+            } catch (e) {
+                if (e.name === 'QuotaExceededError' || e.code === 22) {
+                    if (window.toast) {
+                        toast.error('Failed to save: Storage quota exceeded. Your flashcard deck is too large.');
+                    } else {
+                        alert('Failed to save: Storage quota exceeded. Your flashcard deck is too large. Try reducing the number of cards or content length.');
+                    }
+                } else {
+                    if (window.toast) {
+                        toast.error('Failed to save deck: ' + e.message);
+                    } else {
+                        alert('Failed to save deck: ' + e.message);
+                    }
+                }
+                console.error('Error saving deck:', e);
             }
-            setTimeout(() => {
-                window.location.href = 'custom-flashcards.html';
-            }, 1500);
         });
 
         // Regenerate

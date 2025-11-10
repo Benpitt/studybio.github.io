@@ -412,13 +412,35 @@
             }
 
             function saveDecks(newDecks) {
-                localStorage.setItem('flashcardDecks', JSON.stringify(newDecks));
-                setDecks(newDecks);
+                try {
+                    localStorage.setItem('flashcardDecks', JSON.stringify(newDecks));
+                    setDecks(newDecks);
+                    return true;
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError' || e.code === 22) {
+                        alert('Failed to save: Storage quota exceeded. Your flashcard deck is too large. Try reducing the number of cards or the length of card content.');
+                    } else {
+                        alert('Failed to save flashcards: ' + e.message);
+                    }
+                    console.error('Error saving decks:', e);
+                    return false;
+                }
             }
 
             function saveGroups(newGroups) {
-                localStorage.setItem('flashcardGroups', JSON.stringify(newGroups));
-                setGroups(newGroups);
+                try {
+                    localStorage.setItem('flashcardGroups', JSON.stringify(newGroups));
+                    setGroups(newGroups);
+                    return true;
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError' || e.code === 22) {
+                        alert('Failed to save: Storage quota exceeded. Try reducing your flashcard data.');
+                    } else {
+                        alert('Failed to save groups: ' + e.message);
+                    }
+                    console.error('Error saving groups:', e);
+                    return false;
+                }
             }
 
             function saveMistakes() {
@@ -533,15 +555,18 @@
                 };
 
                 // Save to decks
+                let saveSuccess = false;
                 if (editingDeckId) {
-                    saveDecks(decks.map(d => d.id === editingDeckId ? deckToSave : d));
+                    saveSuccess = saveDecks(decks.map(d => d.id === editingDeckId ? deckToSave : d));
                 } else {
-                    saveDecks([...decks, deckToSave]);
+                    saveSuccess = saveDecks([...decks, deckToSave]);
                 }
 
-                // Reset and go back
-                setMode('decks');
-                setEditingDeckId(null);
+                // Only reset and go back if save was successful
+                if (saveSuccess) {
+                    setMode('decks');
+                    setEditingDeckId(null);
+                }
             }
 
             function addDeckToGroup(groupId, deckId) {
@@ -1113,22 +1138,25 @@
 
                                 <div className={`flip-card ${showAnswer ? 'flipped' : ''}`}>
                                     <div className="flip-card-inner relative" style={{minHeight: '400px'}}>
-                                        <div className="flip-card-front absolute w-full h-full">
-                                            <div onClick={() => setShowAnswer(!showAnswer)} className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                                <div>
-                                                    <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
-                                                    <div className="text-3xl font-bold text-center">{card.question}</div>
+                                        {!showAnswer ? (
+                                            <div className="flip-card-front absolute w-full h-full">
+                                                <div onClick={() => setShowAnswer(true)} className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                                    <div>
+                                                        <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
+                                                        <div className="text-3xl font-bold text-center">{card.question}</div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="flip-card-back absolute w-full h-full">
-                                            <div onClick={() => setShowAnswer(!showAnswer)} className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                                <div>
-                                                    <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
-                                                    <div className="text-2xl text-center">{card.answer}</div>
+                                        ) : (
+                                            <div className="flip-card-back absolute w-full h-full">
+                                                <div onClick={() => setShowAnswer(false)} className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                                    <div>
+                                                        <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
+                                                        <div className="text-2xl text-center">{card.answer}</div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
 

@@ -1673,24 +1673,31 @@
     </script>
 
     <!-- Dynamic Gradient System -->
-    <script src="dynamic-gradient.js"></script>
+    <script type="module" src="dynamic-gradient.js"></script>
 
     <!-- Firebase Integration for Data Sync -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
-            authDomain: "academie-9942b.firebaseapp.com",
-            projectId: "academie-9942b",
-            storageBucket: "academie-9942b.firebasestorageapp",
-            messagingSenderId: "1079518919325",
-            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
-        };
+        // Get existing Firebase app instance or initialize if not exists
+        let app;
+        try {
+            app = getApp(); // Try to get existing app
+        } catch (error) {
+            // App doesn't exist, initialize it
+            const firebaseConfig = {
+                apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
+                authDomain: "academie-9942b.firebaseapp.com",
+                projectId: "academie-9942b",
+                storageBucket: "academie-9942b.firebasestorage.app",
+                messagingSenderId: "1079518919325",
+                appId: "1:1079518919325:web:745025bdb7b2b23645b274"
+            };
+            app = initializeApp(firebaseConfig);
+        }
 
-        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 

@@ -205,7 +205,7 @@
                 }
             }, [text]);
 
-            return <span ref={containerRef} className={className}></span>;
+            return <span ref={containerRef} className={`${className} inline-block`}></span>;
         }
 
         function Navigation() {
@@ -892,11 +892,11 @@
                                 <div className="text-lg text-gray-800 leading-relaxed mb-6 whitespace-pre-wrap">
                                     {passage && (
                                         <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-purple-500">
-                                            <MathText text={passage} />
+                                            <MathText text={passage} className="text-gray-800" />
                                         </div>
                                     )}
-                                    <div className="font-semibold text-xl mb-4">
-                                        <MathText text={questionText} />
+                                    <div className="font-semibold text-xl mb-4 text-gray-900">
+                                        <MathText text={questionText} className="text-gray-900" />
                                     </div>
                                 </div>
                             </div>
@@ -997,8 +997,8 @@
                                                         onClick={() => !isSubmitted && handleAnswer(letter)}
                                                         className={className}
                                                     >
-                                                        <span className="font-bold mr-3">{letter})</span>
-                                                        <MathText text={choiceText} />
+                                                        <span className="font-bold mr-3 text-gray-900">{letter})</span>
+                                                        <MathText text={choiceText} className="text-gray-800" />
                                                     </div>
                                                 );
                                             });

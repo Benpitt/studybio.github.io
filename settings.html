@@ -462,9 +462,9 @@
         async function loadUserProfile() {
             const user = authService.getCachedUserData();
             if (user) {
-                document.getElementById('user-name').textContent = user.displayName || 'User';
-                document.getElementById('user-email').textContent = user.email || '';
-                document.getElementById('user-photo').src = user.photoURL || 'https://via.placeholder.com/80';
+                document.getElementById('user-name').textContent = user.userName || 'User';
+                document.getElementById('user-email').textContent = user.userEmail || '';
+                document.getElementById('user-photo').src = user.userPhoto || 'https://via.placeholder.com/80';
             }
         }
 
@@ -666,8 +666,8 @@
                 const db = getFirestore();
                 const user = authService.getCachedUserData();
 
-                if (user && user.uid) {
-                    await setDoc(doc(db, 'users', user.uid, 'data', 'settings'), settings);
+                if (user && user.userId) {
+                    await setDoc(doc(db, 'users', user.userId, 'data', 'settings'), settings);
                     console.log('Settings synced to Firebase');
                 }
             } catch (error) {

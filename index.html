@@ -76,6 +76,18 @@
             margin-bottom:20px;
             letter-spacing:0.02em;
             text-transform:uppercase;
+            animation:fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown{
+            from{
+                opacity:0;
+                transform:translateY(-20px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
         }
 
         .apex-headline{
@@ -91,6 +103,18 @@
             background-clip:text;
             text-align:center;
             min-height:2.3em;
+            animation:fadeInScale 1s ease-out 0.2s backwards;
+        }
+
+        @keyframes fadeInScale{
+            from{
+                opacity:0;
+                transform:scale(0.95);
+            }
+            to{
+                opacity:1;
+                transform:scale(1);
+            }
         }
 
         .apex-subhead{
@@ -100,6 +124,7 @@
             margin:0 auto 48px;
             line-height:1.4;
             font-weight:400;
+            animation:fadeInUp 1s ease-out 0.4s backwards;
         }
 
         .apex-cta{
@@ -108,6 +133,7 @@
             justify-content:center;
             align-items:center;
             margin-bottom:80px;
+            animation:fadeInUp 1s ease-out 0.6s backwards;
         }
 
         .btn-apex-primary{
@@ -121,11 +147,47 @@
             cursor:pointer;
             box-shadow: 0 20px 50px rgba(14,165,164,0.4);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position:relative;
+            overflow:hidden;
+        }
+
+        .btn-apex-primary::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            opacity:0;
+            transition:opacity 0.3s;
+        }
+
+        .btn-apex-primary::after{
+            content:'';
+            position:absolute;
+            top:-50%;
+            left:-50%;
+            width:200%;
+            height:200%;
+            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform:rotate(45deg);
+            animation:shimmer 3s infinite;
+        }
+
+        @keyframes shimmer{
+            0%{transform:translateX(-100%) rotate(45deg)}
+            100%{transform:translateX(100%) rotate(45deg)}
+        }
+
+        .btn-apex-primary:hover::before{
+            opacity:1;
         }
 
         .btn-apex-primary:hover{
-            transform:translateY(-2px);
-            box-shadow: 0 25px 60px rgba(14,165,164,0.5);
+            transform:translateY(-3px) scale(1.02);
+            box-shadow: 0 30px 70px rgba(14,165,164,0.6), 0 0 40px rgba(14,165,164,0.4);
+        }
+
+        .btn-apex-primary:active{
+            transform:translateY(-1px) scale(0.98);
         }
 
         .btn-apex-secondary{
@@ -138,14 +200,35 @@
             font-size:1.1rem;
             cursor:pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position:relative;
+            overflow:hidden;
+        }
+
+        .btn-apex-secondary::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(135deg, rgba(14,165,164,0.2) 0%, rgba(168,85,247,0.2) 100%);
+            opacity:0;
+            transition:opacity 0.3s;
+        }
+
+        .btn-apex-secondary:hover::before{
+            opacity:1;
         }
 
         .btn-apex-secondary:hover{
-            background:rgba(255,255,255,0.08);
-            border-color:rgba(255,255,255,0.2);
+            background:rgba(255,255,255,0.1);
+            border-color:rgba(255,255,255,0.3);
+            transform:translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255,255,255,0.1);
         }
 
-        /* 3D Feature Cards */
+        .btn-apex-secondary:active{
+            transform:translateY(0);
+        }
+
+        /* 3D Feature Cards with Enhanced Animations */
         .features-grid{
             display:grid;
             grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));
@@ -163,14 +246,32 @@
             position:relative;
             overflow:hidden;
             transform-style:preserve-3d;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor:pointer;
+            animation:fadeInUp 0.8s ease-out forwards;
+            opacity:0;
+        }
+
+        .feature-card:nth-child(1){animation-delay:0.1s;}
+        .feature-card:nth-child(2){animation-delay:0.2s;}
+        .feature-card:nth-child(3){animation-delay:0.3s;}
+
+        @keyframes fadeInUp{
+            from{
+                opacity:0;
+                transform:translateY(40px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
         }
 
         .feature-card:hover{
-            transform:translateY(-8px);
-            border-color:rgba(255,255,255,0.15);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            transform:translateY(-12px) scale(1.02);
+            border-color:rgba(255,255,255,0.2);
+            box-shadow: 0 35px 90px rgba(0,0,0,0.6);
+            background:linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
         }
 
         .feature-icon{
@@ -178,6 +279,12 @@
             margin-bottom:24px;
             display:block;
             filter: drop-shadow(0 4px 12px rgba(14,165,164,0.3));
+            transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover .feature-icon{
+            transform:scale(1.15) rotateY(10deg);
+            filter: drop-shadow(0 8px 24px rgba(14,165,164,0.6));
         }
 
         .feature-title{
@@ -185,6 +292,14 @@
             font-weight:700;
             margin-bottom:12px;
             color:white;
+            transition:color 0.3s;
+        }
+
+        .feature-card:hover .feature-title{
+            background:linear-gradient(135deg, #0ea5a4, #06b6d4);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            background-clip:text;
         }
 
         .feature-desc{
@@ -201,6 +316,12 @@
             filter:blur(80px);
             opacity:0.15;
             pointer-events:none;
+            transition:opacity 0.5s, transform 0.5s;
+        }
+
+        .feature-card:hover .feature-glow{
+            opacity:0.3;
+            transform:scale(1.2);
         }
 
         .feature-card:nth-child(1) .feature-glow{background:#0ea5a4;top:-50px;right:-50px;}
@@ -446,19 +567,26 @@
             font-size:0.8rem;
         }
 
-        /* Glowing orbs for background */
+        /* Enhanced Glowing orbs for background */
         .glow-orb{
             position:absolute;
             border-radius:50%;
             filter:blur(120px);
-            opacity:0.2;
+            opacity:0.25;
             pointer-events:none;
-            animation:float 8s ease-in-out infinite;
+            animation:float 8s ease-in-out infinite, pulse-orb 4s ease-in-out infinite;
         }
 
         @keyframes float{
             0%, 100%{transform:translate(0,0) scale(1)}
-            50%{transform:translate(20px, -20px) scale(1.05)}
+            25%{transform:translate(30px, -15px) scale(1.08)}
+            50%{transform:translate(20px, -30px) scale(1.12)}
+            75%{transform:translate(-10px, -20px) scale(1.05)}
+        }
+
+        @keyframes pulse-orb{
+            0%, 100%{opacity:0.25}
+            50%{opacity:0.35}
         }
 
         /* Card decorations */
@@ -542,16 +670,24 @@
 
         @keyframes spin{to{transform:rotate(360deg)}}
 
-        /* Scroll indicator */
+        /* Enhanced Scroll indicator */
         .scroll-indicator{
             position:absolute;
             bottom:40px;
             left:50%;
             transform:translateX(-50%);
             font-size:2rem;
-            animation:bounce 2s infinite;
+            animation:bounce 2s infinite, fadeInUp 1.2s ease-out 1s backwards;
             opacity:0.6;
             cursor:pointer;
+            transition:all 0.3s;
+            filter:drop-shadow(0 4px 12px rgba(14,165,164,0.4));
+        }
+
+        .scroll-indicator:hover{
+            opacity:1;
+            transform:translateX(-50%) scale(1.2);
+            filter:drop-shadow(0 6px 20px rgba(14,165,164,0.6));
         }
 
         @keyframes bounce{
@@ -559,23 +695,48 @@
             50%{transform:translateX(-50%) translateY(10px)}
         }
 
-        /* Typewriter effect */
+        /* Enhanced Typewriter effect */
         #typewriter-text{
             display:inline;
+            position:relative;
         }
 
         .typewriter-cursor{
             display:inline-block;
-            width:3px;
-            margin-left:2px;
-            background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-            animation:blink 1s step-end infinite;
+            width:4px;
+            height:1.1em;
+            margin-left:4px;
+            background:linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+            animation:blink 1.2s step-end infinite, pulse 2s ease-in-out infinite;
             vertical-align:baseline;
+            border-radius:2px;
+            box-shadow: 0 0 20px rgba(14,165,164,0.6);
         }
 
         @keyframes blink{
             0%, 50%{opacity:1}
             51%, 100%{opacity:0}
+        }
+
+        @keyframes pulse{
+            0%, 100%{box-shadow: 0 0 20px rgba(14,165,164,0.6)}
+            50%{box-shadow: 0 0 30px rgba(14,165,164,0.9), 0 0 40px rgba(14,165,164,0.4)}
+        }
+
+        /* Typewriter text color animation */
+        @keyframes textGradientShift{
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+
+        #typewriter-text{
+            background:linear-gradient(135deg, #ffffff 0%, #0ea5a4 50%, #a855f7 100%);
+            background-size:200% 200%;
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            background-clip:text;
+            animation:textGradientShift 3s ease infinite;
         }
     </style>
 </head>
@@ -632,31 +793,31 @@
                         <div class="features-grid">
                             <div class="feature-card">
                                 <div class="feature-glow"></div>
+                                <span class="feature-icon">🤖</span>
+                                <h3 class="feature-title">AI Flashcard Generator</h3>
+                                <p class="feature-desc">
+                                    Paste your notes or enter any topic. Our AI instantly creates comprehensive flashcards
+                                    with questions and answers. Turn hours of card-making into seconds.
+                                </p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="feature-glow"></div>
                                 <span class="feature-icon">🧠</span>
-                                <h3 class="feature-title">AI That Learns You</h3>
+                                <h3 class="feature-title">Bayesian Knowledge Tracking</h3>
                                 <p class="feature-desc">
-                                    Not just smart flashcards. Our AI analyzes your learning patterns, identifies weak spots,
-                                    and generates personalized content that matches your exact needs.
+                                    Advanced BKT algorithm predicts your mastery level and adapts in real-time.
+                                    Study exactly what you need, when you need it—backed by cognitive science.
                                 </p>
                             </div>
 
                             <div class="feature-card">
                                 <div class="feature-glow"></div>
-                                <span class="feature-icon">📈</span>
-                                <h3 class="feature-title">Adaptive Intelligence</h3>
+                                <span class="feature-icon">🎯</span>
+                                <h3 class="feature-title">Personalized Learning</h3>
                                 <p class="feature-desc">
-                                    Quizzes that evolve with you. Spaced repetition that actually works.
-                                    Our algorithms ensure you study what matters, when it matters most.
-                                </p>
-                            </div>
-
-                            <div class="feature-card">
-                                <div class="feature-glow"></div>
-                                <span class="feature-icon">⚡</span>
-                                <h3 class="feature-title">Zero Friction Learning</h3>
-                                <p class="feature-desc">
-                                    No setup. No complexity. Just paste your notes or upload your materials.
-                                    We handle the rest. Study smarter, not harder.
+                                    Take a quick quiz to discover your learning profile. Get custom recommendations,
+                                    study strategies, and memory games tailored to how your brain works best.
                                 </p>
                             </div>
                         </div>
@@ -675,14 +836,14 @@
                         <div class="showcase-eyebrow">Intelligent Generation</div>
                         <h2 class="showcase-heading">Flashcards that write themselves.</h2>
                         <p class="showcase-description">
-                            Paste your notes, upload a PDF, or type a topic. Our AI instantly creates comprehensive flashcards
-                            with the perfect difficulty level. No more manual card creation. Just pure learning.
+                            Paste your notes or type any topic. Our AI instantly creates comprehensive flashcards
+                            with questions and answers. Save hours of manual work and start studying immediately.
                         </p>
                         <ul class="showcase-features">
-                            <li>AI extracts key concepts automatically</li>
-                            <li>Generates contextual questions and answers</li>
-                            <li>Adapts difficulty to your knowledge level</li>
-                            <li>Supports images, code, and formatted text</li>
+                            <li>Generate from text/notes or topic keywords</li>
+                            <li>AI creates contextual questions and detailed answers</li>
+                            <li>Support for multiple question types and formats</li>
+                            <li>Save to your personal library or share with community</li>
                         </ul>
                     </div>
                     <div class="product-showcase">
@@ -742,36 +903,36 @@
                     </div>
                     <div class="showcase-content" style="order:1;">
                         <div class="showcase-eyebrow">Smart Testing</div>
-                        <h2 class="showcase-heading">Quizzes that adapt to you.</h2>
+                        <h2 class="showcase-heading">BKT-powered adaptive learning.</h2>
                         <p class="showcase-description">
-                            No more random questions. Our adaptive quiz engine learns from every answer,
-                            adjusting difficulty in real-time to keep you in the optimal learning zone.
+                            Bayesian Knowledge Tracing predicts your mastery level for every concept.
+                            The system adapts in real-time, showing you cards when you're about to forget them.
                         </p>
                         <ul class="showcase-features">
-                            <li>Questions adapt based on your performance</li>
-                            <li>Multiple question types (MCQ, fill-in, true/false)</li>
-                            <li>Instant feedback with detailed explanations</li>
-                            <li>Smart review of missed concepts</li>
+                            <li>Probabilistic mastery tracking for each card</li>
+                            <li>Adaptive scheduling based on your performance</li>
+                            <li>Visual mastery indicators and progress analytics</li>
+                            <li>Spaced repetition optimized by cognitive science</li>
                         </ul>
                     </div>
                 </div>
             </section>
 
-            <!-- Feature 3: Spaced Repetition -->
+            <!-- Feature 3: Progress & Analytics -->
             <section class="showcase-section">
                 <div class="showcase-container">
                     <div class="showcase-content">
-                        <div class="showcase-eyebrow">Science-Backed Learning</div>
-                        <h2 class="showcase-heading">Study what you need, when you need it.</h2>
+                        <div class="showcase-eyebrow">Track Your Growth</div>
+                        <h2 class="showcase-heading">Watch your mastery grow.</h2>
                         <p class="showcase-description">
-                            Powered by spaced repetition algorithms that actually work. We track your progress and schedule
-                            reviews at the perfect moment—right before you'd forget.
+                            Detailed analytics track your study streak, cards reviewed, quiz performance, and accuracy.
+                            See exactly which concepts you've mastered and what needs attention.
                         </p>
                         <ul class="showcase-features">
-                            <li>Intelligent review scheduling</li>
-                            <li>Visual progress tracking</li>
-                            <li>Mastery predictions</li>
-                            <li>Personalized study sessions</li>
+                            <li>Daily study streak tracking with fire badges</li>
+                            <li>Real-time mastery percentages for each deck</li>
+                            <li>Comprehensive quiz accuracy analytics</li>
+                            <li>Visual progress bars and achievement system</li>
                         </ul>
                     </div>
                     <div class="product-showcase">
@@ -861,17 +1022,75 @@
                     </div>
                     <div class="showcase-content" style="order:1;">
                         <div class="showcase-eyebrow">Learn Together</div>
-                        <h2 class="showcase-heading">Thousands of decks. Ready to study.</h2>
+                        <h2 class="showcase-heading">Community-powered knowledge.</h2>
                         <p class="showcase-description">
-                            Don't start from scratch. Browse community-created study decks across every subject,
-                            or share your own. Learning is better together.
+                            Browse study decks created by students worldwide. Clone any deck to your library,
+                            customize it, and share your own. Learning is better together.
                         </p>
                         <ul class="showcase-features">
-                            <li>Unlimited community flashcard decks</li>
-                            <li>Browse by subject, difficulty, and popularity</li>
-                            <li>Clone and customize any public deck</li>
-                            <li>Share your knowledge with others</li>
+                            <li>Browse and search community flashcard decks</li>
+                            <li>Clone decks to your personal library instantly</li>
+                            <li>Track study counts and deck popularity</li>
+                            <li>Share your decks with the community</li>
                         </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature 5: Specialized Tools -->
+            <section class="showcase-section">
+                <div class="showcase-container">
+                    <div class="showcase-content">
+                        <div class="showcase-eyebrow">Beyond Flashcards</div>
+                        <h2 class="showcase-heading">Tools for every learning style.</h2>
+                        <p class="showcase-description">
+                            SAT practice with integrated Desmos calculator. Memory matching games.
+                            Learning profile quiz to discover your optimal study methods. We adapt to you.
+                        </p>
+                        <ul class="showcase-features">
+                            <li>SAT Math & Reading practice with real-time tools</li>
+                            <li>Interactive memory games for visual learners</li>
+                            <li>Learning profile assessment with personalized tips</li>
+                            <li>Text-to-speech support for auditory learners</li>
+                        </ul>
+                    </div>
+                    <div class="product-showcase">
+                        <div class="product-card-lg" data-card="tools">
+                            <div class="card-deco">
+                                <div class="orb a"></div>
+                                <div class="orb c"></div>
+                            </div>
+                            <div class="card-screen">
+                                <div class="card-header">
+                                    <div class="card-badge">Specialized Tools</div>
+                                    <div class="card-stat">100%</div>
+                                </div>
+                                <div class="card-content">
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                        <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:16px;padding:20px;text-align:center;">
+                                            <div style="font-size:2.5rem;margin-bottom:8px;">📊</div>
+                                            <div style="font-weight:700;font-size:0.95rem;color:white;margin-bottom:4px;">SAT Practice</div>
+                                            <div style="color:var(--muted);font-size:0.8rem;">Math & Reading</div>
+                                        </div>
+                                        <div style="background:rgba(236,72,153,0.15);border:1px solid rgba(236,72,153,0.3);border-radius:16px;padding:20px;text-align:center;">
+                                            <div style="font-size:2.5rem;margin-bottom:8px;">🎮</div>
+                                            <div style="font-weight:700;font-size:0.95rem;color:white;margin-bottom:4px;">Memory Games</div>
+                                            <div style="color:var(--muted);font-size:0.8rem;">4 Game Types</div>
+                                        </div>
+                                        <div style="background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);border-radius:16px;padding:20px;text-align:center;">
+                                            <div style="font-size:2.5rem;margin-bottom:8px;">🧪</div>
+                                            <div style="font-weight:700;font-size:0.95rem;color:white;margin-bottom:4px;">Profile Quiz</div>
+                                            <div style="color:var(--muted);font-size:0.8rem;">Find Your Style</div>
+                                        </div>
+                                        <div style="background:rgba(14,165,164,0.15);border:1px solid rgba(14,165,164,0.3);border-radius:16px;padding:20px;text-align:center;">
+                                            <div style="font-size:2.5rem;margin-bottom:8px;">🔊</div>
+                                            <div style="font-weight:700;font-size:0.95rem;color:white;margin-bottom:4px;">Text-to-Speech</div>
+                                            <div style="color:var(--muted);font-size:0.8rem;">Listen & Learn</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1164,10 +1383,10 @@
             let phraseIndex = 0;
             let charIndex = 0;
             let isDeleting = false;
-            let typingSpeed = 80; // ms per character when typing
-            let deletingSpeed = 40; // ms per character when deleting
-            let pauseAfterTyping = 2000; // pause after finishing typing a phrase
-            let pauseAfterDeleting = 500; // pause after finishing deleting a phrase
+            let typingSpeed = 70; // ms per character when typing
+            let deletingSpeed = 30; // ms per character when deleting
+            let pauseAfterTyping = 2500; // pause after finishing typing a phrase
+            let pauseAfterDeleting = 400; // pause after finishing deleting a phrase
 
             function typeWriter() {
                 const currentPhrase = phrases[phraseIndex];

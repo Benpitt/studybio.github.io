@@ -168,8 +168,8 @@ function isRecommendedFeature(featureName) {
     return recommendations.features.includes(featureName);
 }
 
-// Get personalized settings for the study interface
-function getPersonalizedSettings() {
+// Get RECOMMENDED settings based on profile (not auto-applied)
+function getRecommendedSettings() {
     const profile = getLearningProfile();
     if (!profile) return null;
 
@@ -199,6 +199,57 @@ function getPersonalizedSettings() {
     };
 
     return settings;
+}
+
+// Get user's CONFIRMED preferences (what they've actually chosen to enable)
+function getUserPreferences() {
+    try {
+        const prefs = localStorage.getItem('userPreferences');
+        if (prefs) {
+            return JSON.parse(prefs);
+        }
+        // Return default preferences (nothing enabled)
+        return {
+            enableTextToSpeech: false,
+            showVisualAids: false,
+            enableBreakReminders: false,
+            distractionFreeMode: false,
+            reduceAnimations: false,
+            hideTimers: false,
+            largerFonts: false,
+            extraTime: false,
+            untimedMode: false,
+            enableSpacedRepetition: false,
+            showStepByStep: false,
+            frequentBreaks: false
+        };
+    } catch (error) {
+        console.error('Error reading user preferences:', error);
+        return null;
+    }
+}
+
+// Save user's confirmed preferences
+function saveUserPreferences(preferences) {
+    try {
+        localStorage.setItem('userPreferences', JSON.stringify(preferences));
+        return true;
+    } catch (error) {
+        console.error('Error saving user preferences:', error);
+        return false;
+    }
+}
+
+// Update a specific preference
+function updatePreference(key, value) {
+    const prefs = getUserPreferences() || {};
+    prefs[key] = value;
+    return saveUserPreferences(prefs);
+}
+
+// Get personalized settings - NOW returns only what user has confirmed
+function getPersonalizedSettings() {
+    return getUserPreferences();
 }
 
 // Get challenge descriptions in user-friendly language
@@ -463,6 +514,10 @@ if (typeof module !== 'undefined' && module.exports) {
         isRecommendedMode,
         isRecommendedFeature,
         getPersonalizedSettings,
+        getRecommendedSettings,
+        getUserPreferences,
+        saveUserPreferences,
+        updatePreference,
         getChallengeDescription,
         getLearningStyleInfo,
         getTTSManager,

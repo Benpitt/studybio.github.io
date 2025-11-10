@@ -227,7 +227,9 @@
             const [answers, setAnswers] = useState({});
             const [showIntro, setShowIntro] = useState(!isRetake);
             const [showResults, setShowResults] = useState(false);
+            const [showRecommendations, setShowRecommendations] = useState(false);
             const [profile, setProfile] = useState(null);
+            const [selectedPreferences, setSelectedPreferences] = useState({});
 
             const handleAnswer = (questionId, optionValue, weight, category) => {
                 const newAnswers = {
@@ -333,12 +335,12 @@
 
             const getChallengeDescription = (challenge) => {
                 const descriptions = {
-                    focus: 'Difficulty maintaining attention',
-                    reading: 'Reading comprehension challenges',
-                    processing: 'Processing speed differences',
-                    memory: 'Memory retention needs',
-                    organization: 'Organization support',
-                    timeManagement: 'Time management support'
+                    focus: 'Focus & concentration',
+                    reading: 'Reading & comprehension',
+                    processing: 'Learning pace',
+                    memory: 'Memory & retention',
+                    organization: 'Organization & planning',
+                    timeManagement: 'Time management'
                 };
                 return descriptions[challenge.type] || challenge.type;
             };
@@ -361,6 +363,78 @@
                     mixed: 'You benefit from a variety of learning approaches - using multiple methods helps you learn most effectively.'
                 };
                 return descriptions[style] || '';
+            };
+
+            const getSettingInfo = (settingKey) => {
+                const settingDescriptions = {
+                    enableTextToSpeech: {
+                        title: 'Text-to-Speech',
+                        description: 'Hear questions and content read aloud',
+                        icon: 'fa-volume-up',
+                        benefit: 'Great for auditory learners and makes reading easier'
+                    },
+                    showVisualAids: {
+                        title: 'Visual Enhancements',
+                        description: 'Color-coded borders and visual indicators',
+                        icon: 'fa-palette',
+                        benefit: 'Helps visual learners identify and remember content'
+                    },
+                    largerFonts: {
+                        title: 'Larger Text',
+                        description: 'Increased font sizes for better readability',
+                        icon: 'fa-text-height',
+                        benefit: 'Reduces eye strain and makes reading more comfortable'
+                    },
+                    reduceAnimations: {
+                        title: 'Reduced Motion',
+                        description: 'Minimize animations and transitions',
+                        icon: 'fa-rabbit',
+                        benefit: 'Less distraction and easier focus on content'
+                    },
+                    distractionFreeMode: {
+                        title: 'Focus Mode',
+                        description: 'Simplified interface with fewer distractions',
+                        icon: 'fa-bullseye',
+                        benefit: 'Helps maintain concentration on your studies'
+                    },
+                    enableSpacedRepetition: {
+                        title: 'Spaced Repetition',
+                        description: 'Review material at optimal intervals',
+                        icon: 'fa-calendar-check',
+                        benefit: 'Scientifically proven to improve long-term memory'
+                    },
+                    enableBreakReminders: {
+                        title: 'Break Reminders',
+                        description: 'Gentle nudges to take regular breaks',
+                        icon: 'fa-clock',
+                        benefit: 'Prevents burnout and maintains productivity'
+                    },
+                    showStepByStep: {
+                        title: 'Step-by-Step Guidance',
+                        description: 'Break down complex problems into smaller steps',
+                        icon: 'fa-stairs',
+                        benefit: 'Makes challenging material more manageable'
+                    }
+                };
+                return settingDescriptions[settingKey] || { title: settingKey, description: '', icon: 'fa-cog', benefit: '' };
+            };
+
+            const togglePreference = (key) => {
+                setSelectedPreferences(prev => ({
+                    ...prev,
+                    [key]: !prev[key]
+                }));
+            };
+
+            const applySelectedPreferences = () => {
+                try {
+                    localStorage.setItem('userPreferences', JSON.stringify(selectedPreferences));
+                    console.log('User preferences saved');
+                    if (onComplete) onComplete(profile);
+                    else window.location.href = '/dashboard.html';
+                } catch (error) {
+                    console.error('Error saving preferences:', error);
+                }
             };
 
             if (showIntro) {
@@ -427,6 +501,133 @@
                 );
             }
 
+            // Helper function to get recommended settings based on profile
+            const getRecommendedSettingsFromProfile = (profileData) => {
+                const recommended = [];
+
+                // Based on learning style
+                if (profileData.learningStyle === 'auditory') {
+                    recommended.push('enableTextToSpeech');
+                }
+                if (profileData.learningStyle === 'visual') {
+                    recommended.push('showVisualAids');
+                }
+                if (profileData.learningStyle === 'kinesthetic') {
+                    recommended.push('enableBreakReminders');
+                }
+
+                // Based on challenges
+                if (profileData.challenges) {
+                    profileData.challenges.forEach(challenge => {
+                        if (challenge.type === 'reading') {
+                            recommended.push('largerFonts');
+                            if (!recommended.includes('enableTextToSpeech')) {
+                                recommended.push('enableTextToSpeech');
+                            }
+                        }
+                        if (challenge.type === 'focus' && (challenge.level === 'moderate' || challenge.level === 'high')) {
+                            recommended.push('reduceAnimations');
+                            recommended.push('distractionFreeMode');
+                        }
+                        if (challenge.type === 'memory') {
+                            recommended.push('enableSpacedRepetition');
+                        }
+                        if (challenge.type === 'processing') {
+                            recommended.push('showStepByStep');
+                        }
+                    });
+                }
+
+                return recommended;
+            };
+
+            // Show recommendations screen
+            if (showRecommendations && profile) {
+                const recommendedSettings = getRecommendedSettingsFromProfile(profile);
+
+                return (
+                    <div className="min-h-screen p-4">
+                        <div className="max-w-4xl mx-auto py-8">
+                            <div className="results-card rounded-2xl shadow-2xl p-8 mb-6">
+                                <div className="text-center mb-8">
+                                    <i className="fas fa-sliders-h text-6xl text-purple-400 mb-4"></i>
+                                    <h1 className="text-3xl font-bold text-white mb-2">Optional Features for You</h1>
+                                    <p className="text-gray-300">Based on your learning profile, these features might enhance your experience.</p>
+                                    <p className="text-sm text-gray-400 mt-2">You can enable any, all, or none - it's completely up to you!</p>
+                                </div>
+
+                                <div className="space-y-4 mb-8">
+                                    {recommendedSettings.map((settingKey) => {
+                                        const setting = getSettingInfo(settingKey);
+                                        const isSelected = selectedPreferences[settingKey] || false;
+
+                                        return (
+                                            <div
+                                                key={settingKey}
+                                                onClick={() => togglePreference(settingKey)}
+                                                className={`cursor-pointer rounded-lg p-5 border-2 transition-all duration-200 ${
+                                                    isSelected
+                                                        ? 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 border-blue-400 shadow-lg'
+                                                        : 'bg-white/5 border-white/20 hover:border-white/40 hover:bg-white/10'
+                                                }`}
+                                            >
+                                                <div className="flex items-start">
+                                                    <div className="flex-shrink-0 mr-4">
+                                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                                                            isSelected ? 'bg-blue-500' : 'bg-white/10'
+                                                        }`}>
+                                                            <i className={`fas ${setting.icon} text-xl text-white`}></i>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <h3 className="text-lg font-semibold text-white">{setting.title}</h3>
+                                                            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
+                                                                isSelected ? 'bg-blue-500 border-blue-500' : 'border-white/40'
+                                                            }`}>
+                                                                {isSelected && <i className="fas fa-check text-white text-sm"></i>}
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-gray-300 text-sm mb-1">{setting.description}</p>
+                                                        <p className="text-blue-300 text-xs italic">{setting.benefit}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="bg-purple-500/20 border border-purple-400/40 rounded-lg p-5 mb-6 backdrop-blur-sm">
+                                    <p className="text-purple-100 text-sm flex items-start">
+                                        <i className="fas fa-info-circle mr-2 mt-1"></i>
+                                        <span>These are just suggestions based on your preferences. You can always change these later in Settings, or try them out and see what works best for you!</span>
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={applySelectedPreferences}
+                                        className="flex-1 card-gradient-blue text-white font-bold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
+                                    >
+                                        <i className="fas fa-check mr-2"></i>
+                                        {Object.values(selectedPreferences).filter(v => v).length > 0
+                                            ? `Apply ${Object.values(selectedPreferences).filter(v => v).length} Selected`
+                                            : 'Continue Without Features'}
+                                    </button>
+                                    <button
+                                        onClick={() => setShowRecommendations(false)}
+                                        className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
+                                    >
+                                        <i className="fas fa-arrow-left mr-2"></i>
+                                        Back
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
             if (showResults && profile) {
                 return (
                     <div className="min-h-screen p-4">
@@ -459,16 +660,16 @@
                                 {profile.challenges && profile.challenges.length > 0 && (
                                     <div className="mb-8">
                                         <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
-                                            <i className="fas fa-hands-helping mr-3 text-purple-400"></i>
-                                            Personalized Support
+                                            <i className="fas fa-star mr-3 text-purple-400"></i>
+                                            Your Learning Preferences
                                         </h2>
-                                        <p className="text-gray-200 mb-4">We'll customize your experience to help with:</p>
+                                        <p className="text-gray-200 mb-4">We have optional features available for:</p>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {profile.challenges.map((challenge, index) => (
                                                 <div key={index} className="bg-purple-500/20 border border-purple-400/40 rounded-lg p-4 backdrop-blur-sm">
                                                     <div className="flex items-center justify-between">
                                                         <span className="font-semibold text-white">{getChallengeDescription(challenge)}</span>
-                                                        <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full">
+                                                        <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full capitalize">
                                                             {challenge.level}
                                                         </span>
                                                     </div>
@@ -478,44 +679,49 @@
                                     </div>
                                 )}
 
-                                <div className="bg-green-500/20 border border-green-400/40 rounded-lg p-6 mb-6 backdrop-blur-sm">
+                                <div className="bg-blue-500/20 border border-blue-400/40 rounded-lg p-6 mb-6 backdrop-blur-sm">
                                     <h3 className="font-semibold text-white mb-3 flex items-center">
-                                        <i className="fas fa-sparkles mr-2"></i>
+                                        <i className="fas fa-lightbulb mr-2"></i>
                                         What's Next?
                                     </h3>
-                                    <ul className="text-sm text-green-100 space-y-2">
+                                    <p className="text-blue-100 mb-3">
+                                        Based on your responses, we have some optional features you might find helpful. You're in control - choose what works for you!
+                                    </p>
+                                    <ul className="text-sm text-blue-100 space-y-2">
                                         <li className="flex items-start">
-                                            <i className="fas fa-check mr-2 mt-1 text-green-400"></i>
+                                            <i className="fas fa-check mr-2 mt-1 text-blue-400"></i>
                                             <span>You'll see <strong>"Recommended"</strong> badges on study modes that match your learning style</span>
                                         </li>
                                         <li className="flex items-start">
-                                            <i className="fas fa-check mr-2 mt-1 text-green-400"></i>
-                                            <span>Your study interface will be optimized based on your needs</span>
+                                            <i className="fas fa-check mr-2 mt-1 text-blue-400"></i>
+                                            <span>You can customize your experience with optional features</span>
                                         </li>
                                         <li className="flex items-start">
-                                            <i className="fas fa-check mr-2 mt-1 text-green-400"></i>
-                                            <span>You can retake this quiz anytime from your Settings</span>
+                                            <i className="fas fa-check mr-2 mt-1 text-blue-400"></i>
+                                            <span>You can adjust or retake this quiz anytime from Settings</span>
                                         </li>
                                     </ul>
                                 </div>
 
                                 <div className="flex gap-4">
                                     <button
+                                        onClick={() => setShowRecommendations(true)}
+                                        className="flex-1 card-gradient-blue text-white font-bold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
+                                    >
+                                        <i className="fas fa-magic mr-2"></i>
+                                        View Recommended Features
+                                    </button>
+                                    <button
                                         onClick={() => {
+                                            // Save empty preferences (nothing enabled by default)
+                                            localStorage.setItem('userPreferences', JSON.stringify({}));
                                             if (onComplete) onComplete(profile);
                                             else window.location.href = '/dashboard.html';
                                         }}
-                                        className="flex-1 card-gradient-blue text-white font-bold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
-                                    >
-                                        <i className="fas fa-home mr-2"></i>
-                                        Go to Dashboard
-                                    </button>
-                                    <button
-                                        onClick={() => window.location.href = '/settings.html'}
                                         className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 hover:scale-105"
                                     >
-                                        <i className="fas fa-cog mr-2"></i>
-                                        View Settings
+                                        <i className="fas fa-arrow-right mr-2"></i>
+                                        Skip to Dashboard
                                     </button>
                                 </div>
                             </div>

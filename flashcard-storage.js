@@ -101,16 +101,22 @@ class FlashcardStorage {
     }
 
     /**
-     * Save a single deck
+     * Save a single deck (with optional compression)
      */
     async saveDeck(deck) {
         await this.init();
+
+        // Compress large decks if compression is available
+        let deckToSave = deck;
+        if (window.dataCompression && window.dataCompression.shouldCompress(deck)) {
+            deckToSave = await window.dataCompression.compressDeck(deck);
+        }
 
         if (this.useIndexedDB && this.db) {
             return new Promise((resolve, reject) => {
                 const transaction = this.db.transaction(['decks'], 'readwrite');
                 const store = transaction.objectStore('decks');
-                const request = store.put(deck);
+                const request = store.put(deckToSave);
 
                 request.onsuccess = () => resolve(true);
                 request.onerror = () => {
@@ -120,23 +126,40 @@ class FlashcardStorage {
             });
         } else {
             // Fallback to localStorage (may fail for large decks)
-            return this.saveToLocalStorage('flashcardDecks', deck, true);
+            return this.saveToLocalStorage('flashcardDecks', deckToSave, true);
         }
     }
 
     /**
-     * Get all decks
+     * Get all decks (with automatic decompression)
      */
     async getAllDecks() {
         await this.init();
 
         if (this.useIndexedDB && this.db) {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 const transaction = this.db.transaction(['decks'], 'readonly');
                 const store = transaction.objectStore('decks');
                 const request = store.getAll();
 
-                request.onsuccess = () => resolve(request.result || []);
+                request.onsuccess = async () => {
+                    const decks = request.result || [];
+
+                    // Decompress decks if needed
+                    if (window.dataCompression) {
+                        const decompressed = [];
+                        for (const deck of decks) {
+                            if (deck._compressed) {
+                                decompressed.push(await window.dataCompression.decompressDeck(deck));
+                            } else {
+                                decompressed.push(deck);
+                            }
+                        }
+                        resolve(decompressed);
+                    } else {
+                        resolve(decks);
+                    }
+                };
                 request.onerror = () => {
                     console.error('Failed to get decks from IndexedDB:', request.error);
                     resolve([]);

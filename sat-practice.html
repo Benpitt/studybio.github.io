@@ -635,9 +635,13 @@
 
                                     const stripHTML = (html) => {
                                         if (!html) return '';
-                                        return html
-                                            .replace(/<math[^>]*>.*?<\/math>/gi, '[math]')
-                                            .replace(/<[^>]+>/g, '')
+                                        let out = html.replace(/<math[^>]*>.*?<\/math>/gi, '[math]');
+                                        let prev;
+                                        do {
+                                            prev = out;
+                                            out = out.replace(/<[^>]+>/g, '');
+                                        } while (out !== prev);
+                                        return out
                                             .replace(/&nbsp;/g, ' ')
                                             .replace(/&rsquo;/g, "'")
                                             .trim();

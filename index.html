@@ -556,6 +556,20 @@
             0%, 100%{transform:translateX(-50%) translateY(0)}
             50%{transform:translateX(-50%) translateY(10px)}
         }
+
+        /* Typewriter effect */
+        .typewriter-cursor{
+            display:inline-block;
+            width:3px;
+            margin-left:4px;
+            background:linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            animation:blink 1s step-end infinite;
+        }
+
+        @keyframes blink{
+            0%, 50%{opacity:1}
+            51%, 100%{opacity:0}
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -583,7 +597,7 @@
             <section class="apex-hero">
                 <div class="apex-content">
                     <div class="apex-eyebrow">AI-Powered Learning Platform</div>
-                    <h1 class="apex-headline">Built for every kind of learner.</h1>
+                    <h1 class="apex-headline">Built for <span id="typewriter-text"></span><span class="typewriter-cursor"></span></h1>
                     <p class="apex-subhead">
                         From visual thinkers to auditory learners. From late-night crammers to structured planners.
                         We adapt to your style. We learn how you learn. And we help you master anything, faster.
@@ -1069,6 +1083,107 @@
         document.getElementById('cta-enter-btn').addEventListener('click', () => {
             handleEnter('cta-auth-buttons', 'cta-loading');
         });
+    </script>
+
+    <!-- Typewriter Effect -->
+    <script>
+        (function(){
+            const phrases = [
+                "curious minds",
+                "big thinkers",
+                "dreamers",
+                "doers",
+                "problem solvers",
+                "deep thinkers",
+                "visual learners",
+                "creative minds",
+                "logical minds",
+                "explorers",
+                "test-takers",
+                "SAT warriors",
+                "high achievers",
+                "fast learners",
+                "late bloomers",
+                "self-starters",
+                "daydreamers",
+                "note-takers",
+                "doodlers",
+                "crammers",
+                "planners",
+                "multitaskers",
+                "perfectionists",
+                "overthinkers",
+                "pattern seekers",
+                "curious souls",
+                "the easily distracted",
+                "focused minds",
+                "lifelong learners",
+                "quiet learners",
+                "loud thinkers",
+                "achievers in progress",
+                "kids who ask \"why?\"",
+                "adults who still do",
+                "future scientists",
+                "future artists",
+                "future leaders",
+                "future innovators",
+                "learners who think differently",
+                "learners on their own path",
+                "self-paced learners",
+                "those who bounce back",
+                "the quietly confident",
+                "the endlessly curious",
+                "thinkers, makers, and doers",
+                "learners who see the world differently",
+                "those who never stop learning",
+                "the ones still figuring it out",
+                "learners who don't fit the mold",
+                "every kind of learner."
+            ];
+
+            const typewriterElement = document.getElementById('typewriter-text');
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            let typingSpeed = 80; // ms per character when typing
+            let deletingSpeed = 40; // ms per character when deleting
+            let pauseAfterTyping = 2000; // pause after finishing typing a phrase
+            let pauseAfterDeleting = 500; // pause after finishing deleting a phrase
+
+            function typeWriter() {
+                const currentPhrase = phrases[phraseIndex];
+
+                if (isDeleting) {
+                    // Deleting
+                    typewriterElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+
+                    if (charIndex === 0) {
+                        isDeleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                        setTimeout(typeWriter, pauseAfterDeleting);
+                        return;
+                    }
+
+                    setTimeout(typeWriter, deletingSpeed);
+                } else {
+                    // Typing
+                    typewriterElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                    charIndex++;
+
+                    if (charIndex === currentPhrase.length) {
+                        isDeleting = true;
+                        setTimeout(typeWriter, pauseAfterTyping);
+                        return;
+                    }
+
+                    setTimeout(typeWriter, typingSpeed);
+                }
+            }
+
+            // Start the typewriter effect
+            typeWriter();
+        })();
     </script>
 
     <!-- Dynamic Gradient System -->

@@ -1213,7 +1213,7 @@
                                     <div className="bg-white rounded-3xl p-12">
                                         <div className="text-center mb-8">
                                             <div className="text-8xl mb-6">{percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}</div>
-                                            <h2 className="text-5xl font-bold mb-4">Score: {percentage}%</h2>
+                                            <h2 className="text-5xl font-bold mb-4 text-gray-900">Score: {percentage}%</h2>
                                             <p className="text-2xl text-gray-600 mb-4">{correct} / {testQuestions.length} correct</p>
                                         </div>
 
@@ -1225,10 +1225,10 @@
                                                         const userAns = testAnswers[q.id];
                                                         return (
                                                             <div key={q.id} className="p-6 rounded-xl bg-red-50 border-2 border-red-200">
-                                                                <div className="font-bold text-lg mb-3">{q.question}</div>
+                                                                <div className="font-bold text-lg mb-3 text-gray-900">{q.question}</div>
                                                                 <div className="space-y-2">
                                                                     {q.choices.map((choice, cIdx) => (
-                                                                        <div key={cIdx} className={`p-3 rounded-lg ${
+                                                                        <div key={cIdx} className={`p-3 rounded-lg text-gray-900 ${
                                                                             choice === q.answer ? 'bg-green-100 border-2 border-green-500' :
                                                                                 choice === userAns ? 'bg-red-100 border-2 border-red-500' :
                                                                                     'bg-white border border-gray-200'
@@ -1508,7 +1508,7 @@
                                     <div className="bg-white rounded-3xl p-12">
                                         <div className="text-center mb-8">
                                             <div className="text-8xl mb-4">⚡</div>
-                                            <h2 className="text-4xl font-bold mb-4">Challenge Complete!</h2>
+                                            <h2 className="text-4xl font-bold mb-4 text-gray-900">Challenge Complete!</h2>
                                             <p className="text-2xl text-gray-600 mb-2">Final Score: {speedScore} / {maxScore}</p>
                                             <p className="text-xl text-gray-500 mb-4">{percentage}% • {speedQuestions.length - speedMistakes.length}/{speedQuestions.length} correct</p>
                                         </div>
@@ -1519,10 +1519,10 @@
                                                 <div className="space-y-4">
                                                     {speedMistakes.map((q, idx) => (
                                                         <div key={idx} className="p-6 rounded-xl bg-red-50 border-2 border-red-200">
-                                                            <div className="font-bold text-lg mb-3">{q.question}</div>
+                                                            <div className="font-bold text-lg mb-3 text-gray-900">{q.question}</div>
                                                             <div className="space-y-2">
                                                                 {q.choices.map((choice, cIdx) => (
-                                                                    <div key={cIdx} className={`p-3 rounded-lg ${
+                                                                    <div key={cIdx} className={`p-3 rounded-lg text-gray-900 ${
                                                                         choice === q.answer ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'
                                                                     }`}>
                                                                         {choice === q.answer && <span className="mr-2">✅</span>}

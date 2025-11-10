@@ -1275,11 +1275,11 @@
                                 <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
 
                                 <div className="bg-white rounded-3xl p-8">
-                                    <h2 className="text-3xl font-bold mb-6">Practice Test</h2>
+                                    <h2 className="text-3xl font-bold mb-6 text-gray-900">Practice Test</h2>
 
                                     {testQuestions.map((q, idx) => (
                                         <div key={q.id} className="mb-8 p-6 bg-gray-50 rounded-xl">
-                                            <div className="font-bold text-xl mb-4">{idx + 1}. {q.question}</div>
+                                            <div className="font-bold text-xl mb-4 text-gray-900">{idx + 1}. {q.question}</div>
                                             <div className="space-y-3">
                                                 {q.choices.map((choice, cIdx) => (
                                                     <button
@@ -1288,7 +1288,7 @@
                                                         className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                                                             testAnswers[q.id] === choice
                                                                 ? 'bg-blue-500 text-white border-blue-600 font-bold'
-                                                                : 'bg-white hover:bg-blue-50 border-gray-300'
+                                                                : 'bg-white hover:bg-blue-50 border-gray-300 text-gray-900'
                                                         }`}
                                                     >
                                                         {choice}

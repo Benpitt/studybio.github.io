@@ -11,6 +11,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="flashcard-storage.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -798,9 +799,9 @@ CRITICAL: Your response must contain ONLY the JSON object. No introductory text,
         }
 
         // Save deck
-        document.getElementById('save-deck-btn').addEventListener('click', () => {
+        document.getElementById('save-deck-btn').addEventListener('click', async () => {
             const deckTitle = document.getElementById('deck-title').value.trim();
-            
+
             const deck = {
                 id: Date.now(),
                 title: deckTitle,
@@ -814,11 +815,11 @@ CRITICAL: Your response must contain ONLY the JSON object. No introductory text,
                 created: new Date().toISOString()
             };
 
-            const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
-            decks.push(deck);
-
             try {
-                localStorage.setItem('flashcardDecks', JSON.stringify(decks));
+                // Use new IndexedDB storage system
+                const decks = await window.flashcardStorage.getAllDecks();
+                decks.push(deck);
+                await window.flashcardStorage.saveAllDecks(decks);
 
                 if (window.toast) {
                     toast.success('Deck saved! Redirecting to My Flashcards...');
@@ -829,18 +830,10 @@ CRITICAL: Your response must contain ONLY the JSON object. No introductory text,
                     window.location.href = 'custom-flashcards.html';
                 }, 1500);
             } catch (e) {
-                if (e.name === 'QuotaExceededError' || e.code === 22) {
-                    if (window.toast) {
-                        toast.error('Failed to save: Storage quota exceeded. Your flashcard deck is too large.');
-                    } else {
-                        alert('Failed to save: Storage quota exceeded. Your flashcard deck is too large. Try reducing the number of cards or content length.');
-                    }
+                if (window.toast) {
+                    toast.error('Failed to save deck: ' + e.message);
                 } else {
-                    if (window.toast) {
-                        toast.error('Failed to save deck: ' + e.message);
-                    } else {
-                        alert('Failed to save deck: ' + e.message);
-                    }
+                    alert('Failed to save deck: ' + e.message);
                 }
                 console.error('Error saving deck:', e);
             }

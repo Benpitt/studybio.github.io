@@ -7,6 +7,7 @@
     <title>Community Library - studying.works</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="flashcard-storage.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -256,9 +257,9 @@
                     })),
                     created: new Date().toISOString()
                 };
-                
+
                 decks.push(newDeck);
-                localStorage.setItem('flashcardDecks', JSON.stringify(decks));
+                await window.flashcardStorage.saveAllDecks(decks);
 
                 const deckRef = doc(db, 'communityDecks', deck.id);
                 await updateDoc(deckRef, { downloads: increment(1) });

@@ -327,9 +327,12 @@ class TextToSpeechManager {
         this.synth = window.speechSynthesis;
         this.enabled = false;
         this.voice = null;
+        this.voices = [];
         this.rate = 1.0;
         this.pitch = 1.0;
         this.volume = 1.0;
+        this.isPaused = false;
+        this.currentUtterance = null;
 
         this.init();
     }
@@ -338,37 +341,113 @@ class TextToSpeechManager {
         const profile = getLearningProfile();
         this.enabled = profile?.learningStyle === 'auditory' || hasChallenge('reading');
 
+        // Load voices
+        this.loadVoices();
+
         // Load saved preferences
         const ttsSettings = JSON.parse(localStorage.getItem('ttsSettings') || '{}');
         this.rate = ttsSettings.rate || 1.0;
         this.pitch = ttsSettings.pitch || 1.0;
         this.volume = ttsSettings.volume || 1.0;
+
+        if (ttsSettings.voiceName && this.voices.length > 0) {
+            const savedVoice = this.voices.find(v => v.name === ttsSettings.voiceName);
+            if (savedVoice) {
+                this.voice = savedVoice;
+            }
+        }
+    }
+
+    loadVoices() {
+        const loadVoicesWhenAvailable = () => {
+            this.voices = this.synth.getVoices();
+
+            if (this.voices.length > 0 && !this.voice) {
+                // Select a high-quality default voice
+                const preferredVoice = this.voices.find(v =>
+                    v.lang.startsWith('en') && (v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Google'))
+                ) || this.voices.find(v => v.lang.startsWith('en'));
+
+                if (preferredVoice) {
+                    this.voice = preferredVoice;
+                }
+            }
+        };
+
+        loadVoicesWhenAvailable();
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoicesWhenAvailable;
+        }
     }
 
     speak(text, options = {}) {
         if (!this.enabled || !text) return;
 
+        // Clean and prepare text
+        const cleanedText = this.prepareText(text);
+
         // Cancel any ongoing speech
         this.synth.cancel();
+        this.isPaused = false;
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = options.rate || this.rate;
-        utterance.pitch = options.pitch || this.pitch;
-        utterance.volume = options.volume || this.volume;
+        this.currentUtterance = new SpeechSynthesisUtterance(cleanedText);
+        this.currentUtterance.rate = options.rate || this.rate;
+        this.currentUtterance.pitch = options.pitch || this.pitch;
+        this.currentUtterance.volume = options.volume || this.volume;
 
         if (this.voice) {
-            utterance.voice = this.voice;
+            this.currentUtterance.voice = this.voice;
         }
 
         if (options.onEnd) {
-            utterance.onend = options.onEnd;
+            this.currentUtterance.onend = options.onEnd;
         }
 
-        this.synth.speak(utterance);
+        this.currentUtterance.onerror = (event) => {
+            console.error('Speech synthesis error:', event);
+        };
+
+        this.synth.speak(this.currentUtterance);
+    }
+
+    prepareText(text) {
+        let cleaned = text.trim().replace(/\s+/g, ' ');
+
+        // Handle common abbreviations
+        cleaned = cleaned.replace(/\bDr\./g, 'Doctor');
+        cleaned = cleaned.replace(/\bMr\./g, 'Mister');
+        cleaned = cleaned.replace(/\bMrs\./g, 'Missus');
+        cleaned = cleaned.replace(/\be\.g\./g, 'for example');
+        cleaned = cleaned.replace(/\bi\.e\./g, 'that is');
+
+        // Handle mathematical expressions
+        cleaned = cleaned.replace(/\+/g, ' plus ');
+        cleaned = cleaned.replace(/\-/g, ' minus ');
+        cleaned = cleaned.replace(/\×/g, ' times ');
+        cleaned = cleaned.replace(/\÷/g, ' divided by ');
+        cleaned = cleaned.replace(/\=/g, ' equals ');
+
+        return cleaned;
     }
 
     stop() {
         this.synth.cancel();
+        this.isPaused = false;
+    }
+
+    pause() {
+        if (this.synth.speaking && !this.isPaused) {
+            this.synth.pause();
+            this.isPaused = true;
+        }
+    }
+
+    resume() {
+        if (this.isPaused) {
+            this.synth.resume();
+            this.isPaused = false;
+        }
     }
 
     toggle() {
@@ -381,17 +460,44 @@ class TextToSpeechManager {
 
     setVoice(voice) {
         this.voice = voice;
+        this.saveSettings();
+    }
+
+    setRate(rate) {
+        this.rate = rate;
+        this.saveSettings();
+    }
+
+    setPitch(pitch) {
+        this.pitch = pitch;
+        this.saveSettings();
+    }
+
+    setVolume(volume) {
+        this.volume = volume;
+        this.saveSettings();
     }
 
     getVoices() {
-        return this.synth.getVoices();
+        return this.voices;
+    }
+
+    getQualityVoices() {
+        return this.voices.filter(v =>
+            v.name.includes('Enhanced') ||
+            v.name.includes('Premium') ||
+            v.name.includes('Google') ||
+            v.name.includes('Microsoft') ||
+            !v.name.includes('eSpeak')
+        );
     }
 
     saveSettings() {
         localStorage.setItem('ttsSettings', JSON.stringify({
             rate: this.rate,
             pitch: this.pitch,
-            volume: this.volume
+            volume: this.volume,
+            voiceName: this.voice ? this.voice.name : null
         }));
     }
 }

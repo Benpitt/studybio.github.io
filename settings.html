@@ -290,6 +290,105 @@
             </div>
         </div>
 
+        <!-- Text-to-Speech Settings -->
+        <div class="settings-section">
+            <h2 class="text-2xl font-bold mb-4 text-white">🔊 Text-to-Speech</h2>
+
+            <!-- Browser Compatibility Warning -->
+            <div id="tts-compatibility-warning" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: start; gap: 12px;">
+                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b; font-size: 20px; margin-top: 2px;"></i>
+                    <div>
+                        <h3 class="font-semibold text-white mb-2">Limited Browser Support</h3>
+                        <p class="text-sm text-white/80" id="tts-warning-message"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <h3 class="font-semibold text-white">Enable Text-to-Speech</h3>
+                    <p class="text-sm text-white/70">Read content aloud with natural-sounding voices</p>
+                </div>
+                <div id="enable-tts" class="toggle-switch"></div>
+            </div>
+
+            <div id="tts-controls" style="display: none;">
+                <div class="setting-item">
+                    <div>
+                        <h3 class="font-semibold text-white">Voice Selection</h3>
+                        <p class="text-sm text-white/70">Choose your preferred voice</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <select id="tts-voice" class="select-custom" style="flex: 1;">
+                            <option value="">Loading voices...</option>
+                        </select>
+                        <button id="preview-voice" class="btn-primary" style="padding: 8px 16px; font-size: 14px;">
+                            <i class="fas fa-play"></i> Preview
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h3 class="font-semibold text-white">Speaking Rate</h3>
+                        <p class="text-sm text-white/70">Adjust how fast the voice speaks</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="1" style="flex: 1;">
+                        <span id="tts-rate-value" class="text-white font-semibold" style="min-width: 40px;">1.0x</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h3 class="font-semibold text-white">Pitch</h3>
+                        <p class="text-sm text-white/70">Adjust the voice pitch (higher or lower)</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="range" id="tts-pitch" min="0.5" max="2" step="0.1" value="1" style="flex: 1;">
+                        <span id="tts-pitch-value" class="text-white font-semibold" style="min-width: 40px;">1.0</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h3 class="font-semibold text-white">Volume</h3>
+                        <p class="text-sm text-white/70">Adjust the voice volume</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="range" id="tts-volume" min="0" max="1" step="0.1" value="1" style="flex: 1;">
+                        <span id="tts-volume-value" class="text-white font-semibold" style="min-width: 40px;">100%</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h3 class="font-semibold text-white">Show Pause Button</h3>
+                        <p class="text-sm text-white/70">Display pause/resume controls during playback</p>
+                    </div>
+                    <div id="tts-show-controls" class="toggle-switch active"></div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h3 class="font-semibold text-white">Highlight Words</h3>
+                        <p class="text-sm text-white/70">Highlight words as they are spoken</p>
+                    </div>
+                    <div id="tts-highlight-words" class="toggle-switch active"></div>
+                </div>
+
+                <div class="setting-item" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 16px;">
+                    <div>
+                        <h3 class="font-semibold text-white"><i class="fas fa-info-circle"></i> Voice Quality Info</h3>
+                        <p class="text-sm text-white/70" id="voice-quality-info">
+                            Select a voice to see quality information
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Notifications -->
         <div class="settings-section">
             <h2 class="text-2xl font-bold mb-4 text-white">🔔 Notifications</h2>
@@ -609,6 +708,25 @@
             setToggle('auto-play-audio', settings.autoPlayAudio || false);
             setToggle('show-timer', settings.showTimer !== false);
 
+            // Text-to-Speech
+            const ttsSettings = JSON.parse(localStorage.getItem('ttsSettings') || '{}');
+            const ttsEnabled = settings.enableTTS || false;
+            setToggle('enable-tts', ttsEnabled);
+            document.getElementById('tts-controls').style.display = ttsEnabled ? 'block' : 'none';
+
+            document.getElementById('tts-rate').value = ttsSettings.rate || 1.0;
+            document.getElementById('tts-rate-value').textContent = (ttsSettings.rate || 1.0) + 'x';
+            document.getElementById('tts-pitch').value = ttsSettings.pitch || 1.0;
+            document.getElementById('tts-pitch-value').textContent = (ttsSettings.pitch || 1.0);
+            document.getElementById('tts-volume').value = ttsSettings.volume || 1.0;
+            document.getElementById('tts-volume-value').textContent = Math.round((ttsSettings.volume || 1.0) * 100) + '%';
+
+            setToggle('tts-show-controls', ttsSettings.showControls !== false);
+            setToggle('tts-highlight-words', ttsSettings.highlightWords !== false);
+
+            // Load voices
+            loadTTSVoices(ttsSettings.voiceName);
+
             // Notifications
             setToggle('study-reminders', settings.studyReminders || false);
             setToggle('streak-alerts', settings.streakAlerts !== false);
@@ -639,6 +757,7 @@
                 cardsPerSession: document.getElementById('cards-per-session').value,
                 autoPlayAudio: getToggleState('auto-play-audio'),
                 showTimer: getToggleState('show-timer'),
+                enableTTS: getToggleState('enable-tts'),
                 studyReminders: getToggleState('study-reminders'),
                 streakAlerts: getToggleState('streak-alerts'),
                 achievementNotifications: getToggleState('achievement-notifications'),
@@ -651,12 +770,33 @@
             };
 
             localStorage.setItem('userSettings', JSON.stringify(settings));
+
+            // Save TTS settings
+            saveTTSSettings();
+
             showSaveIndicator();
 
             // Sync to Firebase if enabled
             if (settings.cloudSync) {
                 syncSettingsToFirebase(settings);
             }
+        }
+
+        // Save TTS settings
+        function saveTTSSettings() {
+            const voiceSelect = document.getElementById('tts-voice');
+            const selectedVoice = voiceSelect.options[voiceSelect.selectedIndex];
+
+            const ttsSettings = {
+                rate: parseFloat(document.getElementById('tts-rate').value),
+                pitch: parseFloat(document.getElementById('tts-pitch').value),
+                volume: parseFloat(document.getElementById('tts-volume').value),
+                voiceName: selectedVoice ? selectedVoice.value : null,
+                showControls: getToggleState('tts-show-controls'),
+                highlightWords: getToggleState('tts-highlight-words')
+            };
+
+            localStorage.setItem('ttsSettings', JSON.stringify(ttsSettings));
         }
 
         // Sync settings to Firebase
@@ -695,6 +835,265 @@
             setTimeout(() => {
                 indicator.classList.remove('show');
             }, 2000);
+        }
+
+        // TTS Functions
+        let ttsVoices = [];
+        let ttsTestSynth = window.speechSynthesis;
+
+        function loadTTSVoices(savedVoiceName) {
+            const loadVoicesWhenAvailable = () => {
+                ttsVoices = ttsTestSynth.getVoices();
+
+                if (ttsVoices.length > 0) {
+                    const voiceSelect = document.getElementById('tts-voice');
+                    voiceSelect.innerHTML = '';
+
+                    // Categorize voices by quality
+                    const qualityVoices = ttsVoices.filter(v =>
+                        v.name.includes('Enhanced') ||
+                        v.name.includes('Premium') ||
+                        v.name.includes('Google') ||
+                        v.name.includes('Microsoft')
+                    );
+
+                    const regularVoices = ttsVoices.filter(v => !qualityVoices.includes(v));
+
+                    // Add high-quality voices first
+                    if (qualityVoices.length > 0) {
+                        const qualityGroup = document.createElement('optgroup');
+                        qualityGroup.label = 'High Quality Voices';
+                        qualityVoices.forEach(voice => {
+                            const option = document.createElement('option');
+                            option.value = voice.name;
+                            option.textContent = `${voice.name} (${voice.lang})`;
+                            if (savedVoiceName === voice.name) {
+                                option.selected = true;
+                            }
+                            qualityGroup.appendChild(option);
+                        });
+                        voiceSelect.appendChild(qualityGroup);
+                    }
+
+                    // Add regular voices
+                    if (regularVoices.length > 0) {
+                        const regularGroup = document.createElement('optgroup');
+                        regularGroup.label = 'Standard Voices';
+                        regularVoices.forEach(voice => {
+                            const option = document.createElement('option');
+                            option.value = voice.name;
+                            option.textContent = `${voice.name} (${voice.lang})`;
+                            if (savedVoiceName === voice.name) {
+                                option.selected = true;
+                            }
+                            regularGroup.appendChild(option);
+                        });
+                        voiceSelect.appendChild(regularGroup);
+                    }
+
+                    // Set default if none selected
+                    if (!savedVoiceName && qualityVoices.length > 0) {
+                        const defaultVoice = qualityVoices.find(v => v.lang.startsWith('en'));
+                        if (defaultVoice) {
+                            voiceSelect.value = defaultVoice.name;
+                        }
+                    }
+
+                    updateVoiceQualityInfo();
+                }
+            };
+
+            loadVoicesWhenAvailable();
+
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoicesWhenAvailable;
+            }
+        }
+
+        function updateVoiceQualityInfo() {
+            const voiceSelect = document.getElementById('tts-voice');
+            const selectedVoiceName = voiceSelect.value;
+            const infoElement = document.getElementById('voice-quality-info');
+
+            if (!selectedVoiceName) {
+                infoElement.textContent = 'Select a voice to see quality information';
+                return;
+            }
+
+            const voice = ttsVoices.find(v => v.name === selectedVoiceName);
+            if (!voice) return;
+
+            const isHighQuality = voice.name.includes('Enhanced') ||
+                                  voice.name.includes('Premium') ||
+                                  voice.name.includes('Google') ||
+                                  voice.name.includes('Microsoft');
+
+            const qualityBadge = isHighQuality ? '⭐ High Quality' : '📢 Standard Quality';
+            const localRemote = voice.localService ? '💻 Offline' : '☁️ Online';
+
+            infoElement.innerHTML = `
+                <strong>${voice.name}</strong><br>
+                Language: ${voice.lang} | ${qualityBadge} | ${localRemote}<br>
+                ${isHighQuality ? 'This voice offers natural-sounding speech with high clarity.' :
+                  'This is a standard system voice. For better quality, try Enhanced or Premium voices.'}
+            `;
+        }
+
+        function previewVoice() {
+            const voiceSelect = document.getElementById('tts-voice');
+            const selectedVoiceName = voiceSelect.value;
+
+            if (!selectedVoiceName) return;
+
+            const voice = ttsVoices.find(v => v.name === selectedVoiceName);
+            if (!voice) return;
+
+            const rate = parseFloat(document.getElementById('tts-rate').value);
+            const pitch = parseFloat(document.getElementById('tts-pitch').value);
+            const volume = parseFloat(document.getElementById('tts-volume').value);
+
+            ttsTestSynth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(
+                'Hello! This is a preview of the selected voice. I hope you enjoy using text to speech for your studies.'
+            );
+            utterance.voice = voice;
+            utterance.rate = rate;
+            utterance.pitch = pitch;
+            utterance.volume = volume;
+
+            ttsTestSynth.speak(utterance);
+        }
+
+        function checkTTSCompatibility() {
+            const warningDiv = document.getElementById('tts-compatibility-warning');
+            const warningMessage = document.getElementById('tts-warning-message');
+
+            // Check if Speech Synthesis is supported
+            if (!window.speechSynthesis) {
+                warningDiv.style.display = 'block';
+                warningMessage.innerHTML = `
+                    Your browser does not support Text-to-Speech.
+                    Please use a modern browser like <strong>Chrome</strong>, <strong>Edge</strong>, <strong>Safari</strong>, or <strong>Firefox</strong>
+                    for the best experience.
+                `;
+                return false;
+            }
+
+            // Check voice availability
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) {
+                // Voices might not be loaded yet, check again after a delay
+                setTimeout(() => {
+                    const voicesNow = window.speechSynthesis.getVoices();
+                    if (voicesNow.length === 0) {
+                        warningDiv.style.display = 'block';
+                        warningMessage.innerHTML = `
+                            No voices detected. Text-to-Speech may not work properly in your browser or system.
+                            Try restarting your browser or check your system's speech settings.
+                        `;
+                    } else {
+                        checkVoiceQuality(voicesNow);
+                    }
+                }, 100);
+            } else {
+                checkVoiceQuality(voices);
+            }
+
+            return true;
+        }
+
+        function checkVoiceQuality(voices) {
+            const warningDiv = document.getElementById('tts-compatibility-warning');
+            const warningMessage = document.getElementById('tts-warning-message');
+
+            const qualityVoices = voices.filter(v =>
+                v.name.includes('Enhanced') ||
+                v.name.includes('Premium') ||
+                v.name.includes('Google') ||
+                v.name.includes('Microsoft')
+            );
+
+            // Detect browser
+            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+            const isFirefox = /Firefox/.test(navigator.userAgent);
+
+            if (qualityVoices.length === 0) {
+                warningDiv.style.display = 'block';
+                let browserAdvice = '';
+
+                if (isSafari) {
+                    browserAdvice = 'Safari has limited voice options. For higher quality voices, consider using <strong>Chrome</strong> or <strong>Edge</strong>.';
+                } else if (isFirefox) {
+                    browserAdvice = 'Firefox has basic voice support. For better quality, try <strong>Chrome</strong> or <strong>Edge</strong>.';
+                } else {
+                    browserAdvice = 'Your system has basic voice support. Installing additional voices from your system settings may improve quality.';
+                }
+
+                warningMessage.innerHTML = `
+                    Only standard voices are available (${voices.length} voice${voices.length !== 1 ? 's' : ''} detected).
+                    ${browserAdvice}
+                `;
+            } else {
+                // High quality voices available
+                warningDiv.style.display = 'none';
+            }
+        }
+
+        function initTTSControls() {
+            // Check browser compatibility
+            checkTTSCompatibility();
+
+            // Re-check when voices change (some browsers load voices async)
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = checkTTSCompatibility;
+            }
+
+            // Enable TTS toggle
+            document.getElementById('enable-tts').addEventListener('click', function() {
+                const ttsControls = document.getElementById('tts-controls');
+                const isEnabled = this.classList.contains('active');
+                ttsControls.style.display = isEnabled ? 'block' : 'none';
+            });
+
+            // Rate slider
+            document.getElementById('tts-rate').addEventListener('input', function() {
+                document.getElementById('tts-rate-value').textContent = this.value + 'x';
+                saveTTSSettings();
+            });
+
+            // Pitch slider
+            document.getElementById('tts-pitch').addEventListener('input', function() {
+                document.getElementById('tts-pitch-value').textContent = this.value;
+                saveTTSSettings();
+            });
+
+            // Volume slider
+            document.getElementById('tts-volume').addEventListener('input', function() {
+                document.getElementById('tts-volume-value').textContent = Math.round(this.value * 100) + '%';
+                saveTTSSettings();
+            });
+
+            // Voice selection
+            document.getElementById('tts-voice').addEventListener('change', function() {
+                updateVoiceQualityInfo();
+                saveTTSSettings();
+            });
+
+            // Preview button
+            document.getElementById('preview-voice').addEventListener('click', previewVoice);
+
+            // TTS toggle switches
+            document.getElementById('tts-show-controls').addEventListener('click', function() {
+                this.classList.toggle('active');
+                saveTTSSettings();
+            });
+
+            document.getElementById('tts-highlight-words').addEventListener('click', function() {
+                this.classList.toggle('active');
+                saveTTSSettings();
+            });
         }
 
         // Setup toggle switches
@@ -828,6 +1227,7 @@
         loadUserProfile();
         loadSettings();
         loadLearningProfile();
+        initTTSControls();
     </script>
 </body>
 </html>

@@ -274,6 +274,7 @@
                                     {item.href ? (
                                         <a
                                             href={item.href}
+                                            onClick={item.onClick}
                                             className="text-white/60 hover:text-white transition-colors"
                                         >
                                             {item.label}
@@ -358,6 +359,7 @@
             const [matchedPairs, setMatchedPairs] = useState([]);
             const [matchScore, setMatchScore] = useState(0);
             const [matchAttempts, setMatchAttempts] = useState(0);
+            const [matchCardCount, setMatchCardCount] = useState(8);
 
             // Speed challenge
             const [speedQuestions, setSpeedQuestions] = useState([]);
@@ -638,7 +640,9 @@
                 } else if (modeType === 'practice') {
                     initPractice(cards);
                 } else if (modeType === 'match') {
-                    initMatching(cards);
+                    // Go to preview screen instead of starting directly
+                    setMode('match-preview');
+                    return;
                 } else if (modeType === 'speed') {
                     initSpeed(cards);
                 }
@@ -669,8 +673,10 @@
                 setTestSubmitted(false);
             }
 
-            function initMatching(cards) {
-                const selected = cards.slice(0, 8);
+            function initMatching(cards, cardCount = 8) {
+                // Randomize cards first, then select the requested count
+                const shuffled = [...cards].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, Math.min(cardCount, cards.length));
                 const pairs = [];
                 selected.forEach(card => {
                     pairs.push({ id: `q-${card.id}`, text: card.question, type: 'question', pairId: card.id });
@@ -1306,19 +1312,137 @@
 // PART 7: Match, Speed, and Mistakes Modes
 // Insert after "// PASTE PART 7 HERE" in Part 6
 
+            // Matching game preview screen
+            if (mode === 'match-preview') {
+                const cards = currentGroup ? getCombinedCards(currentGroup) : (currentDeck?.cards || []);
+                const maxCards = Math.min(cards.length, 20);
+
+                // Calculate valid card counts that form rectangles
+                const getValidCardCounts = (max) => {
+                    const counts = [];
+                    // Grid configurations: 2x2=4, 2x3=6, 2x4=8, 2x5=10, 3x4=12, 4x4=16, 4x5=20
+                    const validCounts = [4, 6, 8, 10, 12, 16, 20];
+                    return validCounts.filter(c => c <= max);
+                };
+
+                const validCounts = getValidCardCounts(maxCards);
+
+                // Get grid dimensions for a card count
+                const getGridDimensions = (count) => {
+                    const gridConfigs = {
+                        4: '2×2',
+                        6: '2×3',
+                        8: '2×4',
+                        10: '2×5',
+                        12: '3×4',
+                        16: '4×4',
+                        20: '4×5'
+                    };
+                    return gridConfigs[count] || `${count} cards`;
+                };
+
+                const startMatchingGame = () => {
+                    initMatching(cards, matchCardCount);
+                    setMode('match');
+                };
+
+                return (
+                    <div className="min-h-screen">
+                        <Navigation />
+                        <Breadcrumb items={[
+                            { label: 'Dashboard', href: 'dashboard' },
+                            { label: 'My Flashcards', href: '#', onClick: (e) => { e.preventDefault(); setMode('decks'); } }
+                        ]} />
+                        <div className="pt-20 p-6">
+                            <div className="max-w-4xl mx-auto">
+                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6 flex items-center gap-2">
+                                    ← Back to Library
+                                </button>
+
+                                <div className="bg-white/95 backdrop-blur rounded-3xl p-12 shadow-2xl">
+                                    <div className="text-center mb-8">
+                                        <div className="text-8xl mb-4">🎯</div>
+                                        <h1 className="text-5xl font-bold text-gray-800 mb-3">Matching Game</h1>
+                                        <p className="text-xl text-gray-600">Choose how many cards you want to match</p>
+                                    </div>
+
+                                    <div className="mb-8">
+                                        <label className="block text-gray-700 font-bold mb-4 text-lg">Number of Cards: {matchCardCount}</label>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            {validCounts.map(count => (
+                                                <button
+                                                    key={count}
+                                                    onClick={() => setMatchCardCount(count)}
+                                                    className={`p-6 rounded-xl font-bold text-lg transition-all ${
+                                                        matchCardCount === count
+                                                            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white scale-105 shadow-lg'
+                                                            : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                                                    }`}
+                                                >
+                                                    <div className="text-3xl mb-2">{count}</div>
+                                                    <div className="text-sm opacity-80">{getGridDimensions(count)}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-blue-50 rounded-xl p-6 mb-8">
+                                        <h3 className="font-bold text-gray-800 mb-2">How to Play:</h3>
+                                        <ul className="text-gray-700 space-y-1">
+                                            <li>• Click on a question card</li>
+                                            <li>• Click on the matching answer card</li>
+                                            <li>• Match all pairs to complete the game</li>
+                                            <li>• Try to do it in as few attempts as possible!</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={() => setMode('decks')}
+                                            className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-4 rounded-xl font-bold text-xl transition-all"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={startMatchingGame}
+                                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:shadow-2xl text-white py-4 rounded-xl font-bold text-xl transition-all"
+                                        >
+                                            Start Game 🎯
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
             if (mode === 'match') {
                 const allMatched = matchedPairs.length === matchPairs.length / 2;
 
                 if (allMatched) {
                     return (
-                        <div className="min-h-screen flex items-center justify-center">
-                            <div className="text-center">
-                                <div className="text-8xl mb-4">🎉</div>
-                                <h2 className="text-4xl font-bold text-white mb-4">Perfect Match!</h2>
-                                <p className="text-2xl text-blue-200 mb-6">Score: {matchScore} | Attempts: {matchAttempts}</p>
-                                <button onClick={() => setMode('decks')} className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl">
-                                    Back to Library
-                                </button>
+                        <div className="min-h-screen">
+                            <Navigation />
+                            <Breadcrumb items={[
+                                { label: 'Dashboard', href: 'dashboard' },
+                                { label: 'My Flashcards', href: '#', onClick: (e) => { e.preventDefault(); setMode('decks'); } },
+                                { label: 'Matching Game Complete' }
+                            ]} />
+                            <div className="pt-20 flex items-center justify-center" style={{ minHeight: 'calc(100vh - 5rem)' }}>
+                                <div className="text-center">
+                                    <div className="text-8xl mb-4">🎉</div>
+                                    <h2 className="text-4xl font-bold text-white mb-4">Perfect Match!</h2>
+                                    <p className="text-2xl text-blue-200 mb-6">Score: {matchScore} | Attempts: {matchAttempts}</p>
+                                    <div className="flex gap-4 justify-center">
+                                        <button onClick={() => setMode('decks')} className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-xl hover:bg-gray-100 transition-all">
+                                            Back to Library
+                                        </button>
+                                        <button onClick={() => setMode('match-preview')} className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-xl hover:shadow-2xl transition-all">
+                                            Play Again 🎯
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     );

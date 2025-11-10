@@ -60,38 +60,20 @@
 /* ===== PRIMARY BUTTONS ===== */
 button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style),
 .btn-primary {
-    background: linear-gradient(45deg, #7c3aed, #6366f1, #14b8a6, #06b6d4, #8b5cf6);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+    background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(14, 165, 164, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-}
-
-button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style)::before,
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
-}
-
-button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):hover::before,
-.btn-primary:hover::before {
-    left: 100%;
+    backdrop-filter: blur(10px);
 }
 
 button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):hover,
 .btn-primary:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 35px rgba(124, 58, 237, 0.6);
-    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 60px rgba(14, 165, 164, 0.4);
 }
 
 button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):active,
@@ -101,20 +83,21 @@ button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):activ
 
 /* ===== SECONDARY BUTTONS ===== */
 .btn-secondary {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6, #14b8a6, #0891b2);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: white;
     font-weight: 600;
 }
 
 .btn-secondary:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
-    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* ===== DANGER/DELETE BUTTONS ===== */
@@ -122,11 +105,10 @@ button:not(.btn-secondary):not(.btn-danger):not(.btn-ghost):not(.no-style):activ
 button[id*="delete"],
 button[id*="signout"],
 button[id*="remove"] {
-    background: linear-gradient(45deg, #eb3b5a, #fc5c65, #fd79a8, #ff6348) !important;
-    background-size: 400% 400% !important;
-    animation: gradient-flow-reverse 20s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 4px 15px rgba(235, 59, 90, 0.4) !important;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
@@ -134,22 +116,24 @@ button[id*="remove"] {
 button[id*="delete"]:hover,
 button[id*="signout"]:hover,
 button[id*="remove"]:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 8px 30px rgba(235, 59, 90, 0.7) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 15px 40px rgba(239, 68, 68, 0.4) !important;
 }
 
 /* ===== GHOST/TRANSPARENT BUTTONS ===== */
 .btn-ghost {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
     transition: all 0.3s ease;
 }
 
 .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* ===== INPUT FIELDS ===== */
@@ -160,8 +144,9 @@ input[type="number"],
 input[type="search"],
 textarea,
 select {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 250, 255, 0.95)) !important;
-    border: 2px solid rgba(124, 58, 237, 0.3) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(14, 165, 164, 0.2) !important;
+    border-radius: 14px !important;
     color: #1f2937 !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -184,12 +169,11 @@ input[type="number"]:focus,
 input[type="search"]:focus,
 textarea:focus,
 select:focus {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(245, 250, 255, 1)) !important;
-    border: 2px solid rgba(124, 58, 237, 0.6) !important;
-    box-shadow: 0 0 25px rgba(124, 58, 237, 0.4) !important;
+    background: rgba(255, 255, 255, 1) !important;
+    border: 1px solid rgba(14, 165, 164, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.1) !important;
     color: #111827 !important;
     outline: none;
-    transform: scale(1.01);
 }
 
 /* ===== CHECKBOX & RADIO INPUTS ===== */
@@ -203,25 +187,17 @@ input[type="radio"] {
 
 /* ===== SPECIAL: Google Sign-In Button Enhancement ===== */
 #google-signin-btn {
-    background: linear-gradient(135deg, #ffffff, #f5faff) !important;
-    border: 3px solid transparent !important;
-    background-clip: padding-box !important;
-    position: relative !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(14, 165, 164, 0.2) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-#google-signin-btn::after {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    background: linear-gradient(45deg, #7c3aed, #6366f1, #14b8a6, #06b6d4, #8b5cf6);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border-radius: inherit;
-    z-index: -1;
+#google-signin-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(14, 165, 164, 0.3) !important;
 }
 
 /* ===== LINK BUTTONS (styled as buttons) ===== */
@@ -252,19 +228,19 @@ select:disabled:hover {
 /* ===== SUBMIT BUTTONS ===== */
 button[type="submit"],
 input[type="submit"] {
-    background: linear-gradient(45deg, #0f766e, #14b8a6, #06b6d4, #0891b2);
-    background-size: 400% 400%;
-    animation: gradient-flow-reverse 25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4);
+    background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(14, 165, 164, 0.3);
     color: white;
     font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 button[type="submit"]:hover,
 input[type="submit"]:hover {
-    box-shadow: 0 8px 35px rgba(15, 118, 110, 0.6);
-    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(14, 165, 164, 0.4);
+    transform: translateY(-2px);
 }
 
 /* ===== FORM LABELS ===== */
@@ -319,21 +295,20 @@ select {
 
 /* ===== FILE INPUTS ===== */
 input[type="file"]::file-selector-button {
-    background: linear-gradient(45deg, #7c3aed, #14b8a6);
-    background-size: 200% 200%;
-    animation: gradient-flow-reverse 15s ease infinite;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+    border: none;
+    border-radius: 12px;
     color: white;
     padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14, 165, 164, 0.3);
 }
 
 input[type="file"]::file-selector-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 8px 25px rgba(14, 165, 164, 0.4);
 }
 
 /* ========================================== */

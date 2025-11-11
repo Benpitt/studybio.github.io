@@ -624,6 +624,7 @@
             const [selectedDisciplines, setSelectedDisciplines] = useState([]);
             const [selectedDifficulties, setSelectedDifficulties] = useState(['E', 'M', 'H']); // All by default
             const [customCount, setCustomCount] = useState(10);
+            const [smartSelection, setSmartSelection] = useState(true); // Enable AI recommendations by default
 
             // Define disciplines by module
             const mathDisciplines = [
@@ -844,6 +845,37 @@
                                     </div>
                                 </div>
 
+                                {/* Smart Selection Toggle */}
+                                <div className="mb-8 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border-2 border-purple-200">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-2xl">🤖</span>
+                                            <div>
+                                                <h3 className="font-bold text-gray-800">AI-Powered Question Selection</h3>
+                                                <p className="text-sm text-gray-600">Let our reinforcement learning algorithm target your weaknesses</p>
+                                            </div>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={smartSelection}
+                                                onChange={(e) => setSmartSelection(e.target.checked)}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                                        </label>
+                                    </div>
+                                    {smartSelection ? (
+                                        <div className="text-sm text-gray-700 bg-white/70 rounded-lg p-3">
+                                            <span className="font-semibold text-purple-600">✓ Enabled:</span> Questions will be selected using Thompson Sampling to focus on your weakest domains and optimal difficulty levels.
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-gray-700 bg-white/70 rounded-lg p-3">
+                                            <span className="font-semibold text-gray-600">Random:</span> Questions will be randomly selected from your chosen filters.
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="flex gap-4">
                                     <button
                                         onClick={() => setStep(1)}
@@ -856,12 +888,13 @@
                                             module: selectedModule,
                                             disciplines: selectedDisciplines,
                                             difficulties: selectedDifficulties,
-                                            count: customCount
+                                            count: customCount,
+                                            smartSelection: smartSelection
                                         })}
                                         disabled={selectedDifficulties.length === 0}
                                         className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        Start Practice Test
+                                        {smartSelection ? '🤖 Start AI-Powered Practice' : '🎲 Start Practice Test'}
                                     </button>
                                 </div>
                             </>
@@ -1017,18 +1050,58 @@
             }
 
             const handleStartTest = (config) => {
-                // Filter questions based on selected module, disciplines, and difficulties
-                let filteredQuestions = allQuestions.filter(q => {
-                    return q.module === config.module &&
-                           config.disciplines.includes(q.domain) &&
-                           config.difficulties.includes(q.difficulty);
-                });
+                let selected = [];
 
-                console.log(`Filtered ${filteredQuestions.length} questions for ${config.module} module`);
+                // Check if smart selection is enabled and RL model is available
+                if (config.smartSelection && satRLModel) {
+                    console.log('🤖 Using RL-based smart question selection');
 
-                // Shuffle and take the specified count
-                const shuffled = filteredQuestions.sort(() => Math.random() - 0.5);
-                const selected = shuffled.slice(0, config.count);
+                    // Filter questions to selected module only
+                    const moduleQuestions = allQuestions.filter(q => q.module === config.module);
+
+                    // Use RL to recommend questions
+                    const recommendation = satRLModel.recommendQuestions(moduleQuestions, config.count);
+                    selected = recommendation.questions;
+
+                    // Log the reasoning
+                    console.log('🎯 RL Recommendations:');
+                    console.log(`  Weaknesses: ${recommendation.weaknesses.map(w => `${w.domain} (θ=${w.theta})`).join(', ')}`);
+                    recommendation.reasoning.forEach((r, i) => {
+                        console.log(`  Q${i + 1}: ${r.reason}`);
+                    });
+
+                    // If RL didn't find enough questions, fall back to filtered selection
+                    if (selected.length < config.count) {
+                        console.warn(`⚠️ RL only found ${selected.length} questions, supplementing with filtered questions`);
+                        const filteredQuestions = allQuestions.filter(q => {
+                            return q.module === config.module &&
+                                   config.disciplines.includes(q.domain) &&
+                                   config.difficulties.includes(q.difficulty);
+                        });
+                        const usedIds = selected.map(q => q.questionId || q.id);
+                        const additional = filteredQuestions
+                            .filter(q => !usedIds.includes(q.questionId || q.id))
+                            .sort(() => Math.random() - 0.5)
+                            .slice(0, config.count - selected.length);
+                        selected = [...selected, ...additional];
+                    }
+                } else {
+                    // Original random selection
+                    console.log('🎲 Using random question selection');
+                    let filteredQuestions = allQuestions.filter(q => {
+                        return q.module === config.module &&
+                               config.disciplines.includes(q.domain) &&
+                               config.difficulties.includes(q.difficulty);
+                    });
+
+                    console.log(`Filtered ${filteredQuestions.length} questions for ${config.module} module`);
+
+                    // Shuffle and take the specified count
+                    const shuffled = filteredQuestions.sort(() => Math.random() - 0.5);
+                    selected = shuffled.slice(0, config.count);
+                }
+
+                console.log(`✅ Selected ${selected.length} questions for practice`);
 
                 setTestQuestions(selected);
                 setCurrentQuestionIndex(0);

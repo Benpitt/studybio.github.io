@@ -313,7 +313,7 @@
 
         function Breadcrumb({ items }) {
             return (
-                <div className="bg-black/20 backdrop-blur-sm border-b border-white/5" style={{ position: 'sticky', top: '64px', zIndex: 40 }}>
+                <div className="bg-gray-900 border-b border-gray-800" style={{ position: 'sticky', top: '64px', zIndex: 40 }}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                         <nav className="flex items-center space-x-2 text-sm">
                             {items.map((item, index) => (
@@ -1533,25 +1533,6 @@
                                      currentQuestion.difficulty === 'M' ? 'Medium' : 'Easy'}
                                 </div>
                             </div>
-
-                            <div className="flex-1"></div>
-
-                            <div className="space-y-3">
-                                <button
-                                    onClick={handlePrevious}
-                                    disabled={currentQuestionIndex === 0}
-                                    className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg font-semibold transition-all"
-                                >
-                                    ← Previous
-                                </button>
-                                <button
-                                    onClick={handleNext}
-                                    disabled={currentQuestionIndex === testQuestions.length - 1}
-                                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 rounded-lg font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                                >
-                                    Next →
-                                </button>
-                            </div>
                         </div>
 
                         {/* Main Content Area */}
@@ -1562,13 +1543,6 @@
                                     <div className="mb-6">
                                         <MathText text={questionText} className="text-xl leading-relaxed text-gray-900" />
                                     </div>
-
-                                    {isSubmitted && (
-                                        <div className="mt-8 p-6 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
-                                            <h4 className="font-bold text-blue-900 mb-3 text-lg">Explanation</h4>
-                                            <MathText text={explanation || 'No explanation available.'} className="text-blue-800" />
-                                        </div>
-                                    )}
                                 </div>
                             </div>
 
@@ -1668,6 +1642,37 @@
                                     Check Answer
                                 </button>
                             )}
+
+                            {/* Explanation Section - Shows after answer is submitted */}
+                            {isSubmitted && (
+                                <div className="mb-6 p-6 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                                    <h4 className="font-bold text-blue-900 mb-3 text-lg">Explanation</h4>
+                                    <MathText text={explanation || 'No explanation available.'} className="text-blue-800" />
+                                </div>
+                            )}
+
+                            {/* Navigation Buttons */}
+                            <div className="border-t border-gray-200 pt-6 mt-6">
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={handlePrevious}
+                                        disabled={currentQuestionIndex === 0}
+                                        className="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg font-semibold transition-all text-gray-800"
+                                    >
+                                        ← Previous
+                                    </button>
+                                    <button
+                                        onClick={handleNext}
+                                        disabled={currentQuestionIndex === testQuestions.length - 1}
+                                        className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 rounded-lg font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed text-white"
+                                    >
+                                        Next →
+                                    </button>
+                                </div>
+                                <div className="text-center text-sm text-gray-500 mt-3">
+                                    Question {currentQuestionIndex + 1} of {testQuestions.length}
+                                </div>
+                            </div>
                         </div>
                         </div>
                     </div>

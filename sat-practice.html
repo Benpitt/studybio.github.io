@@ -466,7 +466,7 @@
             return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
         }
 
-        function HomeScreen({ onNavigate }) {
+        function HomeScreen({ onNavigate, questionsLoaded }) {
             // Get real data from localStorage
             const [studyStreak, setStudyStreak] = useState(0);
             const [recentAccuracy, setRecentAccuracy] = useState(0);
@@ -546,11 +546,20 @@
 
                         {/* Practice Test Mode Card */}
                         <div
-                            onClick={() => onNavigate('practiceTest')}
-                            className="group bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:scale-105 hover:shadow-2xl"
+                            onClick={() => {
+                                if (!questionsLoaded) {
+                                    alert('Questions are still loading. Please wait a moment and try again.');
+                                    return;
+                                }
+                                onNavigate('practiceTest');
+                            }}
+                            className={`group bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:scale-105 hover:shadow-2xl ${!questionsLoaded ? 'opacity-60' : ''}`}
                         >
                             <div className="text-6xl mb-4">📝</div>
-                            <h2 className="text-3xl font-bold text-white mb-3">Practice Test Mode</h2>
+                            <h2 className="text-3xl font-bold text-white mb-3">
+                                Practice Test Mode
+                                {!questionsLoaded && <span className="ml-2 text-sm">(Loading...)</span>}
+                            </h2>
                             <p className="text-white/70 mb-4">
                                 Take a full-length SAT practice test (98 questions: 54 R&W + 44 Math)
                             </p>
@@ -1112,6 +1121,13 @@
             }
 
             const handleStartPracticeTest = () => {
+                // Validate that questions are loaded
+                if (!allQuestions || allQuestions.length === 0) {
+                    console.error('❌ Cannot start practice test: Questions not loaded yet');
+                    alert('Please wait for questions to load before starting the practice test.');
+                    return;
+                }
+
                 // Practice test distribution based on SAT specifications
                 const testDistribution = {
                     english: {
@@ -1148,6 +1164,13 @@
                         console.log(`📝 ${domain}: Selected ${domainSelected.length}/${targetCount} questions`);
                         selected = [...selected, ...domainSelected];
                     }
+                }
+
+                // Validate we have enough questions
+                if (selected.length < 50) {
+                    console.error('❌ Not enough questions generated for practice test');
+                    alert(`Only ${selected.length} questions available. Need at least 50 for a practice test.`);
+                    return;
                 }
 
                 // Shuffle the final test so questions are mixed
@@ -1349,7 +1372,7 @@
             };
 
             if (mode === 'home') {
-                return <HomeScreen onNavigate={handleNavigation} />;
+                return <HomeScreen onNavigate={handleNavigation} questionsLoaded={allQuestions.length > 0} />;
             }
 
             if (mode === 'stats') {

@@ -338,14 +338,6 @@
 
             <div class="setting-item">
                 <div>
-                    <h3 class="font-semibold text-white">Spaced Repetition</h3>
-                    <p class="text-sm text-white/70">Use spaced repetition for optimal memory retention</p>
-                </div>
-                <div id="spaced-repetition" class="toggle-switch active"></div>
-            </div>
-
-            <div class="setting-item">
-                <div>
                     <h3 class="font-semibold text-white">Adaptive Learning</h3>
                     <p class="text-sm text-white/70">Use BKT algorithm to adapt to your learning pace</p>
                 </div>
@@ -563,9 +555,6 @@
                 if (personalizedSettings.largerFonts) {
                     customizations.push('🔤 Larger fonts for readability');
                 }
-                if (personalizedSettings.enableSpacedRepetition) {
-                    customizations.push('📅 Spaced repetition optimized');
-                }
                 if (personalizedSettings.recommendedModes.length > 0) {
                     customizations.push(`⭐ ${personalizedSettings.recommendedModes.length} study modes recommended`);
                 }
@@ -628,7 +617,6 @@
             setToggle('achievement-notifications', settings.achievementNotifications !== false);
 
             // Learning Algorithm
-            setToggle('spaced-repetition', settings.spacedRepetition !== false);
             setToggle('adaptive-learning', settings.adaptiveLearning !== false);
             setToggle('focus-weak-areas', settings.focusWeakAreas !== false);
 
@@ -655,7 +643,6 @@
                 studyReminders: getToggleState('study-reminders'),
                 streakAlerts: getToggleState('streak-alerts'),
                 achievementNotifications: getToggleState('achievement-notifications'),
-                spacedRepetition: getToggleState('spaced-repetition'),
                 adaptiveLearning: getToggleState('adaptive-learning'),
                 focusWeakAreas: getToggleState('focus-weak-areas'),
                 cloudSync: getToggleState('cloud-sync'),

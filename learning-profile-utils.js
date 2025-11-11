@@ -129,13 +129,11 @@ function getRecommendations() {
                 recommendations.tips.push('Adjust font size in settings for easier reading');
                 break;
             case 'processing':
-                recommendations.features.push('untimed-mode', 'step-by-step', 'extra-time');
+                recommendations.features.push('untimed-mode', 'extra-time');
                 recommendations.tips.push('Take your time - no rush!');
-                recommendations.tips.push('Review explanations step-by-step');
                 break;
             case 'memory':
-                recommendations.features.push('spaced-repetition', 'review-mode', 'flashcards');
-                recommendations.tips.push('Enable spaced repetition for better retention');
+                recommendations.features.push('review-mode', 'flashcards');
                 recommendations.tips.push('Review challenging cards more frequently');
                 break;
             case 'organization':
@@ -190,9 +188,7 @@ function getRecommendedSettings() {
         untimedMode: getChallengeLevel('processing') === 'high',
 
         // Learning approach
-        enableSpacedRepetition: hasChallenge('memory'),
-        showStepByStep: hasChallenge('processing'),
-        frequentBreaks: hasChallenge('focus') || profile.learningStyle === 'kinesthetic',
+        enableBreakReminders: hasChallenge('focus') || profile.learningStyle === 'kinesthetic',
 
         // Recommended modes
         recommendedModes: getRecommendations()?.studyModes || []
@@ -219,9 +215,7 @@ function getUserPreferences() {
             largerFonts: false,
             extraTime: false,
             untimedMode: false,
-            enableSpacedRepetition: false,
-            showStepByStep: false,
-            frequentBreaks: false
+            enableBreakReminders: false
         };
     } catch (error) {
         console.error('Error reading user preferences:', error);
@@ -267,12 +261,12 @@ function getChallengeDescription(challengeType) {
         },
         processing: {
             title: 'Processing Support',
-            description: 'Extra time and step-by-step guidance',
+            description: 'Extra time and untimed mode',
             icon: 'fa-brain'
         },
         memory: {
             title: 'Memory Support',
-            description: 'Spaced repetition and review tools',
+            description: 'Review tools and flashcards',
             icon: 'fa-lightbulb'
         },
         organization: {
@@ -335,8 +329,9 @@ class TextToSpeechManager {
     }
 
     init() {
-        const profile = getLearningProfile();
-        this.enabled = profile?.learningStyle === 'auditory' || hasChallenge('reading');
+        // Check if user has explicitly enabled text-to-speech in their preferences
+        const userPreferences = getUserPreferences();
+        this.enabled = userPreferences?.enableTextToSpeech || false;
 
         // Load saved preferences
         const ttsSettings = JSON.parse(localStorage.getItem('ttsSettings') || '{}');
@@ -404,6 +399,281 @@ function getTTSManager() {
         ttsManager = new TextToSpeechManager();
     }
     return ttsManager;
+}
+
+// Break Reminder functionality
+class BreakReminderManager {
+    constructor() {
+        this.enabled = false;
+        this.studyInterval = 25 * 60 * 1000; // 25 minutes in milliseconds
+        this.breakDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+        this.startTime = null;
+        this.reminderTimer = null;
+        this.notificationShown = false;
+
+        this.init();
+    }
+
+    init() {
+        // Check if user has explicitly enabled break reminders in their preferences
+        const userPreferences = getUserPreferences();
+        this.enabled = userPreferences?.enableBreakReminders || false;
+
+        // Load saved settings
+        const breakSettings = JSON.parse(localStorage.getItem('breakReminderSettings') || '{}');
+        this.studyInterval = breakSettings.studyInterval || (25 * 60 * 1000);
+        this.breakDuration = breakSettings.breakDuration || (5 * 60 * 1000);
+
+        if (this.enabled) {
+            this.start();
+        }
+    }
+
+    start() {
+        if (!this.enabled || this.reminderTimer) return;
+
+        this.startTime = Date.now();
+        this.notificationShown = false;
+
+        // Set timer for the study interval
+        this.reminderTimer = setTimeout(() => {
+            this.showBreakReminder();
+        }, this.studyInterval);
+    }
+
+    stop() {
+        if (this.reminderTimer) {
+            clearTimeout(this.reminderTimer);
+            this.reminderTimer = null;
+        }
+        this.notificationShown = false;
+    }
+
+    reset() {
+        this.stop();
+        if (this.enabled) {
+            this.start();
+        }
+    }
+
+    showBreakReminder() {
+        if (this.notificationShown) return;
+        this.notificationShown = true;
+
+        // Create break reminder notification
+        const notification = document.createElement('div');
+        notification.id = 'break-reminder-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 400px;
+            animation: slideInRight 0.5s ease-out;
+        `;
+
+        notification.innerHTML = `
+            <div style="display: flex; align-items: start; gap: 12px;">
+                <div style="font-size: 2rem;">☕</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Time for a break!</div>
+                    <div style="opacity: 0.9; font-size: 0.9rem; margin-bottom: 12px;">
+                        You've been studying for ${this.studyInterval / 60000} minutes. Take a ${this.breakDuration / 60000}-minute break to recharge.
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="take-break-btn" style="
+                            background: white;
+                            color: #667eea;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 0.9rem;
+                        ">Take Break</button>
+                        <button id="dismiss-break-btn" style="
+                            background: rgba(255,255,255,0.2);
+                            color: white;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 0.9rem;
+                        ">Continue</button>
+                    </div>
+                </div>
+                <button id="close-break-btn" style="
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    padding: 0;
+                    line-height: 1;
+                    opacity: 0.7;
+                ">&times;</button>
+            </div>
+        `;
+
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.body.appendChild(notification);
+
+        // Add event listeners
+        const takeBreakBtn = notification.querySelector('#take-break-btn');
+        const dismissBtn = notification.querySelector('#dismiss-break-btn');
+        const closeBtn = notification.querySelector('#close-break-btn');
+
+        const removeNotification = () => {
+            notification.style.animation = 'slideInRight 0.3s ease-in reverse';
+            setTimeout(() => notification.remove(), 300);
+        };
+
+        takeBreakBtn.addEventListener('click', () => {
+            removeNotification();
+            this.startBreakTimer();
+        });
+
+        dismissBtn.addEventListener('click', () => {
+            removeNotification();
+            this.reset(); // Start another study session
+        });
+
+        closeBtn.addEventListener('click', () => {
+            removeNotification();
+            this.reset();
+        });
+
+        // Auto-dismiss after 30 seconds
+        setTimeout(() => {
+            if (document.getElementById('break-reminder-notification')) {
+                removeNotification();
+                this.reset();
+            }
+        }, 30000);
+    }
+
+    startBreakTimer() {
+        // Show break timer
+        const breakTimer = document.createElement('div');
+        breakTimer.id = 'break-timer';
+        breakTimer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-weight: 700;
+            animation: slideInRight 0.5s ease-out;
+        `;
+
+        let secondsLeft = this.breakDuration / 1000;
+
+        const updateTimer = () => {
+            const minutes = Math.floor(secondsLeft / 60);
+            const seconds = secondsLeft % 60;
+            breakTimer.textContent = `🌟 Break time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            secondsLeft--;
+
+            if (secondsLeft < 0) {
+                breakTimer.remove();
+                this.showBreakEndNotification();
+                this.reset(); // Start another study session
+            }
+        };
+
+        updateTimer();
+        const interval = setInterval(updateTimer, 1000);
+
+        breakTimer.addEventListener('click', () => {
+            clearInterval(interval);
+            breakTimer.remove();
+            this.reset();
+        });
+
+        document.body.appendChild(breakTimer);
+    }
+
+    showBreakEndNotification() {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-weight: 700;
+            animation: slideInRight 0.5s ease-out;
+        `;
+        notification.textContent = '✨ Break over! Ready to continue studying?';
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideInRight 0.3s ease-in reverse';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+
+    toggle() {
+        this.enabled = !this.enabled;
+        if (this.enabled) {
+            this.start();
+        } else {
+            this.stop();
+        }
+    }
+
+    updateSettings(studyMinutes, breakMinutes) {
+        this.studyInterval = studyMinutes * 60 * 1000;
+        this.breakDuration = breakMinutes * 60 * 1000;
+        this.saveSettings();
+        this.reset();
+    }
+
+    saveSettings() {
+        localStorage.setItem('breakReminderSettings', JSON.stringify({
+            studyInterval: this.studyInterval,
+            breakDuration: this.breakDuration
+        }));
+    }
+}
+
+// Create global break reminder instance
+let breakReminderManager = null;
+
+function getBreakReminderManager() {
+    if (!breakReminderManager) {
+        breakReminderManager = new BreakReminderManager();
+    }
+    return breakReminderManager;
 }
 
 // Apply personalization to the page
@@ -493,9 +763,15 @@ function applyPersonalization() {
 // Apply personalization when the page loads
 if (typeof window !== 'undefined') {
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', applyPersonalization);
+        document.addEventListener('DOMContentLoaded', () => {
+            applyPersonalization();
+            // Initialize break reminders if enabled
+            getBreakReminderManager();
+        });
     } else {
         applyPersonalization();
+        // Initialize break reminders if enabled
+        getBreakReminderManager();
     }
 }
 
@@ -522,6 +798,8 @@ if (typeof module !== 'undefined' && module.exports) {
         getLearningStyleInfo,
         getTTSManager,
         TextToSpeechManager,
+        getBreakReminderManager,
+        BreakReminderManager,
         applyPersonalization
     };
 }

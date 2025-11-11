@@ -11,10 +11,25 @@
     <script src="learning-profile-utils.js"></script>
     <script src="tts-button.js"></script>
     <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=afe7c31454144b64b28246771a567788"></script>
-    <!-- KaTeX for math rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <!-- MathJax for math rendering (MathML + LaTeX support) -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+            fontCache: 'global'
+        },
+        startup: {
+            ready: () => {
+                MathJax.startup.defaultReady();
+                console.log('MathJax loaded and ready');
+            }
+        }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
     <!-- DOMPurify for HTML sanitization -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -168,34 +183,30 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Math rendering utility with HTML support
+        // Math rendering utility with HTML and MathML support
         function MathText({ text, className = "" }) {
             const containerRef = useRef(null);
 
             useEffect(() => {
                 if (containerRef.current && text) {
                     try {
-                        // Sanitize HTML content with DOMPurify
+                        // Sanitize HTML content with DOMPurify, allowing MathML tags
                         const cleanHTML = window.DOMPurify ? window.DOMPurify.sanitize(text, {
-                            ALLOWED_TAGS: ['p', 'span', 'div', 'br', 'strong', 'em', 'u', 'sub', 'sup', 'img', 'table', 'tr', 'td', 'th', 'ul', 'ol', 'li'],
-                            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'width', 'height'],
+                            ALLOWED_TAGS: ['p', 'span', 'div', 'br', 'strong', 'em', 'u', 'sub', 'sup', 'img', 'table', 'tr', 'td', 'th', 'ul', 'ol', 'li',
+                                          'math', 'mi', 'mn', 'mo', 'mrow', 'mfrac', 'msup', 'msub', 'msubsup', 'msqrt', 'mroot',
+                                          'mfenced', 'mtable', 'mtr', 'mtd', 'mstyle', 'mtext', 'mspace', 'menclose', 'mover', 'munder', 'munderover'],
+                            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'width', 'height', 'alttext', 'displaystyle', 'mathvariant', 'href'],
                             ALLOW_DATA_ATTR: false,
-                            ADD_ATTR: ['src']
+                            ADD_ATTR: ['alttext', 'displaystyle']
                         }) : text;
 
                         // Set the sanitized HTML
                         containerRef.current.innerHTML = cleanHTML;
 
-                        // Render LaTeX math using KaTeX after HTML is set
-                        if (window.renderMathInElement) {
-                            window.renderMathInElement(containerRef.current, {
-                                delimiters: [
-                                    {left: '\\(', right: '\\)', display: false},
-                                    {left: '\\[', right: '\\]', display: true},
-                                    {left: '$', right: '$', display: false},
-                                    {left: '$$', right: '$$', display: true}
-                                ],
-                                throwOnError: false
+                        // Typeset math using MathJax after HTML is set
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            window.MathJax.typesetPromise([containerRef.current]).catch((err) => {
+                                console.warn('MathJax typesetting error:', err);
                             });
                         }
                     } catch (error) {
@@ -205,7 +216,7 @@
                 }
             }, [text]);
 
-            return <span ref={containerRef} className={`${className} inline-block`}></span>;
+            return <div ref={containerRef} className={className}></div>;
         }
 
         function Navigation() {
@@ -439,100 +450,129 @@
             );
         }
 
-        // Helper function to map domain to topic
-        function getDomainTopic(domain, module) {
-            if (!domain) return 'other';
-            const d = domain.toLowerCase();
-
-            // Math topics - more specific categorization
-            if (d.includes('algebra') && !d.includes('advanced')) return 'algebra';
-            if (d.includes('advanced math')) return 'advanced-math';
-            if (d.includes('problem-solving') || d.includes('data analysis')) return 'data-analysis';
-            if (d.includes('geometry') && d.includes('trig')) return 'geometry-trig';
-            if (d.includes('geometry')) return 'geometry';
-            if (d.includes('trig')) return 'trigonometry';
-
-            // Fallback for general math terms
-            if (d.includes('equation') || d.includes('function') || d.includes('linear')) return 'algebra';
-
-            // Reading & Writing topics
-            if (d.includes('information and ideas')) return 'information-ideas';
-            if (d.includes('craft and structure')) return 'craft-structure';
-            if (d.includes('expression of ideas')) return 'expression-ideas';
-            if (d.includes('standard english') || d.includes('conventions')) return 'english-conventions';
-
-            // Fallback for general reading/writing terms
-            if (d.includes('reading') || d.includes('comprehension') || d.includes('inference')) return 'reading';
-            if (d.includes('writing') || d.includes('grammar') || d.includes('punctuation')) return 'writing';
-
-            return 'other';
-        }
-
         function TopicSelectionMenu({ onStartTest, allQuestions }) {
-            const [selectedTopics, setSelectedTopics] = useState([]);
+            const [selectedModule, setSelectedModule] = useState('math'); // 'math' or 'english'
+            const [selectedDisciplines, setSelectedDisciplines] = useState([]);
             const [customCount, setCustomCount] = useState(10);
 
-            // Count questions per topic
-            const getTopicCount = (topicId) => {
-                return allQuestions.filter(q => {
-                    const qTopic = q.topic?.toLowerCase() || getDomainTopic(q.domain, q.module);
-                    return qTopic === topicId;
-                }).length;
+            // Define disciplines by module
+            const mathDisciplines = [
+                { id: 'Algebra', name: 'Algebra', icon: '📐' },
+                { id: 'Advanced Math', name: 'Advanced Math', icon: '🔢' },
+                { id: 'Problem-Solving and Data Analysis', name: 'Problem-Solving & Data Analysis', icon: '📊' },
+                { id: 'Geometry and Trigonometry', name: 'Geometry & Trigonometry', icon: '🔺' }
+            ];
+
+            const englishDisciplines = [
+                { id: 'Information and Ideas', name: 'Information & Ideas', icon: '💡' },
+                { id: 'Craft and Structure', name: 'Craft & Structure', icon: '🏗️' },
+                { id: 'Expression of Ideas', name: 'Expression of Ideas', icon: '✍️' },
+                { id: 'Standard English Conventions', name: 'Standard English Conventions', icon: '📖' }
+            ];
+
+            const currentDisciplines = selectedModule === 'math' ? mathDisciplines : englishDisciplines;
+
+            // Count questions per discipline
+            const getDisciplineCount = (disciplineId) => {
+                return allQuestions.filter(q => q.module === selectedModule && q.domain === disciplineId).length;
             };
 
-            const topics = [
-                { id: 'algebra', name: 'Algebra', icon: '📐', count: getTopicCount('algebra') },
-                { id: 'advanced-math', name: 'Advanced Math', icon: '🔢', count: getTopicCount('advanced-math') },
-                { id: 'data-analysis', name: 'Data Analysis', icon: '📊', count: getTopicCount('data-analysis') },
-                { id: 'geometry-trig', name: 'Geometry & Trig', icon: '🔺', count: getTopicCount('geometry-trig') },
-                { id: 'information-ideas', name: 'Information & Ideas', icon: '💡', count: getTopicCount('information-ideas') },
-                { id: 'craft-structure', name: 'Craft & Structure', icon: '🏗️', count: getTopicCount('craft-structure') },
-                { id: 'expression-ideas', name: 'Expression of Ideas', icon: '✍️', count: getTopicCount('expression-ideas') },
-                { id: 'english-conventions', name: 'English Conventions', icon: '📖', count: getTopicCount('english-conventions') }
-            ].filter(topic => topic.count > 0);
-
-            const toggleTopic = (topicId) => {
-                setSelectedTopics(prev =>
-                    prev.includes(topicId)
-                        ? prev.filter(id => id !== topicId)
-                        : [...prev, topicId]
+            const toggleDiscipline = (disciplineId) => {
+                setSelectedDisciplines(prev =>
+                    prev.includes(disciplineId)
+                        ? prev.filter(id => id !== disciplineId)
+                        : [...prev, disciplineId]
                 );
             };
 
+            // When switching modules, clear selected disciplines
+            const handleModuleChange = (module) => {
+                setSelectedModule(module);
+                setSelectedDisciplines([]);
+            };
+
             return (
-                <div id="main-content" className="max-w-4xl mx-auto py-12 px-6">
+                <div id="main-content" className="max-w-5xl mx-auto py-12 px-6">
                     <div className="bg-white rounded-xl shadow-lg p-8">
                         <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                            SAT Practice Test Setup
+                            SAT Digital Practice
                         </h1>
-                        <p className="text-gray-600 mb-8">Select topics and configure your practice session</p>
+                        <p className="text-gray-600 mb-8">Select module and disciplines for your practice session</p>
 
+                        {/* Module Selector */}
                         <div className="mb-8">
-                            <h2 className="text-xl font-bold mb-4 text-gray-800">Select Topics</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {topics.map(topic => (
-                                    <div
-                                        key={topic.id}
-                                        onClick={() => toggleTopic(topic.id)}
-                                        className={`topic-card ${selectedTopics.includes(topic.id) ? 'selected' : ''}`}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-3">
-                                                <span className="text-3xl">{topic.icon}</span>
-                                                <div>
-                                                    <div className="font-bold text-gray-800">{topic.name}</div>
-                                                    <div className="text-sm text-gray-500">{topic.count} questions available</div>
-                                                </div>
-                                            </div>
-                                            <div className={`w-6 h-6 rounded-full border-2 ${selectedTopics.includes(topic.id) ? 'bg-purple-600 border-purple-600' : 'border-gray-300'}`}>
-                                                {selectedTopics.includes(topic.id) && <span className="text-white text-sm">✓</span>}
-                                            </div>
-                                        </div>
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Select Module</h2>
+                            <div className="grid grid-cols-2 gap-4">
+                                <button
+                                    onClick={() => handleModuleChange('math')}
+                                    className={`p-6 rounded-xl border-2 transition-all ${
+                                        selectedModule === 'math'
+                                            ? 'border-purple-600 bg-purple-50'
+                                            : 'border-gray-300 hover:border-purple-400'
+                                    }`}
+                                >
+                                    <div className="text-4xl mb-2">🔢</div>
+                                    <div className="font-bold text-xl text-gray-800">Math</div>
+                                    <div className="text-sm text-gray-600">
+                                        {allQuestions.filter(q => q.module === 'math').length} questions
                                     </div>
-                                ))}
+                                </button>
+                                <button
+                                    onClick={() => handleModuleChange('english')}
+                                    className={`p-6 rounded-xl border-2 transition-all ${
+                                        selectedModule === 'english'
+                                            ? 'border-purple-600 bg-purple-50'
+                                            : 'border-gray-300 hover:border-purple-400'
+                                    }`}
+                                >
+                                    <div className="text-4xl mb-2">📚</div>
+                                    <div className="font-bold text-xl text-gray-800">Reading & Writing</div>
+                                    <div className="text-sm text-gray-600">
+                                        {allQuestions.filter(q => q.module === 'english').length} questions
+                                    </div>
+                                </button>
                             </div>
                         </div>
 
+                        {/* Discipline Selector */}
+                        <div className="mb-8">
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">
+                                Select {selectedModule === 'math' ? 'Math' : 'Reading & Writing'} Disciplines
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {currentDisciplines.map(discipline => {
+                                    const count = getDisciplineCount(discipline.id);
+                                    return (
+                                        <div
+                                            key={discipline.id}
+                                            onClick={() => toggleDiscipline(discipline.id)}
+                                            className={`topic-card ${selectedDisciplines.includes(discipline.id) ? 'selected' : ''}`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center space-x-3">
+                                                    <span className="text-3xl">{discipline.icon}</span>
+                                                    <div>
+                                                        <div className="font-bold text-gray-800">{discipline.name}</div>
+                                                        <div className="text-sm text-gray-500">{count} questions</div>
+                                                    </div>
+                                                </div>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                                    selectedDisciplines.includes(discipline.id)
+                                                        ? 'bg-purple-600 border-purple-600'
+                                                        : 'border-gray-300'
+                                                }`}>
+                                                    {selectedDisciplines.includes(discipline.id) && (
+                                                        <span className="text-white text-sm">✓</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Number of Questions */}
                         <div className="mb-8">
                             <label className="block text-lg font-bold mb-3 text-gray-800">Number of Questions</label>
                             <input
@@ -545,22 +585,18 @@
                             />
                         </div>
 
-                        <div className="flex gap-4">
-                            <button
-                                onClick={() => onStartTest({ mode: 'random', topics: selectedTopics, count: customCount })}
-                                disabled={selectedTopics.length === 0}
-                                className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Start Random Test
-                            </button>
-                            <button
-                                onClick={() => onStartTest({ mode: 'custom', topics: selectedTopics, count: customCount })}
-                                disabled={selectedTopics.length === 0}
-                                className="flex-1 px-6 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Review Specific Questions
-                            </button>
-                        </div>
+                        {/* Start Button */}
+                        <button
+                            onClick={() => onStartTest({
+                                module: selectedModule,
+                                disciplines: selectedDisciplines,
+                                count: customCount
+                            })}
+                            disabled={selectedDisciplines.length === 0}
+                            className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Start Practice Test
+                        </button>
                     </div>
                 </div>
             );
@@ -577,10 +613,10 @@
             const [showStopwatch, setShowStopwatch] = useState(false);
             const [calculatorMode, setCalculatorMode] = useState('graphing');
 
-            // Load questions from JSON
+            // Load questions from CB Digital Questions JSON
             useEffect(() => {
-                console.log('Attempting to load SAT questions...');
-                fetch('data/sat_questions.json')
+                console.log('Loading CB Digital SAT questions...');
+                fetch('data/cb-digital-questions.json')
                     .then(res => {
                         if (!res.ok) {
                             throw new Error(`HTTP error! status: ${res.status}`);
@@ -588,125 +624,89 @@
                         return res.json();
                     })
                     .then(data => {
-                        console.log('Raw data received');
-                        console.log('Data type:', typeof data);
-                        console.log('Is array?', Array.isArray(data));
+                        console.log('CB Digital questions data received');
 
                         let questionsArray = [];
 
-                        // Handle mixed format (object with mixed CB and clean format)
                         if (!Array.isArray(data) && typeof data === 'object') {
-                            console.log('Converting object to array');
+                            // CB format is an object with UUIDs as keys
                             const allQuestions = Object.values(data);
-                            console.log(`Found ${allQuestions.length} questions`);
+                            console.log(`Found ${allQuestions.length} questions in CB format`);
 
                             questionsArray = allQuestions.map(q => {
-                                // Detect format: CB has 'content' property, clean format has 'question' property, classified has 'options' array
-                                const isCBFormat = q.content !== undefined;
-                                const isClassifiedFormat = q.options !== undefined && Array.isArray(q.options);
+                                const content = q.content || {};
+                                const isMCQ = content.type === 'mcq' || content.answerOptions;
 
-                                if (isClassifiedFormat) {
-                                    // Parse classified format (from SAT_Questions_classified.json)
-                                    let choices = null;
-                                    if (q.options && q.options.length > 0) {
-                                        choices = q.options.map(opt => {
-                                            const label = opt.label || opt.letter || '';
-                                            const text = opt.text || opt.content || opt.body || '';
-                                            return `${label}) ${text}`;
-                                        });
-                                    }
-
-                                    return {
-                                        id: q.id,
-                                        domain: q.domain || q.identifier || 'General',
-                                        module: q.section,
-                                        question: q.question,
-                                        passage: q.passage !== 'null' && q.passage ? q.passage : null,
-                                        choices: choices,
-                                        correct: q.answer,
-                                        explanation: q.explanation || 'No explanation available',
-                                        difficulty: q.difficulty,
-                                        format: 'classified'
-                                    };
-                                } else if (isCBFormat) {
-                                    // Parse CB format
-                                    const content = q.content || {};
-                                    const isMCQ = content.type === 'mcq';
-
-                                    const stripHTML = (html) => {
-                                        if (!html) return '';
-                                        let out = html.replace(/<math[^>]*>.*?<\/math>/gi, '[math]');
-                                        let prev;
-                                        do {
-                                            prev = out;
-                                            out = out.replace(/<[^>]+>/g, '');
-                                        } while (out !== prev);
-                                        return out
-                                            .replace(/&nbsp;/g, ' ')
-                                            .replace(/&rsquo;/g, "'")
-                                            .trim();
-                                    };
-
-                                    let choices = [];
-                                    if (isMCQ && content.answerOptions) {
-                                        choices = content.answerOptions.map((opt, idx) => {
-                                            const letter = String.fromCharCode(65 + idx);
-                                            return `${letter}) ${stripHTML(opt.content)}`;
-                                        });
-                                    }
-
-                                    return {
-                                        id: q.questionId || q.uId,
-                                        domain: q.primary_class_cd_desc || 'General',
-                                        module: q.module,
-                                        question: stripHTML(content.stem),
-                                        choices: isMCQ ? choices : null,
-                                        correct: (content.correct_answer || [''])[0],
-                                        explanation: stripHTML(content.rationale),
-                                        difficulty: q.difficulty,
-                                        format: 'cb'
-                                    };
-                                } else {
-                                    // Parse clean format
-                                    const qData = q.question || {};
-                                    return {
-                                        id: q.id,
-                                        domain: q.domain || 'General',
-                                        module: q.module,
-                                        question: qData.question,
-                                        passage: qData.paragraph !== 'null' ? qData.paragraph : null,
-                                        choices: qData.choices,
-                                        correct: qData.correct_answer,
-                                        explanation: qData.explanation,
-                                        difficulty: q.difficulty,
-                                        format: 'clean'
-                                    };
+                                // Build the question text (combine stimulus + stem for English)
+                                let questionText = '';
+                                if (content.stimulus) {
+                                    questionText = content.stimulus;
                                 }
+                                if (content.stem) {
+                                    questionText += (questionText ? '<br><br>' : '') + content.stem;
+                                }
+                                // For older format with prompt
+                                if (content.prompt && !questionText) {
+                                    questionText = content.prompt;
+                                }
+
+                                // Build answer choices - keep HTML for MathML
+                                let choices = null;
+                                if (isMCQ && content.answerOptions) {
+                                    choices = content.answerOptions.map((opt, idx) => {
+                                        const letter = String.fromCharCode(65 + idx);
+                                        return {
+                                            letter: letter,
+                                            content: opt.content || opt.body || '',
+                                            id: opt.id
+                                        };
+                                    });
+                                } else if (content.answer && content.answer.choices) {
+                                    // Handle alternative format
+                                    choices = Object.entries(content.answer.choices).map(([key, val]) => ({
+                                        letter: key.toUpperCase(),
+                                        content: val.body || '',
+                                        id: key
+                                    }));
+                                }
+
+                                // Get correct answer
+                                let correctAnswer = '';
+                                if (content.correct_answer && Array.isArray(content.correct_answer)) {
+                                    correctAnswer = content.correct_answer[0];
+                                } else if (content.answer && content.answer.correct_choice) {
+                                    correctAnswer = content.answer.correct_choice.toUpperCase();
+                                } else if (content.keys && Array.isArray(content.keys)) {
+                                    // For SPR (student produced response), use keys
+                                    correctAnswer = content.keys[0];
+                                }
+
+                                return {
+                                    id: q.questionId || q.uId,
+                                    domain: q.primary_class_cd_desc || 'General',
+                                    skill: q.skill_desc || '',
+                                    module: q.module,
+                                    question: questionText,
+                                    choices: choices,
+                                    correct: correctAnswer,
+                                    explanation: content.rationale || content.answer?.rationale || 'No explanation available.',
+                                    difficulty: q.difficulty,
+                                    format: 'cb-digital'
+                                };
                             });
 
-                            console.log(`✅ Converted ${questionsArray.length} questions`);
-                        }
-                        // Handle simple array format
-                        else if (Array.isArray(data)) {
-                            questionsArray = data;
-                            console.log(`✅ Loaded ${data.length} questions from array`);
-                        }
-                        // Handle nested questions property
-                        else if (data.questions) {
-                            questionsArray = data.questions;
-                            console.log(`✅ Loaded ${data.questions.length} questions from data.questions`);
-                        }
-                        else {
-                            console.warn('❌ Unknown data format, using fallback');
+                            console.log(`✅ Parsed ${questionsArray.length} CB Digital questions`);
+                            console.log(`Math: ${questionsArray.filter(q => q.module === 'math').length}, English: ${questionsArray.filter(q => q.module === 'english').length}`);
+                        } else {
+                            console.warn('❌ Unexpected data format');
                             questionsArray = [getSampleQuestion()];
                         }
 
                         setAllQuestions(questionsArray);
                     })
                     .catch(err => {
-                        console.error('Error loading SAT questions:', err.message);
-                        console.log('Using fallback sample question. Check data/sat_questions.json exists.');
-                        // Use fallback sample questions
+                        console.error('Error loading CB Digital questions:', err.message);
+                        console.log('Using fallback sample question.');
                         setAllQuestions([getSampleQuestion()]);
                     });
             }, []);
@@ -724,11 +724,12 @@
             }
 
             const handleStartTest = (config) => {
-                // Filter questions based on selected topics
+                // Filter questions based on selected module and disciplines
                 let filteredQuestions = allQuestions.filter(q => {
-                    const qTopic = q.topic?.toLowerCase() || getDomainTopic(q.domain, q.module);
-                    return config.topics.includes(qTopic);
+                    return q.module === config.module && config.disciplines.includes(q.domain);
                 });
+
+                console.log(`Filtered ${filteredQuestions.length} questions for ${config.module} module`);
 
                 // Shuffle and take the specified count
                 const shuffled = filteredQuestions.sort(() => Math.random() - 0.5);
@@ -758,8 +759,8 @@
                 if (!progress.totalCorrect) progress.totalCorrect = 0;
                 if (!progress.byTopic) progress.byTopic = {};
 
-                // Determine topic from question
-                const topic = questionData.topic?.toLowerCase() || getDomainTopic(questionData.domain, questionData.module);
+                // Use domain as topic
+                const topic = questionData.domain || 'General';
 
                 // Initialize topic if needed
                 if (!progress.byTopic[topic]) {
@@ -792,7 +793,7 @@
                 // Update study streak
                 updateStudyStreak();
 
-                console.log(`✅ SAT progress saved - Topic: ${topic}, Correct: ${isCorrect}`);
+                console.log(`✅ SAT progress saved - Discipline: ${topic}, Correct: ${isCorrect}`);
             };
 
             const updateStudyStreak = () => {
@@ -851,86 +852,110 @@
             }
 
             const currentQuestion = testQuestions[currentQuestionIndex];
-
-            // Handle both OpenSAT format (nested) and simple format
-            const questionData = currentQuestion.question?.question ? currentQuestion.question : currentQuestion;
-            const passage = questionData.paragraph || currentQuestion.passage;
-            const questionText = questionData.question || currentQuestion.question;
-            const explanation = questionData.explanation || currentQuestion.explanation;
-            const choices = questionData.choices;
-            const correctAnswer = questionData.correct_answer || currentQuestion.correct;
+            const questionText = currentQuestion.question;
+            const explanation = currentQuestion.explanation;
+            const choices = currentQuestion.choices; // Array of {letter, content, id} or null
+            const correctAnswer = currentQuestion.correct;
 
             return (
                 <>
-                    <div className="grid grid-cols-2" style={{ height: 'calc(100vh - 64px)' }}>
-                        {/* Left Panel - Question */}
-                        <div className="question-panel overflow-y-auto">
+                    <div className="flex" style={{ minHeight: 'calc(100vh - 64px)' }}>
+                        {/* Sidebar - Progress and Navigation */}
+                        <div className="w-64 bg-gray-900 text-white p-6 flex flex-col">
+                            <button
+                                onClick={() => setMode('menu')}
+                                className="text-white hover:bg-white/10 font-semibold mb-6 px-4 py-2 rounded-lg transition-all text-left"
+                            >
+                                ← Back to Menu
+                            </button>
+
                             <div className="mb-6">
-                                <button
-                                    onClick={() => setMode('menu')}
-                                    className="text-purple-600 hover:text-purple-700 font-semibold mb-4 bg-purple-50 hover:bg-purple-100 px-4 py-2 rounded-lg transition-all"
-                                >
-                                    ← Back to Menu
-                                </button>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div>
-                                        <h1 className="text-2xl font-bold text-gray-800">
-                                            Question {currentQuestionIndex + 1} of {testQuestions.length}
-                                        </h1>
-                                    </div>
-                                    <div className="question-id">
-                                        ID: {currentQuestion.id}
-                                    </div>
-                                </div>
-                                <div className="flex gap-2 mb-4">
-                                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
-                                        {currentQuestion.topic || getDomainTopic(currentQuestion.domain, currentQuestion.module)}
-                                    </span>
-                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
-                                        {currentQuestion.domain || 'General'}
-                                    </span>
+                                <div className="text-sm text-gray-400 mb-1">Question</div>
+                                <div className="text-3xl font-bold text-white">
+                                    {currentQuestionIndex + 1} <span className="text-gray-500">/ {testQuestions.length}</span>
                                 </div>
                             </div>
 
-                            <div className="prose max-w-none">
-                                <div className="text-lg text-gray-800 leading-relaxed mb-6 whitespace-pre-wrap">
-                                    {passage && (
-                                        <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-purple-500">
-                                            <MathText text={passage} className="text-gray-800" />
-                                        </div>
-                                    )}
-                                    <div className="font-semibold text-xl mb-4 text-gray-900">
-                                        <MathText text={questionText} className="text-gray-900" />
-                                    </div>
+                            <div className="mb-6">
+                                <div className="text-sm text-gray-400 mb-2">Progress</div>
+                                <div className="bg-gray-700 rounded-full h-2 mb-2">
+                                    <div
+                                        className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${((currentQuestionIndex + 1) / testQuestions.length) * 100}%` }}
+                                    />
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                    {Math.round(((currentQuestionIndex + 1) / testQuestions.length) * 100)}% complete
                                 </div>
                             </div>
 
-                            {isSubmitted && (
-                                <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
-                                    <h4 className="font-bold text-blue-900 mb-2">Explanation:</h4>
-                                    <p className="text-blue-800">
-                                        <MathText text={explanation || 'No explanation available.'} />
-                                    </p>
+                            <div className="mb-6">
+                                <div className="text-sm text-gray-400 mb-2">Module</div>
+                                <div className="px-3 py-1 bg-purple-600 rounded-full text-sm font-semibold inline-block">
+                                    {currentQuestion.module === 'math' ? '🔢 Math' : '📚 Reading & Writing'}
                                 </div>
-                            )}
+                            </div>
 
-                            <div className="flex gap-3 mt-8">
+                            <div className="mb-6">
+                                <div className="text-sm text-gray-400 mb-2">Discipline</div>
+                                <div className="text-sm font-semibold text-white">
+                                    {currentQuestion.domain}
+                                </div>
+                                {currentQuestion.skill && (
+                                    <div className="text-xs text-gray-400 mt-1">
+                                        {currentQuestion.skill}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="mb-6">
+                                <div className="text-sm text-gray-400 mb-2">Difficulty</div>
+                                <div className={`px-2 py-1 rounded text-xs font-bold inline-block ${
+                                    currentQuestion.difficulty === 'H' ? 'bg-red-500' :
+                                    currentQuestion.difficulty === 'M' ? 'bg-yellow-500' : 'bg-green-500'
+                                }`}>
+                                    {currentQuestion.difficulty === 'H' ? 'Hard' :
+                                     currentQuestion.difficulty === 'M' ? 'Medium' : 'Easy'}
+                                </div>
+                            </div>
+
+                            <div className="flex-1"></div>
+
+                            <div className="space-y-3">
                                 <button
                                     onClick={handlePrevious}
                                     disabled={currentQuestionIndex === 0}
-                                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-semibold transition-all"
+                                    className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg font-semibold transition-all"
                                 >
                                     ← Previous
                                 </button>
                                 <button
                                     onClick={handleNext}
                                     disabled={currentQuestionIndex === testQuestions.length - 1}
-                                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+                                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 rounded-lg font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
                                     Next →
                                 </button>
                             </div>
                         </div>
+
+                        {/* Main Content Area */}
+                        <div className="flex-1 flex">
+                            {/* Question Panel */}
+                            <div className="flex-1 question-panel overflow-y-auto p-8">
+                                <div className="max-w-4xl">
+                                    <div className="mb-6">
+                                        <MathText text={questionText} className="text-xl leading-relaxed text-gray-900" />
+                                    </div>
+
+                                    {isSubmitted && (
+                                        <div className="mt-8 p-6 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                                            <h4 className="font-bold text-blue-900 mb-3 text-lg">Explanation</h4>
+                                            <MathText text={explanation || 'No explanation available.'} className="text-blue-800" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
                         {/* Right Panel - Answers & Widgets */}
                         <div className="answer-panel overflow-y-auto">
@@ -969,44 +994,34 @@
                                 {/* Multiple Choice */}
                                 {choices && (
                                     <div className="space-y-3">
-                                        {(() => {
-                                            // Handle both array format and object format (OpenSAT)
-                                            const choicesArray = Array.isArray(choices)
-                                                ? choices
-                                                : Object.entries(choices || {}).map(([key, value]) => `${key}) ${value}`);
+                                        {choices.map((choice, idx) => {
+                                            const letter = choice.letter;
+                                            const content = choice.content;
 
-                                            return choicesArray.map((choice, idx) => {
-                                                const letter = Array.isArray(choices)
-                                                    ? String.fromCharCode(65 + idx)
-                                                    : choice.charAt(0); // Extract A, B, C, D from "A) text"
+                                            const isSelected = userAnswers[currentQuestion.id] === letter;
+                                            const isCorrect = letter === correctAnswer;
 
-                                                const isSelected = userAnswers[currentQuestion.id] === letter;
-                                                const isCorrect = letter === correctAnswer;
+                                            let className = 'choice-option';
+                                            if (isSubmitted) {
+                                                if (isCorrect) className += ' correct';
+                                                else if (isSelected) className += ' incorrect';
+                                            } else if (isSelected) {
+                                                className += ' selected';
+                                            }
 
-                                                let className = 'choice-option';
-                                                if (isSubmitted) {
-                                                    if (isCorrect) className += ' correct';
-                                                    else if (isSelected) className += ' incorrect';
-                                                } else if (isSelected) {
-                                                    className += ' selected';
-                                                }
-
-                                                const choiceText = Array.isArray(choices)
-                                                    ? choice.replace(/^[A-D]\)\s*/, '')
-                                                    : choice.substring(3); // Remove "A) " prefix
-
-                                                return (
-                                                    <div
-                                                        key={idx}
-                                                        onClick={() => !isSubmitted && handleAnswer(letter)}
-                                                        className={className}
-                                                    >
-                                                        <span className="font-bold mr-3 text-gray-900">{letter})</span>
-                                                        <MathText text={choiceText} className="text-gray-800" />
+                                            return (
+                                                <div
+                                                    key={choice.id || idx}
+                                                    onClick={() => !isSubmitted && handleAnswer(letter)}
+                                                    className={className}
+                                                >
+                                                    <div className="flex items-start">
+                                                        <span className="font-bold mr-3 text-gray-900 flex-shrink-0">{letter})</span>
+                                                        <MathText text={content} className="text-gray-800 flex-1" />
                                                     </div>
-                                                );
-                                            });
-                                        })()}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 )}
 
@@ -1044,20 +1059,7 @@
                                     Check Answer
                                 </button>
                             )}
-
-                            {/* Progress */}
-                            <div className="mt-6">
-                                <div className="flex justify-between text-sm text-gray-600 mb-2">
-                                    <span>Progress</span>
-                                    <span>{Math.round(((currentQuestionIndex + 1) / testQuestions.length) * 100)}%</span>
-                                </div>
-                                <div className="bg-gray-200 rounded-full h-2">
-                                    <div
-                                        className="bg-gradient-to-r from-purple-600 to-blue-500 h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${((currentQuestionIndex + 1) / testQuestions.length) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
+                        </div>
                         </div>
                     </div>
 

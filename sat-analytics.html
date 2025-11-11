@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Analytics - Studying.works</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="apple-style.css">
+    <link rel="stylesheet" href="button-styles.css">
+    <link rel="stylesheet" href="global-styles.css">
+
+    <!-- IRT and RL Models -->
+    <script src="sat-irt-model.js"></script>
+    <script src="sat-reinforcement-learning.js"></script>
+    <script src="sat-firebase-sync.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .analytics-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 1rem 0;
+        }
+
+        .spider-chart-container {
+            position: relative;
+            height: 500px;
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .view-toggle button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-toggle button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .view-toggle button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .weakness-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .strength-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .model-param {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .model-param:last-child {
+            border-bottom: none;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .percentile-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .level-advanced { background: #10b981; color: white; }
+        .level-proficient { background: #3b82f6; color: white; }
+        .level-developing { background: #f59e0b; color: white; }
+        .level-basic { background: #ef4444; color: white; }
+
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 0.25rem;
+        }
+
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 0.75rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .technical-view {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .formula {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #667eea;
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .analytics-container {
+                padding: 1rem;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .spider-chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-container">
+        <!-- Header -->
+        <div class="stat-card mb-6">
+            <div class="flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">SAT Analytics</h1>
+                    <p class="text-gray-600">Multidimensional IRT & Reinforcement Learning</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="window.location.href='sat-practice.html'" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                        Back to Practice
+                    </button>
+                    <button onclick="exportData()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                        Export Data
+                    </button>
+                    <button onclick="resetData()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                        Reset All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button id="simpleViewBtn" class="active" onclick="switchView('simple')">📊 Simple View</button>
+            <button id="explanationViewBtn" onclick="switchView('explanation')">📚 Learn About IRT</button>
+            <button id="technicalViewBtn" onclick="switchView('technical')">🔬 Technical Details</button>
+        </div>
+
+        <!-- Simple View -->
+        <div id="simpleView" class="view-content">
+            <!-- Estimated SAT Scores -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="stat-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Estimated Math Score</h3>
+                    <div class="score-display" id="mathScore">--</div>
+                    <p class="text-gray-500 text-sm mt-2">out of 800</p>
+                </div>
+                <div class="stat-card text-center">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Estimated R&W Score</h3>
+                    <div class="score-display" id="englishScore">--</div>
+                    <p class="text-gray-500 text-sm mt-2">out of 800</p>
+                </div>
+            </div>
+
+            <!-- Spider Chart -->
+            <div class="stat-card mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Skill Profile (Spider Chart)</h2>
+                <p class="text-gray-600 mb-4">Your ability across all SAT domains. Larger area = stronger skills.</p>
+                <div class="spider-chart-container">
+                    <canvas id="spiderChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Overall Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="stat-card text-center">
+                    <div class="text-3xl font-bold text-blue-600" id="totalQuestions">0</div>
+                    <div class="text-gray-600 text-sm mt-1">Questions Answered</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="text-3xl font-bold text-green-600" id="overallAccuracy">0%</div>
+                    <div class="text-gray-600 text-sm mt-1">Overall Accuracy</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="text-3xl font-bold text-purple-600" id="avgResponseTime">0s</div>
+                    <div class="text-gray-600 text-sm mt-1">Avg Response Time</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="text-3xl font-bold text-orange-600" id="recentAccuracy">0%</div>
+                    <div class="text-gray-600 text-sm mt-1">Recent Performance</div>
+                </div>
+            </div>
+
+            <!-- Weaknesses and Strengths -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="stat-card">
+                    <h3 class="text-xl font-bold text-red-600 mb-3">🎯 Focus Areas (Weaknesses)</h3>
+                    <div id="weaknessesList"></div>
+                </div>
+                <div class="stat-card">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">💪 Strengths</h3>
+                    <div id="strengthsList"></div>
+                </div>
+            </div>
+
+            <!-- Domain Breakdown -->
+            <div class="stat-card mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Domain Performance</h2>
+                <div class="chart-container">
+                    <canvas id="domainChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation View -->
+        <div id="explanationView" class="view-content" style="display: none;">
+            <div class="stat-card mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Understanding Your SAT Analytics</h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">What is IRT?</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            <strong>Item Response Theory (IRT)</strong> is a modern psychometric framework that models the relationship
+                            between your ability and your performance on test items. Unlike simple percentage scores, IRT estimates
+                            your true ability (θ, theta) on a continuous scale, accounting for question difficulty and your response patterns.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Multidimensional IRT</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            We track <strong>separate ability estimates</strong> for each SAT domain (Algebra, Geometry, Reading, etc.).
+                            This gives you a detailed profile of your strengths and weaknesses, rather than a single overall score.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">What is Reinforcement Learning?</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Our system uses <strong>Thompson Sampling</strong>, a reinforcement learning algorithm inspired by VowpalWabbit.
+                            It intelligently selects questions to maximize your learning by:
+                        </p>
+                        <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                            <li>Focusing on your weak areas (exploitation)</li>
+                            <li>Occasionally exploring other topics (exploration)</li>
+                            <li>Targeting questions in your "Zone of Proximal Development" (just above your current level)</li>
+                            <li>Adapting based on your performance and response times</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Understanding Your Scores</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            <strong>Theta (θ):</strong> Your ability estimate, typically ranging from -3 to +3 (average = 0).<br>
+                            <strong>Percentile:</strong> Your rank compared to other test-takers.<br>
+                            <strong>Level:</strong> Your proficiency level (Below Basic, Basic, Developing, Proficient, Advanced).<br>
+                            <strong>Estimated SAT Score:</strong> Predicted score (200-800) based on your ability estimates.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Spider Chart Interpretation</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            The spider (radar) chart shows your abilities across all domains at a glance. A larger, more balanced shape
+                            indicates well-rounded skills. Sharp "spikes" show strengths, while "valleys" indicate areas needing improvement.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical View -->
+        <div id="technicalView" class="view-content" style="display: none;">
+            <div class="stat-card mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Technical Details & Model Parameters</h2>
+
+                <!-- IRT Model -->
+                <div class="technical-view mb-6">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">2-Parameter Logistic (2PL) IRT Model</h3>
+
+                    <div class="formula">
+                        P(θ) = 1 / (1 + exp(-a(θ - b)))
+                    </div>
+
+                    <div class="mt-4 space-y-2 text-gray-700">
+                        <p><strong>θ (theta):</strong> Ability parameter (estimated for each domain)</p>
+                        <p><strong>a:</strong> Discrimination parameter = <span id="discriminationParam">1.0</span></p>
+                        <p><strong>b:</strong> Difficulty parameter (E=-1.0, M=0.0, H=1.5)</p>
+                        <p><strong>Learning Rate:</strong> <span id="learningRate">0.3</span></p>
+                    </div>
+
+                    <h4 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Update Rule (Gradient Ascent):</h4>
+                    <div class="formula">
+                        θ_new = θ_old + α · a · (y - P(θ))<br>
+                        where y = 1 if correct, 0 if incorrect
+                    </div>
+                </div>
+
+                <!-- Thompson Sampling -->
+                <div class="technical-view mb-6">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Thompson Sampling (Multi-Armed Bandit)</h3>
+
+                    <p class="text-gray-600 mb-3">
+                        Each domain is treated as an "arm" with a Beta distribution representing expected learning reward.
+                    </p>
+
+                    <div class="formula">
+                        Prior: Beta(α=1, β=1)<br>
+                        Update: α += 1 if correct, β += 1 if incorrect<br>
+                        Sample: reward ~ Beta(α, β)<br>
+                        Select: argmax(reward + weakness_boost)
+                    </div>
+
+                    <div class="mt-4 space-y-2 text-gray-700">
+                        <p><strong>Exploration Rate (ε):</strong> <span id="epsilonParam">15%</span></p>
+                        <p><strong>Decay Rate:</strong> 0.995 per question</p>
+                        <p><strong>Weakness Focus Weight:</strong> 0.7</p>
+                    </div>
+                </div>
+
+                <!-- Domain Parameters Table -->
+                <div class="technical-view">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Domain-Specific Parameters</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Domain</th>
+                                    <th class="px-4 py-2 text-right">θ (theta)</th>
+                                    <th class="px-4 py-2 text-right">Attempts</th>
+                                    <th class="px-4 py-2 text-right">Accuracy</th>
+                                    <th class="px-4 py-2 text-right">α (Alpha)</th>
+                                    <th class="px-4 py-2 text-right">β (Beta)</th>
+                                    <th class="px-4 py-2 text-left">Level</th>
+                                </tr>
+                            </thead>
+                            <tbody id="domainParamsTable">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-2SELHboxELp2XLQIwstiI-pCaNcUDOA",
+            authDomain: "academie-9942b.firebaseapp.com",
+            projectId: "academie-9942b",
+            storageBucket: "academie-9942b.firebasestorage.app",
+            messagingSenderId: "1079518919325",
+            appId: "1:1079518919325:web:745025bdb7b2b23645b274"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Initialize Firebase sync
+        const satSync = initializeSATFirebaseSync(db, auth);
+
+        // Initialize models
+        initializeSATRL();
+
+        // Load data from Firebase on page load
+        if (satSync) {
+            satSync.loadAll();
+        }
+
+        // Global variables
+        let spiderChart = null;
+        let domainChart = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAnalytics();
+        });
+
+        function switchView(view) {
+            // Hide all views
+            document.getElementById('simpleView').style.display = 'none';
+            document.getElementById('explanationView').style.display = 'none';
+            document.getElementById('technicalView').style.display = 'none';
+
+            // Remove active class from all buttons
+            document.getElementById('simpleViewBtn').classList.remove('active');
+            document.getElementById('explanationViewBtn').classList.remove('active');
+            document.getElementById('technicalViewBtn').classList.remove('active');
+
+            // Show selected view
+            if (view === 'simple') {
+                document.getElementById('simpleView').style.display = 'block';
+                document.getElementById('simpleViewBtn').classList.add('active');
+            } else if (view === 'explanation') {
+                document.getElementById('explanationView').style.display = 'block';
+                document.getElementById('explanationViewBtn').classList.add('active');
+            } else if (view === 'technical') {
+                document.getElementById('technicalView').style.display = 'block';
+                document.getElementById('technicalViewBtn').classList.add('active');
+                loadTechnicalView();
+            }
+        }
+
+        function loadAnalytics() {
+            // Get data from models
+            const irtData = satIRTModel.exportData();
+            const rlData = satRLModel.exportData();
+            const insights = satRLModel.getInsights();
+
+            // Update overall stats
+            document.getElementById('totalQuestions').textContent = irtData.summary.totalAttempts;
+
+            const overallAccuracy = irtData.summary.totalAttempts > 0
+                ? ((irtData.summary.totalCorrect / irtData.summary.totalAttempts) * 100).toFixed(1)
+                : 0;
+            document.getElementById('overallAccuracy').textContent = overallAccuracy + '%';
+
+            document.getElementById('avgResponseTime').textContent = insights.avgResponseTime + 's';
+            document.getElementById('recentAccuracy').textContent = insights.recentAccuracy + '%';
+
+            // Update estimated SAT scores
+            const mathScore = satIRTModel.getEstimatedSATScore('math');
+            const englishScore = satIRTModel.getEstimatedSATScore('english');
+
+            document.getElementById('mathScore').textContent = mathScore || '--';
+            document.getElementById('englishScore').textContent = englishScore || '--';
+
+            // Render charts
+            renderSpiderChart();
+            renderDomainChart();
+
+            // Render weaknesses and strengths
+            renderWeaknessesAndStrengths(insights);
+        }
+
+        function renderSpiderChart() {
+            const abilities = satIRTModel.getAllAbilities();
+
+            // Convert theta (-3 to 3) to 0-100 scale for visualization
+            const labels = Object.keys(abilities);
+            const data = Object.values(abilities).map(theta => ((theta + 3) / 6) * 100);
+
+            const ctx = document.getElementById('spiderChart').getContext('2d');
+
+            if (spiderChart) {
+                spiderChart.destroy();
+            }
+
+            spiderChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ability Level',
+                        data: data,
+                        fill: true,
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgb(102, 126, 234)',
+                        pointBackgroundColor: 'rgb(102, 126, 234)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(102, 126, 234)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: {
+                                stepSize: 20,
+                                callback: function(value) {
+                                    // Convert back to theta for display
+                                    const theta = (value / 100) * 6 - 3;
+                                    return theta.toFixed(1);
+                                }
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                },
+                                callback: function(label) {
+                                    // Shorten long labels
+                                    return label.length > 20 ? label.substring(0, 18) + '...' : label;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const theta = (context.parsed.r / 100) * 6 - 3;
+                                    const percentile = satIRTModel.thetaToPercentile(theta);
+                                    const level = satIRTModel.thetaToLevel(theta);
+                                    return [
+                                        `Ability (θ): ${theta.toFixed(2)}`,
+                                        `Percentile: ${percentile}%`,
+                                        `Level: ${level}`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDomainChart() {
+            const domains = Object.keys(satIRTModel.domains);
+            const accuracies = domains.map(domain => {
+                const stats = satIRTModel.getDomainStats(domain);
+                return stats ? stats.accuracy : 0;
+            });
+            const thetas = domains.map(domain => satIRTModel.getAbility(domain));
+
+            const ctx = document.getElementById('domainChart').getContext('2d');
+
+            if (domainChart) {
+                domainChart.destroy();
+            }
+
+            domainChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: domains,
+                    datasets: [
+                        {
+                            label: 'Accuracy (%)',
+                            data: accuracies,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 2,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Ability (θ)',
+                            data: thetas,
+                            backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                            borderColor: 'rgb(168, 85, 247)',
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Accuracy (%)'
+                            },
+                            min: 0,
+                            max: 100
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Ability (θ)'
+                            },
+                            min: -3,
+                            max: 3,
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const domain = context.label;
+                                    const stats = satIRTModel.getDomainStats(domain);
+                                    if (stats) {
+                                        return [
+                                            `Attempts: ${stats.attempts}`,
+                                            `Correct: ${stats.correct}`,
+                                            `Level: ${stats.level}`,
+                                            `Percentile: ${stats.percentile}%`
+                                        ];
+                                    }
+                                    return [];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderWeaknessesAndStrengths(insights) {
+            // Weaknesses
+            const weaknessesList = document.getElementById('weaknessesList');
+            weaknessesList.innerHTML = '';
+
+            if (insights.weaknesses.length === 0) {
+                weaknessesList.innerHTML = '<p class="text-gray-500">Answer more questions to identify weaknesses.</p>';
+            } else {
+                insights.weaknesses.forEach((weakness, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'weakness-card';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-semibold">${index + 1}. ${weakness.domain}</div>
+                                <div class="text-sm opacity-90 mt-1">
+                                    θ = ${weakness.stats.theta.toFixed(2)} |
+                                    ${weakness.stats.accuracy.toFixed(1)}% accuracy |
+                                    ${weakness.stats.attempts} attempts
+                                </div>
+                            </div>
+                            <span class="percentile-badge level-${weakness.stats.level.toLowerCase().replace(' ', '-')}">
+                                ${weakness.stats.level}
+                            </span>
+                        </div>
+                    `;
+                    weaknessesList.appendChild(card);
+                });
+            }
+
+            // Strengths
+            const strengthsList = document.getElementById('strengthsList');
+            strengthsList.innerHTML = '';
+
+            if (insights.strengths.length === 0) {
+                strengthsList.innerHTML = '<p class="text-gray-500">Answer more questions to identify strengths.</p>';
+            } else {
+                insights.strengths.forEach((strength, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'strength-card';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-semibold">${index + 1}. ${strength.domain}</div>
+                                <div class="text-sm opacity-90 mt-1">
+                                    θ = ${strength.stats.theta.toFixed(2)} |
+                                    ${strength.stats.accuracy.toFixed(1)}% accuracy |
+                                    ${strength.stats.attempts} attempts
+                                </div>
+                            </div>
+                            <span class="percentile-badge level-${strength.stats.level.toLowerCase().replace(' ', '-')}">
+                                ${strength.stats.level}
+                            </span>
+                        </div>
+                    `;
+                    strengthsList.appendChild(card);
+                });
+            }
+        }
+
+        function loadTechnicalView() {
+            // Update model parameters
+            document.getElementById('discriminationParam').textContent = satIRTModel.defaultDiscrimination.toFixed(1);
+            document.getElementById('learningRate').textContent = satIRTModel.learningRate.toFixed(1);
+            document.getElementById('epsilonParam').textContent = (satRLModel.strategies.exploration.epsilon * 100).toFixed(1) + '%';
+
+            // Populate domain parameters table
+            const tableBody = document.getElementById('domainParamsTable');
+            tableBody.innerHTML = '';
+
+            const domains = Object.keys(satIRTModel.domains);
+            domains.forEach(domain => {
+                const irtStats = satIRTModel.getDomainStats(domain);
+                const rlStats = satRLModel.armStats[domain];
+
+                if (irtStats && irtStats.attempts > 0) {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b';
+                    row.innerHTML = `
+                        <td class="px-4 py-2 text-left font-medium">${domain}</td>
+                        <td class="px-4 py-2 text-right">${irtStats.theta.toFixed(3)}</td>
+                        <td class="px-4 py-2 text-right">${irtStats.attempts}</td>
+                        <td class="px-4 py-2 text-right">${irtStats.accuracy.toFixed(1)}%</td>
+                        <td class="px-4 py-2 text-right">${rlStats.alpha.toFixed(1)}</td>
+                        <td class="px-4 py-2 text-right">${rlStats.beta.toFixed(1)}</td>
+                        <td class="px-4 py-2 text-left">
+                            <span class="percentile-badge level-${irtStats.level.toLowerCase().replace(' ', '-')}">
+                                ${irtStats.level}
+                            </span>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+
+            if (tableBody.children.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7" class="px-4 py-2 text-center text-gray-500">No data available. Answer questions to see statistics.</td>';
+                tableBody.appendChild(row);
+            }
+        }
+
+        function exportData() {
+            const data = {
+                irt: satIRTModel.exportData(),
+                rl: satRLModel.exportData(),
+                insights: satRLModel.getInsights(),
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sat-analytics-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('Analytics data exported successfully!');
+        }
+
+        function resetData() {
+            if (confirm('Are you sure you want to reset ALL SAT data? This cannot be undone.')) {
+                if (confirm('This will delete all your progress, ability estimates, and statistics. Continue?')) {
+                    satIRTModel.reset();
+                    satRLModel.reset();
+                    localStorage.removeItem('satProgress');
+                    alert('All SAT data has been reset.');
+                    window.location.reload();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -49,15 +49,21 @@
                     <h3 class="text-xl font-bold text-gray-800 mt-4 mb-2">Content You Create</h3>
                     <ul class="list-disc ml-6 mt-2 space-y-1">
                         <li>Flashcards and study decks</li>
-                        <li>Quiz responses</li>
-                        <li>Community uploads</li>
+                        <li>Quiz responses and SAT practice answers</li>
+                        <li>Community uploads and shared decks</li>
+                        <li>Learning profile quiz results</li>
+                        <li>Custom flashcard groups and organization</li>
                     </ul>
 
                     <h3 class="text-xl font-bold text-gray-800 mt-4 mb-2">Usage Data</h3>
                     <ul class="list-disc ml-6 mt-2 space-y-1">
-                        <li>Study session data</li>
-                        <li>Quiz scores and progress</li>
-                        <li>Feature usage patterns</li>
+                        <li>Study session data and daily streak tracking</li>
+                        <li>Quiz scores, SAT practice progress, and topic mastery</li>
+                        <li>BKT (Bayesian Knowledge Tracking) mastery scores</li>
+                        <li>IRT (Item Response Theory) ability tracking for SAT</li>
+                        <li>Memory game scores and performance</li>
+                        <li>Achievement unlocks and progress milestones</li>
+                        <li>Feature usage patterns and study mode preferences</li>
                     </ul>
                 </section>
 
@@ -77,10 +83,12 @@
                     <h2 class="text-2xl font-bold text-gray-800 mb-3">4. Data Storage</h2>
                     <p>Your data is stored using:</p>
                     <ul class="list-disc ml-6 mt-2 space-y-1">
-                        <li><strong>Firebase/Google Cloud:</strong> Account data, community content, and study progress</li>
-                        <li><strong>Browser Storage:</strong> Study preferences and session data (stored locally on your device)</li>
+                        <li><strong>Firebase Firestore:</strong> Account data, community content, shared decks, and cloud-synced progress</li>
+                        <li><strong>IndexedDB (Primary):</strong> Flashcard decks, study progress, and local data (unlimited capacity)</li>
+                        <li><strong>localStorage (Fallback):</strong> Study preferences and session data when IndexedDB unavailable</li>
+                        <li><strong>Auto-sync:</strong> Data syncs to Firebase every 5 minutes and on page unload</li>
                     </ul>
-                    <p class="mt-2">All data is stored securely with industry-standard encryption.</p>
+                    <p class="mt-2">All data transmission is encrypted via HTTPS with industry-standard security measures.</p>
                 </section>
 
                 <section>
@@ -96,12 +104,15 @@
 
                 <section>
                     <h2 class="text-2xl font-bold text-gray-800 mb-3">6. AI and Your Data</h2>
-                    <p>When you use AI flashcard generation:</p>
+                    <p>When you use AI flashcard generation, you can choose from multiple providers:</p>
                     <ul class="list-disc ml-6 mt-2 space-y-1">
-                        <li>Your input text is sent to Claude AI (Anthropic) for processing</li>
-                        <li>We don't store the AI prompts long-term</li>
-                        <li>Generated flashcards are saved to your account</li>
-                        <li>Anthropic's privacy policy applies to AI processing</li>
+                        <li><strong>Hugging Face (Free):</strong> Flan-T5, Mistral-7B, or Llama-3-8B models</li>
+                        <li><strong>OpenAI:</strong> GPT-3.5 (requires your API key)</li>
+                        <li><strong>Claude (Anthropic):</strong> Manual prompt option for Claude/ChatGPT/Gemini</li>
+                        <li>Your input text is sent to the selected AI provider for processing</li>
+                        <li>We don't store AI prompts long-term, only generated flashcards</li>
+                        <li>Each provider's privacy policy applies to their AI processing</li>
+                        <li>API keys (if provided) are stored locally and not shared</li>
                     </ul>
                 </section>
 
@@ -167,9 +178,15 @@
                 </div>
             </div>
 
-            <div class="mt-12 pt-8 border-t border-gray-200 flex justify-between">
-                <a href="terms" class="text-purple-600 hover:text-purple-700 font-semibold">← Terms of Service</a>
-                <a href="index" class="text-purple-600 hover:text-purple-700 font-semibold">Back to studying.works →</a>
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <p class="text-gray-600 text-sm mb-4 text-center">
+                    🔒 Your data is protected with HTTPS encryption, Google OAuth authentication, and secure Firebase storage.
+                    We never sell your personal information.
+                </p>
+                <div class="flex justify-between">
+                    <a href="terms" class="text-purple-600 hover:text-purple-700 font-semibold">← Terms of Service</a>
+                    <a href="index" class="text-purple-600 hover:text-purple-700 font-semibold">Back to studying.works →</a>
+                </div>
             </div>
         </div>
     </div>

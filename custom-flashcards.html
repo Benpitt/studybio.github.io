@@ -221,6 +221,78 @@
             background: #1a1a1f;
             color: white;
         }
+
+        /* Emoji Picker Styles */
+        .emoji-picker-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .emoji-picker-button {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .emoji-picker-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .emoji-picker-popup {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            z-index: 1000;
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .emoji-picker-category {
+            margin-bottom: 16px;
+        }
+
+        .emoji-picker-category-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .emoji-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+        }
+
+        .emoji-picker-item {
+            background: transparent;
+            border: none;
+            padding: 8px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+
+        .emoji-picker-item:hover {
+            background: #f3f4f6;
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="min-height: 100vh;">
@@ -321,6 +393,68 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            );
+        }
+
+        function EmojiPicker({ onEmojiSelect }) {
+            const [isOpen, setIsOpen] = useState(false);
+
+            const emojiCategories = {
+                'Learning': ['📚', '📖', '📝', '✏️', '📓', '📔', '📕', '📗', '📘', '📙', '🎓', '🎒', '🏫', '✍️', '🖊️', '🖍️'],
+                'Science': ['🧬', '🔬', '🧪', '⚗️', '🧫', '🔭', '⚛️', '🧮', '🌡️', '💉', '🩺', '🦠', '🧠', '🫀', '🫁', '🦴'],
+                'Math': ['📐', '📏', '📊', '📈', '📉', '➕', '➖', '✖️', '➗', '🔢', '💯', '∞', '∑', '∫', 'π', '√'],
+                'Languages': ['🗣️', '💬', '🗨️', '💭', '🌍', '🌎', '🌏', '🇪🇸', '🇫🇷', '🇩🇪', '🇮🇹', '🇯🇵', '🇨🇳', '🇰🇷', 'ABC', '🔤'],
+                'Tech': ['💻', '🖥️', '⌨️', '🖱️', '💾', '💿', '📱', '🔌', '🔋', '🖨️', '🤖', '🌐', '📡', '🛰️', '⚙️', '🔧'],
+                'Arts': ['🎨', '🖌️', '🖍️', '🎭', '🎪', '🎬', '🎤', '🎧', '🎵', '🎶', '🎸', '🎹', '🎺', '🎻', '🥁', '🎼'],
+                'Nature': ['🌱', '🌿', '☘️', '🍀', '🌾', '🌳', '🌲', '🌴', '🌵', '🌷', '🌸', '🌺', '🌻', '🌼', '🌙', '⭐'],
+                'Animals': ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🦉'],
+                'Food': ['🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥑'],
+                'Activities': ['⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸', '🥊', '🎯', '⛳', '🏹', '🎣', '🥏'],
+                'Symbols': ['❤️', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍', '🤎', '💗', '💖', '💝', '⭐', '🌟', '✨', '💫']
+            };
+
+            return (
+                <div className="emoji-picker-container">
+                    <button
+                        type="button"
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="emoji-picker-button"
+                        title="Add emoji"
+                    >
+                        😊 +
+                    </button>
+                    {isOpen && (
+                        <>
+                            <div
+                                className="fixed inset-0 z-40"
+                                onClick={() => setIsOpen(false)}
+                            ></div>
+                            <div className="emoji-picker-popup">
+                                {Object.entries(emojiCategories).map(([category, emojis]) => (
+                                    <div key={category} className="emoji-picker-category">
+                                        <div className="emoji-picker-category-title">{category}</div>
+                                        <div className="emoji-picker-grid">
+                                            {emojis.map((emoji, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        onEmojiSelect(emoji);
+                                                        setIsOpen(false);
+                                                    }}
+                                                    className="emoji-picker-item"
+                                                    title={emoji}
+                                                >
+                                                    {emoji}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             );
         }
@@ -775,35 +909,44 @@
                                     {/* Deck Info */}
                                     <div className="mb-6">
                                         <label className="block text-gray-700 font-bold mb-2">Deck Title *</label>
-                                        <input
-                                            type="text"
-                                            value={newDeck.title}
-                                            onChange={(e) => setNewDeck({ ...newDeck, title: e.target.value })}
-                                            placeholder="e.g., Spanish Vocabulary, Biology Chapter 5"
-                                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
-                                        />
+                                        <div className="flex gap-3">
+                                            <input
+                                                type="text"
+                                                value={newDeck.title}
+                                                onChange={(e) => setNewDeck({ ...newDeck, title: e.target.value })}
+                                                placeholder="e.g., Spanish Vocabulary, Biology Chapter 5"
+                                                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                                            />
+                                            <EmojiPicker onEmojiSelect={(emoji) => setNewDeck({ ...newDeck, title: newDeck.title + emoji })} />
+                                        </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                         <div>
                                             <label className="block text-gray-700 font-bold mb-2">Subject</label>
-                                            <input
-                                                type="text"
-                                                value={newDeck.subject}
-                                                onChange={(e) => setNewDeck({ ...newDeck, subject: e.target.value })}
-                                                placeholder="e.g., Spanish, Biology"
-                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
-                                            />
+                                            <div className="flex gap-3">
+                                                <input
+                                                    type="text"
+                                                    value={newDeck.subject}
+                                                    onChange={(e) => setNewDeck({ ...newDeck, subject: e.target.value })}
+                                                    placeholder="e.g., Spanish, Biology"
+                                                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                                                />
+                                                <EmojiPicker onEmojiSelect={(emoji) => setNewDeck({ ...newDeck, subject: newDeck.subject + emoji })} />
+                                            </div>
                                         </div>
                                         <div>
                                             <label className="block text-gray-700 font-bold mb-2">Description</label>
-                                            <input
-                                                type="text"
-                                                value={newDeck.description}
-                                                onChange={(e) => setNewDeck({ ...newDeck, description: e.target.value })}
-                                                placeholder="Optional description"
-                                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
-                                            />
+                                            <div className="flex gap-3">
+                                                <input
+                                                    type="text"
+                                                    value={newDeck.description}
+                                                    onChange={(e) => setNewDeck({ ...newDeck, description: e.target.value })}
+                                                    placeholder="Optional description"
+                                                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                                                />
+                                                <EmojiPicker onEmojiSelect={(emoji) => setNewDeck({ ...newDeck, description: newDeck.description + emoji })} />
+                                            </div>
                                         </div>
                                     </div>
 
@@ -831,24 +974,34 @@
 
                                                     <div className="mb-3">
                                                         <label className="block text-gray-700 font-semibold mb-1 text-sm">Question *</label>
-                                                        <textarea
-                                                            value={card.question}
-                                                            onChange={(e) => updateNewDeckCard(index, 'question', e.target.value)}
-                                                            placeholder="Enter the question or prompt"
-                                                            rows="2"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
-                                                        />
+                                                        <div className="flex gap-2">
+                                                            <textarea
+                                                                value={card.question}
+                                                                onChange={(e) => updateNewDeckCard(index, 'question', e.target.value)}
+                                                                placeholder="Enter the question or prompt"
+                                                                rows="2"
+                                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
+                                                            />
+                                                            <div className="flex-shrink-0">
+                                                                <EmojiPicker onEmojiSelect={(emoji) => updateNewDeckCard(index, 'question', card.question + emoji)} />
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                     <div>
                                                         <label className="block text-gray-700 font-semibold mb-1 text-sm">Answer *</label>
-                                                        <textarea
-                                                            value={card.answer}
-                                                            onChange={(e) => updateNewDeckCard(index, 'answer', e.target.value)}
-                                                            placeholder="Enter the answer"
-                                                            rows="2"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
-                                                        />
+                                                        <div className="flex gap-2">
+                                                            <textarea
+                                                                value={card.answer}
+                                                                onChange={(e) => updateNewDeckCard(index, 'answer', e.target.value)}
+                                                                placeholder="Enter the answer"
+                                                                rows="2"
+                                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
+                                                            />
+                                                            <div className="flex-shrink-0">
+                                                                <EmojiPicker onEmojiSelect={(emoji) => updateNewDeckCard(index, 'answer', card.answer + emoji)} />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}

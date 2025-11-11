@@ -1,12 +1,12 @@
 /* Apple-Style Design System for studying.works */
 
 :root {
-    --bg: #0b0b0d;
-    --bg-lighter: #121216;
+    --bg: #0a0a1a;
+    --bg-lighter: #1e1b4b;
     --muted: #9aa3b2;
-    --accent: #0ea5a4;
+    --accent: #7c3aed;
     --accent-purple: #a855f7;
-    --accent-blue: #06b6d4;
+    --accent-blue: #6366f1;
     --glass: rgba(255, 255, 255, 0.06);
     --border: rgba(255, 255, 255, 0.08);
     --hover: rgba(255, 255, 255, 0.1);
@@ -89,7 +89,7 @@ body {
 }
 
 .gradient-text-accent {
-    background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+    background: linear-gradient(135deg, var(--accent), var(--accent-purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -97,7 +97,7 @@ body {
 
 /* Buttons */
 .btn-primary {
-    background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
     color: white;
     padding: 18px 40px;
     border-radius: 16px;
@@ -105,7 +105,7 @@ body {
     font-size: 1.1rem;
     border: none;
     cursor: pointer;
-    box-shadow: 0 20px 50px rgba(14, 165, 164, 0.4);
+    box-shadow: 0 20px 50px rgba(124, 58, 237, 0.4);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-block;
     text-decoration: none;
@@ -114,7 +114,7 @@ body {
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 25px 60px rgba(14, 165, 164, 0.5);
+    box-shadow: 0 25px 60px rgba(124, 58, 237, 0.5);
 }
 
 .btn-secondary {
@@ -180,7 +180,7 @@ body {
 }
 
 .card-gradient-accent {
-    background: linear-gradient(135deg, rgba(14, 165, 164, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -286,7 +286,7 @@ body {
     font-size: 2.5rem;
     margin-bottom: 12px;
     display: block;
-    filter: drop-shadow(0 4px 12px rgba(14, 165, 164, 0.3));
+    filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.3));
 }
 
 .stat-value {
@@ -316,7 +316,7 @@ body {
     height: 100%;
     border-radius: 999px;
     transition: width 1s ease;
-    background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+    background: linear-gradient(90deg, var(--accent), var(--accent-purple));
 }
 
 /* Input Fields */
@@ -372,7 +372,7 @@ body {
 }
 
 .badge-accent {
-    background: rgba(14, 165, 164, 0.15);
+    background: rgba(124, 58, 237, 0.15);
     border-color: var(--accent);
     color: var(--accent);
 }

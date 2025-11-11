@@ -317,7 +317,7 @@ input[type="file"]::file-selector-button:hover {
 
 /* Fire/Streak Card - Vibrant red to pink gradient */
 .card-gradient-fire {
-    background: linear-gradient(45deg, #ef4444, #f43f5e, #ec4899, #ff6b9d, #fca5a5) !important;
+    background: linear-gradient(45deg, #dc2626, #e11d48, #db2777, #ec4899, #f43f5e) !important;
     background-size: 400% 400% !important;
     animation: gradient-flow-reverse 30s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
     box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;

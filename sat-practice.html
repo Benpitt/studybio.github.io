@@ -283,7 +283,7 @@
 
         function Breadcrumb({ items }) {
             return (
-                <div className="bg-black/20 backdrop-blur-sm border-b border-white/5 sticky top-16 z-40">
+                <div className="bg-black/20 backdrop-blur-sm border-b border-white/5" style={{ position: 'sticky', top: '64px', zIndex: 40 }}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                         <nav className="flex items-center space-x-2 text-sm">
                             {items.map((item, index) => (
@@ -311,10 +311,13 @@
             );
         }
 
-        function DraggableWidget({ title, children, initialX, initialY, onClose }) {
+        function DraggableWidget({ title, children, initialX, initialY, initialWidth, initialHeight, onClose }) {
             const [position, setPosition] = useState({ x: initialX, y: initialY });
+            const [size, setSize] = useState({ width: initialWidth || 450, height: initialHeight || 500 });
             const [isDragging, setIsDragging] = useState(false);
+            const [isResizing, setIsResizing] = useState(false);
             const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+            const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
             const widgetRef = useRef(null);
 
             const handleMouseDown = (e) => {
@@ -328,6 +331,17 @@
                 }
             };
 
+            const handleResizeMouseDown = (e) => {
+                e.stopPropagation();
+                setIsResizing(true);
+                setResizeStart({
+                    x: e.clientX,
+                    y: e.clientY,
+                    width: size.width,
+                    height: size.height
+                });
+            };
+
             useEffect(() => {
                 const handleMouseMove = (e) => {
                     if (isDragging) {
@@ -335,14 +349,22 @@
                             x: e.clientX - dragOffset.x,
                             y: e.clientY - dragOffset.y
                         });
+                    } else if (isResizing) {
+                        const deltaX = e.clientX - resizeStart.x;
+                        const deltaY = e.clientY - resizeStart.y;
+                        setSize({
+                            width: Math.max(300, resizeStart.width + deltaX),
+                            height: Math.max(300, resizeStart.height + deltaY)
+                        });
                     }
                 };
 
                 const handleMouseUp = () => {
                     setIsDragging(false);
+                    setIsResizing(false);
                 };
 
-                if (isDragging) {
+                if (isDragging || isResizing) {
                     document.addEventListener('mousemove', handleMouseMove);
                     document.addEventListener('mouseup', handleMouseUp);
                 }
@@ -351,22 +373,40 @@
                     document.removeEventListener('mousemove', handleMouseMove);
                     document.removeEventListener('mouseup', handleMouseUp);
                 };
-            }, [isDragging, dragOffset]);
+            }, [isDragging, isResizing, dragOffset, resizeStart]);
 
             return (
                 <div
                     ref={widgetRef}
                     className={`draggable-widget ${isDragging ? 'dragging' : ''}`}
-                    style={{ left: `${position.x}px`, top: `${position.y}px` }}
+                    style={{
+                        left: `${position.x}px`,
+                        top: `${position.y}px`,
+                        width: `${size.width}px`,
+                        height: `${size.height}px`
+                    }}
                     onMouseDown={handleMouseDown}
                 >
                     <div className="widget-header">
                         <span>{title}</span>
                         <button onClick={onClose} className="text-white hover:text-gray-200 font-bold text-lg bg-white/20 hover:bg-white/30 px-2 rounded transition-all">×</button>
                     </div>
-                    <div className="widget-content">
+                    <div className="widget-content" style={{ height: 'calc(100% - 40px)', overflow: 'hidden' }}>
                         {children}
                     </div>
+                    <div
+                        onMouseDown={handleResizeMouseDown}
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            bottom: 0,
+                            width: '20px',
+                            height: '20px',
+                            cursor: 'nwse-resize',
+                            background: 'linear-gradient(135deg, transparent 0%, transparent 50%, rgba(102, 126, 234, 0.5) 50%, rgba(102, 126, 234, 0.8) 100%)',
+                            borderRadius: '0 0 8px 0'
+                        }}
+                    />
                 </div>
             );
         }
@@ -394,65 +434,14 @@
                 };
             }, [mode]);
 
-            return <div ref={containerRef} className="desmos-container" />;
-        }
-
-        function Stopwatch() {
-            const [time, setTime] = useState(0);
-            const [isRunning, setIsRunning] = useState(false);
-            const intervalRef = useRef(null);
-
-            useEffect(() => {
-                if (isRunning) {
-                    intervalRef.current = setInterval(() => {
-                        setTime(t => t + 10);
-                    }, 10);
-                } else {
-                    if (intervalRef.current) clearInterval(intervalRef.current);
-                }
-                return () => {
-                    if (intervalRef.current) clearInterval(intervalRef.current);
-                };
-            }, [isRunning]);
-
-            const formatTime = (ms) => {
-                const minutes = Math.floor(ms / 60000);
-                const seconds = Math.floor((ms % 60000) / 1000);
-                const milliseconds = Math.floor((ms % 1000) / 10);
-                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
-            };
-
-            return (
-                <div style={{ minWidth: '200px' }}>
-                    <div className="text-3xl font-mono font-bold text-center mb-3 text-gray-800">
-                        {formatTime(time)}
-                    </div>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setIsRunning(!isRunning)}
-                            className="flex-1 px-4 py-2 rounded-lg font-semibold text-white transition-all"
-                            style={{
-                                background: isRunning
-                                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                            }}
-                        >
-                            {isRunning ? 'Stop' : 'Start'}
-                        </button>
-                        <button
-                            onClick={() => { setIsRunning(false); setTime(0); }}
-                            className="px-4 py-2 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300 transition-all"
-                        >
-                            Reset
-                        </button>
-                    </div>
-                </div>
-            );
+            return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
         }
 
         function TopicSelectionMenu({ onStartTest, allQuestions }) {
+            const [step, setStep] = useState(1); // 1: disciplines, 2: filters
             const [selectedModule, setSelectedModule] = useState('math'); // 'math' or 'english'
             const [selectedDisciplines, setSelectedDisciplines] = useState([]);
+            const [selectedDifficulties, setSelectedDifficulties] = useState(['E', 'M', 'H']); // All by default
             const [customCount, setCustomCount] = useState(10);
 
             // Define disciplines by module
@@ -470,11 +459,26 @@
                 { id: 'Standard English Conventions', name: 'Standard English Conventions', icon: '📖' }
             ];
 
+            const difficulties = [
+                { id: 'E', name: 'Easy', icon: '🟢', color: 'bg-green-100 border-green-500' },
+                { id: 'M', name: 'Medium', icon: '🟡', color: 'bg-yellow-100 border-yellow-500' },
+                { id: 'H', name: 'Hard', icon: '🔴', color: 'bg-red-100 border-red-500' }
+            ];
+
             const currentDisciplines = selectedModule === 'math' ? mathDisciplines : englishDisciplines;
 
             // Count questions per discipline
             const getDisciplineCount = (disciplineId) => {
                 return allQuestions.filter(q => q.module === selectedModule && q.domain === disciplineId).length;
+            };
+
+            // Count questions with current filters
+            const getFilteredCount = () => {
+                return allQuestions.filter(q =>
+                    q.module === selectedModule &&
+                    selectedDisciplines.includes(q.domain) &&
+                    selectedDifficulties.includes(q.difficulty)
+                ).length;
             };
 
             const toggleDiscipline = (disciplineId) => {
@@ -485,10 +489,19 @@
                 );
             };
 
+            const toggleDifficulty = (difficultyId) => {
+                setSelectedDifficulties(prev =>
+                    prev.includes(difficultyId)
+                        ? prev.filter(id => id !== difficultyId)
+                        : [...prev, difficultyId]
+                );
+            };
+
             // When switching modules, clear selected disciplines
             const handleModuleChange = (module) => {
                 setSelectedModule(module);
                 setSelectedDisciplines([]);
+                setStep(1);
             };
 
             return (
@@ -497,106 +510,171 @@
                         <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                             SAT Digital Practice
                         </h1>
-                        <p className="text-gray-600 mb-8">Select module and disciplines for your practice session</p>
+                        <p className="text-gray-600 mb-8">
+                            {step === 1 ? 'Select module and disciplines' : 'Customize your practice session'}
+                        </p>
 
-                        {/* Module Selector */}
-                        <div className="mb-8">
-                            <h2 className="text-xl font-bold mb-4 text-gray-800">Select Module</h2>
-                            <div className="grid grid-cols-2 gap-4">
-                                <button
-                                    onClick={() => handleModuleChange('math')}
-                                    className={`p-6 rounded-xl border-2 transition-all ${
-                                        selectedModule === 'math'
-                                            ? 'border-purple-600 bg-purple-50'
-                                            : 'border-gray-300 hover:border-purple-400'
-                                    }`}
-                                >
-                                    <div className="text-4xl mb-2">🔢</div>
-                                    <div className="font-bold text-xl text-gray-800">Math</div>
-                                    <div className="text-sm text-gray-600">
-                                        {allQuestions.filter(q => q.module === 'math').length} questions
-                                    </div>
-                                </button>
-                                <button
-                                    onClick={() => handleModuleChange('english')}
-                                    className={`p-6 rounded-xl border-2 transition-all ${
-                                        selectedModule === 'english'
-                                            ? 'border-purple-600 bg-purple-50'
-                                            : 'border-gray-300 hover:border-purple-400'
-                                    }`}
-                                >
-                                    <div className="text-4xl mb-2">📚</div>
-                                    <div className="font-bold text-xl text-gray-800">Reading & Writing</div>
-                                    <div className="text-sm text-gray-600">
-                                        {allQuestions.filter(q => q.module === 'english').length} questions
-                                    </div>
-                                </button>
+                        {/* Progress Indicator */}
+                        <div className="flex items-center justify-center mb-8">
+                            <div className="flex items-center space-x-2">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                                    step >= 1 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-500'
+                                }`}>1</div>
+                                <div className={`w-16 h-1 ${step >= 2 ? 'bg-purple-600' : 'bg-gray-200'}`}></div>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                                    step >= 2 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-500'
+                                }`}>2</div>
                             </div>
                         </div>
 
-                        {/* Discipline Selector */}
-                        <div className="mb-8">
-                            <h2 className="text-xl font-bold mb-4 text-gray-800">
-                                Select {selectedModule === 'math' ? 'Math' : 'Reading & Writing'} Disciplines
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {currentDisciplines.map(discipline => {
-                                    const count = getDisciplineCount(discipline.id);
-                                    return (
-                                        <div
-                                            key={discipline.id}
-                                            onClick={() => toggleDiscipline(discipline.id)}
-                                            className={`topic-card ${selectedDisciplines.includes(discipline.id) ? 'selected' : ''}`}
+                        {step === 1 && (
+                            <>
+                                {/* Module Selector */}
+                                <div className="mb-8">
+                                    <h2 className="text-xl font-bold mb-4 text-gray-800">Select Module</h2>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            onClick={() => handleModuleChange('math')}
+                                            className={`p-6 rounded-xl border-2 transition-all ${
+                                                selectedModule === 'math'
+                                                    ? 'border-purple-600 bg-purple-50'
+                                                    : 'border-gray-300 hover:border-purple-400'
+                                            }`}
                                         >
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center space-x-3">
-                                                    <span className="text-3xl">{discipline.icon}</span>
-                                                    <div>
-                                                        <div className="font-bold text-gray-800">{discipline.name}</div>
-                                                        <div className="text-sm text-gray-500">{count} questions</div>
+                                            <div className="text-4xl mb-2">🔢</div>
+                                            <div className="font-bold text-xl text-gray-800">Math</div>
+                                            <div className="text-sm text-gray-600">
+                                                {allQuestions.filter(q => q.module === 'math').length} questions
+                                            </div>
+                                        </button>
+                                        <button
+                                            onClick={() => handleModuleChange('english')}
+                                            className={`p-6 rounded-xl border-2 transition-all ${
+                                                selectedModule === 'english'
+                                                    ? 'border-purple-600 bg-purple-50'
+                                                    : 'border-gray-300 hover:border-purple-400'
+                                            }`}
+                                        >
+                                            <div className="text-4xl mb-2">📚</div>
+                                            <div className="font-bold text-xl text-gray-800">Reading & Writing</div>
+                                            <div className="text-sm text-gray-600">
+                                                {allQuestions.filter(q => q.module === 'english').length} questions
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Discipline Selector */}
+                                <div className="mb-8">
+                                    <h2 className="text-xl font-bold mb-4 text-gray-800">
+                                        Select {selectedModule === 'math' ? 'Math' : 'Reading & Writing'} Disciplines
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {currentDisciplines.map(discipline => {
+                                            const count = getDisciplineCount(discipline.id);
+                                            return (
+                                                <div
+                                                    key={discipline.id}
+                                                    onClick={() => toggleDiscipline(discipline.id)}
+                                                    className={`topic-card ${selectedDisciplines.includes(discipline.id) ? 'selected' : ''}`}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center space-x-3">
+                                                            <span className="text-3xl">{discipline.icon}</span>
+                                                            <div>
+                                                                <div className="font-bold text-gray-800">{discipline.name}</div>
+                                                                <div className="text-sm text-gray-500">{count} questions</div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                                            selectedDisciplines.includes(discipline.id)
+                                                                ? 'bg-purple-600 border-purple-600'
+                                                                : 'border-gray-300'
+                                                        }`}>
+                                                            {selectedDisciplines.includes(discipline.id) && (
+                                                                <span className="text-white text-sm">✓</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                                                    selectedDisciplines.includes(discipline.id)
-                                                        ? 'bg-purple-600 border-purple-600'
-                                                        : 'border-gray-300'
-                                                }`}>
-                                                    {selectedDisciplines.includes(discipline.id) && (
-                                                        <span className="text-white text-sm">✓</span>
-                                                    )}
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setStep(2)}
+                                    disabled={selectedDisciplines.length === 0}
+                                    className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Continue to Filters →
+                                </button>
+                            </>
+                        )}
+
+                        {step === 2 && (
+                            <>
+                                {/* Difficulty Selector */}
+                                <div className="mb-8">
+                                    <h2 className="text-xl font-bold mb-4 text-gray-800">Select Difficulty Levels</h2>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        {difficulties.map(difficulty => (
+                                            <div
+                                                key={difficulty.id}
+                                                onClick={() => toggleDifficulty(difficulty.id)}
+                                                className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
+                                                    selectedDifficulties.includes(difficulty.id)
+                                                        ? `${difficulty.color} border-2`
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                                }`}
+                                            >
+                                                <div className="text-center">
+                                                    <div className="text-3xl mb-2">{difficulty.icon}</div>
+                                                    <div className="font-bold text-gray-800">{difficulty.name}</div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                        ))}
+                                    </div>
+                                </div>
 
-                        {/* Number of Questions */}
-                        <div className="mb-8">
-                            <label className="block text-lg font-bold mb-3 text-gray-800">Number of Questions</label>
-                            <input
-                                type="number"
-                                min="1"
-                                max="50"
-                                value={customCount}
-                                onChange={(e) => setCustomCount(parseInt(e.target.value) || 10)}
-                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-lg"
-                            />
-                        </div>
+                                {/* Number of Questions */}
+                                <div className="mb-8">
+                                    <label className="block text-lg font-bold mb-3 text-gray-800">Number of Questions</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="50"
+                                        value={customCount}
+                                        onChange={(e) => setCustomCount(parseInt(e.target.value) || 10)}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-lg"
+                                    />
+                                    <div className="mt-2 text-sm text-gray-600">
+                                        {getFilteredCount()} questions available with current filters
+                                    </div>
+                                </div>
 
-                        {/* Start Button */}
-                        <button
-                            onClick={() => onStartTest({
-                                module: selectedModule,
-                                disciplines: selectedDisciplines,
-                                count: customCount
-                            })}
-                            disabled={selectedDisciplines.length === 0}
-                            className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Start Practice Test
-                        </button>
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => setStep(1)}
+                                        className="flex-1 px-6 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-bold text-lg transition-all"
+                                    >
+                                        ← Back
+                                    </button>
+                                    <button
+                                        onClick={() => onStartTest({
+                                            module: selectedModule,
+                                            disciplines: selectedDisciplines,
+                                            difficulties: selectedDifficulties,
+                                            count: customCount
+                                        })}
+                                        disabled={selectedDifficulties.length === 0}
+                                        className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Start Practice Test
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             );
@@ -610,7 +688,6 @@
             const [userAnswers, setUserAnswers] = useState({});
             const [isSubmitted, setIsSubmitted] = useState(false);
             const [showCalculator, setShowCalculator] = useState(false);
-            const [showStopwatch, setShowStopwatch] = useState(false);
             const [calculatorMode, setCalculatorMode] = useState('graphing');
 
             // Load questions from CB Digital Questions JSON
@@ -724,9 +801,11 @@
             }
 
             const handleStartTest = (config) => {
-                // Filter questions based on selected module and disciplines
+                // Filter questions based on selected module, disciplines, and difficulties
                 let filteredQuestions = allQuestions.filter(q => {
-                    return q.module === config.module && config.disciplines.includes(q.domain);
+                    return q.module === config.module &&
+                           config.disciplines.includes(q.domain) &&
+                           config.difficulties.includes(q.difficulty);
                 });
 
                 console.log(`Filtered ${filteredQuestions.length} questions for ${config.module} module`);
@@ -967,12 +1046,6 @@
                                 >
                                     🧮 Calculator
                                 </button>
-                                <button
-                                    onClick={() => setShowStopwatch(!showStopwatch)}
-                                    className={`widget-toggle ${showStopwatch ? 'active' : ''}`}
-                                >
-                                    ⏱️ Stopwatch
-                                </button>
                                 {showCalculator && (
                                     <select
                                         value={calculatorMode}
@@ -1067,24 +1140,13 @@
                     {showCalculator && (
                         <DraggableWidget
                             title={`Desmos ${calculatorMode === 'graphing' ? 'Graphing' : 'Scientific'} Calculator`}
-                            initialX={window.innerWidth - 500}
+                            initialX={window.innerWidth - 550}
                             initialY={100}
+                            initialWidth={500}
+                            initialHeight={600}
                             onClose={() => setShowCalculator(false)}
                         >
-                            <div style={{ width: '450px' }}>
-                                <DesmosCalculator mode={calculatorMode} />
-                            </div>
-                        </DraggableWidget>
-                    )}
-
-                    {showStopwatch && (
-                        <DraggableWidget
-                            title="Stopwatch"
-                            initialX={window.innerWidth - 280}
-                            initialY={100}
-                            onClose={() => setShowStopwatch(false)}
-                        >
-                            <Stopwatch />
+                            <DesmosCalculator mode={calculatorMode} />
                         </DraggableWidget>
                     )}
                 </>

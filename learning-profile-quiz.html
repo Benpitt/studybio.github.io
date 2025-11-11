@@ -428,23 +428,11 @@
                         icon: 'fa-bullseye',
                         benefit: 'Helps maintain concentration on your studies'
                     },
-                    enableSpacedRepetition: {
-                        title: 'Spaced Repetition',
-                        description: 'Review material at optimal intervals',
-                        icon: 'fa-calendar-check',
-                        benefit: 'Scientifically proven to improve long-term memory'
-                    },
                     enableBreakReminders: {
                         title: 'Break Reminders',
                         description: 'Gentle nudges to take regular breaks',
                         icon: 'fa-clock',
                         benefit: 'Prevents burnout and maintains productivity'
-                    },
-                    showStepByStep: {
-                        title: 'Step-by-Step Guidance',
-                        description: 'Break down complex problems into smaller steps',
-                        icon: 'fa-stairs',
-                        benefit: 'Makes challenging material more manageable'
                     }
                 };
                 return settingDescriptions[settingKey] || { title: settingKey, description: '', icon: 'fa-cog', benefit: '' };
@@ -566,12 +554,7 @@
                             recommended.push('reduceAnimations');
                             recommended.push('distractionFreeMode');
                         }
-                        if (challenge.type === 'memory') {
-                            recommended.push('enableSpacedRepetition');
-                        }
-                        if (challenge.type === 'processing') {
-                            recommended.push('showStepByStep');
-                        }
+                        // Processing and memory challenges handled through other settings
                     });
                 }
 

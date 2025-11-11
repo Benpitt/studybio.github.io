@@ -71,6 +71,37 @@
             );
         }
 
+        // Breadcrumb Component
+        function Breadcrumb({ items }) {
+            return (
+                <div className="bg-black/20 backdrop-blur-sm border-b border-white/5" style={{ position: 'sticky', top: '64px', zIndex: 40 }}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                        <nav className="flex items-center space-x-2 text-sm">
+                            {items.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    {index > 0 && (
+                                        <svg className="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    )}
+                                    {item.href ? (
+                                        <a
+                                            href={item.href}
+                                            className="text-white/60 hover:text-white transition-colors"
+                                        >
+                                            {item.label}
+                                        </a>
+                                    ) : (
+                                        <span className="text-white font-medium">{item.label}</span>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </nav>
+                    </div>
+                </div>
+            );
+        }
+
         function BiologyMasterApp() {
             const [mode, setMode] = useState('menu');
             const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -436,6 +467,10 @@
                 return (
                     <>
                         <Navigation />
+                        <Breadcrumb items={[
+                            { label: 'Dashboard', href: 'dashboard' },
+                            { label: 'Biology Quiz 2' }
+                        ]} />
                         <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-4 pt-20">
                         <div className="max-w-7xl mx-auto">
                             <div className="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 mb-6 animate-slide-in">

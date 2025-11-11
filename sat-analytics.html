@@ -207,7 +207,20 @@
     </style>
 </head>
 <body>
-    <div class="analytics-container">
+    <!-- Breadcrumb -->
+    <div class="bg-black/20 backdrop-blur-sm border-b border-white/5" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="dashboard" class="text-white/60 hover:text-white transition-colors">Dashboard</a>
+                <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="text-white font-medium">SAT Analytics</span>
+            </nav>
+        </div>
+    </div>
+
+    <div class="analytics-container" style="padding-top: 70px;">
         <!-- Header -->
         <div class="stat-card mb-6">
             <div class="flex justify-between items-center flex-wrap gap-4">

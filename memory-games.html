@@ -463,6 +463,7 @@
 <body>
     <a href="#main-content" class="skip-to-main">Skip to main content</a>
     <script type="module" src="auth-guard.js"></script>
+    <script src="flashcard-storage.js"></script>
 
     <!-- Glowing orbs background -->
     <div class="glow-orb" style="width: 500px; height: 500px; background: #0ea5a4; top: 10%; left: 5%;"></div>
@@ -614,8 +615,8 @@
         let gameState = {};
 
         // Load decks
-        function loadDecks() {
-            const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
+        async function loadDecks() {
+            const decks = await window.flashcardStorage.getAllDecks();
             const deckGrid = document.getElementById('deck-grid');
 
             if (decks.length === 0) {
@@ -673,8 +674,8 @@
             });
         }
 
-        function selectDeck(index) {
-            const decks = JSON.parse(localStorage.getItem('flashcardDecks') || '[]');
+        async function selectDeck(index) {
+            const decks = await window.flashcardStorage.getAllDecks();
             currentDeck = decks[index];
             document.getElementById('deck-selection').classList.add('hidden');
             document.getElementById('game-selection').classList.remove('hidden');

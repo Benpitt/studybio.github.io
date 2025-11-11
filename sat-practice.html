@@ -437,7 +437,196 @@
             return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
         }
 
-        function TopicSelectionMenu({ onStartTest, allQuestions }) {
+        function HomeScreen({ onNavigate }) {
+            return (
+                <div id="main-content" className="max-w-6xl mx-auto py-12 px-6">
+                    {/* Welcome Header */}
+                    <div className="text-center mb-12">
+                        <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
+                            SAT Digital Practice
+                        </h1>
+                        <p className="text-xl text-white/80">
+                            Master your SAT preparation with comprehensive practice and insights
+                        </p>
+                    </div>
+
+                    {/* Main Navigation Cards */}
+                    <div className="grid md:grid-cols-2 gap-6 mb-12">
+                        {/* Question Bank Card */}
+                        <div
+                            onClick={() => onNavigate('questionBank')}
+                            className="group bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:scale-105 hover:shadow-2xl"
+                        >
+                            <div className="text-6xl mb-4">📚</div>
+                            <h2 className="text-3xl font-bold text-white mb-3">Question Bank</h2>
+                            <p className="text-white/70 mb-4">
+                                Practice with real Digital SAT questions across all subjects and difficulty levels
+                            </p>
+                            <div className="flex items-center text-white/60 group-hover:text-white transition-colors">
+                                <span className="font-semibold">Start Practice</span>
+                                <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Stats Card */}
+                        <div
+                            onClick={() => onNavigate('stats')}
+                            className="group bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:scale-105 hover:shadow-2xl"
+                        >
+                            <div className="text-6xl mb-4">📊</div>
+                            <h2 className="text-3xl font-bold text-white mb-3">Stats & Analytics</h2>
+                            <p className="text-white/70 mb-4">
+                                Track your progress, view detailed statistics, and identify areas for improvement
+                            </p>
+                            <div className="flex items-center text-white/60 group-hover:text-white transition-colors">
+                                <span className="font-semibold">View Stats</span>
+                                <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Widgets Section */}
+                    <div className="bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8">
+                        <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span className="mr-3">⚡</span>
+                            Quick Insights
+                        </h2>
+                        <div className="grid md:grid-cols-3 gap-6">
+                            {/* Widget Placeholder 1 - Study Streak */}
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-3xl">🔥</span>
+                                    <span className="text-xs font-semibold text-white/50 bg-white/10 px-2 py-1 rounded">COMING SOON</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">Study Streak</h3>
+                                <p className="text-3xl font-black text-white/80 mb-1">—</p>
+                                <p className="text-sm text-white/60">days in a row</p>
+                            </div>
+
+                            {/* Widget Placeholder 2 - Recent Performance */}
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-3xl">🎯</span>
+                                    <span className="text-xs font-semibold text-white/50 bg-white/10 px-2 py-1 rounded">COMING SOON</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">Recent Accuracy</h3>
+                                <p className="text-3xl font-black text-white/80 mb-1">—</p>
+                                <p className="text-sm text-white/60">last 10 questions</p>
+                            </div>
+
+                            {/* Widget Placeholder 3 - Total Progress */}
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-3xl">📈</span>
+                                    <span className="text-xs font-semibold text-white/50 bg-white/10 px-2 py-1 rounded">COMING SOON</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">Total Questions</h3>
+                                <p className="text-3xl font-black text-white/80 mb-1">—</p>
+                                <p className="text-sm text-white/60">completed so far</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Additional Widgets Row */}
+                    <div className="grid md:grid-cols-2 gap-6 mt-6">
+                        {/* Widget Placeholder 4 - Strengths & Weaknesses */}
+                        <div className="bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-xl font-bold text-white flex items-center">
+                                    <span className="mr-3">💪</span>
+                                    Strengths & Weaknesses
+                                </h3>
+                                <span className="text-xs font-semibold text-white/50 bg-white/10 px-3 py-1 rounded-full">COMING SOON</span>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                                    <span className="text-white/60">Top performing area</span>
+                                    <span className="text-white/40">—</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                                    <span className="text-white/60">Needs improvement</span>
+                                    <span className="text-white/40">—</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Widget Placeholder 5 - Recommended Practice */}
+                        <div className="bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-xl font-bold text-white flex items-center">
+                                    <span className="mr-3">🎓</span>
+                                    Recommended Practice
+                                </h3>
+                                <span className="text-xs font-semibold text-white/50 bg-white/10 px-3 py-1 rounded-full">COMING SOON</span>
+                            </div>
+                            <div className="text-center py-8">
+                                <div className="text-5xl mb-3">🔍</div>
+                                <p className="text-white/60">We'll suggest topics to practice based on your performance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function StatsScreen({ onBack }) {
+            return (
+                <div id="main-content" className="max-w-6xl mx-auto py-12 px-6">
+                    <button
+                        onClick={onBack}
+                        className="mb-8 text-white/80 hover:text-white font-semibold flex items-center transition-all group"
+                    >
+                        <svg className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Home
+                    </button>
+
+                    <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                        <div className="text-8xl mb-6">📊</div>
+                        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                            Stats & Analytics
+                        </h1>
+                        <p className="text-xl text-gray-600 mb-8">
+                            Coming Soon
+                        </p>
+                        <div className="max-w-2xl mx-auto bg-gray-50 border-2 border-gray-200 rounded-xl p-8">
+                            <p className="text-gray-700 mb-4">
+                                This section will display comprehensive statistics including:
+                            </p>
+                            <ul className="text-left space-y-2 text-gray-600">
+                                <li className="flex items-start">
+                                    <span className="text-purple-600 mr-2">•</span>
+                                    <span>Detailed performance analytics by topic and difficulty</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-purple-600 mr-2">•</span>
+                                    <span>Progress tracking over time</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-purple-600 mr-2">•</span>
+                                    <span>Personalized recommendations for improvement</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-purple-600 mr-2">•</span>
+                                    <span>Study streaks and engagement metrics</span>
+                                </li>
+                                <li className="flex items-start">
+                                    <span className="text-purple-600 mr-2">•</span>
+                                    <span>Predicted score estimates</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function TopicSelectionMenu({ onStartTest, allQuestions, onBack }) {
             const [step, setStep] = useState(1); // 1: disciplines, 2: filters
             const [selectedModule, setSelectedModule] = useState('math'); // 'math' or 'english'
             const [selectedDisciplines, setSelectedDisciplines] = useState([]);
@@ -506,6 +695,16 @@
 
             return (
                 <div id="main-content" className="max-w-5xl mx-auto py-12 px-6">
+                    <button
+                        onClick={onBack}
+                        className="mb-8 text-white/80 hover:text-white font-semibold flex items-center transition-all group"
+                    >
+                        <svg className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Home
+                    </button>
+
                     <div className="bg-white rounded-xl shadow-lg p-8">
                         <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                             SAT Digital Practice
@@ -681,7 +880,7 @@
         }
 
         function SATApp() {
-            const [mode, setMode] = useState('menu'); // 'menu' or 'test'
+            const [mode, setMode] = useState('home'); // 'home', 'menu', 'test', 'stats'
             const [allQuestions, setAllQuestions] = useState([]); // Full question bank
             const [testQuestions, setTestQuestions] = useState([]); // Current test questions
             const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -689,6 +888,16 @@
             const [isSubmitted, setIsSubmitted] = useState(false);
             const [showCalculator, setShowCalculator] = useState(false);
             const [calculatorMode, setCalculatorMode] = useState('graphing');
+
+            const handleNavigation = (destination) => {
+                if (destination === 'questionBank') {
+                    setMode('menu');
+                } else if (destination === 'stats') {
+                    setMode('stats');
+                } else if (destination === 'home') {
+                    setMode('home');
+                }
+            };
 
             // Load questions from CB Digital Questions JSON
             useEffect(() => {
@@ -911,8 +1120,16 @@
                 }
             };
 
+            if (mode === 'home') {
+                return <HomeScreen onNavigate={handleNavigation} />;
+            }
+
+            if (mode === 'stats') {
+                return <StatsScreen onBack={() => handleNavigation('home')} />;
+            }
+
             if (mode === 'menu') {
-                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} />;
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} onBack={() => handleNavigation('home')} />;
             }
 
             if (allQuestions.length === 0) {
@@ -927,7 +1144,7 @@
             }
 
             if (testQuestions.length === 0) {
-                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} />;
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} onBack={() => handleNavigation('home')} />;
             }
 
             const currentQuestion = testQuestions[currentQuestionIndex];

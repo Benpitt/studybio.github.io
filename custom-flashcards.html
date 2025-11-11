@@ -13,6 +13,7 @@
     <script src="learning-profile-utils.js"></script>
     <script src="tts-button.js"></script>
     <script src="flashcard-storage.js"></script>
+    <script src="wikimedia-service.js"></script>
     <link rel="stylesheet" href="apple-style.css">
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="button-styles.css">
@@ -293,6 +294,163 @@
             background: #f3f4f6;
             transform: scale(1.2);
         }
+
+        /* Wikimedia Image Search Styles */
+        .image-search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .image-search-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-search-header {
+            padding: 24px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .image-search-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .image-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .image-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(14, 165, 164, 0.3);
+            border-color: #0ea5a4;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-card-info {
+            padding: 8px;
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .selected-image-preview {
+            margin-top: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #0ea5a4;
+            position: relative;
+        }
+
+        .selected-image-preview img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .remove-image-btn:hover {
+            background: rgb(239, 68, 68);
+            transform: scale(1.1);
+        }
+
+        .image-search-button {
+            background: linear-gradient(135deg, #0ea5a4 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(14, 165, 164, 0.3);
+        }
+
+        .image-search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 164, 0.4);
+        }
+
+        .flashcard-image {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 16px auto;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900" style="min-height: 100vh;">
@@ -459,6 +617,130 @@
             );
         }
 
+        function WikimediaImageSearch({ isOpen, onClose, onSelectImage, searchTerm }) {
+            const [images, setImages] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [customSearch, setCustomSearch] = useState('');
+            const [hasSearched, setHasSearched] = useState(false);
+
+            useEffect(() => {
+                if (isOpen && searchTerm && !hasSearched) {
+                    performSearch(searchTerm);
+                }
+            }, [isOpen, searchTerm]);
+
+            async function performSearch(term) {
+                if (!term || term.trim().length === 0) {
+                    return;
+                }
+                setLoading(true);
+                setHasSearched(true);
+                try {
+                    const results = await wikimediaService.searchImages(term, 9);
+                    setImages(results);
+                } catch (error) {
+                    console.error('Error searching images:', error);
+                    alert('Failed to search for images. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            }
+
+            function handleSearch(e) {
+                e.preventDefault();
+                if (customSearch.trim()) {
+                    performSearch(customSearch);
+                }
+            }
+
+            function handleImageSelect(image) {
+                onSelectImage(image.thumbnailUrl);
+                onClose();
+            }
+
+            function handleClose() {
+                setImages([]);
+                setCustomSearch('');
+                setHasSearched(false);
+                onClose();
+            }
+
+            if (!isOpen) return null;
+
+            return (
+                <div className="image-search-modal" onClick={handleClose}>
+                    <div className="image-search-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="image-search-header">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-2xl font-bold text-gray-800">🖼️ Add Image from Wikimedia</h3>
+                                <button
+                                    onClick={handleClose}
+                                    className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <form onSubmit={handleSearch} className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={customSearch}
+                                    onChange={(e) => setCustomSearch(e.target.value)}
+                                    placeholder={`Search images... (default: "${searchTerm}")`}
+                                    className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                                />
+                                <button
+                                    type="submit"
+                                    className="image-search-button"
+                                    disabled={loading}
+                                >
+                                    {loading ? <span className="loading-spinner"></span> : '🔍 Search'}
+                                </button>
+                            </form>
+                            <p className="text-sm text-gray-600 mt-2">
+                                Search for free images from Wikimedia Commons
+                            </p>
+                        </div>
+                        <div className="image-search-body">
+                            {loading && !images.length && (
+                                <div className="text-center py-12">
+                                    <div className="loading-spinner" style={{width: '40px', height: '40px', borderWidth: '4px', borderColor: '#0ea5a4', borderTopColor: 'transparent', margin: '0 auto'}}></div>
+                                    <p className="text-gray-600 mt-4">Searching for images...</p>
+                                </div>
+                            )}
+                            {!loading && images.length === 0 && hasSearched && (
+                                <div className="text-center py-12">
+                                    <div className="text-6xl mb-4">🔍</div>
+                                    <p className="text-gray-600">No images found. Try a different search term.</p>
+                                </div>
+                            )}
+                            {!loading && !hasSearched && (
+                                <div className="text-center py-12">
+                                    <div className="text-6xl mb-4">🖼️</div>
+                                    <p className="text-gray-600">Enter a search term above to find images</p>
+                                </div>
+                            )}
+                            {images.length > 0 && (
+                                <div className="image-grid">
+                                    {images.map((image, index) => (
+                                        <div
+                                            key={index}
+                                            className="image-card"
+                                            onClick={() => handleImageSelect(image)}
+                                        >
+                                            <img src={image.thumbnailUrl} alt={image.title} />
+                                            <div className="image-card-info">
+                                                {image.title.substring(0, 30)}{image.title.length > 30 ? '...' : ''}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         function CustomFlashcardsApp() {
             // State - all modes
             const [mode, setMode] = useState('decks');
@@ -473,9 +755,12 @@
                 title: '',
                 subject: '',
                 description: '',
-                cards: [{ question: '', answer: '' }]
+                cards: [{ question: '', answer: '', imageUrl: '' }]
             });
             const [editingDeckId, setEditingDeckId] = useState(null);
+            const [imageSearchOpen, setImageSearchOpen] = useState(false);
+            const [imageSearchCardIndex, setImageSearchCardIndex] = useState(null);
+            const [imageSearchField, setImageSearchField] = useState('question');
 
             // Flashcard mode
             const [currentCard, setCurrentCard] = useState(0);
@@ -644,7 +929,7 @@
             function addCardToNewDeck() {
                 setNewDeck({
                     ...newDeck,
-                    cards: [...newDeck.cards, { question: '', answer: '' }]
+                    cards: [...newDeck.cards, { question: '', answer: '', imageUrl: '' }]
                 });
             }
 
@@ -664,6 +949,24 @@
                     i === index ? { ...card, [field]: value } : card
                 );
                 setNewDeck({ ...newDeck, cards: updatedCards });
+            }
+
+            function openImageSearch(cardIndex, field) {
+                setImageSearchCardIndex(cardIndex);
+                setImageSearchField(field);
+                setImageSearchOpen(true);
+            }
+
+            function handleImageSelect(imageUrl) {
+                if (imageSearchCardIndex !== null) {
+                    updateNewDeckCard(imageSearchCardIndex, 'imageUrl', imageUrl);
+                }
+                setImageSearchOpen(false);
+                setImageSearchCardIndex(null);
+            }
+
+            function removeCardImage(cardIndex) {
+                updateNewDeckCard(cardIndex, 'imageUrl', '');
             }
 
             async function saveManualDeck() {
@@ -1003,6 +1306,36 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    <div className="mt-4">
+                                                        <label className="block text-gray-700 font-semibold mb-2 text-sm">Image (Optional)</label>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => openImageSearch(index, card.question || card.answer || 'image')}
+                                                                className="image-search-button"
+                                                            >
+                                                                🖼️ Add Image from Wikimedia
+                                                            </button>
+                                                            {card.imageUrl && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeCardImage(index)}
+                                                                    className="text-red-500 hover:text-red-700 font-semibold text-sm"
+                                                                >
+                                                                    Remove Image
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                        {card.imageUrl && (
+                                                            <div className="selected-image-preview">
+                                                                <img src={card.imageUrl} alt="Card visual" />
+                                                            </div>
+                                                        )}
+                                                        <p className="text-xs text-gray-600 mt-1">
+                                                            Click to search for free images from Wikimedia Commons
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -1031,6 +1364,13 @@
                                         </button>
                                     </div>
                                 </div>
+
+                                <WikimediaImageSearch
+                                    isOpen={imageSearchOpen}
+                                    onClose={() => setImageSearchOpen(false)}
+                                    onSelectImage={handleImageSelect}
+                                    searchTerm={imageSearchCardIndex !== null ? (newDeck.cards[imageSearchCardIndex]?.[imageSearchField] || '') : ''}
+                                />
                             </div>
                         </div>
                     </div>
@@ -1303,18 +1643,24 @@
                                         {!showAnswer ? (
                                             <div className="flip-card-front absolute w-full h-full">
                                                 <div onClick={() => setShowAnswer(true)} className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                                    <div>
+                                                    <div className="w-full">
                                                         <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
                                                         <div className="text-3xl font-bold text-center">{card.question}</div>
+                                                        {card.imageUrl && (
+                                                            <img src={card.imageUrl} alt="Visual aid" className="flashcard-image" />
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="flip-card-back absolute w-full h-full">
                                                 <div onClick={() => setShowAnswer(false)} className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                                    <div>
+                                                    <div className="w-full">
                                                         <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
                                                         <div className="text-2xl text-center">{card.answer}</div>
+                                                        {card.imageUrl && (
+                                                            <img src={card.imageUrl} alt="Visual aid" className="flashcard-image" />
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

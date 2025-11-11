@@ -467,6 +467,51 @@
         }
 
         function HomeScreen({ onNavigate }) {
+            // Get real data from localStorage
+            const [studyStreak, setStudyStreak] = useState(0);
+            const [recentAccuracy, setRecentAccuracy] = useState(0);
+            const [totalQuestions, setTotalQuestions] = useState(0);
+            const [topStrength, setTopStrength] = useState('—');
+            const [topWeakness, setTopWeakness] = useState('—');
+
+            useEffect(() => {
+                // Load study streak
+                const streak = parseInt(localStorage.getItem('studyStreak') || '0');
+                setStudyStreak(streak);
+
+                // Load SAT progress data
+                const progress = JSON.parse(localStorage.getItem('satProgress') || '{}');
+                setTotalQuestions(progress.totalQuestions || 0);
+
+                // Calculate recent accuracy (last 10 questions from IRT model)
+                if (typeof satIRTModel !== 'undefined' && satIRTModel) {
+                    const recentData = satIRTModel.getRecentAccuracy(10);
+                    setRecentAccuracy(recentData ? Math.round(recentData * 100) : 0);
+                } else {
+                    // Fallback to overall accuracy
+                    const overallAccuracy = progress.totalQuestions > 0
+                        ? Math.round((progress.totalCorrect / progress.totalQuestions) * 100)
+                        : 0;
+                    setRecentAccuracy(overallAccuracy);
+                }
+
+                // Find strengths and weaknesses
+                if (progress.byTopic) {
+                    const topics = Object.entries(progress.byTopic);
+                    if (topics.length > 0) {
+                        // Sort by accuracy
+                        const sortedByAccuracy = topics
+                            .filter(([_, data]) => data.attempted >= 3) // At least 3 attempts
+                            .sort(([_, a], [__, b]) => b.accuracy - a.accuracy);
+
+                        if (sortedByAccuracy.length > 0) {
+                            setTopStrength(sortedByAccuracy[0][0]);
+                            setTopWeakness(sortedByAccuracy[sortedByAccuracy.length - 1][0]);
+                        }
+                    }
+                }
+            }, []);
+
             return (
                 <div id="main-content" className="max-w-6xl mx-auto py-12 px-6">
                     {/* Welcome Header */}
@@ -480,7 +525,7 @@
                     </div>
 
                     {/* Main Navigation Cards */}
-                    <div className="grid md:grid-cols-2 gap-6 mb-12">
+                    <div className="grid md:grid-cols-3 gap-6 mb-12">
                         {/* Question Bank Card */}
                         <div
                             onClick={() => onNavigate('questionBank')}
@@ -493,6 +538,24 @@
                             </p>
                             <div className="flex items-center text-white/60 group-hover:text-white transition-colors">
                                 <span className="font-semibold">Start Practice</span>
+                                <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Practice Test Mode Card */}
+                        <div
+                            onClick={() => onNavigate('practiceTest')}
+                            className="group bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/40 hover:scale-105 hover:shadow-2xl"
+                        >
+                            <div className="text-6xl mb-4">📝</div>
+                            <h2 className="text-3xl font-bold text-white mb-3">Practice Test Mode</h2>
+                            <p className="text-white/70 mb-4">
+                                Take a full-length SAT practice test (98 questions: 54 R&W + 44 Math)
+                            </p>
+                            <div className="flex items-center text-white/60 group-hover:text-white transition-colors">
+                                <span className="font-semibold">Start Full Test</span>
                                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
@@ -525,36 +588,33 @@
                             Quick Insights
                         </h2>
                         <div className="grid md:grid-cols-3 gap-6">
-                            {/* Widget Placeholder 1 - Study Streak */}
+                            {/* Widget 1 - Study Streak */}
                             <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="text-3xl">🔥</span>
-                                    <span className="text-xs font-semibold text-white/50 bg-white/10 px-2 py-1 rounded">COMING SOON</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-2">Study Streak</h3>
-                                <p className="text-3xl font-black text-white/80 mb-1">—</p>
+                                <p className="text-3xl font-black text-white/80 mb-1">{studyStreak}</p>
                                 <p className="text-sm text-white/60">days in a row</p>
                             </div>
 
-                            {/* Widget Placeholder 2 - Recent Performance */}
+                            {/* Widget 2 - Recent Performance */}
                             <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="text-3xl">🎯</span>
-                                    <span className="text-xs font-semibold text-white/50 bg-white/10 px-2 py-1 rounded">COMING SOON</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-2">Recent Accuracy</h3>
-                                <p className="text-3xl font-black text-white/80 mb-1">—</p>
+                                <p className="text-3xl font-black text-white/80 mb-1">{recentAccuracy}%</p>
                                 <p className="text-sm text-white/60">last 10 questions</p>
                             </div>
 
-                            {/* Widget Placeholder 3 - Total Progress */}
+                            {/* Widget 3 - Total Progress */}
                             <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="text-3xl">📈</span>
-                                    <span className="text-xs font-semibold text-white/50 bg-white/10 px-2 py-1 rounded">COMING SOON</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-2">Total Questions</h3>
-                                <p className="text-3xl font-black text-white/80 mb-1">—</p>
+                                <p className="text-3xl font-black text-white/80 mb-1">{totalQuestions}</p>
                                 <p className="text-sm text-white/60">completed so far</p>
                             </div>
                         </div>
@@ -562,23 +622,22 @@
 
                     {/* Additional Widgets Row */}
                     <div className="grid md:grid-cols-2 gap-6 mt-6">
-                        {/* Widget Placeholder 4 - Strengths & Weaknesses */}
+                        {/* Widget 4 - Strengths & Weaknesses */}
                         <div className="bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl p-8">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-xl font-bold text-white flex items-center">
                                     <span className="mr-3">💪</span>
                                     Strengths & Weaknesses
                                 </h3>
-                                <span className="text-xs font-semibold text-white/50 bg-white/10 px-3 py-1 rounded-full">COMING SOON</span>
                             </div>
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                                     <span className="text-white/60">Top performing area</span>
-                                    <span className="text-white/40">—</span>
+                                    <span className="text-white font-semibold">{topStrength}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                                     <span className="text-white/60">Needs improvement</span>
-                                    <span className="text-white/40">—</span>
+                                    <span className="text-white font-semibold">{topWeakness}</span>
                                 </div>
                             </div>
                         </div>
@@ -932,6 +991,9 @@
             const handleNavigation = (destination) => {
                 if (destination === 'questionBank') {
                     setMode('menu');
+                } else if (destination === 'practiceTest') {
+                    // Auto-generate full SAT practice test
+                    handleStartPracticeTest();
                 } else if (destination === 'stats') {
                     setMode('stats');
                 } else if (destination === 'home') {
@@ -1048,6 +1110,60 @@
                     explanation: "Subtract 5 from both sides: 2x = 10, then divide by 2: x = 5"
                 };
             }
+
+            const handleStartPracticeTest = () => {
+                // Practice test distribution based on SAT specifications
+                const testDistribution = {
+                    english: {
+                        'Information and Ideas': { min: 12, max: 14 },
+                        'Craft and Structure': { min: 13, max: 15 },
+                        'Standard English Conventions': { min: 11, max: 15 },
+                        'Expression of Ideas': { min: 8, max: 12 }
+                    },
+                    math: {
+                        'Algebra': { min: 13, max: 15 },
+                        'Advanced Math': { min: 13, max: 15 },
+                        'Problem-Solving and Data Analysis': { min: 5, max: 7 },
+                        'Geometry and Trigonometry': { min: 5, max: 7 }
+                    }
+                };
+
+                let selected = [];
+
+                // Select questions for each domain
+                for (const [module, domains] of Object.entries(testDistribution)) {
+                    for (const [domain, range] of Object.entries(domains)) {
+                        // Calculate target count (use middle of range)
+                        const targetCount = Math.floor((range.min + range.max) / 2);
+
+                        // Get all questions for this domain
+                        const domainQuestions = allQuestions.filter(q =>
+                            q.module === module && q.domain === domain
+                        );
+
+                        // Shuffle and select
+                        const shuffled = domainQuestions.sort(() => Math.random() - 0.5);
+                        const domainSelected = shuffled.slice(0, targetCount);
+
+                        console.log(`📝 ${domain}: Selected ${domainSelected.length}/${targetCount} questions`);
+                        selected = [...selected, ...domainSelected];
+                    }
+                }
+
+                // Shuffle the final test so questions are mixed
+                selected = selected.sort(() => Math.random() - 0.5);
+
+                console.log(`✅ Full Practice Test Generated: ${selected.length} questions total`);
+                console.log(`   📚 Reading & Writing: ${selected.filter(q => q.module === 'english').length} questions`);
+                console.log(`   🔢 Math: ${selected.filter(q => q.module === 'math').length} questions`);
+
+                setTestQuestions(selected);
+                setCurrentQuestionIndex(0);
+                setUserAnswers({});
+                setIsSubmitted(false);
+                setQuestionStartTime(Date.now());
+                setMode('test');
+            };
 
             const handleStartTest = (config) => {
                 let selected = [];

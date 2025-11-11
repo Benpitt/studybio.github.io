@@ -219,14 +219,15 @@
             useEffect(() => {
                 if (containerRef.current && text) {
                     try {
-                        // Sanitize HTML content with DOMPurify, allowing MathML tags
+                        // Sanitize HTML content with DOMPurify, allowing MathML tags and data URIs for images
                         const cleanHTML = window.DOMPurify ? window.DOMPurify.sanitize(text, {
-                            ALLOWED_TAGS: ['p', 'span', 'div', 'br', 'strong', 'em', 'u', 'sub', 'sup', 'img', 'table', 'tr', 'td', 'th', 'ul', 'ol', 'li',
+                            ALLOWED_TAGS: ['p', 'span', 'div', 'br', 'strong', 'em', 'u', 'sub', 'sup', 'img', 'table', 'tr', 'td', 'th', 'ul', 'ol', 'li', 'thead', 'tbody',
                                           'math', 'mi', 'mn', 'mo', 'mrow', 'mfrac', 'msup', 'msub', 'msubsup', 'msqrt', 'mroot',
                                           'mfenced', 'mtable', 'mtr', 'mtd', 'mstyle', 'mtext', 'mspace', 'menclose', 'mover', 'munder', 'munderover'],
-                            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'width', 'height', 'alttext', 'displaystyle', 'mathvariant', 'href'],
+                            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'width', 'height', 'alttext', 'displaystyle', 'mathvariant', 'href', 'align', 'role', 'colspan', 'rowspan'],
                             ALLOW_DATA_ATTR: false,
-                            ADD_ATTR: ['alttext', 'displaystyle']
+                            ADD_DATA_URI: true, // Allow data URIs for base64-encoded images
+                            ADD_ATTR: ['alttext', 'displaystyle', 'align', 'role']
                         }) : text;
 
                         // Set the sanitized HTML
@@ -680,13 +681,14 @@
             );
         }
 
-        function TopicSelectionMenu({ onStartTest, allQuestions, onBack }) {
+        function TopicSelectionMenu({ onStartTest, allQuestions, onBack, bluebookQuestionIds }) {
             const [step, setStep] = useState(1); // 1: disciplines, 2: filters
             const [selectedModule, setSelectedModule] = useState('math'); // 'math' or 'english'
             const [selectedDisciplines, setSelectedDisciplines] = useState([]);
             const [selectedDifficulties, setSelectedDifficulties] = useState(['E', 'M', 'H']); // All by default
             const [customCount, setCustomCount] = useState(10);
             const [smartSelection, setSmartSelection] = useState(true); // Enable AI recommendations by default
+            const [excludeBluebook, setExcludeBluebook] = useState(false); // Exclude bluebook questions by default
 
             // Define disciplines by module
             const mathDisciplines = [
@@ -718,11 +720,14 @@
 
             // Count questions with current filters
             const getFilteredCount = () => {
-                return allQuestions.filter(q =>
-                    q.module === selectedModule &&
-                    selectedDisciplines.includes(q.domain) &&
-                    selectedDifficulties.includes(q.difficulty)
-                ).length;
+                const bluebookIds = selectedModule === 'math' ? bluebookQuestionIds.math : bluebookQuestionIds.reading;
+                return allQuestions.filter(q => {
+                    const matchesModule = q.module === selectedModule;
+                    const matchesDiscipline = selectedDisciplines.includes(q.domain);
+                    const matchesDifficulty = selectedDifficulties.includes(q.difficulty);
+                    const matchesBluebook = !excludeBluebook || !bluebookIds.includes(q.id) && !bluebookIds.includes(q.questionId) && !bluebookIds.includes(q.uId);
+                    return matchesModule && matchesDiscipline && matchesDifficulty && matchesBluebook;
+                }).length;
             };
 
             const toggleDiscipline = (disciplineId) => {
@@ -907,6 +912,37 @@
                                     </div>
                                 </div>
 
+                                {/* Bluebook Questions Filter */}
+                                <div className="mb-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-2xl">📘</span>
+                                            <div>
+                                                <h3 className="font-bold text-gray-800">Exclude Bluebook Questions</h3>
+                                                <p className="text-sm text-gray-600">Filter out College Board's live test questions</p>
+                                            </div>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={excludeBluebook}
+                                                onChange={(e) => setExcludeBluebook(e.target.checked)}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        </label>
+                                    </div>
+                                    {excludeBluebook ? (
+                                        <div className="text-sm text-gray-700 bg-white/70 rounded-lg p-3">
+                                            <span className="font-semibold text-indigo-600">✓ Enabled:</span> Bluebook questions will be excluded from your practice set.
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm text-gray-700 bg-white/70 rounded-lg p-3">
+                                            <span className="font-semibold text-gray-600">Disabled:</span> All questions, including bluebook questions, will be available.
+                                        </div>
+                                    )}
+                                </div>
+
                                 {/* Smart Selection Toggle */}
                                 <div className="mb-8 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border-2 border-purple-200">
                                     <div className="flex items-center justify-between mb-3">
@@ -951,7 +987,8 @@
                                             disciplines: selectedDisciplines,
                                             difficulties: selectedDifficulties,
                                             count: customCount,
-                                            smartSelection: smartSelection
+                                            smartSelection: smartSelection,
+                                            excludeBluebook: excludeBluebook
                                         })}
                                         disabled={selectedDifficulties.length === 0}
                                         className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -976,6 +1013,7 @@
             const [showCalculator, setShowCalculator] = useState(false);
             const [calculatorMode, setCalculatorMode] = useState('graphing');
             const [questionStartTime, setQuestionStartTime] = useState(Date.now());
+            const [bluebookQuestionIds, setBluebookQuestionIds] = useState({ math: [], reading: [] }); // IDs of bluebook questions
 
             // Initialize RL model and Firebase sync when component mounts
             useEffect(() => {
@@ -1003,6 +1041,23 @@
                     setMode('home');
                 }
             };
+
+            // Load bluebook question IDs from lookup.json
+            useEffect(() => {
+                console.log('Loading bluebook question IDs...');
+                fetch('lookup.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        setBluebookQuestionIds({
+                            math: data.mathLiveItems || [],
+                            reading: data.readingLiveItems || []
+                        });
+                        console.log(`✅ Loaded ${data.mathLiveItems?.length || 0} math and ${data.readingLiveItems?.length || 0} reading bluebook questions`);
+                    })
+                    .catch(err => {
+                        console.error('Error loading bluebook question IDs:', err);
+                    });
+            }, []);
 
             // Load questions from CB Digital Questions JSON
             useEffect(() => {
@@ -1185,12 +1240,23 @@
             const handleStartTest = (config) => {
                 let selected = [];
 
+                // Get bluebook question IDs for the current module
+                const bluebookIds = config.module === 'math' ? bluebookQuestionIds.math : bluebookQuestionIds.reading;
+
                 // Check if smart selection is enabled and RL model is available
                 if (config.smartSelection && satRLModel) {
                     console.log('🤖 Using RL-based smart question selection');
 
                     // Filter questions to selected module only
-                    const moduleQuestions = allQuestions.filter(q => q.module === config.module);
+                    let moduleQuestions = allQuestions.filter(q => q.module === config.module);
+
+                    // Exclude bluebook questions if requested
+                    if (config.excludeBluebook) {
+                        moduleQuestions = moduleQuestions.filter(q =>
+                            !bluebookIds.includes(q.id) && !bluebookIds.includes(q.questionId) && !bluebookIds.includes(q.uId)
+                        );
+                        console.log(`📘 Filtered out bluebook questions, ${moduleQuestions.length} questions remaining`);
+                    }
 
                     // Use RL to recommend questions
                     const recommendation = satRLModel.recommendQuestions(moduleQuestions, config.count);
@@ -1226,6 +1292,14 @@
                                config.disciplines.includes(q.domain) &&
                                config.difficulties.includes(q.difficulty);
                     });
+
+                    // Exclude bluebook questions if requested
+                    if (config.excludeBluebook) {
+                        filteredQuestions = filteredQuestions.filter(q =>
+                            !bluebookIds.includes(q.id) && !bluebookIds.includes(q.questionId) && !bluebookIds.includes(q.uId)
+                        );
+                        console.log(`📘 Filtered out bluebook questions`);
+                    }
 
                     console.log(`Filtered ${filteredQuestions.length} questions for ${config.module} module`);
 
@@ -1374,7 +1448,7 @@
             }
 
             if (mode === 'menu') {
-                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} onBack={() => handleNavigation('home')} />;
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} onBack={() => handleNavigation('home')} bluebookQuestionIds={bluebookQuestionIds} />;
             }
 
             if (allQuestions.length === 0) {
@@ -1389,7 +1463,7 @@
             }
 
             if (testQuestions.length === 0) {
-                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} onBack={() => handleNavigation('home')} />;
+                return <TopicSelectionMenu onStartTest={handleStartTest} allQuestions={allQuestions} onBack={() => handleNavigation('home')} bluebookQuestionIds={bluebookQuestionIds} />;
             }
 
             const currentQuestion = testQuestions[currentQuestionIndex];

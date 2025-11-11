@@ -483,17 +483,11 @@
                 const progress = JSON.parse(localStorage.getItem('satProgress') || '{}');
                 setTotalQuestions(progress.totalQuestions || 0);
 
-                // Calculate recent accuracy (last 10 questions from IRT model)
-                if (typeof satIRTModel !== 'undefined' && satIRTModel) {
-                    const recentData = satIRTModel.getRecentAccuracy(10);
-                    setRecentAccuracy(recentData ? Math.round(recentData * 100) : 0);
-                } else {
-                    // Fallback to overall accuracy
-                    const overallAccuracy = progress.totalQuestions > 0
-                        ? Math.round((progress.totalCorrect / progress.totalQuestions) * 100)
-                        : 0;
-                    setRecentAccuracy(overallAccuracy);
-                }
+                // Calculate overall accuracy from progress data
+                const overallAccuracy = progress.totalQuestions > 0
+                    ? Math.round((progress.totalCorrect / progress.totalQuestions) * 100)
+                    : 0;
+                setRecentAccuracy(overallAccuracy);
 
                 // Find strengths and weaknesses
                 if (progress.byTopic) {
@@ -607,14 +601,14 @@
                                 <p className="text-sm text-white/60">days in a row</p>
                             </div>
 
-                            {/* Widget 2 - Recent Performance */}
+                            {/* Widget 2 - Overall Accuracy */}
                             <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all">
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="text-3xl">🎯</span>
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">Recent Accuracy</h3>
+                                <h3 className="text-lg font-bold text-white mb-2">Overall Accuracy</h3>
                                 <p className="text-3xl font-black text-white/80 mb-1">{recentAccuracy}%</p>
-                                <p className="text-sm text-white/60">last 10 questions</p>
+                                <p className="text-sm text-white/60">across all questions</p>
                             </div>
 
                             {/* Widget 3 - Total Progress */}

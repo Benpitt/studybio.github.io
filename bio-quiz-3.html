@@ -241,6 +241,27 @@ function BioQuiz3App() {
           visual: '🔁',
           remember: 'Most common = mode'
         },
+        {
+          term: 'CER Argument',
+          definition: 'Claim, Evidence, Reasoning - scientific argument format.',
+          example: 'Claim: Plants grow faster with more light. Evidence: Data shows 2x growth. Reasoning: Light provides energy for photosynthesis.',
+          visual: '📋',
+          remember: 'C = statement, E = data, R = why E supports C'
+        },
+        {
+          term: 'Bar Graph',
+          definition: 'Shows discontinuous (categorical) data with separate bars.',
+          example: 'Number of students in each grade, types of flowers.',
+          visual: '📊',
+          remember: 'Categories = Bar graph'
+        },
+        {
+          term: 'Line Graph',
+          definition: 'Shows continuous data over time or along a continuum.',
+          example: 'Plant growth over 30 days, temperature changes.',
+          visual: '📈',
+          remember: 'Connected = continuous data'
+        },
       ]
     },
     {
@@ -522,11 +543,67 @@ function BioQuiz3App() {
           remember: 'DNA command center'
         },
         {
+          term: 'Ribosomes',
+          definition: 'Small structures that make proteins by linking amino acids. Found in ALL cells.',
+          example: 'Free in cytoplasm or attached to ER.',
+          visual: '⚙️',
+          remember: 'Protein factories - in ALL cells'
+        },
+        {
+          term: 'Cytoplasm',
+          definition: 'Gel-like fluid inside the cell where organelles are suspended and chemical reactions occur.',
+          example: 'Contains water, salts, and nutrients.',
+          visual: '💧',
+          remember: 'The "jelly" that fills the cell'
+        },
+        {
+          term: 'Mitochondria',
+          definition: 'Powerhouse of the cell. Produces ATP energy through cellular respiration.',
+          example: 'Found in eukaryotic cells.',
+          visual: '⚡',
+          remember: 'Mitochondria = energy producer'
+        },
+        {
           term: 'Chloroplast',
           definition: 'Where photosynthesis occurs. Plants and some protists.',
           example: 'Contains chlorophyll.',
           visual: '🌿',
           remember: 'Chloro = green, makes food from light'
+        },
+        {
+          term: 'Vacuole',
+          definition: 'Storage sac for water, nutrients, and waste. Large in plant cells.',
+          example: 'Provides structure/pressure in plant cells.',
+          visual: '💧',
+          remember: 'Big in plants, small in animals'
+        },
+        {
+          term: 'Flagella/Cilia',
+          definition: 'Hair-like structures for movement. Flagella are long (few), cilia are short (many).',
+          example: 'Sperm use flagella, lung cells have cilia.',
+          visual: '🌊',
+          remember: 'Flagella = whip, Cilia = tiny hairs'
+        },
+        {
+          term: 'Endoplasmic Reticulum',
+          definition: 'Network of membranes. Rough ER has ribosomes (makes proteins), Smooth ER makes lipids.',
+          example: 'Rough ER looks bumpy, Smooth ER looks smooth.',
+          visual: '🔀',
+          remember: 'ER = assembly line. Rough = proteins, Smooth = lipids'
+        },
+        {
+          term: 'Golgi Apparatus',
+          definition: 'Packages and modifies proteins and lipids for transport.',
+          example: 'Like a post office - sorts and ships.',
+          visual: '📦',
+          remember: 'Golgi = packaging center'
+        },
+        {
+          term: 'Lysosome',
+          definition: 'Contains digestive enzymes that break down waste and damaged organelles.',
+          example: 'Found in animal cells.',
+          visual: '🗑️',
+          remember: 'Lysosome = recycling center'
         },
         {
           term: 'Light Microscope',
@@ -543,6 +620,73 @@ function BioQuiz3App() {
           remember: 'Pros: super detailed. Cons: expensive, samples dead'
         },
       ]
+    },
+  ];
+
+  // Cell identification flashcards with images
+  const cellIdentificationCards = [
+    {
+      term: 'Identify: Cell Wall',
+      definition: 'Rigid outer layer that provides structure and protection. Made of cellulose in plants.',
+      image: cellImages.plant,
+      highlight: 'The outermost thick green layer surrounding the entire cell',
+      visual: '🧱',
+      remember: 'Outside the membrane, NOT in animal cells',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Cell Membrane',
+      definition: 'Thin phospholipid bilayer that controls what enters and exits the cell.',
+      image: cellImages.animal,
+      highlight: 'The thin boundary layer around the cell',
+      visual: '🎭',
+      remember: 'ALL cells have a membrane',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Nucleus',
+      definition: 'Large, round organelle containing DNA that controls all cell activities.',
+      image: cellImages.animal,
+      highlight: 'The large purple/blue circular structure in the center',
+      visual: '🧠',
+      remember: 'The control center with DNA',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Ribosomes',
+      definition: 'Tiny dots that make proteins. Can be free or attached to ER.',
+      image: cellImages.animal,
+      highlight: 'Small dots scattered throughout cytoplasm',
+      visual: '⚙️',
+      remember: 'Smallest organelles - protein makers',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Cytoplasm',
+      definition: 'Gel-like fluid that fills the cell and holds organelles.',
+      image: cellImages.animal,
+      highlight: 'The background fluid/gel around all organelles',
+      visual: '💧',
+      remember: 'The jelly everything floats in',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Mitochondria',
+      definition: 'Oval-shaped powerhouse that produces ATP energy.',
+      image: cellImages.animal,
+      highlight: 'Bean-shaped structures with wavy inner membranes',
+      visual: '⚡',
+      remember: 'Has inner folds called cristae',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Chloroplast',
+      definition: 'Green organelle where photosynthesis occurs. Plants only.',
+      image: cellImages.plant,
+      highlight: 'Green oval structures with internal stacks',
+      visual: '🌿',
+      remember: 'Makes glucose from sunlight',
+      category: 'Cell Identification'
     },
   ];
 
@@ -951,7 +1095,7 @@ function BioQuiz3App() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="stat-card">
             <div className="stat-icon">🎴</div>
-            <div className="stat-value">{topicCategories.reduce((sum, cat) => sum + cat.concepts.length, 0)}</div>
+            <div className="stat-value">{topicCategories.reduce((sum, cat) => sum + cat.concepts.length, 0) + cellIdentificationCards.length}</div>
             <div className="stat-label">Flashcards</div>
           </div>
           <div className="stat-card">
@@ -1006,18 +1150,6 @@ function BioQuiz3App() {
             <p className="text-white/70 mb-4">Side-by-side visual comparisons</p>
             <div className="flex items-center text-cyan-300 text-sm font-semibold">
               Compare Now →
-            </div>
-          </button>
-
-          <button
-            onClick={() => setMode('interactive')}
-            className="card-gradient-success p-8 rounded-3xl text-left card-hover transform transition-all"
-          >
-            <div className="text-6xl mb-4">🔬</div>
-            <h3 className="text-2xl font-bold text-white mb-2">Interactive Diagrams</h3>
-            <p className="text-white/70 mb-4">Explore cells, enzymes, and microscopes</p>
-            <div className="flex items-center text-green-300 text-sm font-semibold">
-              Explore →
             </div>
           </button>
 
@@ -1088,76 +1220,79 @@ function BioQuiz3App() {
           </div>
         </div>
 
-        {/* Concept Maps */}
+        {/* Concept Maps with SVG Lines */}
         <div className="card mb-8 p-8">
           <h2 className="text-2xl font-bold text-white mb-6">🗺️ Concept Map: Biological Molecules</h2>
-          <div className="bg-black/20 rounded-2xl p-8">
-            <div className="flex flex-col items-center gap-8">
+          <div className="bg-black/20 rounded-2xl p-8 relative">
+            <svg className="absolute inset-0 w-full h-full" style={{pointerEvents: 'none'}}>
+              {/* Lines from center to each category */}
+              <line x1="50%" y1="12%" x2="12%" y2="35%" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+              <line x1="50%" y1="12%" x2="30%" y2="35%" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+              <line x1="50%" y1="12%" x2="70%" y2="35%" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+              <line x1="50%" y1="12%" x2="88%" y2="35%" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+            </svg>
+            <div className="flex flex-col items-center gap-12 relative">
               {/* Central concept */}
-              <div className="card-gradient-violet p-6 rounded-2xl text-center concept-node">
+              <div className="card-gradient-violet p-6 rounded-2xl text-center concept-node shadow-2xl">
                 <div className="text-4xl mb-2">🧬</div>
                 <div className="text-white font-bold text-xl">Biological Molecules</div>
               </div>
 
-              {/* Main categories */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-5xl">
+              {/* Main categories with subconcepts */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-6xl">
                 {/* Carbohydrates */}
-                <div className="flex flex-col gap-4">
-                  <div className="card-gradient-amber p-4 rounded-xl concept-node">
+                <div className="flex flex-col items-center">
+                  <div className="card-gradient-amber p-4 rounded-xl concept-node shadow-lg mb-3 w-full text-center">
                     <div className="text-2xl mb-2">🍞</div>
                     <div className="text-white font-bold">Carbohydrates</div>
-                    <div className="text-white/70 text-sm mt-2">CHO (1:2:1)</div>
+                    <div className="text-white/70 text-sm mt-1">CHO (1:2:1)</div>
                   </div>
-                  <div className="pl-4 space-y-2 text-sm text-white/80">
-                    <div>→ Monosaccharide</div>
-                    <div>→ Disaccharide</div>
-                    <div>→ Polysaccharide</div>
-                    <div className="text-xs text-white/60">Quick energy, storage</div>
+                  <div className="space-y-2 text-sm text-white/90 w-full">
+                    <div className="bg-yellow-500/10 border-l-2 border-yellow-500 pl-3 py-1">Monosaccharide</div>
+                    <div className="bg-yellow-500/10 border-l-2 border-yellow-500 pl-3 py-1">Disaccharide</div>
+                    <div className="bg-yellow-500/10 border-l-2 border-yellow-500 pl-3 py-1">Polysaccharide</div>
                   </div>
                 </div>
 
                 {/* Lipids */}
-                <div className="flex flex-col gap-4">
-                  <div className="card-gradient-rose p-4 rounded-xl concept-node">
+                <div className="flex flex-col items-center">
+                  <div className="card-gradient-rose p-4 rounded-xl concept-node shadow-lg mb-3 w-full text-center">
                     <div className="text-2xl mb-2">🧈</div>
                     <div className="text-white font-bold">Lipids</div>
-                    <div className="text-white/70 text-sm mt-2">Hydrophobic</div>
+                    <div className="text-white/70 text-sm mt-1">Hydrophobic</div>
                   </div>
-                  <div className="pl-4 space-y-2 text-sm text-white/80">
-                    <div>→ Triglyceride</div>
-                    <div>→ Phospholipid</div>
-                    <div>→ Steroid</div>
-                    <div className="text-xs text-white/60">Long-term energy, membranes</div>
+                  <div className="space-y-2 text-sm text-white/90 w-full">
+                    <div className="bg-rose-500/10 border-l-2 border-rose-500 pl-3 py-1">Triglyceride</div>
+                    <div className="bg-rose-500/10 border-l-2 border-rose-500 pl-3 py-1">Phospholipid</div>
+                    <div className="bg-rose-500/10 border-l-2 border-rose-500 pl-3 py-1">Steroid</div>
                   </div>
                 </div>
 
                 {/* Proteins */}
-                <div className="flex flex-col gap-4">
-                  <div className="card-gradient-purple p-4 rounded-xl concept-node">
+                <div className="flex flex-col items-center">
+                  <div className="card-gradient-purple p-4 rounded-xl concept-node shadow-lg mb-3 w-full text-center">
                     <div className="text-2xl mb-2">🔗</div>
                     <div className="text-white font-bold">Proteins</div>
-                    <div className="text-white/70 text-sm mt-2">CHON(S)</div>
+                    <div className="text-white/70 text-sm mt-1">CHON(S)</div>
                   </div>
-                  <div className="pl-4 space-y-2 text-sm text-white/80">
-                    <div>→ Amino acids</div>
-                    <div>→ Peptide bonds</div>
-                    <div>→ 4 structures</div>
-                    <div className="text-xs text-white/60">Enzymes, structure, transport</div>
+                  <div className="space-y-2 text-sm text-white/90 w-full">
+                    <div className="bg-purple-500/10 border-l-2 border-purple-500 pl-3 py-1">Amino acids</div>
+                    <div className="bg-purple-500/10 border-l-2 border-purple-500 pl-3 py-1">Peptide bonds</div>
+                    <div className="bg-purple-500/10 border-l-2 border-purple-500 pl-3 py-1">4 structures</div>
                   </div>
                 </div>
 
                 {/* Nucleic Acids */}
-                <div className="flex flex-col gap-4">
-                  <div className="card-gradient-blue p-4 rounded-xl concept-node">
+                <div className="flex flex-col items-center">
+                  <div className="card-gradient-blue p-4 rounded-xl concept-node shadow-lg mb-3 w-full text-center">
                     <div className="text-2xl mb-2">🧬</div>
                     <div className="text-white font-bold">Nucleic Acids</div>
-                    <div className="text-white/70 text-sm mt-2">CHONP</div>
+                    <div className="text-white/70 text-sm mt-1">CHONP</div>
                   </div>
-                  <div className="pl-4 space-y-2 text-sm text-white/80">
-                    <div>→ Nucleotides</div>
-                    <div>→ DNA / RNA</div>
-                    <div>→ ATP</div>
-                    <div className="text-xs text-white/60">Genetic information, energy</div>
+                  <div className="space-y-2 text-sm text-white/90 w-full">
+                    <div className="bg-blue-500/10 border-l-2 border-blue-500 pl-3 py-1">Nucleotides</div>
+                    <div className="bg-blue-500/10 border-l-2 border-blue-500 pl-3 py-1">DNA / RNA</div>
+                    <div className="bg-blue-500/10 border-l-2 border-blue-500 pl-3 py-1">ATP</div>
                   </div>
                 </div>
               </div>
@@ -1165,44 +1300,83 @@ function BioQuiz3App() {
           </div>
         </div>
 
-        {/* Enzyme Concept Map */}
+        {/* Enzyme Concept Map with SVG */}
         <div className="card p-8">
           <h2 className="text-2xl font-bold text-white mb-6">⚡ Concept Map: Enzymes</h2>
-          <div className="bg-black/20 rounded-2xl p-8">
-            <div className="flex flex-col items-center gap-8">
-              <div className="card-gradient-amber p-6 rounded-2xl text-center concept-node">
+          <div className="bg-black/20 rounded-2xl p-8 relative">
+            <svg className="absolute inset-0 w-full h-full" style={{pointerEvents: 'none'}}>
+              {/* Lines from center to categories */}
+              <line x1="50%" y1="15%" x2="16%" y2="50%" stroke="rgba(245, 158, 11, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+              <line x1="50%" y1="15%" x2="50%" y2="50%" stroke="rgba(245, 158, 11, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+              <line x1="50%" y1="15%" x2="84%" y2="50%" stroke="rgba(245, 158, 11, 0.4)" strokeWidth="2" strokeDasharray="5,5"/>
+            </svg>
+            <div className="flex flex-col items-center gap-12 relative">
+              <div className="card-gradient-amber p-6 rounded-2xl text-center concept-node shadow-2xl">
                 <div className="text-4xl mb-2">⚡</div>
                 <div className="text-white font-bold text-xl">ENZYME</div>
                 <div className="text-white/70 text-sm mt-2">Biological Catalyst</div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
-                <div className="card p-4">
-                  <div className="text-white font-bold mb-2">✅ What it does</div>
-                  <ul className="text-white/80 text-sm space-y-1">
-                    <li>• Speeds up reactions</li>
-                    <li>• Lowers activation energy</li>
-                    <li>• NOT consumed</li>
-                    <li>• Reusable</li>
+                <div className="card-gradient-success p-5 rounded-xl shadow-lg">
+                  <div className="text-white font-bold mb-3 text-lg">✅ Function</div>
+                  <ul className="text-white/90 text-sm space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-400">→</span>
+                      <span>Speeds up reactions</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-400">→</span>
+                      <span>Lowers activation energy</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-400">→</span>
+                      <span>NOT consumed</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-400">→</span>
+                      <span>Reusable</span>
+                    </li>
                   </ul>
                 </div>
 
-                <div className="card p-4">
-                  <div className="text-white font-bold mb-2">🎯 Key Parts</div>
-                  <ul className="text-white/80 text-sm space-y-1">
-                    <li>• Active site (substrate binds)</li>
-                    <li>• Allosteric site (regulation)</li>
-                    <li>• Specific shape = specific function</li>
+                <div className="card-gradient-blue p-5 rounded-xl shadow-lg">
+                  <div className="text-white font-bold mb-3 text-lg">🎯 Structure</div>
+                  <ul className="text-white/90 text-sm space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400">→</span>
+                      <span>Active site binds substrate</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400">→</span>
+                      <span>Allosteric site regulates</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400">→</span>
+                      <span>Specific shape = function</span>
+                    </li>
                   </ul>
                 </div>
 
-                <div className="card p-4">
-                  <div className="text-white font-bold mb-2">⚠️ Factors</div>
-                  <ul className="text-white/80 text-sm space-y-1">
-                    <li>• Temperature (optimal ~37°C)</li>
-                    <li>• pH (varies by enzyme)</li>
-                    <li>• Substrate concentration</li>
-                    <li>• Inhibitors (competitive/non)</li>
+                <div className="card-gradient-rose p-5 rounded-xl shadow-lg">
+                  <div className="text-white font-bold mb-3 text-lg">⚠️ Factors</div>
+                  <ul className="text-white/90 text-sm space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-400">→</span>
+                      <span>Temperature (~37°C)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-400">→</span>
+                      <span>pH level</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-400">→</span>
+                      <span>Substrate concentration</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-400">→</span>
+                      <span>Inhibitors</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -1218,7 +1392,9 @@ function BioQuiz3App() {
     const allConcepts = topicCategories.flatMap(cat =>
       cat.concepts.map(c => ({ ...c, category: cat.name, icon: cat.icon, color: cat.color }))
     );
-    const concept = allConcepts[currentCard];
+    // Add cell identification cards
+    const allCards = [...allConcepts, ...cellIdentificationCards];
+    const concept = allCards[currentCard];
 
     return (
       <div className="min-h-screen p-4 pt-20">
@@ -1235,7 +1411,8 @@ function BioQuiz3App() {
           </div>
 
           <div className="text-center mb-6">
-            <div className="badge badge-accent mb-2">Card {currentCard + 1} / {allConcepts.length}</div>
+            <div className="badge badge-accent mb-2">Card {currentCard + 1} / {allCards.length}</div>
+            {concept.image && <div className="badge badge-purple ml-2">📷 Photo ID</div>}
           </div>
 
           {/* 3D Flashcard */}
@@ -1243,11 +1420,32 @@ function BioQuiz3App() {
             <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`} style={{position: 'relative', minHeight: '500px'}}>
               {/* Front */}
               <div className="flashcard-front absolute inset-0" style={{backfaceVisibility: 'hidden'}}>
-                <div className={`${concept.color} p-12 rounded-3xl shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center`}>
-                  <div className="text-8xl mb-6">{concept.visual}</div>
-                  <div className="badge badge-purple mb-4">{concept.category}</div>
-                  <h2 className="text-4xl font-bold text-white text-center mb-4">{concept.term}</h2>
-                  <p className="text-white/70 text-lg">Click to flip →</p>
+                <div className={`${concept.color || 'card-gradient-blue'} p-8 rounded-3xl shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center`}>
+                  {concept.image ? (
+                    // Image-based identification card
+                    <>
+                      <div className="badge badge-purple mb-4">{concept.category}</div>
+                      <div className="bg-white rounded-2xl p-6 mb-4 w-full max-w-md">
+                        <img
+                          src={concept.image}
+                          alt="Cell diagram for identification"
+                          className="w-full h-auto"
+                          style={{maxHeight: '300px', objectFit: 'contain'}}
+                        />
+                      </div>
+                      <h2 className="text-3xl font-bold text-white text-center mb-2">{concept.term}</h2>
+                      <p className="text-white/70 text-center text-sm mb-2">{concept.highlight}</p>
+                      <p className="text-white/70 text-lg">Click to flip →</p>
+                    </>
+                  ) : (
+                    // Regular concept card
+                    <>
+                      <div className="text-8xl mb-6">{concept.visual}</div>
+                      <div className="badge badge-purple mb-4">{concept.category}</div>
+                      <h2 className="text-4xl font-bold text-white text-center mb-4">{concept.term}</h2>
+                      <p className="text-white/70 text-lg">Click to flip →</p>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -1296,8 +1494,8 @@ function BioQuiz3App() {
               {isFlipped ? 'Show Front' : 'Show Back'}
             </button>
             <button
-              onClick={() => { setCurrentCard(Math.min(allConcepts.length - 1, currentCard + 1)); setIsFlipped(false); }}
-              disabled={currentCard === allConcepts.length - 1}
+              onClick={() => { setCurrentCard(Math.min(allCards.length - 1, currentCard + 1)); setIsFlipped(false); }}
+              disabled={currentCard === allCards.length - 1}
               className="btn-secondary disabled:opacity-30"
             >
               Next →
@@ -1320,6 +1518,12 @@ function BioQuiz3App() {
                   </button>
                 );
               })}
+              <button
+                onClick={() => { setCurrentCard(allConcepts.length); setIsFlipped(false); }}
+                className="btn-secondary btn-small"
+              >
+                📷 Cell ID
+              </button>
             </div>
           </div>
         </div>
@@ -1439,259 +1643,6 @@ function BioQuiz3App() {
               </div>
             </div>
           )}
-        </div>
-      </div>
-    );
-  };
-
-  // Interactive Diagrams Mode
-  const InteractiveMode = () => {
-    const [activeTab, setActiveTab] = useState('cell');
-
-    // Interactive Cell Diagram
-    const CellDiagram = () => {
-      const cellParts = [
-        { name: 'Nucleus', description: 'Contains DNA, controls cell activities', color: '#9B59B6' },
-        { name: 'Cell Membrane', description: 'Controls what enters/exits the cell', color: '#3498DB' },
-        { name: 'Cytoplasm', description: 'Gel-like fluid where reactions occur', color: '#1ABC9C' },
-        { name: 'Ribosome', description: 'Makes proteins', color: '#E74C3C' },
-        { name: 'Mitochondria', description: 'Powerhouse - produces ATP energy', color: '#F39C12' },
-        { name: 'Chloroplast', description: 'Photosynthesis (plants only)', color: '#27AE60' },
-      ];
-
-      return (
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-6">🦠 Interactive Cell</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="card p-6">
-              {!imageErrors.plant ? (
-                <img
-                  src={cellImages.plant}
-                  alt="Plant Cell Structure"
-                  className="w-full rounded-xl mb-4"
-                  style={{background: 'white', padding: '20px', minHeight: '300px', objectFit: 'contain'}}
-                  onError={() => setImageErrors({...imageErrors, plant: true})}
-                />
-              ) : (
-                <div className="bg-green-500/10 border-2 border-dashed border-green-500/30 rounded-xl p-12 mb-4 text-center">
-                  <div className="text-6xl mb-4">🌿</div>
-                  <p className="text-white/70">Plant Cell Diagram</p>
-                </div>
-              )}
-              <p className="text-white/70 text-center text-sm">Plant Cell Structure</p>
-            </div>
-            <div className="card p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Cell Parts</h3>
-              <div className="space-y-3">
-                {cellParts.map((part, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedCellPart(part.name)}
-                    className={`w-full text-left p-4 rounded-xl transition-all ${
-                      selectedCellPart === part.name
-                        ? 'bg-purple-500/30 border-2 border-purple-500'
-                        : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-4 h-4 rounded-full"
-                        style={{backgroundColor: part.color}}
-                      />
-                      <div>
-                        <div className="text-white font-bold">{part.name}</div>
-                        {selectedCellPart === part.name && (
-                          <div className="text-white/70 text-sm mt-1">{part.description}</div>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    // Enzyme Animation
-    const EnzymeAnimation = () => {
-      const steps = [
-        { title: 'Enzyme + Substrate', description: 'Enzyme has active site ready for substrate' },
-        { title: 'Substrate Binds', description: 'Substrate binds to active site (lock and key)' },
-        { title: 'Catalysis', description: 'Enzyme lowers activation energy, reaction occurs' },
-        { title: 'Product Released', description: 'Product released, enzyme unchanged and reusable' },
-      ];
-
-      return (
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-6">⚡ Enzyme Action</h2>
-          <div className="card p-8">
-            <div className="text-center mb-8">
-              <div className="text-8xl mb-4 enzyme-animation">⚡</div>
-              <h3 className="text-2xl font-bold text-white mb-2">{steps[enzymeStep].title}</h3>
-              <p className="text-white/70">{steps[enzymeStep].description}</p>
-            </div>
-
-            {/* Step Indicator */}
-            <div className="flex justify-center gap-4 mb-6">
-              {steps.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setEnzymeStep(idx)}
-                  className={`w-12 h-12 rounded-full font-bold transition-all ${
-                    idx === enzymeStep
-                      ? 'bg-purple-500 text-white scale-110'
-                      : 'bg-white/10 text-white/50 hover:bg-white/20'
-                  }`}
-                >
-                  {idx + 1}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setEnzymeStep((enzymeStep - 1 + steps.length) % steps.length)}
-                className="btn-secondary"
-              >
-                ← Previous Step
-              </button>
-              <button
-                onClick={() => setEnzymeStep((enzymeStep + 1) % steps.length)}
-                className="btn-primary"
-              >
-                Next Step →
-              </button>
-            </div>
-
-            {/* Key Facts */}
-            <div className="mt-8 p-6 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-              <h4 className="text-white font-bold mb-3">🔑 Key Points</h4>
-              <ul className="text-white/80 space-y-2 text-sm">
-                <li>• Enzyme is NOT consumed - it's reusable!</li>
-                <li>• Specific shape = specific substrate (lock & key)</li>
-                <li>• Lowers activation energy to speed up reaction</li>
-                <li>• Temperature and pH affect enzyme function</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    // Microscope Zoom
-    const MicroscopeZoom = () => {
-      const magnifications = [
-        { level: 100, name: 'Naked Eye', canSee: 'Visible objects', image: '👁️' },
-        { level: 400, name: 'Light Microscope (Low)', canSee: 'Large cells, tissues', image: '🔬' },
-        { level: 1000, name: 'Light Microscope (High)', canSee: 'Bacteria, cell structures', image: '🔬' },
-        { level: 10000, name: 'Electron Microscope', canSee: 'Viruses, large molecules', image: '⚡' },
-        { level: 100000, name: 'Electron Microscope (High)', canSee: 'Detailed organelles, DNA', image: '⚡' },
-        { level: 1000000, name: 'Electron Microscope (Max)', canSee: 'Atomic structures, proteins', image: '⚡' },
-      ];
-
-      const current = magnifications.reduce((prev, curr) =>
-        Math.abs(curr.level - microscopeZoom) < Math.abs(prev.level - microscopeZoom) ? curr : prev
-      );
-
-      return (
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-6">🔬 Microscope Magnification</h2>
-          <div className="card p-8">
-            <div className="text-center mb-8">
-              <div className="text-8xl mb-4">{current.image}</div>
-              <h3 className="text-3xl font-bold text-white mb-2">{current.name}</h3>
-              <div className="text-2xl text-purple-300 font-bold mb-2">{microscopeZoom}x</div>
-              <p className="text-white/70">Can see: {current.canSee}</p>
-            </div>
-
-            <div className="mb-8">
-              <input
-                type="range"
-                min="100"
-                max="1000000"
-                step="100"
-                value={microscopeZoom}
-                onChange={(e) => setMicroscopeZoom(parseInt(e.target.value))}
-                className="microscope-slider w-full"
-              />
-              <div className="flex justify-between text-white/50 text-xs mt-2">
-                <span>100x</span>
-                <span>1,000x</span>
-                <span>10,000x</span>
-                <span>1,000,000x</span>
-              </div>
-            </div>
-
-            {/* Comparison */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-                <h4 className="text-blue-300 font-bold mb-2">🔬 Light Microscope</h4>
-                <ul className="text-white/80 text-sm space-y-1">
-                  <li>• Max: ~1,000x</li>
-                  <li>• Uses: visible light</li>
-                  <li>• Can view: living cells</li>
-                  <li>• Cost: Affordable</li>
-                </ul>
-              </div>
-              <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-                <h4 className="text-purple-300 font-bold mb-2">⚡ Electron Microscope</h4>
-                <ul className="text-white/80 text-sm space-y-1">
-                  <li>• Max: ~1,000,000x</li>
-                  <li>• Uses: electron beams</li>
-                  <li>• Can view: dead samples only</li>
-                  <li>• Cost: Very expensive</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div className="min-h-screen p-4 pt-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-2 text-white/60 text-sm">
-              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
-              <span>/</span>
-              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
-              <span>/</span>
-              <span className="text-white font-semibold">Interactive Diagrams</span>
-            </div>
-            <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
-          </div>
-
-          <h1 className="heading-md gradient-text mb-8 text-center">🔬 Interactive Diagrams</h1>
-
-          {/* Tab Selector */}
-          <div className="flex gap-3 mb-8 justify-center">
-            <button
-              onClick={() => setActiveTab('cell')}
-              className={activeTab === 'cell' ? 'btn-primary' : 'btn-secondary'}
-            >
-              🦠 Cell Parts
-            </button>
-            <button
-              onClick={() => setActiveTab('enzyme')}
-              className={activeTab === 'enzyme' ? 'btn-primary' : 'btn-secondary'}
-            >
-              ⚡ Enzyme Action
-            </button>
-            <button
-              onClick={() => setActiveTab('microscope')}
-              className={activeTab === 'microscope' ? 'btn-primary' : 'btn-secondary'}
-            >
-              🔬 Microscope Zoom
-            </button>
-          </div>
-
-          {/* Tab Content */}
-          {activeTab === 'cell' && <CellDiagram />}
-          {activeTab === 'enzyme' && <EnzymeAnimation />}
-          {activeTab === 'microscope' && <MicroscopeZoom />}
         </div>
       </div>
     );
@@ -2019,7 +1970,6 @@ function BioQuiz3App() {
       {mode === 'learn' && <LearnMode />}
       {mode === 'flashcards' && <FlashcardsMode />}
       {mode === 'compare' && <CompareMode />}
-      {mode === 'interactive' && <InteractiveMode />}
       {mode === 'test' && <TestMode />}
       {mode === 'mistakes' && <MistakeBankMode />}
     </div>

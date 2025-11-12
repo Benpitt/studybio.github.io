@@ -115,6 +115,7 @@ function BioQuiz3App() {
   const [microscopeZoom, setMicroscopeZoom] = useState(400);
   const [enzymeStep, setEnzymeStep] = useState(0);
   const [customTestQuestions, setCustomTestQuestions] = useState([]);
+  const [definitionsView, setDefinitionsView] = useState('learn'); // 'learn' or 'flashcard'
 
   // Load mistake bank from localStorage
   useEffect(() => {
@@ -690,6 +691,282 @@ function BioQuiz3App() {
     },
   ];
 
+  // Question-based flashcards (for main Flashcards mode)
+  const questionFlashcards = [
+    // Experimental Design Questions
+    {
+      question: 'In an experiment, what is the independent variable?',
+      answer: 'The variable that YOU change or manipulate. Example: If testing how fertilizer type affects plant growth, the fertilizer type is the independent variable.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Think: "I change this"'
+    },
+    {
+      question: 'What is a dependent variable and how do you identify it?',
+      answer: 'The variable that you MEASURE in response to changes. It depends on the independent variable. Example: In a fertilizer experiment, plant height (what you measure) is the dependent variable.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'What gets measured?'
+    },
+    {
+      question: 'You\'re testing if music helps plants grow. What variables should you control?',
+      answer: 'Control variables (keep constant): same plant type, same pot size, same amount of water, same light, same soil. This ensures music is the ONLY thing changing.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'What needs to stay the same?'
+    },
+    {
+      question: 'Write a testable hypothesis about light and plant growth using the "If...then...because" format.',
+      answer: 'If light intensity increases, then plant growth will increase, because plants need light energy for photosynthesis to make glucose.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'If [IV changes], then [DV changes], because [reason]'
+    },
+
+    // Data Analysis Questions
+    {
+      question: 'Is "flower color" qualitative or quantitative? Why?',
+      answer: 'Qualitative - because color is descriptive and cannot be measured with numbers. Qualitative = qualities you observe (colors, textures, smells).',
+      category: 'Data Analysis',
+      color: 'card-gradient-success',
+      hint: 'Can you measure it with numbers?'
+    },
+    {
+      question: 'What\'s the difference between quantitative continuous and discontinuous data?',
+      answer: 'Continuous = measured with decimals (height: 152.3 cm, temperature: 37.5°C). Discontinuous = counted in whole numbers (# of students: 25, # of seeds: 18).',
+      category: 'Data Analysis',
+      color: 'card-gradient-success',
+      hint: 'Measured vs Counted'
+    },
+    {
+      question: 'Calculate mean, median, and mode for: 5, 8, 3, 8, 6',
+      answer: 'Mean = (5+8+3+8+6)÷5 = 6. Median = arrange (3,5,6,8,8), middle = 6. Mode = 8 (appears twice).',
+      category: 'Data Analysis',
+      color: 'card-gradient-success',
+      hint: 'Mean=average, Median=middle, Mode=most common'
+    },
+    {
+      question: 'Write a CER argument for: "Plants need light." Data: Plants in light grew 15cm, plants in dark grew 2cm.',
+      answer: 'Claim: Plants need light to grow. Evidence: Plants in light grew 15cm while plants in dark only grew 2cm. Reasoning: Light provides energy for photosynthesis, allowing plants to make glucose for growth.',
+      category: 'Data Analysis',
+      color: 'card-gradient-success',
+      hint: 'Claim, Evidence, Reasoning'
+    },
+    {
+      question: 'Should you use a bar graph or line graph to show plant growth over 30 days?',
+      answer: 'Line graph - because this is continuous data over time. Bar graphs are for categorical/discontinuous data. Line graphs show trends and changes.',
+      category: 'Data Analysis',
+      color: 'card-gradient-success',
+      hint: 'Connected data = line graph'
+    },
+
+    // Atomic Structure Questions
+    {
+      question: 'An atom has 6 protons, 8 neutrons, and 6 electrons. What element is it? Is it an ion or isotope?',
+      answer: 'Carbon (6 protons = carbon). It\'s an isotope (Carbon-14) because it has more neutrons than Carbon-12. NOT an ion because protons = electrons (neutral charge).',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: '# of protons = element'
+    },
+    {
+      question: 'What determines the element? What determines the charge? What determines the mass?',
+      answer: 'Element = # of protons. Charge = protons vs electrons (more protons = positive, more electrons = negative). Mass = protons + neutrons.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Protons, electrons, neutrons'
+    },
+    {
+      question: 'How do you know if something is an ion? Give an example.',
+      answer: 'Unequal protons and electrons = ion. Example: Na+ has 11 protons, 10 electrons (lost 1 electron = positive charge).',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Protons ≠ electrons'
+    },
+    {
+      question: 'Carbon-12 and Carbon-14 are isotopes. What does this mean?',
+      answer: 'Same element (both have 6 protons) but different numbers of neutrons. C-12 has 6 neutrons, C-14 has 8 neutrons. Isotopes = same protons, different neutrons.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Same element, different mass'
+    },
+
+    // Water & Polarity Questions
+    {
+      question: 'What\'s the difference between covalent and hydrogen bonds?',
+      answer: 'Covalent = STRONG bonds WITHIN molecules (sharing electrons). Example: H-O bonds in H₂O. Hydrogen = WEAK attractions BETWEEN molecules. Example: between different water molecules.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Within vs Between'
+    },
+    {
+      question: 'Why is water polar? Draw or describe the charges.',
+      answer: 'Oxygen pulls electrons closer (more electronegative), making it δ⁻ (partial negative). Hydrogens become δ⁺ (partial positive). Uneven charge distribution = polar.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'O is greedy for electrons'
+    },
+    {
+      question: 'Will salt (NaCl) dissolve in water? Why or why not?',
+      answer: 'YES - salt is ionic/charged, making it hydrophilic (water-loving). Polar water molecules attract and surround the ions. Like dissolves like - polar dissolves polar/charged.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Polar dissolves polar'
+    },
+    {
+      question: 'Will oil dissolve in water? Why or why not?',
+      answer: 'NO - oil is nonpolar (hydrophobic = water-fearing). Water is polar. Nonpolar and polar don\'t mix. Oil molecules can\'t form hydrogen bonds with water.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Like dissolves like'
+    },
+
+    // Biological Molecules Questions
+    {
+      question: 'What are the 4 types of biological molecules and their functions?',
+      answer: 'Carbohydrates (CHO) = quick energy. Lipids = long-term energy + membranes. Proteins (CHON) = enzymes + structure. Nucleic acids (CHONP) = genetic information.',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Carbs, Lipids, Proteins, Nucleic acids'
+    },
+    {
+      question: 'Build a disaccharide from two glucose molecules. What reaction is this?',
+      answer: 'Dehydration synthesis - two glucose molecules join together, REMOVING a water molecule (H₂O). Glucose + Glucose → Maltose + H₂O. Dehydration = build + lose water.',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Building = dehydration'
+    },
+    {
+      question: 'Break down maltose into glucose. What reaction is this?',
+      answer: 'Hydrolysis - maltose breaks apart by ADDING water. Maltose + H₂O → Glucose + Glucose. Hydrolysis = break + add water (like digestion).',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Breaking = hydrolysis'
+    },
+    {
+      question: 'Why are saturated fats solid and unsaturated fats liquid at room temperature?',
+      answer: 'Saturated fats have NO double bonds, so fatty acid chains are STRAIGHT and pack tightly = solid (butter). Unsaturated have double bonds creating KINKS, can\'t pack tightly = liquid (oil).',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Straight vs kinked chains'
+    },
+    {
+      question: 'What makes up a phospholipid? Why is it perfect for cell membranes?',
+      answer: 'Glycerol + 2 fatty acids + phosphate group. Phosphate head = hydrophilic (loves water), fatty acid tails = hydrophobic (fear water). Forms bilayer with heads out, tails in!',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Amphipathic = both'
+    },
+    {
+      question: 'Compare starch, glycogen, and cellulose.',
+      answer: 'All are polysaccharides. Starch = plant energy storage. Glycogen = animal energy storage (highly branched). Cellulose = plant structure (cell walls, we can\'t digest).',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Storage vs structure'
+    },
+    {
+      question: 'How does DNA differ from RNA? List 3 differences.',
+      answer: '1) Sugar: DNA has deoxyribose, RNA has ribose. 2) Bases: DNA has T, RNA has U. 3) Structure: DNA is double helix, RNA is single strand.',
+      category: 'Biological Molecules',
+      color: 'card-gradient-violet',
+      hint: 'Sugar, bases, structure'
+    },
+
+    // Enzyme Questions
+    {
+      question: 'How do enzymes speed up reactions? Are they consumed?',
+      answer: 'Enzymes LOWER activation energy needed to start a reaction. NOT consumed - they can be reused many times! They\'re catalysts.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Lower energy barrier'
+    },
+    {
+      question: 'What\'s the difference between the active site and allosteric site?',
+      answer: 'Active site = where substrate binds (lock and key). Allosteric site = different spot where molecules bind to REGULATE enzyme activity (turn on/off).',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Action vs regulation'
+    },
+    {
+      question: 'Compare competitive and noncompetitive inhibitors.',
+      answer: 'Competitive = competes for ACTIVE site, blocks substrate (looks like substrate). Noncompetitive = binds to ALLOSTERIC site, changes enzyme shape so active site doesn\'t work.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Block vs change shape'
+    },
+    {
+      question: 'What happens to an enzyme at very high temperature or extreme pH?',
+      answer: 'DENATURATION - enzyme loses its shape and can\'t function. Bonds break, active site changes, substrate can\'t bind. Enzyme is permanently damaged.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Shape is critical'
+    },
+    {
+      question: 'Why is enzyme-substrate specificity called "lock and key"?',
+      answer: 'Active site (lock) has a specific shape that only fits a specific substrate (key). Specific shape = specific function. Wrong substrate won\'t fit.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Specific fit'
+    },
+
+    // Cell Questions
+    {
+      question: 'State the three parts of cell theory.',
+      answer: '1) All living things are made of cells. 2) Cells are the basic unit of life. 3) All cells come from pre-existing cells.',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Foundation of biology'
+    },
+    {
+      question: 'Compare prokaryotic and eukaryotic cells - give 3 differences.',
+      answer: '1) Nucleus: Prokaryotes NO nucleus, Eukaryotes HAVE nucleus. 2) Size: Prokaryotes smaller (1-10 μm), Eukaryotes larger (10-100 μm). 3) Examples: Prokaryotes = bacteria, Eukaryotes = animals/plants.',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Nucleus, size, complexity'
+    },
+    {
+      question: 'Which organelles are found ONLY in plant cells?',
+      answer: 'Cell wall (rigid, cellulose), chloroplasts (photosynthesis), large central vacuole (storage). Animals DON\'T have these!',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Plants are unique'
+    },
+    {
+      question: 'What do mitochondria and chloroplasts have in common?',
+      answer: 'Both are energy organelles! Mitochondria make ATP (cellular respiration). Chloroplasts make glucose (photosynthesis). Both have double membranes.',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Energy makers'
+    },
+    {
+      question: 'Describe the function of: nucleus, ribosome, and ER.',
+      answer: 'Nucleus = contains DNA, controls cell. Ribosome = makes proteins. ER = transport system (Rough ER has ribosomes for proteins, Smooth ER makes lipids).',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Control, make, transport'
+    },
+    {
+      question: 'What\'s the difference between cell membrane and cell wall?',
+      answer: 'Cell membrane = thin phospholipid bilayer, ALL cells have it, controls what enters/exits. Cell wall = thick rigid layer OUTSIDE membrane, only in plants/bacteria/fungi, provides structure.',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'All cells vs some cells'
+    },
+    {
+      question: 'Compare light microscope and electron microscope.',
+      answer: 'Light: uses visible light, ~1000x magnification, can view LIVING cells, affordable. Electron: uses electron beams, ~1,000,000x magnification, samples must be DEAD, very expensive.',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Living vs detailed'
+    },
+    {
+      question: 'What are flagella and cilia? How are they different?',
+      answer: 'Both are for movement. Flagella = long whip-like structures (FEW of them) - example: sperm. Cilia = short hair-like structures (MANY of them) - example: lung cells.',
+      category: 'Cells',
+      color: 'card-gradient-rose',
+      hint: 'Long & few vs short & many'
+    },
+  ];
+
   // Comprehensive question bank with images
   const questionBank = [
     // Experimental Design
@@ -1094,9 +1371,14 @@ function BioQuiz3App() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="stat-card">
-            <div className="stat-icon">🎴</div>
-            <div className="stat-value">{topicCategories.reduce((sum, cat) => sum + cat.concepts.length, 0) + cellIdentificationCards.length}</div>
-            <div className="stat-label">Flashcards</div>
+            <div className="stat-icon">❓</div>
+            <div className="stat-value">{questionFlashcards.length + cellIdentificationCards.length}</div>
+            <div className="stat-label">Question Cards</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">📖</div>
+            <div className="stat-value">{topicCategories.reduce((sum, cat) => sum + cat.concepts.length, 0)}</div>
+            <div className="stat-label">Definitions</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">📝</div>
@@ -1130,14 +1412,26 @@ function BioQuiz3App() {
           </button>
 
           <button
-            onClick={() => setMode('flashcards')}
+            onClick={() => setMode('definitions')}
+            className="card-gradient-success p-8 rounded-3xl text-left card-hover transform transition-all"
+          >
+            <div className="text-6xl mb-4">📖</div>
+            <h3 className="text-2xl font-bold text-white mb-2">Definitions</h3>
+            <p className="text-white/70 mb-4">All terms with examples (Learn + Flashcard modes)</p>
+            <div className="flex items-center text-green-300 text-sm font-semibold">
+              Browse Definitions →
+            </div>
+          </button>
+
+          <button
+            onClick={() => { setMode('flashcards'); setCurrentCard(0); setIsFlipped(false); }}
             className="card-gradient-blue p-8 rounded-3xl text-left card-hover transform transition-all"
           >
-            <div className="text-6xl mb-4">🎴</div>
-            <h3 className="text-2xl font-bold text-white mb-2">Flashcards</h3>
-            <p className="text-white/70 mb-4">Interactive cards with images and examples</p>
+            <div className="text-6xl mb-4">❓</div>
+            <h3 className="text-2xl font-bold text-white mb-2">Question Flashcards</h3>
+            <p className="text-white/70 mb-4">Question-based practice + cell identification</p>
             <div className="flex items-center text-blue-300 text-sm font-semibold">
-              Start Reviewing →
+              Start Practicing →
             </div>
           </button>
 
@@ -1387,14 +1681,11 @@ function BioQuiz3App() {
     </div>
   );
 
-  // Flashcards Mode with 3D Flip
+  // Flashcards Mode with 3D Flip - QUESTIONS + CELL ID
   const FlashcardsMode = () => {
-    const allConcepts = topicCategories.flatMap(cat =>
-      cat.concepts.map(c => ({ ...c, category: cat.name, icon: cat.icon, color: cat.color }))
-    );
-    // Add cell identification cards
-    const allCards = [...allConcepts, ...cellIdentificationCards];
-    const concept = allCards[currentCard];
+    // Use question flashcards + cell identification cards
+    const allCards = [...questionFlashcards, ...cellIdentificationCards];
+    const card = allCards[currentCard];
 
     return (
       <div className="min-h-screen p-4 pt-20">
@@ -1412,7 +1703,8 @@ function BioQuiz3App() {
 
           <div className="text-center mb-6">
             <div className="badge badge-accent mb-2">Card {currentCard + 1} / {allCards.length}</div>
-            {concept.image && <div className="badge badge-purple ml-2">📷 Photo ID</div>}
+            {card.image && <div className="badge badge-purple ml-2">📷 Photo ID</div>}
+            {card.question && <div className="badge badge-accent ml-2">❓ Question</div>}
           </div>
 
           {/* 3D Flashcard */}
@@ -1420,29 +1712,34 @@ function BioQuiz3App() {
             <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`} style={{position: 'relative', minHeight: '500px'}}>
               {/* Front */}
               <div className="flashcard-front absolute inset-0" style={{backfaceVisibility: 'hidden'}}>
-                <div className={`${concept.color || 'card-gradient-blue'} p-8 rounded-3xl shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center`}>
-                  {concept.image ? (
+                <div className={`${card.color || 'card-gradient-blue'} p-8 rounded-3xl shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center`}>
+                  {card.image ? (
                     // Image-based identification card
                     <>
-                      <div className="badge badge-purple mb-4">{concept.category}</div>
+                      <div className="badge badge-purple mb-4">{card.category}</div>
                       <div className="bg-white rounded-2xl p-6 mb-4 w-full max-w-md">
                         <img
-                          src={concept.image}
+                          src={card.image}
                           alt="Cell diagram for identification"
                           className="w-full h-auto"
                           style={{maxHeight: '300px', objectFit: 'contain'}}
                         />
                       </div>
-                      <h2 className="text-3xl font-bold text-white text-center mb-2">{concept.term}</h2>
-                      <p className="text-white/70 text-center text-sm mb-2">{concept.highlight}</p>
+                      <h2 className="text-3xl font-bold text-white text-center mb-2">{card.term}</h2>
+                      <p className="text-white/70 text-center text-sm mb-2">{card.highlight}</p>
                       <p className="text-white/70 text-lg">Click to flip →</p>
                     </>
                   ) : (
-                    // Regular concept card
+                    // Question card
                     <>
-                      <div className="text-8xl mb-6">{concept.visual}</div>
-                      <div className="badge badge-purple mb-4">{concept.category}</div>
-                      <h2 className="text-4xl font-bold text-white text-center mb-4">{concept.term}</h2>
+                      <div className="badge badge-purple mb-4">{card.category}</div>
+                      <div className="text-6xl mb-6">❓</div>
+                      <h2 className="text-3xl font-bold text-white text-center mb-4 px-6">{card.question}</h2>
+                      {card.hint && (
+                        <div className="bg-white/10 px-4 py-2 rounded-lg mb-4">
+                          <span className="text-white/70 text-sm">💡 Hint: {card.hint}</span>
+                        </div>
+                      )}
                       <p className="text-white/70 text-lg">Click to flip →</p>
                     </>
                   )}
@@ -1452,30 +1749,40 @@ function BioQuiz3App() {
               {/* Back */}
               <div className="flashcard-back absolute inset-0" style={{backfaceVisibility: 'hidden', transform: 'rotateY(180deg)'}}>
                 <div className="card p-8 h-full overflow-y-auto">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="text-5xl">{concept.visual}</div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">{concept.term}</h3>
-                      <div className="badge badge-purple mt-2">{concept.category}</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
-                      <div className="text-blue-300 font-bold mb-2">📖 Definition</div>
-                      <p className="text-white/90">{concept.definition}</p>
-                    </div>
-
-                    <div className="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
-                      <div className="text-green-300 font-bold mb-2">💡 Example</div>
-                      <p className="text-white/90">{concept.example}</p>
-                    </div>
-
-                    <div className="bg-purple-500/10 border border-purple-500/30 p-4 rounded-xl">
-                      <div className="text-purple-300 font-bold mb-2">🎯 Remember</div>
-                      <p className="text-white/90 font-semibold">{concept.remember}</p>
-                    </div>
-                  </div>
+                  {card.image ? (
+                    // Image card back
+                    <>
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="text-5xl">{card.visual}</div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-white">{card.term}</h3>
+                          <div className="badge badge-purple mt-2">{card.category}</div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
+                          <div className="text-blue-300 font-bold mb-2">📖 Definition</div>
+                          <p className="text-white/90">{card.definition}</p>
+                        </div>
+                        <div className="bg-purple-500/10 border border-purple-500/30 p-4 rounded-xl">
+                          <div className="text-purple-300 font-bold mb-2">🎯 Remember</div>
+                          <p className="text-white/90 font-semibold">{card.remember}</p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    // Question card back
+                    <>
+                      <div className="mb-6">
+                        <div className="badge badge-purple mb-3">{card.category}</div>
+                        <h3 className="text-xl font-bold text-white mb-4">❓ {card.question}</h3>
+                      </div>
+                      <div className="bg-green-500/10 border-2 border-green-500/50 p-6 rounded-xl">
+                        <div className="text-green-300 font-bold mb-3 text-lg">✅ Answer</div>
+                        <p className="text-white/95 text-lg leading-relaxed">{card.answer}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -1502,33 +1809,209 @@ function BioQuiz3App() {
             </button>
           </div>
 
-          {/* Topic Jump */}
+          {/* Category Jump */}
           <div className="card p-6 mt-8">
-            <h3 className="text-white font-bold mb-4">Jump to Topic</h3>
+            <h3 className="text-white font-bold mb-4">Jump to Category</h3>
             <div className="flex flex-wrap gap-3">
-              {topicCategories.map((topic, idx) => {
-                const startIdx = topicCategories.slice(0, idx).reduce((sum, t) => sum + t.concepts.length, 0);
+              {['Experimental Design', 'Data Analysis', 'Atomic Structure', 'Water & Polarity', 'Biological Molecules', 'Enzymes', 'Cells'].map((cat, idx) => {
+                const catIndex = allCards.findIndex(c => c.category === cat);
+                if (catIndex === -1) return null;
                 return (
                   <button
                     key={idx}
-                    onClick={() => { setCurrentCard(startIdx); setIsFlipped(false); }}
+                    onClick={() => { setCurrentCard(catIndex); setIsFlipped(false); }}
                     className="btn-secondary btn-small"
                   >
-                    {topic.icon} {topic.name}
+                    {cat}
                   </button>
                 );
               })}
               <button
-                onClick={() => { setCurrentCard(allConcepts.length); setIsFlipped(false); }}
+                onClick={() => { setCurrentCard(questionFlashcards.length); setIsFlipped(false); }}
                 className="btn-secondary btn-small"
               >
-                📷 Cell ID
+                📷 Cell ID Cards
               </button>
             </div>
           </div>
         </div>
       </div>
     );
+  };
+
+  // Definitions Mode - with Learn and Flashcard views
+  const DefinitionsMode = () => {
+    const allDefinitions = topicCategories.flatMap(cat =>
+      cat.concepts.map(c => ({ ...c, category: cat.name, icon: cat.icon, color: cat.color }))
+    );
+    const currentDef = allDefinitions[currentCard];
+
+    if (definitionsView === 'learn') {
+      // Learn view - show all definitions organized by topic
+      return (
+        <div className="min-h-screen p-4 pt-20">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2 text-white/60 text-sm">
+                <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+                <span>/</span>
+                <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+                <span>/</span>
+                <span className="text-white font-semibold">Definitions</span>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setDefinitionsView('flashcard')} className="btn-secondary btn-small">
+                  🎴 Flashcard View
+                </button>
+                <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
+              </div>
+            </div>
+
+            <h1 className="heading-md gradient-text mb-8 text-center">📖 Definitions</h1>
+
+            {/* Show all definitions by topic */}
+            {topicCategories.map((topic, topicIdx) => (
+              <div key={topicIdx} className="card mb-6 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="text-4xl">{topic.icon}</div>
+                  <h2 className="text-2xl font-bold text-white">{topic.name}</h2>
+                  <div className="badge badge-accent">{topic.concepts.length} terms</div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  {topic.concepts.map((concept, idx) => (
+                    <div key={idx} className={`${topic.color} p-4 rounded-xl`}>
+                      <div className="flex items-start gap-3 mb-2">
+                        <div className="text-3xl">{concept.visual}</div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-white mb-2">{concept.term}</h3>
+                          <p className="text-white/90 text-sm mb-2">{concept.definition}</p>
+                          <div className="bg-white/10 rounded px-2 py-1 text-xs text-white/80">
+                            💡 {concept.remember}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else {
+      // Flashcard view - traditional flip cards for definitions
+      return (
+        <div className="min-h-screen p-4 pt-20">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2 text-white/60 text-sm">
+                <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+                <span>/</span>
+                <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+                <span>/</span>
+                <span className="text-white font-semibold">Definitions</span>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setDefinitionsView('learn')} className="btn-secondary btn-small">
+                  📖 Learn View
+                </button>
+                <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
+              </div>
+            </div>
+
+            <div className="text-center mb-6">
+              <div className="badge badge-accent mb-2">Definition {currentCard + 1} / {allDefinitions.length}</div>
+            </div>
+
+            {/* 3D Flashcard for definitions */}
+            <div className="flashcard-3d mb-8" onClick={() => setIsFlipped(!isFlipped)}>
+              <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`} style={{position: 'relative', minHeight: '500px'}}>
+                {/* Front - term */}
+                <div className="flashcard-front absolute inset-0" style={{backfaceVisibility: 'hidden'}}>
+                  <div className={`${currentDef.color} p-12 rounded-3xl shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center`}>
+                    <div className="text-8xl mb-6">{currentDef.visual}</div>
+                    <div className="badge badge-purple mb-4">{currentDef.category}</div>
+                    <h2 className="text-4xl font-bold text-white text-center mb-4">{currentDef.term}</h2>
+                    <p className="text-white/70 text-lg">Click to flip →</p>
+                  </div>
+                </div>
+
+                {/* Back - definition */}
+                <div className="flashcard-back absolute inset-0" style={{backfaceVisibility: 'hidden', transform: 'rotateY(180deg)'}}>
+                  <div className="card p-8 h-full overflow-y-auto">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="text-5xl">{currentDef.visual}</div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-white">{currentDef.term}</h3>
+                        <div className="badge badge-purple mt-2">{currentDef.category}</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
+                        <div className="text-blue-300 font-bold mb-2">📖 Definition</div>
+                        <p className="text-white/90">{currentDef.definition}</p>
+                      </div>
+
+                      <div className="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                        <div className="text-green-300 font-bold mb-2">💡 Example</div>
+                        <p className="text-white/90">{currentDef.example}</p>
+                      </div>
+
+                      <div className="bg-purple-500/10 border border-purple-500/30 p-4 rounded-xl">
+                        <div className="text-purple-300 font-bold mb-2">🎯 Remember</div>
+                        <p className="text-white/90 font-semibold">{currentDef.remember}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex justify-between items-center">
+              <button
+                onClick={() => { setCurrentCard(Math.max(0, currentCard - 1)); setIsFlipped(false); }}
+                disabled={currentCard === 0}
+                className="btn-secondary disabled:opacity-30"
+              >
+                ← Previous
+              </button>
+              <button onClick={() => setIsFlipped(!isFlipped)} className="btn-primary">
+                {isFlipped ? 'Show Term' : 'Show Definition'}
+              </button>
+              <button
+                onClick={() => { setCurrentCard(Math.min(allDefinitions.length - 1, currentCard + 1)); setIsFlipped(false); }}
+                disabled={currentCard === allDefinitions.length - 1}
+                className="btn-secondary disabled:opacity-30"
+              >
+                Next →
+              </button>
+            </div>
+
+            {/* Topic Jump */}
+            <div className="card p-6 mt-8">
+              <h3 className="text-white font-bold mb-4">Jump to Topic</h3>
+              <div className="flex flex-wrap gap-3">
+                {topicCategories.map((topic, idx) => {
+                  const startIdx = topicCategories.slice(0, idx).reduce((sum, t) => sum + t.concepts.length, 0);
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => { setCurrentCard(startIdx); setIsFlipped(false); }}
+                      className="btn-secondary btn-small"
+                    >
+                      {topic.icon} {topic.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
   };
 
   // Compare & Contrast Mode
@@ -1968,6 +2451,7 @@ function BioQuiz3App() {
     <div className="font-sans">
       {mode === 'menu' && <MenuScreen />}
       {mode === 'learn' && <LearnMode />}
+      {mode === 'definitions' && <DefinitionsMode />}
       {mode === 'flashcards' && <FlashcardsMode />}
       {mode === 'compare' && <CompareMode />}
       {mode === 'test' && <TestMode />}

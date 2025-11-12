@@ -3,6 +3,7 @@
  * Provides functionality to search and retrieve images from Wikimedia Commons
  */
 
+const sanitizeHtml = require('sanitize-html');
 class WikimediaService {
     constructor() {
         this.apiUrl = 'https://commons.wikimedia.org/w/api.php';
@@ -89,8 +90,7 @@ class WikimediaService {
     extractDescription(metadata) {
         if (metadata.ImageDescription && metadata.ImageDescription.value) {
             // Remove HTML tags and truncate
-            const desc = metadata.ImageDescription.value
-                .replace(/<[^>]*>/g, '')
+            const desc = sanitizeHtml(metadata.ImageDescription.value, { allowedTags: [], allowedAttributes: {} })
                 .trim();
             return desc.length > 100 ? desc.substring(0, 100) + '...' : desc;
         }
@@ -103,7 +103,7 @@ class WikimediaService {
      */
     extractArtist(metadata) {
         if (metadata.Artist && metadata.Artist.value) {
-            return metadata.Artist.value.replace(/<[^>]*>/g, '').trim();
+            return sanitizeHtml(metadata.Artist.value, { allowedTags: [], allowedAttributes: {} }).trim();
         }
         return 'Unknown';
     }

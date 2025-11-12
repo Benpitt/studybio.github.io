@@ -86,6 +86,18 @@
     </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="dashboard" class="nav-logo">
+                <span>🎓</span>
+                <span>studying.works</span>
+            </a>
+            <div class="nav-links">
+                <a href="dashboard" class="nav-link">Dashboard</a>
+            </div>
+        </div>
+    </nav>
     <div id="root"></div>
     <script type="text/babel">
 const { useState, useEffect, useRef } = React;
@@ -134,13 +146,16 @@ function BioQuiz3App() {
     { emoji: '🔗', fact: 'Primary = sequence, Secondary = helix/sheet, Tertiary = 3D shape', category: 'Proteins' },
   ];
 
-  // Cell images and diagrams
+  // Cell images and diagrams (using Wikimedia Commons URLs)
   const cellImages = {
-    prokaryotic: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Prokaryote_cell.svg/500px-Prokaryote_cell.svg.png',
-    eukaryotic: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Biological_cell.svg/500px-Biological_cell.svg.png',
-    plant: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Plant_cell_structure_svg.svg/500px-Plant_cell_structure_svg.png',
-    animal: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Animal_cell_structure_en.svg/500px-Animal_cell_structure_en.svg.png',
+    prokaryotic: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Prokaryote_cell.svg/600px-Prokaryote_cell.svg.png',
+    eukaryotic: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Biological_cell.svg/600px-Biological_cell.svg.png',
+    plant: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Plant_cell_structure_svg.svg/600px-Plant_cell_structure_svg.png',
+    animal: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Animal_cell_structure_en.svg/600px-Animal_cell_structure_en.svg.png',
   };
+
+  // Image loading state
+  const [imageErrors, setImageErrors] = useState({});
 
   // Comprehensive topic data
   const topicCategories = [
@@ -892,18 +907,22 @@ function BioQuiz3App() {
       }
     });
 
-    // Save mistakes to mistake bank
-    if (mistakes.length > 0) {
-      const updatedBank = [...mistakeBank, ...mistakes];
-      saveMistakeBank(updatedBank);
-    }
-
     return {
       correct,
       total: testQuestions.length,
       percentage: Math.round((correct / testQuestions.length) * 100),
       mistakes
     };
+  };
+
+  const handleSubmitTest = () => {
+    const results = calculateTestScore();
+    // Save mistakes to mistake bank
+    if (results.mistakes.length > 0) {
+      const updatedBank = [...mistakeBank, ...results.mistakes];
+      saveMistakeBank(updatedBank);
+    }
+    setShowResults(true);
   };
 
   // Menu Screen
@@ -1025,22 +1044,6 @@ function BioQuiz3App() {
               {mistakeBank.length > 0 ? `Review ${mistakeBank.length} mistakes →` : 'No mistakes yet! →'}
             </div>
           </button>
-        </div>
-
-        {/* Topics Overview */}
-        <div className="card p-8 mb-8">
-          <h3 className="text-2xl font-bold text-white mb-6">📋 All Topics Covered</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topicCategories.map((topic, idx) => (
-              <div key={idx} className={`${topic.color} p-4 rounded-xl`}>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-3xl">{topic.icon}</span>
-                  <div className="text-white font-bold">{topic.name}</div>
-                </div>
-                <div className="text-white/80 text-sm">{topic.concepts.length} key concepts</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -1392,12 +1395,20 @@ function BioQuiz3App() {
             <div className="grid md:grid-cols-2 gap-6 mt-8">
               <div className="card p-6">
                 <h3 className="text-xl font-bold text-white mb-4">🔵 Prokaryotic Cell</h3>
-                <img
-                  src={cellImages.prokaryotic}
-                  alt="Prokaryotic Cell"
-                  className="w-full rounded-xl mb-4"
-                  style={{background: 'white', padding: '20px'}}
-                />
+                {!imageErrors.prokaryotic ? (
+                  <img
+                    src={cellImages.prokaryotic}
+                    alt="Prokaryotic Cell Diagram"
+                    className="w-full rounded-xl mb-4"
+                    style={{background: 'white', padding: '20px', minHeight: '300px', objectFit: 'contain'}}
+                    onError={() => setImageErrors({...imageErrors, prokaryotic: true})}
+                  />
+                ) : (
+                  <div className="bg-blue-500/10 border-2 border-dashed border-blue-500/30 rounded-xl p-12 mb-4 text-center">
+                    <div className="text-6xl mb-4">🔵</div>
+                    <p className="text-white/70">Prokaryotic Cell Diagram</p>
+                  </div>
+                )}
                 <ul className="text-white/80 text-sm space-y-2">
                   <li>• No nucleus - DNA in cytoplasm</li>
                   <li>• Smaller (1-10 μm)</li>
@@ -1406,12 +1417,20 @@ function BioQuiz3App() {
               </div>
               <div className="card p-6">
                 <h3 className="text-xl font-bold text-white mb-4">🟣 Eukaryotic Cell</h3>
-                <img
-                  src={cellImages.animal}
-                  alt="Eukaryotic Cell"
-                  className="w-full rounded-xl mb-4"
-                  style={{background: 'white', padding: '20px'}}
-                />
+                {!imageErrors.animal ? (
+                  <img
+                    src={cellImages.animal}
+                    alt="Eukaryotic Cell Diagram"
+                    className="w-full rounded-xl mb-4"
+                    style={{background: 'white', padding: '20px', minHeight: '300px', objectFit: 'contain'}}
+                    onError={() => setImageErrors({...imageErrors, animal: true})}
+                  />
+                ) : (
+                  <div className="bg-purple-500/10 border-2 border-dashed border-purple-500/30 rounded-xl p-12 mb-4 text-center">
+                    <div className="text-6xl mb-4">🟣</div>
+                    <p className="text-white/70">Eukaryotic Cell Diagram</p>
+                  </div>
+                )}
                 <ul className="text-white/80 text-sm space-y-2">
                   <li>• Has nucleus with DNA</li>
                   <li>• Larger (10-100 μm)</li>
@@ -1445,12 +1464,20 @@ function BioQuiz3App() {
           <h2 className="text-2xl font-bold text-white mb-6">🦠 Interactive Cell</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="card p-6">
-              <img
-                src={cellImages.plant}
-                alt="Plant Cell"
-                className="w-full rounded-xl mb-4"
-                style={{background: 'white', padding: '20px'}}
-              />
+              {!imageErrors.plant ? (
+                <img
+                  src={cellImages.plant}
+                  alt="Plant Cell Structure"
+                  className="w-full rounded-xl mb-4"
+                  style={{background: 'white', padding: '20px', minHeight: '300px', objectFit: 'contain'}}
+                  onError={() => setImageErrors({...imageErrors, plant: true})}
+                />
+              ) : (
+                <div className="bg-green-500/10 border-2 border-dashed border-green-500/30 rounded-xl p-12 mb-4 text-center">
+                  <div className="text-6xl mb-4">🌿</div>
+                  <p className="text-white/70">Plant Cell Diagram</p>
+                </div>
+              )}
               <p className="text-white/70 text-center text-sm">Plant Cell Structure</p>
             </div>
             <div className="card p-6">
@@ -1798,11 +1825,14 @@ function BioQuiz3App() {
                     onClick={() => handleTestAnswer(idx)}
                     className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
                       userAnswers[currentQuestion] === idx
-                        ? 'bg-purple-500 text-white border-2 border-purple-300'
+                        ? 'bg-purple-500 text-white border-2 border-purple-300 shadow-lg shadow-purple-500/50'
                         : 'bg-white/5 border border-white/20 text-white hover:bg-white/10'
                     }`}
                   >
-                    {String.fromCharCode(65 + idx)}. {option}
+                    <div className="flex items-center justify-between">
+                      <span>{String.fromCharCode(65 + idx)}. {option}</span>
+                      {userAnswers[currentQuestion] === idx && <span className="text-2xl">✓</span>}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -1814,21 +1844,27 @@ function BioQuiz3App() {
                   onClick={() => handleTestAnswer(true)}
                   className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
                     userAnswers[currentQuestion] === true
-                      ? 'bg-purple-500 text-white border-2 border-purple-300'
+                      ? 'bg-purple-500 text-white border-2 border-purple-300 shadow-lg shadow-purple-500/50'
                       : 'bg-white/5 border border-white/20 text-white hover:bg-white/10'
                   }`}
                 >
-                  True
+                  <div className="flex items-center justify-between">
+                    <span>True</span>
+                    {userAnswers[currentQuestion] === true && <span className="text-2xl">✓</span>}
+                  </div>
                 </button>
                 <button
                   onClick={() => handleTestAnswer(false)}
                   className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
                     userAnswers[currentQuestion] === false
-                      ? 'bg-purple-500 text-white border-2 border-purple-300'
+                      ? 'bg-purple-500 text-white border-2 border-purple-300 shadow-lg shadow-purple-500/50'
                       : 'bg-white/5 border border-white/20 text-white hover:bg-white/10'
                   }`}
                 >
-                  False
+                  <div className="flex items-center justify-between">
+                    <span>False</span>
+                    {userAnswers[currentQuestion] === false && <span className="text-2xl">✓</span>}
+                  </div>
                 </button>
               </div>
             )}
@@ -1844,7 +1880,7 @@ function BioQuiz3App() {
 
               {currentQuestion === testQuestions.length - 1 ? (
                 <button
-                  onClick={() => setShowResults(true)}
+                  onClick={handleSubmitTest}
                   disabled={Object.keys(userAnswers).length !== testQuestions.length}
                   className="btn-primary disabled:opacity-30"
                 >

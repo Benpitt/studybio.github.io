@@ -840,29 +840,13 @@
                         <p style="color: #cbd5e1; font-size: 1.2rem;">Studying smarter, not harder.</p>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px;">
-                        <div style="text-align: center; padding: 40px 24px;">
-                            <div style="font-size: 4rem; font-weight: 900; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; line-height: 1;">
-                                1M+
-                            </div>
-                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Cards Studied</div>
-                            <div style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Across all decks</div>
-                        </div>
-
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; max-width: 900px; margin: 0 auto;">
                         <div style="text-align: center; padding: 40px 24px;">
                             <div style="font-size: 4rem; font-weight: 900; background: linear-gradient(135deg, #ec4899, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; line-height: 1;">
                                 2,017
                             </div>
                             <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">SAT Questions</div>
-                            <div style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">With IRT tracking</div>
-                        </div>
-
-                        <div style="text-align: center; padding: 40px 24px;">
-                            <div style="font-size: 4rem; font-weight: 900; background: linear-gradient(135deg, #f59e0b, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; line-height: 1;">
-                                500+
-                            </div>
-                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Public Decks</div>
-                            <div style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Community created</div>
+                            <div style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">With adaptive difficulty</div>
                         </div>
 
                         <div style="text-align: center; padding: 40px 24px;">
@@ -1157,100 +1141,96 @@
 
                     <!-- ML Tech Grid -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 80px;">
-                        <!-- BKT for Flashcards -->
+                        <!-- Smart Flashcards -->
                         <div class="feature-card" style="background: linear-gradient(180deg, rgba(168,85,247,0.12) 0%, rgba(124,58,237,0.06) 100%); border: 2px solid rgba(168,85,247,0.3); padding: 56px 40px;">
                             <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
                                 <span style="font-size: 4rem; filter: drop-shadow(0 4px 16px rgba(168,85,247,0.6));">🧠</span>
                                 <div>
                                     <h3 style="font-size: 2rem; font-weight: 900; margin: 0; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                                        Bayesian Knowledge Tracing
+                                        Smart Flashcard Scheduling
                                     </h3>
-                                    <p style="margin: 4px 0 0; color: #a855f7; font-weight: 700; font-size: 1.1rem;">For Flashcards</p>
+                                    <p style="margin: 4px 0 0; color: #a855f7; font-weight: 700; font-size: 1.1rem;">Predicts When You'll Forget</p>
                                 </div>
                             </div>
 
                             <p style="color: #cbd5e1; line-height: 1.7; font-size: 1.1rem; margin-bottom: 24px;">
-                                BKT is a probabilistic model developed at UC Berkeley that tracks four key parameters for every flashcard:
+                                Our system learns how <em>you</em> learn. It tracks your performance on every flashcard to predict exactly when you're about to forget something—then shows it to you at the perfect moment.
                             </p>
 
                             <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
                                 <div style="background: rgba(168,85,247,0.1); border-left: 4px solid #a855f7; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">P(L₀) - Initial Knowledge</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">Probability you already know this concept</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">📈 Knows Your Starting Point</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">Detects what you already know vs. what's new</div>
                                 </div>
 
                                 <div style="background: rgba(236,72,153,0.1); border-left: 4px solid #ec4899; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">P(T) - Learning Rate</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">How quickly you transition from not knowing to knowing</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">⚡ Tracks Your Learning Speed</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">Adapts to how fast you pick up new concepts</div>
                                 </div>
 
                                 <div style="background: rgba(245,158,11,0.1); border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">P(G) - Guess Probability</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">Chance of getting it right without knowing</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">🎯 Catches Guessing</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">Knows when you got lucky vs. truly mastered it</div>
                                 </div>
 
                                 <div style="background: rgba(99,102,241,0.1); border-left: 4px solid #6366f1; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">P(S) - Slip Probability</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">Chance of making a careless mistake even when you know it</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">🛡️ Forgives Mistakes</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">One slip-up doesn't reset your progress</div>
                                 </div>
                             </div>
 
                             <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px;">
-                                <div style="font-weight: 700; color: #a855f7; margin-bottom: 12px; font-size: 1.1rem;">Real-Time Adaptation</div>
+                                <div style="font-weight: 700; color: #a855f7; margin-bottom: 12px; font-size: 1.1rem;">The Result</div>
                                 <p style="color: #cbd5e1; line-height: 1.6; margin: 0; font-size: 1rem;">
-                                    After every answer, BKT updates your mastery probability using Bayes' theorem. Cards you're about to forget
-                                    bubble to the top. Mastered cards appear less frequently. Your study session optimizes itself in real-time.
+                                    Cards you're about to forget bubble to the top. Mastered cards appear less often. Every review is perfectly timed for maximum retention. No manual scheduling needed.
                                 </p>
                             </div>
                         </div>
 
-                        <!-- IRT for SAT -->
+                        <!-- Adaptive SAT -->
                         <div class="feature-card" style="background: linear-gradient(180deg, rgba(236,72,153,0.12) 0%, rgba(245,158,11,0.06) 100%); border: 2px solid rgba(236,72,153,0.3); padding: 56px 40px;">
                             <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
                                 <span style="font-size: 4rem; filter: drop-shadow(0 4px 16px rgba(236,72,153,0.6));">📊</span>
                                 <div>
                                     <h3 style="font-size: 2rem; font-weight: 900; margin: 0; background: linear-gradient(135deg, #ec4899, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                                        Item Response Theory
+                                        Adaptive SAT Practice
                                     </h3>
-                                    <p style="margin: 4px 0 0; color: #ec4899; font-weight: 700; font-size: 1.1rem;">For SAT Practice</p>
+                                    <p style="margin: 4px 0 0; color: #ec4899; font-weight: 700; font-size: 1.1rem;">Always At Your Level</p>
                                 </div>
                             </div>
 
                             <p style="color: #cbd5e1; line-height: 1.7; font-size: 1.1rem; margin-bottom: 24px;">
-                                IRT is the gold standard in standardized testing. We use a 3-parameter logistic model to assess both
-                                question difficulty and your ability level:
+                                Unlike static practice tests, our SAT questions adapt to <em>your</em> skill level in real-time. The system continuously estimates your ability and selects questions that challenge you without overwhelming you.
                             </p>
 
                             <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
                                 <div style="background: rgba(236,72,153,0.1); border-left: 4px solid #ec4899; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">Difficulty Parameter (b)</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">How hard is this question for an average student?</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">🎚️ Knows Question Difficulty</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">Every question has a calibrated difficulty level</div>
                                 </div>
 
                                 <div style="background: rgba(245,158,11,0.1); border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">Discrimination Parameter (a)</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">How well does this question separate high/low performers?</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">📍 Pinpoints Your Ability</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">Estimates your skill level across 8 SAT domains</div>
                                 </div>
 
                                 <div style="background: rgba(99,102,241,0.1); border-left: 4px solid #6366f1; padding: 16px 20px; border-radius: 8px;">
-                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">Guessing Parameter (c)</div>
-                                    <div style="color: var(--muted); font-size: 0.95rem;">Baseline probability of guessing correctly</div>
+                                    <div style="font-weight: 700; color: white; margin-bottom: 6px; font-size: 1.05rem;">🎯 Finds Your Sweet Spot</div>
+                                    <div style="color: var(--muted); font-size: 0.95rem;">Not too easy, not too hard—just right</div>
                                 </div>
                             </div>
 
                             <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
-                                <div style="font-weight: 700; color: #ec4899; margin-bottom: 12px; font-size: 1.1rem;">Ability Estimation</div>
+                                <div style="font-weight: 700; color: #ec4899; margin-bottom: 12px; font-size: 1.1rem;">The Result</div>
                                 <p style="color: #cbd5e1; line-height: 1.6; margin: 0; font-size: 1rem;">
-                                    Your ability level (θ) is continuously estimated across 8 SAT domains. As you answer questions,
-                                    the system narrows in on your true skill level using maximum likelihood estimation.
+                                    Each question teaches you something new. You're never bored by easy questions or demoralized by impossible ones. The system keeps you in your "learning zone" where growth happens fastest.
                                 </p>
                             </div>
 
                             <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px;">
-                                <div style="font-weight: 700; color: #f59e0b; margin-bottom: 12px; font-size: 1.1rem;">Adaptive Question Selection</div>
+                                <div style="font-weight: 700; color: #f59e0b; margin-bottom: 12px; font-size: 1.1rem;">Built on Science</div>
                                 <p style="color: #cbd5e1; line-height: 1.6; margin: 0; font-size: 1rem;">
-                                    Questions are selected to maximize information gain. Too easy wastes time. Too hard is discouraging.
-                                    IRT finds your Goldilocks zone and keeps you there.
+                                    This is the same technology used by the actual SAT and GRE. It's proven, reliable, and it works.
                                 </p>
                             </div>
                         </div>
@@ -1262,53 +1242,53 @@
                             <div style="font-size: 3.5rem; font-weight: 900; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">
                                 2,017
                             </div>
-                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">SAT Questions with IRT Tracking</div>
+                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Adaptive SAT Questions</div>
                         </div>
 
                         <div style="background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.08)); border: 1px solid rgba(236,72,153,0.3); border-radius: 20px; padding: 32px; text-align: center;">
                             <div style="font-size: 3.5rem; font-weight: 900; background: linear-gradient(135deg, #ec4899, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">
-                                4 Params
+                                Smart
                             </div>
-                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Per Card with Bayesian Updates</div>
+                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Flashcard Scheduling</div>
                         </div>
 
                         <div style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.08)); border: 1px solid rgba(245,158,11,0.3); border-radius: 20px; padding: 32px; text-align: center;">
                             <div style="font-size: 3.5rem; font-weight: 900; background: linear-gradient(135deg, #f59e0b, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">
                                 8 Domains
                             </div>
-                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">SAT Ability Tracking</div>
+                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">SAT Skill Tracking</div>
                         </div>
 
                         <div style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.08)); border: 1px solid rgba(99,102,241,0.3); border-radius: 20px; padding: 32px; text-align: center;">
                             <div style="font-size: 3.5rem; font-weight: 900; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">
                                 Real-Time
                             </div>
-                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Adaptive Learning Updates</div>
+                            <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600;">Learning Adaptation</div>
                         </div>
                     </div>
 
                     <!-- How it Works Together -->
                     <div style="margin-top: 80px; background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.08), rgba(245,158,11,0.08)); border: 2px solid rgba(168,85,247,0.2); border-radius: 24px; padding: 60px 48px; text-align: center;">
                         <h3 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 24px; background: linear-gradient(135deg, #a855f7, #ec4899, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            The Result? Learning That Feels Like Magic.
+                            Learning that feels effortless.
                         </h3>
                         <p style="font-size: 1.3rem; line-height: 1.7; color: #cbd5e1; max-width: 80ch; margin: 0 auto 32px;">
-                            While you study, algorithms are working behind the scenes. BKT predicts when you'll forget each flashcard.
-                            IRT identifies your exact ability level in every SAT domain. The spaced repetition algorithm schedules reviews
-                            at the optimal moment. Every session is personalized, efficient, and scientifically optimized for retention.
+                            You just study. Behind the scenes, intelligent algorithms predict when you'll forget, select the perfect next question,
+                            and schedule reviews at exactly the right moment. Every session adapts to you. Every card appears when you need it most.
+                            No planning required.
                         </p>
                         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
                             <div style="background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.4); border-radius: 999px; padding: 12px 28px; font-weight: 700; color: white; font-size: 1.05rem;">
-                                ✓ No manual scheduling
+                                ✓ Zero planning needed
                             </div>
                             <div style="background: rgba(236,72,153,0.2); border: 1px solid rgba(236,72,153,0.4); border-radius: 999px; padding: 12px 28px; font-weight: 700; color: white; font-size: 1.05rem;">
-                                ✓ Personalized difficulty
+                                ✓ Adapts to your level
                             </div>
                             <div style="background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.4); border-radius: 999px; padding: 12px 28px; font-weight: 700; color: white; font-size: 1.05rem;">
-                                ✓ Optimized retention
+                                ✓ Maximum retention
                             </div>
                             <div style="background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); border-radius: 999px; padding: 12px 28px; font-weight: 700; color: white; font-size: 1.05rem;">
-                                ✓ Scientifically proven
+                                ✓ Proven by research
                             </div>
                         </div>
                     </div>

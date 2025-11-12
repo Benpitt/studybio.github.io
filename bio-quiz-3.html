@@ -1210,23 +1210,782 @@ function BioQuiz3App() {
     </div>
   );
 
+  // Flashcards Mode with 3D Flip
+  const FlashcardsMode = () => {
+    const allConcepts = topicCategories.flatMap(cat =>
+      cat.concepts.map(c => ({ ...c, category: cat.name, icon: cat.icon, color: cat.color }))
+    );
+    const concept = allConcepts[currentCard];
+
+    return (
+      <div className="min-h-screen p-4 pt-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2 text-white/60 text-sm">
+              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+              <span>/</span>
+              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+              <span>/</span>
+              <span className="text-white font-semibold">Flashcards</span>
+            </div>
+            <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
+          </div>
+
+          <div className="text-center mb-6">
+            <div className="badge badge-accent mb-2">Card {currentCard + 1} / {allConcepts.length}</div>
+          </div>
+
+          {/* 3D Flashcard */}
+          <div className="flashcard-3d mb-8" onClick={() => setIsFlipped(!isFlipped)}>
+            <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`} style={{position: 'relative', minHeight: '500px'}}>
+              {/* Front */}
+              <div className="flashcard-front absolute inset-0" style={{backfaceVisibility: 'hidden'}}>
+                <div className={`${concept.color} p-12 rounded-3xl shadow-2xl cursor-pointer h-full flex flex-col items-center justify-center`}>
+                  <div className="text-8xl mb-6">{concept.visual}</div>
+                  <div className="badge badge-purple mb-4">{concept.category}</div>
+                  <h2 className="text-4xl font-bold text-white text-center mb-4">{concept.term}</h2>
+                  <p className="text-white/70 text-lg">Click to flip →</p>
+                </div>
+              </div>
+
+              {/* Back */}
+              <div className="flashcard-back absolute inset-0" style={{backfaceVisibility: 'hidden', transform: 'rotateY(180deg)'}}>
+                <div className="card p-8 h-full overflow-y-auto">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="text-5xl">{concept.visual}</div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">{concept.term}</h3>
+                      <div className="badge badge-purple mt-2">{concept.category}</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
+                      <div className="text-blue-300 font-bold mb-2">📖 Definition</div>
+                      <p className="text-white/90">{concept.definition}</p>
+                    </div>
+
+                    <div className="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                      <div className="text-green-300 font-bold mb-2">💡 Example</div>
+                      <p className="text-white/90">{concept.example}</p>
+                    </div>
+
+                    <div className="bg-purple-500/10 border border-purple-500/30 p-4 rounded-xl">
+                      <div className="text-purple-300 font-bold mb-2">🎯 Remember</div>
+                      <p className="text-white/90 font-semibold">{concept.remember}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => { setCurrentCard(Math.max(0, currentCard - 1)); setIsFlipped(false); }}
+              disabled={currentCard === 0}
+              className="btn-secondary disabled:opacity-30"
+            >
+              ← Previous
+            </button>
+            <button onClick={() => setIsFlipped(!isFlipped)} className="btn-primary">
+              {isFlipped ? 'Show Front' : 'Show Back'}
+            </button>
+            <button
+              onClick={() => { setCurrentCard(Math.min(allConcepts.length - 1, currentCard + 1)); setIsFlipped(false); }}
+              disabled={currentCard === allConcepts.length - 1}
+              className="btn-secondary disabled:opacity-30"
+            >
+              Next →
+            </button>
+          </div>
+
+          {/* Topic Jump */}
+          <div className="card p-6 mt-8">
+            <h3 className="text-white font-bold mb-4">Jump to Topic</h3>
+            <div className="flex flex-wrap gap-3">
+              {topicCategories.map((topic, idx) => {
+                const startIdx = topicCategories.slice(0, idx).reduce((sum, t) => sum + t.concepts.length, 0);
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => { setCurrentCard(startIdx); setIsFlipped(false); }}
+                    className="btn-secondary btn-small"
+                  >
+                    {topic.icon} {topic.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Compare & Contrast Mode
+  const CompareMode = () => {
+    const [selectedComparison, setSelectedComparison] = useState('dnarna');
+    const comparison = comparisons[selectedComparison];
+
+    return (
+      <div className="min-h-screen p-4 pt-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2 text-white/60 text-sm">
+              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+              <span>/</span>
+              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+              <span>/</span>
+              <span className="text-white font-semibold">Compare & Contrast</span>
+            </div>
+            <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
+          </div>
+
+          <h1 className="heading-md gradient-text mb-8 text-center">⚖️ Compare & Contrast</h1>
+
+          {/* Comparison Selector */}
+          <div className="flex flex-wrap gap-3 mb-8 justify-center">
+            {Object.keys(comparisons).map((key) => (
+              <button
+                key={key}
+                onClick={() => setSelectedComparison(key)}
+                className={selectedComparison === key ? 'btn-primary' : 'btn-secondary'}
+              >
+                {comparisons[key].title}
+              </button>
+            ))}
+          </div>
+
+          {/* Comparison Table */}
+          <div className="card p-8">
+            <h2 className="text-3xl font-bold text-white mb-6 text-center">{comparison.title}</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/20">
+                    {comparison.headers.map((header, idx) => (
+                      <th key={idx} className="text-left p-4 text-white font-bold text-lg">
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparison.rows.map((row, rowIdx) => (
+                    <tr key={rowIdx} className="border-b border-white/10 comparison-row transition-all">
+                      {row.map((cell, cellIdx) => (
+                        <td key={cellIdx} className={`p-4 ${cellIdx === 0 ? 'font-bold text-purple-300' : 'text-white/90'}`}>
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Visual Summary */}
+          {selectedComparison === 'cells' && (
+            <div className="grid md:grid-cols-2 gap-6 mt-8">
+              <div className="card p-6">
+                <h3 className="text-xl font-bold text-white mb-4">🔵 Prokaryotic Cell</h3>
+                <img
+                  src={cellImages.prokaryotic}
+                  alt="Prokaryotic Cell"
+                  className="w-full rounded-xl mb-4"
+                  style={{background: 'white', padding: '20px'}}
+                />
+                <ul className="text-white/80 text-sm space-y-2">
+                  <li>• No nucleus - DNA in cytoplasm</li>
+                  <li>• Smaller (1-10 μm)</li>
+                  <li>• Example: Bacteria</li>
+                </ul>
+              </div>
+              <div className="card p-6">
+                <h3 className="text-xl font-bold text-white mb-4">🟣 Eukaryotic Cell</h3>
+                <img
+                  src={cellImages.animal}
+                  alt="Eukaryotic Cell"
+                  className="w-full rounded-xl mb-4"
+                  style={{background: 'white', padding: '20px'}}
+                />
+                <ul className="text-white/80 text-sm space-y-2">
+                  <li>• Has nucleus with DNA</li>
+                  <li>• Larger (10-100 μm)</li>
+                  <li>• Example: Animals, Plants</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Interactive Diagrams Mode
+  const InteractiveMode = () => {
+    const [activeTab, setActiveTab] = useState('cell');
+
+    // Interactive Cell Diagram
+    const CellDiagram = () => {
+      const cellParts = [
+        { name: 'Nucleus', description: 'Contains DNA, controls cell activities', color: '#9B59B6' },
+        { name: 'Cell Membrane', description: 'Controls what enters/exits the cell', color: '#3498DB' },
+        { name: 'Cytoplasm', description: 'Gel-like fluid where reactions occur', color: '#1ABC9C' },
+        { name: 'Ribosome', description: 'Makes proteins', color: '#E74C3C' },
+        { name: 'Mitochondria', description: 'Powerhouse - produces ATP energy', color: '#F39C12' },
+        { name: 'Chloroplast', description: 'Photosynthesis (plants only)', color: '#27AE60' },
+      ];
+
+      return (
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-6">🦠 Interactive Cell</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="card p-6">
+              <img
+                src={cellImages.plant}
+                alt="Plant Cell"
+                className="w-full rounded-xl mb-4"
+                style={{background: 'white', padding: '20px'}}
+              />
+              <p className="text-white/70 text-center text-sm">Plant Cell Structure</p>
+            </div>
+            <div className="card p-6">
+              <h3 className="text-xl font-bold text-white mb-4">Cell Parts</h3>
+              <div className="space-y-3">
+                {cellParts.map((part, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedCellPart(part.name)}
+                    className={`w-full text-left p-4 rounded-xl transition-all ${
+                      selectedCellPart === part.name
+                        ? 'bg-purple-500/30 border-2 border-purple-500'
+                        : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{backgroundColor: part.color}}
+                      />
+                      <div>
+                        <div className="text-white font-bold">{part.name}</div>
+                        {selectedCellPart === part.name && (
+                          <div className="text-white/70 text-sm mt-1">{part.description}</div>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Enzyme Animation
+    const EnzymeAnimation = () => {
+      const steps = [
+        { title: 'Enzyme + Substrate', description: 'Enzyme has active site ready for substrate' },
+        { title: 'Substrate Binds', description: 'Substrate binds to active site (lock and key)' },
+        { title: 'Catalysis', description: 'Enzyme lowers activation energy, reaction occurs' },
+        { title: 'Product Released', description: 'Product released, enzyme unchanged and reusable' },
+      ];
+
+      return (
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-6">⚡ Enzyme Action</h2>
+          <div className="card p-8">
+            <div className="text-center mb-8">
+              <div className="text-8xl mb-4 enzyme-animation">⚡</div>
+              <h3 className="text-2xl font-bold text-white mb-2">{steps[enzymeStep].title}</h3>
+              <p className="text-white/70">{steps[enzymeStep].description}</p>
+            </div>
+
+            {/* Step Indicator */}
+            <div className="flex justify-center gap-4 mb-6">
+              {steps.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setEnzymeStep(idx)}
+                  className={`w-12 h-12 rounded-full font-bold transition-all ${
+                    idx === enzymeStep
+                      ? 'bg-purple-500 text-white scale-110'
+                      : 'bg-white/10 text-white/50 hover:bg-white/20'
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setEnzymeStep((enzymeStep - 1 + steps.length) % steps.length)}
+                className="btn-secondary"
+              >
+                ← Previous Step
+              </button>
+              <button
+                onClick={() => setEnzymeStep((enzymeStep + 1) % steps.length)}
+                className="btn-primary"
+              >
+                Next Step →
+              </button>
+            </div>
+
+            {/* Key Facts */}
+            <div className="mt-8 p-6 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+              <h4 className="text-white font-bold mb-3">🔑 Key Points</h4>
+              <ul className="text-white/80 space-y-2 text-sm">
+                <li>• Enzyme is NOT consumed - it's reusable!</li>
+                <li>• Specific shape = specific substrate (lock & key)</li>
+                <li>• Lowers activation energy to speed up reaction</li>
+                <li>• Temperature and pH affect enzyme function</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Microscope Zoom
+    const MicroscopeZoom = () => {
+      const magnifications = [
+        { level: 100, name: 'Naked Eye', canSee: 'Visible objects', image: '👁️' },
+        { level: 400, name: 'Light Microscope (Low)', canSee: 'Large cells, tissues', image: '🔬' },
+        { level: 1000, name: 'Light Microscope (High)', canSee: 'Bacteria, cell structures', image: '🔬' },
+        { level: 10000, name: 'Electron Microscope', canSee: 'Viruses, large molecules', image: '⚡' },
+        { level: 100000, name: 'Electron Microscope (High)', canSee: 'Detailed organelles, DNA', image: '⚡' },
+        { level: 1000000, name: 'Electron Microscope (Max)', canSee: 'Atomic structures, proteins', image: '⚡' },
+      ];
+
+      const current = magnifications.reduce((prev, curr) =>
+        Math.abs(curr.level - microscopeZoom) < Math.abs(prev.level - microscopeZoom) ? curr : prev
+      );
+
+      return (
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-6">🔬 Microscope Magnification</h2>
+          <div className="card p-8">
+            <div className="text-center mb-8">
+              <div className="text-8xl mb-4">{current.image}</div>
+              <h3 className="text-3xl font-bold text-white mb-2">{current.name}</h3>
+              <div className="text-2xl text-purple-300 font-bold mb-2">{microscopeZoom}x</div>
+              <p className="text-white/70">Can see: {current.canSee}</p>
+            </div>
+
+            <div className="mb-8">
+              <input
+                type="range"
+                min="100"
+                max="1000000"
+                step="100"
+                value={microscopeZoom}
+                onChange={(e) => setMicroscopeZoom(parseInt(e.target.value))}
+                className="microscope-slider w-full"
+              />
+              <div className="flex justify-between text-white/50 text-xs mt-2">
+                <span>100x</span>
+                <span>1,000x</span>
+                <span>10,000x</span>
+                <span>1,000,000x</span>
+              </div>
+            </div>
+
+            {/* Comparison */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                <h4 className="text-blue-300 font-bold mb-2">🔬 Light Microscope</h4>
+                <ul className="text-white/80 text-sm space-y-1">
+                  <li>• Max: ~1,000x</li>
+                  <li>• Uses: visible light</li>
+                  <li>• Can view: living cells</li>
+                  <li>• Cost: Affordable</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+                <h4 className="text-purple-300 font-bold mb-2">⚡ Electron Microscope</h4>
+                <ul className="text-white/80 text-sm space-y-1">
+                  <li>• Max: ~1,000,000x</li>
+                  <li>• Uses: electron beams</li>
+                  <li>• Can view: dead samples only</li>
+                  <li>• Cost: Very expensive</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <div className="min-h-screen p-4 pt-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2 text-white/60 text-sm">
+              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+              <span>/</span>
+              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+              <span>/</span>
+              <span className="text-white font-semibold">Interactive Diagrams</span>
+            </div>
+            <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
+          </div>
+
+          <h1 className="heading-md gradient-text mb-8 text-center">🔬 Interactive Diagrams</h1>
+
+          {/* Tab Selector */}
+          <div className="flex gap-3 mb-8 justify-center">
+            <button
+              onClick={() => setActiveTab('cell')}
+              className={activeTab === 'cell' ? 'btn-primary' : 'btn-secondary'}
+            >
+              🦠 Cell Parts
+            </button>
+            <button
+              onClick={() => setActiveTab('enzyme')}
+              className={activeTab === 'enzyme' ? 'btn-primary' : 'btn-secondary'}
+            >
+              ⚡ Enzyme Action
+            </button>
+            <button
+              onClick={() => setActiveTab('microscope')}
+              className={activeTab === 'microscope' ? 'btn-primary' : 'btn-secondary'}
+            >
+              🔬 Microscope Zoom
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          {activeTab === 'cell' && <CellDiagram />}
+          {activeTab === 'enzyme' && <EnzymeAnimation />}
+          {activeTab === 'microscope' && <MicroscopeZoom />}
+        </div>
+      </div>
+    );
+  };
+
+  // Practice Test Mode (Complete)
+  const TestMode = () => {
+    if (testQuestions.length === 0) return null;
+
+    if (showResults) {
+      const results = calculateTestScore();
+      return (
+        <div className="min-h-screen p-4 pt-20">
+          <div className="max-w-5xl mx-auto">
+            <div className="card p-8">
+              <div className="text-center mb-8">
+                <div className="text-8xl mb-4">
+                  {results.percentage >= 90 ? '🏆' : results.percentage >= 70 ? '🌟' : '📚'}
+                </div>
+                <h2 className="text-4xl font-bold text-white mb-2">Test Complete!</h2>
+                <div className="text-3xl font-bold gradient-text mb-2">
+                  {results.correct}/{results.total} ({results.percentage}%)
+                </div>
+                <p className="text-white/70">
+                  {results.percentage >= 90 ? 'Outstanding! You\'ve mastered this! 🎉' :
+                   results.percentage >= 80 ? 'Great job! Keep it up! 👏' :
+                   results.percentage >= 70 ? 'Good work! Review the missed topics. 📖' :
+                   'Keep studying! You\'ll get there! 💪'}
+                </p>
+              </div>
+
+              {/* Results by Category */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-white mb-4">📊 By Category</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {topicCategories.map((cat, idx) => {
+                    const catQuestions = testQuestions.filter(q => q.category === cat.name);
+                    const catCorrect = catQuestions.filter((q, i) => {
+                      const qIdx = testQuestions.indexOf(q);
+                      return q.type === 'multiple-choice'
+                        ? userAnswers[qIdx] === q.correct
+                        : userAnswers[qIdx] === q.correct;
+                    }).length;
+
+                    if (catQuestions.length === 0) return null;
+
+                    return (
+                      <div key={idx} className={`${cat.color} p-4 rounded-xl`}>
+                        <div className="text-2xl mb-2">{cat.icon}</div>
+                        <div className="text-white font-bold">{cat.name}</div>
+                        <div className="text-white/90 text-2xl font-bold mt-2">
+                          {catCorrect}/{catQuestions.length}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Question Review */}
+              <div className="space-y-4 mb-8 max-h-96 overflow-y-auto">
+                {testQuestions.map((q, idx) => {
+                  const userAnswer = userAnswers[idx];
+                  const isCorrect = q.type === 'multiple-choice'
+                    ? userAnswer === q.correct
+                    : userAnswer === q.correct;
+
+                  return (
+                    <div key={idx} className={`p-4 rounded-xl border-2 ${isCorrect ? 'bg-green-500/10 border-green-500/50' : 'bg-red-500/10 border-red-500/50'}`}>
+                      <div className="flex gap-3">
+                        <div className="text-2xl">{isCorrect ? '✅' : '❌'}</div>
+                        <div className="flex-1">
+                          <div className="badge badge-purple mb-2">{q.category}</div>
+                          <p className="text-white font-semibold mb-2">{idx + 1}. {q.question}</p>
+                          {!isCorrect && (
+                            <div className="text-sm space-y-1">
+                              <div className="text-red-300">Your answer: {q.type === 'multiple-choice' ? q.options[userAnswer] : String(userAnswer)}</div>
+                              <div className="text-green-300">Correct: {q.type === 'multiple-choice' ? q.options[q.correct] : String(q.correct)}</div>
+                              <div className="text-white/70 mt-2">{q.explanation}</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-4">
+                <button onClick={() => setMode('menu')} className="btn-secondary flex-1">
+                  Back to Menu
+                </button>
+                <button onClick={initializeTest} className="btn-primary flex-1">
+                  🔄 Take New Test
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const currentQ = testQuestions[currentQuestion];
+    const answered = userAnswers.hasOwnProperty(currentQuestion);
+
+    return (
+      <div className="min-h-screen p-4 pt-20">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2 text-white/60 text-sm">
+              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+              <span>/</span>
+              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+              <span>/</span>
+              <span className="text-white font-semibold">Practice Test</span>
+            </div>
+            <div className="badge badge-accent">
+              Question {currentQuestion + 1} / {testQuestions.length}
+            </div>
+          </div>
+
+          <div className="card p-8">
+            <div className="badge badge-purple mb-4">{currentQ.category}</div>
+            <h3 className="text-2xl font-bold text-white mb-6">{currentQ.question}</h3>
+
+            {currentQ.type === 'multiple-choice' && (
+              <div className="space-y-3 mb-8">
+                {currentQ.options.map((option, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleTestAnswer(idx)}
+                    className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
+                      userAnswers[currentQuestion] === idx
+                        ? 'bg-purple-500 text-white border-2 border-purple-300'
+                        : 'bg-white/5 border border-white/20 text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {String.fromCharCode(65 + idx)}. {option}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {currentQ.type === 'true-false' && (
+              <div className="space-y-3 mb-8">
+                <button
+                  onClick={() => handleTestAnswer(true)}
+                  className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
+                    userAnswers[currentQuestion] === true
+                      ? 'bg-purple-500 text-white border-2 border-purple-300'
+                      : 'bg-white/5 border border-white/20 text-white hover:bg-white/10'
+                  }`}
+                >
+                  True
+                </button>
+                <button
+                  onClick={() => handleTestAnswer(false)}
+                  className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
+                    userAnswers[currentQuestion] === false
+                      ? 'bg-purple-500 text-white border-2 border-purple-300'
+                      : 'bg-white/5 border border-white/20 text-white hover:bg-white/10'
+                  }`}
+                >
+                  False
+                </button>
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+                disabled={currentQuestion === 0}
+                className="btn-secondary disabled:opacity-30"
+              >
+                ← Previous
+              </button>
+
+              {currentQuestion === testQuestions.length - 1 ? (
+                <button
+                  onClick={() => setShowResults(true)}
+                  disabled={Object.keys(userAnswers).length !== testQuestions.length}
+                  className="btn-primary disabled:opacity-30"
+                >
+                  Submit Test
+                </button>
+              ) : (
+                <button
+                  onClick={() => setCurrentQuestion(currentQuestion + 1)}
+                  disabled={!answered}
+                  className="btn-primary disabled:opacity-30"
+                >
+                  Next →
+                </button>
+              )}
+            </div>
+
+            {/* Progress Dots */}
+            <div className="flex gap-2 justify-center mt-6 flex-wrap">
+              {testQuestions.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-3 h-3 rounded-full ${
+                    userAnswers.hasOwnProperty(idx) ? 'bg-purple-500' : 'bg-white/20'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Mistake Bank Mode
+  const MistakeBankMode = () => {
+    return (
+      <div className="min-h-screen p-4 pt-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-2 text-white/60 text-sm">
+              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+              <span>/</span>
+              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+              <span>/</span>
+              <span className="text-white font-semibold">Mistake Bank</span>
+            </div>
+            <button onClick={() => setMode('menu')} className="btn-secondary btn-small">← Back</button>
+          </div>
+
+          <h1 className="heading-md gradient-text mb-8 text-center">🎯 Mistake Bank</h1>
+
+          {mistakeBank.length === 0 ? (
+            <div className="card p-12 text-center">
+              <div className="text-8xl mb-4">🎉</div>
+              <h2 className="text-3xl font-bold text-white mb-4">No Mistakes Yet!</h2>
+              <p className="text-white/70 mb-6">Take practice tests to track the questions you miss</p>
+              <button onClick={() => setMode('test')} className="btn-primary">
+                Take Practice Test
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex gap-4 mb-8 justify-center">
+                <div className="stat-card">
+                  <div className="stat-icon">📝</div>
+                  <div className="stat-value">{mistakeBank.length}</div>
+                  <div className="stat-label">Mistakes Tracked</div>
+                </div>
+                <button
+                  onClick={() => {
+                    initializeTest(mistakeBank);
+                    setMode('test');
+                  }}
+                  className="btn-primary"
+                >
+                  Practice from Mistakes
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('Clear all mistakes?')) {
+                      saveMistakeBank([]);
+                    }
+                  }}
+                  className="btn-danger"
+                >
+                  Clear All
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {mistakeBank.map((mistake, idx) => (
+                  <div key={idx} className="card p-6">
+                    <div className="badge badge-purple mb-3">{mistake.category}</div>
+                    <h3 className="text-xl font-bold text-white mb-3">{mistake.question}</h3>
+
+                    {mistake.type === 'multiple-choice' && (
+                      <div className="space-y-2 mb-4">
+                        {mistake.options.map((opt, optIdx) => (
+                          <div
+                            key={optIdx}
+                            className={`p-3 rounded-lg ${
+                              optIdx === mistake.correct
+                                ? 'bg-green-500/20 border border-green-500/50'
+                                : optIdx === mistake.userAnswer
+                                ? 'bg-red-500/20 border border-red-500/50'
+                                : 'bg-white/5'
+                            }`}
+                          >
+                            {opt}
+                            {optIdx === mistake.correct && <span className="ml-2 text-green-300">✓ Correct</span>}
+                            {optIdx === mistake.userAnswer && optIdx !== mistake.correct && (
+                              <span className="ml-2 text-red-300">✗ Your answer</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
+                      <div className="text-blue-300 font-bold mb-2">💡 Explanation</div>
+                      <p className="text-white/80">{mistake.explanation}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="font-sans">
       {mode === 'menu' && <MenuScreen />}
       {mode === 'learn' && <LearnMode />}
-      {/* Other modes will be added in next update */}
-      {!['menu', 'learn'].includes(mode) && (
-        <div className="min-h-screen p-4 pt-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="text-6xl mb-4">🚧</div>
-            <h2 className="text-3xl font-bold text-white mb-4">Coming Soon!</h2>
-            <p className="text-white/70 mb-6">This mode is being enhanced with more visuals and interactive elements.</p>
-            <button onClick={() => setMode('menu')} className="btn-primary">
-              ← Back to Menu
-            </button>
-          </div>
-        </div>
-      )}
+      {mode === 'flashcards' && <FlashcardsMode />}
+      {mode === 'compare' && <CompareMode />}
+      {mode === 'interactive' && <InteractiveMode />}
+      {mode === 'test' && <TestMode />}
+      {mode === 'mistakes' && <MistakeBankMode />}
     </div>
   );
 }

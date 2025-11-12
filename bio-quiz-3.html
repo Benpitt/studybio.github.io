@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Quiz #3 - Complete Study Guide</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="button-styles.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+const { useState, useEffect } = React;
+
+function BioQuiz3App() {
+  const [mode, setMode] = useState('menu');
+  const [currentCard, setCurrentCard] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [testQuestions, setTestQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [showResults, setShowResults] = useState(false);
+  const [matchingPairs, setMatchingPairs] = useState([]);
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [matchedPairs, setMatchedPairs] = useState([]);
+  const [score, setScore] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+
+  // Topic data organized by main categories
+  const topicCategories = [
+    {
+      name: 'Experimental Design',
+      icon: '🔬',
+      color: 'bg-blue-500',
+      concepts: [
+        {
+          term: 'Independent Variable',
+          definition: 'The variable that is deliberately changed or manipulated in an experiment.',
+          example: 'If testing how light affects plant growth, light intensity is the independent variable.'
+        },
+        {
+          term: 'Dependent Variable',
+          definition: 'The variable that is measured or observed in response to changes in the independent variable.',
+          example: 'Plant height measured in response to different light intensities.'
+        },
+        {
+          term: 'Control Variable',
+          definition: 'Variables that are kept constant throughout the experiment to ensure a fair test.',
+          example: 'Same soil type, water amount, and temperature for all plants.'
+        },
+        {
+          term: 'Research Question',
+          definition: 'A clear, focused question that guides the investigation.',
+          example: 'How does light intensity affect the growth rate of bean plants?'
+        },
+        {
+          term: 'Testable Hypothesis',
+          definition: 'A specific, measurable prediction about the relationship between variables.',
+          example: 'If light intensity increases, then plant growth will increase because more energy is available for photosynthesis.'
+        }
+      ]
+    },
+    {
+      name: 'Data Analysis',
+      icon: '📊',
+      color: 'bg-green-500',
+      concepts: [
+        {
+          term: 'Qualitative Data',
+          definition: 'Descriptive data that can be observed but not measured with numbers.',
+          example: 'Color of flowers, texture of leaves, smell of chemicals.'
+        },
+        {
+          term: 'Quantitative Data (Continuous)',
+          definition: 'Numerical data that can take any value within a range and can be measured.',
+          example: 'Temperature (37.5°C), height (152.3 cm), time (4.7 seconds).'
+        },
+        {
+          term: 'Quantitative Data (Discontinuous)',
+          definition: 'Numerical data that can only take specific, discrete values (counted).',
+          example: 'Number of students (25), number of seeds that germinated (18).'
+        },
+        {
+          term: 'Ranked Data',
+          definition: 'Data organized in order from highest to lowest or vice versa.',
+          example: 'Pain scale (1-10), satisfaction rating (poor, fair, good, excellent).'
+        },
+        {
+          term: 'Mean',
+          definition: 'The average of all values in a data set (sum ÷ count).',
+          example: 'Data: 5, 8, 3, 9, 5. Mean = (5+8+3+9+5)÷5 = 6'
+        },
+        {
+          term: 'Median',
+          definition: 'The middle value when data is arranged in order.',
+          example: 'Data: 3, 5, 5, 8, 9. Median = 5 (middle value)'
+        },
+        {
+          term: 'Mode',
+          definition: 'The value that appears most frequently in a data set.',
+          example: 'Data: 3, 5, 5, 8, 9. Mode = 5 (appears twice)'
+        },
+        {
+          term: 'Claim, Evidence, Reasoning (CER)',
+          definition: 'A scientific argument structure: Claim (answer), Evidence (data), Reasoning (explanation).',
+          example: 'Claim: Plants grow faster with fertilizer. Evidence: Plants with fertilizer grew 5cm more. Reasoning: Fertilizer provides nutrients needed for cell division.'
+        }
+      ]
+    },
+    {
+      name: 'Basic Atomic Structure',
+      icon: '⚛️',
+      color: 'bg-purple-500',
+      concepts: [
+        {
+          term: 'Proton',
+          definition: 'Positively charged particle in the nucleus. Determines the element.',
+          example: 'Carbon has 6 protons. All atoms with 6 protons are carbon.'
+        },
+        {
+          term: 'Neutron',
+          definition: 'Neutral particle (no charge) in the nucleus. Affects atomic mass.',
+          example: 'Carbon-12 has 6 neutrons. Carbon-14 has 8 neutrons.'
+        },
+        {
+          term: 'Electron',
+          definition: 'Negatively charged particle orbiting the nucleus. Involved in bonding.',
+          example: 'Neutral carbon has 6 electrons to balance 6 protons.'
+        },
+        {
+          term: 'Ion',
+          definition: 'An atom with unequal protons and electrons, giving it a charge.',
+          example: 'Na⁺ has 11 protons but 10 electrons (lost 1 electron, positive charge).'
+        },
+        {
+          term: 'Isotope',
+          definition: 'Atoms of the same element with different numbers of neutrons.',
+          example: 'Carbon-12 (6p, 6n) and Carbon-14 (6p, 8n) are isotopes.'
+        }
+      ]
+    },
+    {
+      name: 'Water, Polarity & Molecular Interactions',
+      icon: '💧',
+      color: 'bg-cyan-500',
+      concepts: [
+        {
+          term: 'Covalent Bond',
+          definition: 'A strong bond formed by sharing electrons between atoms within a molecule.',
+          example: 'H-O bonds in water (H₂O) are covalent bonds.'
+        },
+        {
+          term: 'Hydrogen Bond',
+          definition: 'A weak attraction between a slightly positive H and a slightly negative atom (O, N, F) in different molecules.',
+          example: 'Hydrogen bonds form between water molecules, giving water unique properties.'
+        },
+        {
+          term: 'Polar Bond',
+          definition: 'A covalent bond where electrons are shared unequally, creating partial charges.',
+          example: 'O-H bonds in water are polar (oxygen is more electronegative).'
+        },
+        {
+          term: 'Polar Molecule',
+          definition: 'A molecule with an uneven distribution of charge, having positive and negative regions.',
+          example: 'Water (H₂O) is polar. The oxygen end is δ⁻ and hydrogen ends are δ⁺.'
+        },
+        {
+          term: 'Partial Charges (δ⁺ and δ⁻)',
+          definition: 'Small charges that develop on atoms in polar bonds. δ⁺ = slightly positive, δ⁻ = slightly negative.',
+          example: 'In H₂O: oxygen is δ⁻, hydrogens are δ⁺.'
+        },
+        {
+          term: 'Hydrophilic',
+          definition: '"Water-loving" - polar or charged substances that dissolve in water.',
+          example: 'Salt (NaCl), sugar, amino acids with polar R groups.'
+        },
+        {
+          term: 'Hydrophobic',
+          definition: '"Water-fearing" - nonpolar substances that do not dissolve in water.',
+          example: 'Oils, fats, waxes, amino acids with nonpolar R groups.'
+        }
+      ]
+    },
+    {
+      name: 'Biological Molecules',
+      icon: '🧬',
+      color: 'bg-pink-500',
+      concepts: [
+        {
+          term: 'Carbohydrates',
+          definition: 'Molecules made of C, H, O in 1:2:1 ratio. Functions: quick energy, energy storage, structural support.',
+          example: 'Glucose (energy), starch (plant storage), cellulose (plant cell walls), glycogen (animal storage).'
+        },
+        {
+          term: 'Lipids',
+          definition: 'Hydrophobic molecules including fats, oils, phospholipids, steroids. Functions: long-term energy storage, membranes, hormones.',
+          example: 'Triglycerides (fats), phospholipids (cell membranes), cholesterol (steroid).'
+        },
+        {
+          term: 'Proteins',
+          definition: 'Polymers of amino acids. Functions: enzymes, structure, transport, defense, movement.',
+          example: 'Enzymes (catalase), hemoglobin (transport), antibodies (defense), collagen (structure).'
+        },
+        {
+          term: 'Nucleic Acids',
+          definition: 'Polymers of nucleotides. Functions: store and transmit genetic information.',
+          example: 'DNA (genetic blueprint), RNA (protein synthesis), ATP (energy transfer).'
+        },
+        {
+          term: 'Monosaccharide',
+          definition: 'Simple sugar monomer. Examples: glucose, fructose, galactose.',
+          example: 'Glucose is the primary energy source for cells.'
+        },
+        {
+          term: 'Disaccharide',
+          definition: 'Two monosaccharides joined together.',
+          example: 'Sucrose (glucose + fructose), lactose (glucose + galactose), maltose (glucose + glucose).'
+        },
+        {
+          term: 'Polysaccharide',
+          definition: 'Many monosaccharides joined together.',
+          example: 'Starch (plant energy storage), cellulose (plant structure), glycogen (animal energy storage).'
+        },
+        {
+          term: 'Dehydration Synthesis',
+          definition: 'Building larger molecules by removing water to form bonds.',
+          example: 'Two glucose molecules → maltose + H₂O'
+        },
+        {
+          term: 'Hydrolysis',
+          definition: 'Breaking down molecules by adding water to break bonds.',
+          example: 'Maltose + H₂O → two glucose molecules'
+        },
+        {
+          term: 'Saturated Lipid',
+          definition: 'Fatty acid with NO double bonds. Straight chains pack tightly. Solid at room temperature.',
+          example: 'Butter, lard, coconut oil.'
+        },
+        {
+          term: 'Unsaturated Lipid',
+          definition: 'Fatty acid with double bonds creating kinks. Cannot pack tightly. Liquid at room temperature.',
+          example: 'Olive oil, vegetable oil, fish oil.'
+        },
+        {
+          term: 'Triglyceride',
+          definition: 'Glycerol backbone + 3 fatty acids. Main form of fat storage.',
+          example: 'Fats and oils we eat and store in adipose tissue.'
+        },
+        {
+          term: 'Phospholipid',
+          definition: 'Glycerol + 2 fatty acids + phosphate group. Forms cell membranes (bilayer).',
+          example: 'Cell membrane structure with hydrophilic heads and hydrophobic tails.'
+        },
+        {
+          term: 'Steroid',
+          definition: 'Lipid with 4 fused carbon rings. Functions as hormones.',
+          example: 'Cholesterol, testosterone, estrogen, cortisol.'
+        },
+        {
+          term: 'Primary Structure (Protein)',
+          definition: 'The sequence of amino acids in a polypeptide chain.',
+          example: 'Met-Gly-Ala-Leu-Phe-Tyr... (specific order determined by DNA)'
+        },
+        {
+          term: 'Secondary Structure (Protein)',
+          definition: 'Folding patterns from hydrogen bonding: α-helix (spiral) or β-sheet (pleated).',
+          example: 'Collagen has helical structure, spider silk has β-sheets.'
+        },
+        {
+          term: 'Tertiary Structure (Protein)',
+          definition: 'Overall 3D shape from interactions between R groups (H-bonds, ionic, disulfide bridges).',
+          example: 'Enzymes fold into specific shapes for their active sites.'
+        },
+        {
+          term: 'Quaternary Structure (Protein)',
+          definition: 'Multiple polypeptide chains working together.',
+          example: 'Hemoglobin has 4 polypeptide chains working together to carry oxygen.'
+        }
+      ]
+    },
+    {
+      name: 'Enzymes',
+      icon: '⚡',
+      color: 'bg-yellow-500',
+      concepts: [
+        {
+          term: 'Enzyme',
+          definition: 'A biological catalyst (usually protein) that speeds up reactions by lowering activation energy.',
+          example: 'Catalase breaks down hydrogen peroxide, amylase breaks down starch.'
+        },
+        {
+          term: 'Substrate',
+          definition: 'The reactant molecule(s) that an enzyme acts upon.',
+          example: 'For amylase, starch is the substrate.'
+        },
+        {
+          term: 'Product',
+          definition: 'The molecule(s) produced after the enzyme catalyzes the reaction.',
+          example: 'Amylase breaks starch into maltose (the product).'
+        },
+        {
+          term: 'Active Site',
+          definition: 'The specific region on an enzyme where the substrate binds.',
+          example: 'The "pocket" where the substrate fits perfectly (lock and key model).'
+        },
+        {
+          term: 'Allosteric Site',
+          definition: 'A site on the enzyme (not the active site) where molecules can bind to regulate enzyme activity.',
+          example: 'Regulatory molecules bind here to activate or inhibit the enzyme.'
+        },
+        {
+          term: 'Competitive Inhibitor',
+          definition: 'A molecule that blocks the active site by competing with the substrate.',
+          example: 'Inhibitor shaped like substrate competes for active site binding.'
+        },
+        {
+          term: 'Noncompetitive Inhibitor',
+          definition: 'A molecule that binds to the allosteric site, changing enzyme shape and reducing activity.',
+          example: 'Inhibitor binds elsewhere on enzyme, distorting the active site.'
+        },
+        {
+          term: 'Optimal Temperature',
+          definition: 'The temperature at which enzyme activity is highest.',
+          example: 'Human enzymes typically work best around 37°C (body temperature).'
+        },
+        {
+          term: 'Optimal pH',
+          definition: 'The pH at which enzyme activity is highest.',
+          example: 'Pepsin works best at pH 2 (stomach acid), most enzymes at pH 7.'
+        },
+        {
+          term: 'Denaturation',
+          definition: 'Loss of enzyme shape and function due to extreme temperature or pH.',
+          example: 'Cooking an egg denatures proteins, making them solid and unable to function.'
+        }
+      ]
+    },
+    {
+      name: 'Cells',
+      icon: '🦠',
+      color: 'bg-red-500',
+      concepts: [
+        {
+          term: 'Cell Theory',
+          definition: '1) All living things are made of cells. 2) The cell is the basic unit of life. 3) All cells come from pre-existing cells.',
+          example: 'These three principles form the foundation of modern biology.'
+        },
+        {
+          term: 'Prokaryotic Cell',
+          definition: 'Simple cell with NO nucleus or membrane-bound organelles. DNA floats freely in cytoplasm.',
+          example: 'Bacteria and archaea are prokaryotes.'
+        },
+        {
+          term: 'Eukaryotic Cell',
+          definition: 'Complex cell WITH a nucleus and membrane-bound organelles.',
+          example: 'Animals, plants, fungi, and protists are eukaryotes.'
+        },
+        {
+          term: 'Cell Wall',
+          definition: 'Rigid structure outside the cell membrane (found in plants, bacteria, fungi). Provides support and protection.',
+          example: 'Plant cell walls are made of cellulose.'
+        },
+        {
+          term: 'Cell Membrane',
+          definition: 'Phospholipid bilayer that controls what enters and exits the cell. Found in ALL cells.',
+          example: 'Selective barrier that lets oxygen in and waste out.'
+        },
+        {
+          term: 'Nucleus',
+          definition: 'Membrane-bound organelle containing DNA. Controls cell activities. Found in eukaryotes only.',
+          example: 'The "control center" or "brain" of the cell.'
+        },
+        {
+          term: 'Ribosome',
+          definition: 'Makes proteins by translating mRNA. Found in ALL cells (prokaryotes and eukaryotes).',
+          example: 'Free-floating in cytoplasm or attached to ER in eukaryotes.'
+        },
+        {
+          term: 'Cytoplasm',
+          definition: 'Gel-like fluid inside the cell where organelles are suspended and reactions occur.',
+          example: 'Contains water, salts, enzymes, and dissolved nutrients.'
+        },
+        {
+          term: 'Flagella/Cilia',
+          definition: 'Hair-like structures for cell movement. Flagella are long (few), cilia are short (many).',
+          example: 'Sperm cells use flagella to swim, paramecium uses cilia.'
+        },
+        {
+          term: 'Chloroplast',
+          definition: 'Organelle where photosynthesis occurs. Contains chlorophyll. Found in plant cells and some protists.',
+          example: 'Converts light energy into glucose in plant cells.'
+        },
+        {
+          term: 'Light Microscope',
+          definition: 'Uses visible light and lenses to magnify specimens up to ~1000x.',
+          example: 'Good for viewing cells, tissues, bacteria. Pros: easy to use, affordable. Cons: lower magnification and resolution.'
+        },
+        {
+          term: 'Electron Microscope',
+          definition: 'Uses electron beams for much higher magnification (up to 1,000,000x) and resolution.',
+          example: 'Can see viruses and cell organelles in detail. Pros: high detail. Cons: expensive, samples must be dead.'
+        }
+      ]
+    }
+  ];
+
+  // Comprehensive question bank
+  const questionBank = [
+    // Experimental Design
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'In an experiment testing how fertilizer affects plant growth, what is the independent variable?',
+      options: ['Plant height', 'Type of fertilizer', 'Amount of water', 'Soil type'],
+      correct: 1,
+      explanation: 'The independent variable is what YOU change or manipulate. In this case, it\'s the type of fertilizer being tested.'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'What is the dependent variable in an experiment testing how temperature affects enzyme activity?',
+      options: ['Temperature', 'Enzyme activity', 'pH level', 'Time'],
+      correct: 1,
+      explanation: 'The dependent variable is what you MEASURE. Here, you measure enzyme activity in response to temperature changes.'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'Which is a testable hypothesis?',
+      options: [
+        'Plants are cool',
+        'If plants receive more sunlight, then they will grow taller',
+        'Why do plants need water?',
+        'Plants should grow faster'
+      ],
+      correct: 1,
+      explanation: 'A testable hypothesis has a clear if-then format with measurable variables.'
+    },
+
+    // Data Analysis
+    {
+      category: 'Data Analysis',
+      type: 'multiple-choice',
+      question: 'Which type of data is "the color of flowers"?',
+      options: ['Quantitative continuous', 'Quantitative discontinuous', 'Qualitative', 'Ranked'],
+      correct: 2,
+      explanation: 'Color is descriptive and cannot be measured with numbers, making it qualitative data.'
+    },
+    {
+      category: 'Data Analysis',
+      type: 'multiple-choice',
+      question: 'What is the mean of this data set: 4, 7, 9, 2, 8?',
+      options: ['5', '6', '7', '8'],
+      correct: 1,
+      explanation: 'Mean = (4+7+9+2+8) ÷ 5 = 30 ÷ 5 = 6'
+    },
+    {
+      category: 'Data Analysis',
+      type: 'multiple-choice',
+      question: 'What is the median of: 3, 7, 2, 9, 5?',
+      options: ['3', '5', '7', '9'],
+      correct: 1,
+      explanation: 'First arrange in order: 2, 3, 5, 7, 9. The middle value is 5.'
+    },
+    {
+      category: 'Data Analysis',
+      type: 'multiple-choice',
+      question: 'Temperature measured in degrees Celsius is what type of data?',
+      options: ['Qualitative', 'Quantitative continuous', 'Quantitative discontinuous', 'Ranked'],
+      correct: 1,
+      explanation: 'Temperature can take any value in a range (37.5°C, 37.6°C, etc.), making it quantitative continuous.'
+    },
+    {
+      category: 'Data Analysis',
+      type: 'multiple-choice',
+      question: 'In a CER argument, what is the Evidence?',
+      options: ['Your answer to the question', 'The data that supports your answer', 'The scientific explanation', 'The hypothesis'],
+      correct: 1,
+      explanation: 'Evidence is the DATA from experiments or observations that supports your claim.'
+    },
+
+    // Atomic Structure
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'An atom has 6 protons, 6 neutrons, and 6 electrons. What element is this?',
+      options: ['Oxygen', 'Carbon', 'Nitrogen', 'Boron'],
+      correct: 1,
+      explanation: 'The number of protons determines the element. 6 protons = Carbon (C).'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'If an atom has 11 protons and 10 electrons, is it neutral or charged?',
+      options: ['Neutral', 'Positively charged', 'Negatively charged', 'Cannot determine'],
+      correct: 1,
+      explanation: 'More protons (11) than electrons (10) means it has a +1 charge. This is Na⁺ (sodium ion).'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'Carbon-12 and Carbon-14 are examples of:',
+      options: ['Different elements', 'Isotopes', 'Ions', 'Molecules'],
+      correct: 1,
+      explanation: 'Isotopes are atoms of the same element with different numbers of neutrons. Both have 6 protons but different neutrons (12-6=6n, 14-6=8n).'
+    },
+
+    // Water and Polarity
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'What type of bond connects the oxygen and hydrogen atoms WITHIN a water molecule?',
+      options: ['Hydrogen bond', 'Ionic bond', 'Covalent bond', 'Peptide bond'],
+      correct: 2,
+      explanation: 'Covalent bonds form within molecules by sharing electrons. Hydrogen bonds form BETWEEN molecules.'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'Which molecule can form hydrogen bonds with water?',
+      options: ['CH₄ (methane)', 'C₆H₁₂O₆ (glucose)', 'O₂ (oxygen gas)', 'CO₂ (carbon dioxide)'],
+      correct: 1,
+      explanation: 'Glucose has -OH groups that can form hydrogen bonds with water, making it soluble.'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'In a water molecule (H₂O), which atom has a partial negative charge (δ⁻)?',
+      options: ['Hydrogen', 'Oxygen', 'Both equally', 'Neither'],
+      correct: 1,
+      explanation: 'Oxygen is more electronegative, pulling electrons closer and becoming δ⁻. Hydrogen atoms become δ⁺.'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'A molecule that dissolves well in water is most likely:',
+      options: ['Nonpolar', 'Hydrophobic', 'Polar or charged', 'A lipid'],
+      correct: 2,
+      explanation: '"Like dissolves like" - polar water dissolves polar/charged substances (hydrophilic).'
+    },
+
+    // Biological Molecules
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'What is the monomer of a carbohydrate?',
+      options: ['Amino acid', 'Nucleotide', 'Monosaccharide', 'Fatty acid'],
+      correct: 2,
+      explanation: 'Monosaccharides (simple sugars like glucose) are the monomers of carbohydrates.'
+    },
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'Which macromolecule is the primary long-term energy storage in animals?',
+      options: ['Carbohydrates', 'Proteins', 'Lipids', 'Nucleic acids'],
+      correct: 2,
+      explanation: 'Lipids (fats) store the most energy per gram and are used for long-term storage.'
+    },
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'What type of reaction breaks down polymers into monomers?',
+      options: ['Dehydration synthesis', 'Hydrolysis', 'Condensation', 'Photosynthesis'],
+      correct: 1,
+      explanation: 'Hydrolysis adds water to break bonds, separating polymers into monomers (like digestion).'
+    },
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'Which polysaccharide is used for energy storage in plants?',
+      options: ['Glycogen', 'Cellulose', 'Starch', 'Chitin'],
+      correct: 2,
+      explanation: 'Starch is how plants store glucose for later use. Glycogen is animal storage, cellulose is structure.'
+    },
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'Saturated fats have:',
+      options: ['Double bonds and are liquid', 'No double bonds and are solid', 'Double bonds and are solid', 'No bonds'],
+      correct: 1,
+      explanation: 'Saturated = "saturated with hydrogen" = no double bonds. Straight chains pack tightly, making them solid at room temp.'
+    },
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'What makes up a phospholipid?',
+      options: [
+        'Glycerol + 3 fatty acids',
+        'Glycerol + 2 fatty acids + phosphate group',
+        '4 fused carbon rings',
+        '20 amino acids'
+      ],
+      correct: 1,
+      explanation: 'Phospholipids have glycerol + 2 fatty acids (hydrophobic tails) + phosphate group (hydrophilic head).'
+    },
+    {
+      category: 'Biological Molecules',
+      type: 'multiple-choice',
+      question: 'The primary structure of a protein is:',
+      options: [
+        'The sequence of amino acids',
+        'Alpha helices and beta sheets',
+        'The overall 3D shape',
+        'Multiple polypeptide chains'
+      ],
+      correct: 0,
+      explanation: 'Primary structure is simply the order/sequence of amino acids in the chain.'
+    },
+
+    // Enzymes
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'How do enzymes speed up chemical reactions?',
+      options: [
+        'By raising activation energy',
+        'By lowering activation energy',
+        'By being consumed in the reaction',
+        'By changing the products'
+      ],
+      correct: 1,
+      explanation: 'Enzymes lower the activation energy needed to start a reaction, making it happen faster.'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'Where does the substrate bind on an enzyme?',
+      options: ['Allosteric site', 'Active site', 'Ribosomes', 'Cell membrane'],
+      correct: 1,
+      explanation: 'The substrate binds to the active site, which is specifically shaped to fit that substrate.'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'What type of inhibitor binds to the active site?',
+      options: ['Noncompetitive inhibitor', 'Competitive inhibitor', 'Coenzyme', 'Cofactor'],
+      correct: 1,
+      explanation: 'Competitive inhibitors compete with the substrate for the active site.'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'Extreme heat or pH can cause enzymes to:',
+      options: ['Speed up', 'Denature (lose shape and function)', 'Duplicate', 'Form new bonds'],
+      correct: 1,
+      explanation: 'Extreme conditions break bonds holding enzyme shape, causing denaturation and loss of function.'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'If you increase substrate concentration (with excess enzyme), enzyme activity will:',
+      options: ['Decrease', 'Stay the same', 'Increase then plateau', 'Stop completely'],
+      correct: 2,
+      explanation: 'Activity increases as more substrate is available, but plateaus when all enzyme active sites are full.'
+    },
+
+    // Cells
+    {
+      category: 'Cells',
+      type: 'multiple-choice',
+      question: 'Which type of cell has a nucleus?',
+      options: ['Prokaryotic only', 'Eukaryotic only', 'Both prokaryotic and eukaryotic', 'Neither'],
+      correct: 1,
+      explanation: 'Only eukaryotic cells have a membrane-bound nucleus. Prokaryotes have DNA floating in cytoplasm.'
+    },
+    {
+      category: 'Cells',
+      type: 'multiple-choice',
+      question: 'Which organelle is found in plant cells but NOT animal cells?',
+      options: ['Nucleus', 'Mitochondria', 'Chloroplast', 'Ribosome'],
+      correct: 2,
+      explanation: 'Chloroplasts (for photosynthesis) are found in plant cells and some protists, but not in animal cells.'
+    },
+    {
+      category: 'Cells',
+      type: 'multiple-choice',
+      question: 'According to cell theory, all cells:',
+      options: [
+        'Have a nucleus',
+        'Come from pre-existing cells',
+        'Can photosynthesize',
+        'Are exactly the same'
+      ],
+      correct: 1,
+      explanation: 'One of the three parts of cell theory: All cells come from pre-existing cells (no spontaneous generation).'
+    },
+    {
+      category: 'Cells',
+      type: 'multiple-choice',
+      question: 'What is the advantage of an electron microscope over a light microscope?',
+      options: [
+        'Cheaper and easier to use',
+        'Can view living specimens',
+        'Much higher magnification and resolution',
+        'Uses colored dyes'
+      ],
+      correct: 2,
+      explanation: 'Electron microscopes can magnify up to 1,000,000x with high detail. However, they\'re expensive and samples must be dead.'
+    },
+    {
+      category: 'Cells',
+      type: 'multiple-choice',
+      question: 'Bacteria are classified as:',
+      options: ['Eukaryotic', 'Prokaryotic', 'Viruses', 'Multicellular'],
+      correct: 1,
+      explanation: 'Bacteria are prokaryotes - they lack a nucleus and membrane-bound organelles.'
+    },
+
+    // True/False Questions
+    {
+      category: 'Biological Molecules',
+      type: 'true-false',
+      question: 'Cellulose provides structural support in plant cell walls.',
+      correct: true,
+      explanation: 'True! Cellulose is a polysaccharide that gives plant cell walls their strength and rigidity.'
+    },
+    {
+      category: 'Enzymes',
+      type: 'true-false',
+      question: 'Enzymes are consumed in the reactions they catalyze.',
+      correct: false,
+      explanation: 'False! Enzymes are NOT consumed - they can be reused many times. They only speed up reactions.'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'true-false',
+      question: 'Hydrogen bonds are stronger than covalent bonds.',
+      correct: false,
+      explanation: 'False! Hydrogen bonds are weak intermolecular forces. Covalent bonds (within molecules) are much stronger.'
+    },
+    {
+      category: 'Cells',
+      type: 'true-false',
+      question: 'All cells have ribosomes.',
+      correct: true,
+      explanation: 'True! Both prokaryotic and eukaryotic cells have ribosomes to make proteins.'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'true-false',
+      question: 'Isotopes of an element have different numbers of protons.',
+      correct: false,
+      explanation: 'False! Isotopes have the SAME number of protons but DIFFERENT numbers of neutrons.'
+    }
+  ];
+
+  // Matching game data
+  const matchingData = [
+    { id: 1, type: 'term', content: 'Independent Variable', match: 'What you change', category: 'Experimental Design' },
+    { id: 2, type: 'answer', content: 'What you change', match: 'Independent Variable', category: 'Experimental Design' },
+    { id: 3, type: 'term', content: 'Dependent Variable', match: 'What you measure', category: 'Experimental Design' },
+    { id: 4, type: 'answer', content: 'What you measure', match: 'Dependent Variable', category: 'Experimental Design' },
+    { id: 5, type: 'term', content: 'Enzyme', match: 'Biological catalyst', category: 'Enzymes' },
+    { id: 6, type: 'answer', content: 'Biological catalyst', match: 'Enzyme', category: 'Enzymes' },
+    { id: 7, type: 'term', content: 'Active Site', match: 'Where substrate binds', category: 'Enzymes' },
+    { id: 8, type: 'answer', content: 'Where substrate binds', match: 'Active Site', category: 'Enzymes' },
+    { id: 9, type: 'term', content: 'Prokaryotic', match: 'No nucleus', category: 'Cells' },
+    { id: 10, type: 'answer', content: 'No nucleus', match: 'Prokaryotic', category: 'Cells' },
+    { id: 11, type: 'term', content: 'Eukaryotic', match: 'Has nucleus', category: 'Cells' },
+    { id: 12, type: 'answer', content: 'Has nucleus', match: 'Eukaryotic', category: 'Cells' },
+    { id: 13, type: 'term', content: 'Hydrophobic', match: 'Water-fearing', category: 'Water & Polarity' },
+    { id: 14, type: 'answer', content: 'Water-fearing', match: 'Hydrophobic', category: 'Water & Polarity' },
+    { id: 15, type: 'term', content: 'Hydrophilic', match: 'Water-loving', category: 'Water & Polarity' },
+    { id: 16, type: 'answer', content: 'Water-loving', match: 'Hydrophilic', category: 'Water & Polarity' },
+  ];
+
+  const initializeMatching = () => {
+    const shuffled = [...matchingData].sort(() => Math.random() - 0.5);
+    setMatchingPairs(shuffled);
+    setSelectedCards([]);
+    setMatchedPairs([]);
+    setScore(0);
+    setAttempts(0);
+  };
+
+  const initializeTest = () => {
+    const shuffled = [...questionBank].sort(() => Math.random() - 0.5).slice(0, 20);
+    setTestQuestions(shuffled);
+    setCurrentQuestion(0);
+    setUserAnswers({});
+    setShowResults(false);
+  };
+
+  useEffect(() => {
+    if (mode === 'matching') {
+      initializeMatching();
+    } else if (mode === 'test') {
+      initializeTest();
+    }
+  }, [mode]);
+
+  const handleCardSelect = (card) => {
+    if (matchedPairs.includes(card.id) || selectedCards.some(c => c.id === card.id)) {
+      return;
+    }
+    const newSelected = [...selectedCards, card];
+    setSelectedCards(newSelected);
+    if (newSelected.length === 2) {
+      setAttempts(attempts + 1);
+      if (newSelected[0].match === newSelected[1].content || newSelected[1].match === newSelected[0].content) {
+        setMatchedPairs([...matchedPairs, newSelected[0].id, newSelected[1].id]);
+        setScore(score + 10);
+        setSelectedCards([]);
+      } else {
+        setTimeout(() => setSelectedCards([]), 1000);
+      }
+    }
+  };
+
+  const handleTestAnswer = (answer) => {
+    setUserAnswers({...userAnswers, [currentQuestion]: answer});
+  };
+
+  const calculateTestScore = () => {
+    let correct = 0;
+    testQuestions.forEach((q, idx) => {
+      if (q.type === 'multiple-choice' && userAnswers[idx] === q.correct) {
+        correct++;
+      } else if (q.type === 'true-false' && userAnswers[idx] === q.correct) {
+        correct++;
+      }
+    });
+    return { correct, total: testQuestions.length, percentage: Math.round((correct / testQuestions.length) * 100) };
+  };
+
+  // Menu Screen
+  const MenuScreen = () => (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-4">
+      {/* Breadcrumbs */}
+      <div className="max-w-6xl mx-auto mb-4 pt-4">
+        <div className="flex items-center space-x-2 text-white/80 text-sm">
+          <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+          <span>/</span>
+          <span className="text-white font-semibold">Bio Quiz #3</span>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-3xl shadow-2xl p-8">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <span className="text-7xl">🧬</span>
+            </div>
+            <h1 className="text-5xl font-bold text-gray-800 mb-2">Bio Quiz #3</h1>
+            <p className="text-gray-600 text-lg">Complete Study Guide - All Topics Mastered!</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <button
+              onClick={() => setMode('flashcards')}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all"
+            >
+              <span className="text-4xl">📚</span>
+              <div className="text-left">
+                <div>Study Flashcards</div>
+                <div className="text-sm opacity-90">Master all concepts</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setMode('matching')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all"
+            >
+              <span className="text-4xl">🎯</span>
+              <div className="text-left">
+                <div>Matching Game</div>
+                <div className="text-sm opacity-90">Test your knowledge</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setMode('test')}
+              className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg transform hover:scale-105 transition-all md:col-span-2"
+            >
+              <span className="text-4xl">✍️</span>
+              <div className="text-left">
+                <div>Practice Test</div>
+                <div className="text-sm opacity-90">20 questions covering all topics</div>
+              </div>
+            </button>
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6">
+            <h3 className="font-bold text-gray-800 mb-4 text-lg flex items-center">
+              <span className="text-2xl mr-2">📋</span>
+              Topics Covered:
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {topicCategories.map((topic, idx) => (
+                <div key={idx} className="flex items-center space-x-2 bg-white p-3 rounded-lg shadow-sm">
+                  <span className="text-2xl">{topic.icon}</span>
+                  <div>
+                    <div className="font-semibold text-gray-800">{topic.name}</div>
+                    <div className="text-xs text-gray-600">{topic.concepts.length} key concepts</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Flashcard Mode
+  const FlashcardMode = () => {
+    const allConcepts = topicCategories.flatMap(cat =>
+      cat.concepts.map(c => ({ ...c, category: cat.name, icon: cat.icon, color: cat.color }))
+    );
+    const concept = allConcepts[currentCard];
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4">
+        {/* Breadcrumbs */}
+        <div className="max-w-4xl mx-auto mb-4 pt-4">
+          <div className="flex items-center space-x-2 text-white/90 text-sm">
+            <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+            <span>/</span>
+            <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+            <span>/</span>
+            <span className="text-white font-semibold">Flashcards</span>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setMode('menu')}
+              className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              ← Back to Menu
+            </button>
+            <div className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-700">
+              Card {currentCard + 1} / {allConcepts.length}
+            </div>
+          </div>
+
+          <div
+            className="bg-white rounded-3xl shadow-2xl p-8 min-h-[500px] cursor-pointer transform transition-all hover:scale-105"
+            onClick={() => setIsFlipped(!isFlipped)}
+          >
+            {!isFlipped ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-5xl">{concept.icon}</span>
+                  <span className={`${concept.color} text-white px-4 py-2 rounded-full text-sm font-semibold`}>
+                    {concept.category}
+                  </span>
+                </div>
+                <h2 className="text-4xl font-bold text-gray-800 mb-4 text-center">{concept.term}</h2>
+                <p className="text-gray-500 text-lg">Click to see definition →</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-4xl">{concept.icon}</span>
+                  <span className={`${concept.color} text-white px-4 py-2 rounded-full text-sm font-semibold`}>
+                    {concept.category}
+                  </span>
+                </div>
+
+                <h2 className="text-3xl font-bold text-gray-800">{concept.term}</h2>
+
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-lg text-blue-800 mb-2">📖 Definition:</h3>
+                  <p className="text-gray-700 text-lg leading-relaxed">{concept.definition}</p>
+                </div>
+
+                <div className="bg-green-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-lg text-green-800 mb-2">💡 Example:</h3>
+                  <p className="text-gray-700 text-lg leading-relaxed">{concept.example}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-between mt-6">
+            <button
+              onClick={() => {
+                setCurrentCard(Math.max(0, currentCard - 1));
+                setIsFlipped(false);
+              }}
+              disabled={currentCard === 0}
+              className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
+            >
+              ← Previous
+            </button>
+
+            <button
+              onClick={() => setIsFlipped(!isFlipped)}
+              className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-all"
+            >
+              {isFlipped ? 'Show Front' : 'Show Back'}
+            </button>
+
+            <button
+              onClick={() => {
+                setCurrentCard(Math.min(allConcepts.length - 1, currentCard + 1));
+                setIsFlipped(false);
+              }}
+              disabled={currentCard === allConcepts.length - 1}
+              className="bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
+            >
+              Next →
+            </button>
+          </div>
+
+          {/* Topic Filter */}
+          <div className="mt-6 bg-white/20 backdrop-blur-lg rounded-xl p-4">
+            <p className="text-white text-sm font-semibold mb-2">Jump to Topic:</p>
+            <div className="flex flex-wrap gap-2">
+              {topicCategories.map((topic, idx) => {
+                const startIdx = topicCategories.slice(0, idx).reduce((sum, t) => sum + t.concepts.length, 0);
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => { setCurrentCard(startIdx); setIsFlipped(false); }}
+                    className="bg-white/90 hover:bg-white px-3 py-2 rounded-lg text-sm font-semibold transition-all"
+                  >
+                    {topic.icon} {topic.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Matching Mode
+  const MatchingMode = () => {
+    const allMatched = matchedPairs.length === matchingPairs.length;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-400 to-purple-500 p-4">
+        {/* Breadcrumbs */}
+        <div className="max-w-6xl mx-auto mb-4 pt-4">
+          <div className="flex items-center space-x-2 text-white/90 text-sm">
+            <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+            <span>/</span>
+            <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+            <span>/</span>
+            <span className="text-white font-semibold">Matching Game</span>
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setMode('menu')}
+              className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              ← Back to Menu
+            </button>
+            <div className="flex gap-4">
+              <div className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-700">
+                Score: {score}
+              </div>
+              <div className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-700">
+                Attempts: {attempts}
+              </div>
+            </div>
+          </div>
+
+          {allMatched && (
+            <div className="bg-green-500 text-white rounded-2xl shadow-2xl p-6 mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl">🏆</span>
+                <div>
+                  <h3 className="text-2xl font-bold">Perfect! 🎉</h3>
+                  <p>Score: {score} | Attempts: {attempts}</p>
+                </div>
+              </div>
+              <button
+                onClick={initializeMatching}
+                className="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold flex items-center gap-2 hover:shadow-lg transition-all"
+              >
+                🔄 Play Again
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {matchingPairs.map((card) => {
+              const isMatched = matchedPairs.includes(card.id);
+              const isSelected = selectedCards.some(c => c.id === card.id);
+              const isWrongMatch = selectedCards.length === 2 && isSelected && !isMatched;
+              return (
+                <button
+                  key={card.id}
+                  onClick={() => handleCardSelect(card)}
+                  disabled={isMatched}
+                  className={`p-6 rounded-xl font-semibold text-center min-h-[120px] flex items-center justify-center transition-all transform hover:scale-105 ${
+                    isMatched
+                      ? 'bg-green-500 text-white opacity-50 cursor-not-allowed'
+                      : isSelected
+                      ? isWrongMatch
+                        ? 'bg-red-500 text-white scale-95'
+                        : 'bg-blue-500 text-white'
+                      : card.type === 'term'
+                      ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                      : 'bg-pink-100 text-pink-800 hover:bg-pink-200'
+                  }`}
+                >
+                  {card.content}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Test Mode
+  const TestMode = () => {
+    if (testQuestions.length === 0) return null;
+
+    if (showResults) {
+      const results = calculateTestScore();
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
+          {/* Breadcrumbs */}
+          <div className="max-w-4xl mx-auto mb-4 pt-4">
+            <div className="flex items-center space-x-2 text-white/90 text-sm">
+              <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+              <span>/</span>
+              <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+              <span>/</span>
+              <span className="text-white font-semibold">Test Results</span>
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-2xl p-8">
+              <div className="text-center mb-8">
+                <div className={`text-8xl mb-4 ${results.percentage >= 80 ? '🏆' : results.percentage >= 60 ? '🌟' : '📚'}`}>
+                  {results.percentage >= 80 ? '🏆' : results.percentage >= 60 ? '🌟' : '📚'}
+                </div>
+                <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Complete!</h2>
+                <p className="text-2xl text-gray-600">Score: {results.correct}/{results.total} ({results.percentage}%)</p>
+                <p className="text-gray-500 mt-2">
+                  {results.percentage >= 90 ? 'Outstanding! You\'ve mastered this material! 🎉' :
+                   results.percentage >= 80 ? 'Great job! You\'re well-prepared! 👏' :
+                   results.percentage >= 70 ? 'Good work! Review the missed topics. 📖' :
+                   results.percentage >= 60 ? 'Fair effort. More practice needed. 💪' :
+                   'Keep studying! You\'ll get there! 🌱'}
+                </p>
+              </div>
+
+              <div className="space-y-6 mb-8 max-h-[600px] overflow-y-auto">
+                {testQuestions.map((q, idx) => {
+                  const userAnswer = userAnswers[idx];
+                  const isCorrect = q.type === 'multiple-choice'
+                    ? userAnswer === q.correct
+                    : userAnswer === q.correct;
+
+                  return (
+                    <div key={idx} className={`p-6 rounded-xl ${isCorrect ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'}`}>
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="text-2xl">{isCorrect ? '✅' : '❌'}</div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xs bg-gray-200 px-2 py-1 rounded font-semibold text-gray-700">
+                              {q.category}
+                            </span>
+                          </div>
+                          <p className="font-semibold text-gray-800 mb-2">{idx + 1}. {q.question}</p>
+                          {q.type === 'multiple-choice' && (
+                            <div className="space-y-2">
+                              {q.options.map((opt, optIdx) => (
+                                <div key={optIdx} className={`p-2 rounded ${
+                                  optIdx === q.correct ? 'bg-green-200 font-semibold' :
+                                  optIdx === userAnswer && optIdx !== q.correct ? 'bg-red-200' :
+                                  'bg-gray-100'
+                                }`}>
+                                  {opt} {optIdx === q.correct && '✓'} {optIdx === userAnswer && optIdx !== q.correct && '✗ (Your answer)'}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {q.type === 'true-false' && (
+                            <div className="space-y-2">
+                              <div className={`p-2 rounded ${q.correct === true ? 'bg-green-200 font-semibold' : userAnswer === true && !q.correct ? 'bg-red-200' : 'bg-gray-100'}`}>
+                                True {q.correct === true && '✓'} {userAnswer === true && !q.correct && '✗ (Your answer)'}
+                              </div>
+                              <div className={`p-2 rounded ${q.correct === false ? 'bg-green-200 font-semibold' : userAnswer === false && q.correct ? 'bg-red-200' : 'bg-gray-100'}`}>
+                                False {q.correct === false && '✓'} {userAnswer === false && q.correct && '✗ (Your answer)'}
+                              </div>
+                            </div>
+                          )}
+                          <p className="mt-3 text-sm text-gray-700 bg-blue-50 p-3 rounded">
+                            <strong>💡 Explanation:</strong> {q.explanation}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setMode('menu')}
+                  className="flex-1 bg-gray-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-gray-700 transition-all"
+                >
+                  Back to Menu
+                </button>
+                <button
+                  onClick={initializeTest}
+                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-green-700 transition-all flex items-center justify-center gap-2"
+                >
+                  🔄 Take New Test
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const currentQ = testQuestions[currentQuestion];
+    const answered = userAnswers.hasOwnProperty(currentQuestion);
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4">
+        {/* Breadcrumbs */}
+        <div className="max-w-4xl mx-auto mb-4 pt-4">
+          <div className="flex items-center space-x-2 text-white/90 text-sm">
+            <a href="dashboard" className="hover:text-white transition-colors">🏠 Dashboard</a>
+            <span>/</span>
+            <button onClick={() => setMode('menu')} className="hover:text-white transition-colors">Bio Quiz #3</button>
+            <span>/</span>
+            <span className="text-white font-semibold">Practice Test</span>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setMode('menu')}
+              className="bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              ← Exit Test
+            </button>
+            <div className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-700">
+              Question {currentQuestion + 1} / {testQuestions.length}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-2xl p-8">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full font-semibold">
+                {currentQ.category}
+              </span>
+            </div>
+
+            <h3 className="text-2xl font-bold text-gray-800 mb-6">{currentQ.question}</h3>
+
+            {currentQ.type === 'multiple-choice' && (
+              <div className="space-y-3 mb-8">
+                {currentQ.options.map((option, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleTestAnswer(idx)}
+                    className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
+                      userAnswers[currentQuestion] === idx
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                    }`}
+                  >
+                    {String.fromCharCode(65 + idx)}. {option}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {currentQ.type === 'true-false' && (
+              <div className="space-y-3 mb-8">
+                <button
+                  onClick={() => handleTestAnswer(true)}
+                  className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
+                    userAnswers[currentQuestion] === true
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  }`}
+                >
+                  True
+                </button>
+                <button
+                  onClick={() => handleTestAnswer(false)}
+                  className={`w-full p-4 rounded-xl text-left font-semibold transition-all ${
+                    userAnswers[currentQuestion] === false
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  }`}
+                >
+                  False
+                </button>
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+                disabled={currentQuestion === 0}
+                className="bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-400 transition-all"
+              >
+                ← Previous
+              </button>
+
+              {currentQuestion === testQuestions.length - 1 ? (
+                <button
+                  onClick={() => setShowResults(true)}
+                  disabled={Object.keys(userAnswers).length !== testQuestions.length}
+                  className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Submit Test
+                </button>
+              ) : (
+                <button
+                  onClick={() => setCurrentQuestion(currentQuestion + 1)}
+                  disabled={!answered}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-all"
+                >
+                  Next →
+                </button>
+              )}
+            </div>
+
+            <div className="mt-6 flex gap-2 justify-center flex-wrap">
+              {testQuestions.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-3 h-3 rounded-full ${
+                    userAnswers.hasOwnProperty(idx) ? 'bg-green-500' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="font-sans">
+      {mode === 'menu' && <MenuScreen />}
+      {mode === 'flashcards' && <FlashcardMode />}
+      {mode === 'matching' && <MatchingMode />}
+      {mode === 'test' && <TestMode />}
+    </div>
+  );
+}
+
+ReactDOM.render(<BioQuiz3App />, document.getElementById('root'));
+    </script>
+    <!-- Dynamic Gradient System -->
+    <script type="module" src="dynamic-gradient.js"></script>
+</body>
+</html>

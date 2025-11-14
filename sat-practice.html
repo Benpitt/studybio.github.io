@@ -488,7 +488,11 @@
                 setError(null);
                 try {
                     console.log('Loading TensorFlow.js QnA model...');
-                    const loadedModel = await qna.load();
+                    // Check if qna is available
+                    if (typeof window.qna === 'undefined') {
+                        throw new Error('QnA library not loaded. Please refresh the page.');
+                    }
+                    const loadedModel = await window.qna.load();
                     setModel(loadedModel);
                     console.log('QnA model loaded successfully');
                 } catch (err) {
@@ -535,84 +539,106 @@
             };
 
             return (
-                <div className="mt-6 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl p-4 border border-purple-200">
-                    <button
-                        onClick={() => {
-                            setIsExpanded(!isExpanded);
-                            if (!isExpanded && !model && !modelLoading) {
-                                loadModel();
-                            }
-                        }}
-                        className="w-full flex items-center justify-between text-gray-900 font-semibold mb-2"
-                    >
-                        <div className="flex items-center space-x-2">
-                            <span className="text-2xl">🤖</span>
-                            <span>AI Question Assistant</span>
-                        </div>
-                        <svg
-                            className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                <div className="fixed left-4 bottom-4 z-50" style={{ maxWidth: isExpanded ? '380px' : '60px' }}>
+                    {!isExpanded ? (
+                        <button
+                            onClick={() => {
+                                setIsExpanded(true);
+                                if (!model && !modelLoading) {
+                                    loadModel();
+                                }
+                            }}
+                            className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center text-2xl"
+                            title="AI Assistant"
                         >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    {isExpanded && (
-                        <div className="mt-3 space-y-3">
-                            {modelLoading && (
-                                <div className="text-gray-700 text-sm text-center py-2">
-                                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600 mb-2"></div>
-                                    <p>Loading AI model (this may take a moment)...</p>
+                            🤖
+                        </button>
+                    ) : (
+                        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" style={{ width: '380px' }}>
+                            <div className="bg-gradient-to-r from-purple-600 to-blue-500 p-4 flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                    <div className="text-2xl">🤖</div>
+                                    <div>
+                                        <div className="text-white font-semibold">AI Assistant</div>
+                                        <div className="text-white/80 text-xs">Hey! How can I help?</div>
+                                    </div>
                                 </div>
-                            )}
+                                <button
+                                    onClick={() => setIsExpanded(false)}
+                                    className="text-white/80 hover:text-white transition-colors"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
 
-                            {!modelLoading && (
-                                <>
-                                    <div className="flex space-x-2">
-                                        <input
-                                            type="text"
-                                            value={question}
-                                            onChange={(e) => setQuestion(e.target.value)}
-                                            onKeyPress={handleKeyPress}
-                                            placeholder={placeholder}
-                                            disabled={loading || !model}
-                                            className="flex-1 px-4 py-2 rounded-lg bg-white text-gray-900 placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                                        />
+                            <div className="p-4 space-y-3" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                                {modelLoading && (
+                                    <div className="text-gray-600 text-sm text-center py-4">
+                                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mb-2"></div>
+                                        <p>Loading AI model...</p>
+                                        <p className="text-xs text-gray-500 mt-1">This may take a moment</p>
+                                    </div>
+                                )}
+
+                                {!modelLoading && !model && (
+                                    <div className="text-center py-4">
+                                        <p className="text-gray-600 text-sm mb-3">Ready to answer your questions!</p>
                                         <button
-                                            onClick={handleAskQuestion}
-                                            disabled={loading || !question.trim() || !model}
-                                            className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            onClick={loadModel}
+                                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all"
                                         >
-                                            {loading ? '...' : 'Ask'}
+                                            Start Chat
                                         </button>
                                     </div>
+                                )}
 
-                                    {error && (
-                                        <div className="p-3 bg-red-100 border border-red-300 rounded-lg text-red-800 text-sm">
-                                            {error}
-                                        </div>
-                                    )}
-
-                                    {answer && (
-                                        <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                                            <div className="flex items-start space-x-2">
-                                                <span className="text-lg">💡</span>
-                                                <div className="flex-1">
-                                                    <p className="text-gray-900 font-medium mb-1">Answer:</p>
-                                                    <p className="text-gray-700">{answer.text}</p>
-                                                    {answer.score > 0 && (
-                                                        <p className="text-xs text-gray-500 mt-2">
-                                                            Confidence: {Math.round(answer.score * 100)}%
-                                                        </p>
-                                                    )}
+                                {!modelLoading && model && (
+                                    <>
+                                        {answer && (
+                                            <div className="p-3 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+                                                <div className="flex items-start space-x-2">
+                                                    <span className="text-lg">💡</span>
+                                                    <div className="flex-1">
+                                                        <p className="text-gray-700 text-sm">{answer.text}</p>
+                                                        {answer.score > 0 && (
+                                                            <p className="text-xs text-gray-500 mt-2">
+                                                                Confidence: {Math.round(answer.score * 100)}%
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
+                                        )}
+
+                                        {error && (
+                                            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                                                {error}
+                                            </div>
+                                        )}
+
+                                        <div className="space-y-2">
+                                            <input
+                                                type="text"
+                                                value={question}
+                                                onChange={(e) => setQuestion(e.target.value)}
+                                                onKeyPress={handleKeyPress}
+                                                placeholder={placeholder}
+                                                disabled={loading}
+                                                className="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                                            />
+                                            <button
+                                                onClick={handleAskQuestion}
+                                                disabled={loading || !question.trim()}
+                                                className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            >
+                                                {loading ? 'Thinking...' : 'Ask Question'}
+                                            </button>
                                         </div>
-                                    )}
-                                </>
-                            )}
+                                    </>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -1721,11 +1747,6 @@
                                             <MathText text={explanation || 'No explanation available.'} className="text-blue-800" />
                                         </div>
                                     )}
-
-                                    <QnAWidget
-                                        context={`Question: ${questionText}\n\n${choices ? 'Answer Choices:\n' + choices.map(c => `${c.letter}) ${c.content}`).join('\n') + '\n\n' : ''}Correct Answer: ${correctAnswer}${explanation ? '\n\nExplanation: ' + explanation : ''}`}
-                                        placeholder="Ask a question about this SAT question..."
-                                    />
                                 </div>
                             </div>
 
@@ -1841,6 +1862,14 @@
                         >
                             <DesmosCalculator mode={calculatorMode} />
                         </DraggableWidget>
+                    )}
+
+                    {/* QnA Assistant */}
+                    {testQuestions.length > 0 && (
+                        <QnAWidget
+                            context={`Question: ${questionText}\n\n${choices ? 'Answer Choices:\n' + choices.map(c => `${c.letter}) ${c.content}`).join('\n') + '\n\n' : ''}Correct Answer: ${correctAnswer}${explanation ? '\n\nExplanation: ' + explanation : ''}`}
+                            placeholder="Ask a question about this SAT question..."
+                        />
                     )}
                 </>
             );

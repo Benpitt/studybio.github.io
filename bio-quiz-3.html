@@ -87,17 +87,66 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="nav-bar">
-        <div class="nav-container">
-            <a href="dashboard" class="nav-logo">
-                <span>🎓</span>
-                <span>studying.works</span>
-            </a>
-            <div class="nav-links">
-                <a href="dashboard" class="nav-link">Dashboard</a>
+    <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 fixed top-0 left-0 right-0 z-50 animate-slide-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="dashboard" class="text-2xl font-bold text-white flex items-center space-x-2 hover:scale-105 transition-transform">
+                        <span>🎓</span>
+                        <span>studying.works</span>
+                    </a>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="dashboard" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Dashboard</a>
+                        <a href="bio-quiz-3" class="text-white font-semibold px-3 py-2 rounded-lg bg-white/10">Bio Quiz #3</a>
+                        <a href="progress" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">Progress</a>
+                        <a href="about" class="text-white/80 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all">About</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="flex items-center space-x-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all">
+                            <img id="user-photo" src="https://via.placeholder.com/40" alt="User profile photo" class="w-8 h-8 rounded-full" loading="lazy">
+                            <span id="user-name-nav" class="text-white font-semibold hidden md:block">User</span>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <div class="p-4">
+                                <p id="user-email" class="text-sm text-gray-600 mb-3 break-words overflow-wrap"></p>
+                                <div class="space-y-2 mb-3">
+                                    <a href="tutorial" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-purple-50 rounded-lg transition-all">
+                                        <span>📚</span>
+                                        <span>Tutorial</span>
+                                    </a>
+                                    <a href="settings" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition-all">
+                                        <span>⚙️</span>
+                                        <span>Settings</span>
+                                    </a>
+                                </div>
+                                <button id="signout-btn" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-all">
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
+    <script type="module">
+        // Load user info from localStorage
+        const userName = localStorage.getItem('userName') || 'Student';
+        const userEmail = localStorage.getItem('userEmail') || '';
+        const userPhoto = localStorage.getItem('userPhoto') || 'https://via.placeholder.com/40';
+
+        document.getElementById('user-photo').src = userPhoto;
+        document.getElementById('user-name-nav').textContent = userName.split(' ')[0];
+        document.getElementById('user-email').textContent = userEmail;
+
+        // Sign out functionality
+        document.getElementById('signout-btn').addEventListener('click', async () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+    </script>
     <div id="root"></div>
     <script type="text/babel">
 const { useState, useEffect, useRef } = React;
@@ -116,6 +165,7 @@ function BioQuiz3App() {
   const [enzymeStep, setEnzymeStep] = useState(0);
   const [customTestQuestions, setCustomTestQuestions] = useState([]);
   const [definitionsView, setDefinitionsView] = useState('learn'); // 'learn' or 'flashcard'
+  const [selectedComparison, setSelectedComparison] = useState('dnarna');
 
   // Load mistake bank from localStorage
   useEffect(() => {
@@ -262,6 +312,27 @@ function BioQuiz3App() {
           example: 'Plant growth over 30 days, temperature changes.',
           visual: '📈',
           remember: 'Connected = continuous data'
+        },
+        {
+          term: 'Ranked Data',
+          definition: 'Data ordered by position or rank rather than numerical values.',
+          example: 'Olympic medals (1st, 2nd, 3rd), satisfaction ratings (poor, fair, good, excellent).',
+          visual: '🥇',
+          remember: 'Order matters, but differences between ranks not equal'
+        },
+        {
+          term: 'Data Transformations',
+          definition: 'Converting data into different forms like percentages or rates for easier comparison.',
+          example: 'Raw: 15 out of 60 seeds germinated. Percentage: (15÷60)×100 = 25%. Rate: 15 seeds per day.',
+          visual: '🔄',
+          remember: 'Percentage = (part÷whole)×100. Rate = amount per unit time'
+        },
+        {
+          term: 'Graph Labels',
+          definition: 'All graphs need: 1) Title describing what is shown, 2) X-axis label with units, 3) Y-axis label with units.',
+          example: 'Title: "Effect of Temperature on Enzyme Activity" X-axis: "Temperature (°C)" Y-axis: "Reaction Rate (mM/min)"',
+          visual: '🏷️',
+          remember: 'Title + Both axes labeled + Units'
         },
       ]
     },
@@ -425,6 +496,41 @@ function BioQuiz3App() {
           remember: 'NH₂ + COOH + R group'
         },
         {
+          term: 'Amino Acid R Groups',
+          definition: 'The R group determines amino acid properties. Polar R groups = hydrophilic. Nonpolar R groups = hydrophobic. Charged R groups = ionic interactions.',
+          example: 'Polar (Ser, Thr) → outside proteins. Nonpolar (Val, Leu) → inside proteins away from water.',
+          visual: '⚡',
+          remember: 'Polar = water-loving, Nonpolar = water-fearing'
+        },
+        {
+          term: 'Primary Structure',
+          definition: 'The linear sequence of amino acids in a protein chain.',
+          example: 'Gly-Ala-Val-Ser-Leu... Held by peptide bonds.',
+          visual: '1️⃣',
+          remember: 'Sequence = 1st structure. Like beads on a string.'
+        },
+        {
+          term: 'Secondary Structure',
+          definition: 'Local folding patterns: alpha helix (spiral) or beta sheet (pleated). Held by hydrogen bonds.',
+          example: 'Hair has alpha helices. Silk has beta sheets.',
+          visual: '2️⃣',
+          remember: 'Helix or Sheet. H-bonds between backbone atoms.'
+        },
+        {
+          term: 'Tertiary Structure',
+          definition: 'Overall 3D shape of a single protein chain. Held by R group interactions.',
+          example: 'Folded enzyme with active site. Disulfide bonds, ionic bonds, hydrophobic interactions.',
+          visual: '3️⃣',
+          remember: 'Final 3D shape. R groups interact.'
+        },
+        {
+          term: 'Quaternary Structure',
+          definition: 'Multiple protein chains working together. Not all proteins have this.',
+          example: 'Hemoglobin has 4 subunits (2 alpha + 2 beta chains).',
+          visual: '4️⃣',
+          remember: 'Multiple chains together. Not always present.'
+        },
+        {
           term: 'Nucleic Acids',
           definition: 'Polymers of nucleotides. Store and transmit genetic info.',
           example: 'DNA, RNA, ATP.',
@@ -444,6 +550,34 @@ function BioQuiz3App() {
           example: 'Maltose + H₂O → two glucose',
           visual: '💥',
           remember: 'Break (catabolic) + add water'
+        },
+        {
+          term: 'Starch Identification',
+          definition: 'Plant energy storage. Made of α-glucose. Branched (amylopectin) or unbranched (amylose). Humans CAN digest.',
+          example: 'In potatoes, rice, wheat. Iodine test turns blue-black for starch.',
+          visual: '🥔',
+          remember: 'PLANTS store energy. Digestible by humans.'
+        },
+        {
+          term: 'Glycogen Identification',
+          definition: 'Animal energy storage. Made of α-glucose. HIGHLY branched. Humans CAN digest.',
+          example: 'Stored in liver and muscles. More branched than starch.',
+          visual: '💪',
+          remember: 'ANIMAL storage. Very branched. In liver/muscles.'
+        },
+        {
+          term: 'Cellulose Identification',
+          definition: 'Plant cell wall structure. Made of β-glucose. Straight, unbranched chains. Humans CANNOT digest.',
+          example: 'Cotton, wood, dietary fiber. Forms strong fibers.',
+          visual: '🌳',
+          remember: 'STRUCTURE not energy. β-glucose. NOT digestible.'
+        },
+        {
+          term: 'Banana Lab Summary',
+          definition: 'Tests for biomolecules: Benedict\'s (sugars→orange), Iodine (starch→blue-black), Biuret (protein→purple), Sudan III (lipids→red layer).',
+          example: 'Ripe banana: more simple sugars (Benedict\'s+), less starch (Iodine-). Unripe: opposite.',
+          visual: '🍌',
+          remember: 'Ripening converts starch → sugar. Benedict\'s + = reducing sugars present.'
         },
       ]
     },
@@ -493,6 +627,41 @@ function BioQuiz3App() {
           example: 'High temperature or extreme pH breaks bonds.',
           visual: '🔥',
           remember: 'Extreme temp/pH = broken enzyme'
+        },
+        {
+          term: 'Enzyme Concentration Effect',
+          definition: 'More enzyme = faster reaction rate (if substrate available). Linear relationship until substrate runs out.',
+          example: 'Doubling enzyme doubles rate (if excess substrate).',
+          visual: '⚡⚡',
+          remember: 'More enzyme = more active sites = faster rate'
+        },
+        {
+          term: 'Substrate Concentration Effect',
+          definition: 'More substrate = faster rate, UNTIL saturation. Then rate plateaus (all enzymes busy).',
+          example: 'Graph shows curve that levels off at max rate.',
+          visual: '📈',
+          remember: 'Levels off when all enzymes occupied'
+        },
+        {
+          term: 'Temperature Effect',
+          definition: 'Low temp = slow. Optimal temp = maximum rate. High temp = denaturation (rate drops to zero).',
+          example: 'Human enzymes: optimal ~37°C. Above ~40-45°C = denatured.',
+          visual: '🌡️',
+          remember: 'Bell curve. Optimal usually 37°C for humans'
+        },
+        {
+          term: 'pH Effect',
+          definition: 'Each enzyme has optimal pH. Too acidic or basic = denaturation. Different enzymes have different optimums.',
+          example: 'Pepsin (stomach) optimal pH 2. Trypsin (intestine) optimal pH 8.',
+          visual: '🔬',
+          remember: 'Bell curve. Optimal pH varies by enzyme location'
+        },
+        {
+          term: 'Optimal Conditions',
+          definition: 'The temperature and pH where enzyme works FASTEST. Identified as peak on graph.',
+          example: 'Look for highest point on graph. Example: Peak at 37°C = optimal temperature.',
+          visual: '⛰️',
+          remember: 'Peak = optimal. Most efficient enzyme activity'
         },
       ]
     },
@@ -620,6 +789,90 @@ function BioQuiz3App() {
           visual: '⚡',
           remember: 'Pros: super detailed. Cons: expensive, samples dead'
         },
+        {
+          term: 'Microscope Parts: Stage',
+          definition: 'Flat platform where the slide is placed for viewing.',
+          example: 'Hold slide in place with stage clips.',
+          visual: '🔲',
+          remember: 'Stage = where specimen sits'
+        },
+        {
+          term: 'Microscope Parts: Base',
+          definition: 'Bottom support of microscope. Houses light source.',
+          example: 'Heavy part that stabilizes the microscope.',
+          visual: '⬛',
+          remember: 'Base = foundation, supports everything'
+        },
+        {
+          term: 'Microscope Parts: Objective Lens',
+          definition: 'Lens closest to specimen. Multiple powers (4x, 10x, 40x, 100x).',
+          example: 'Total magnification = objective × ocular (10x × 40x = 400x).',
+          visual: '🔍',
+          remember: 'Objective = near object (specimen)'
+        },
+        {
+          term: 'Microscope Parts: Ocular Lens',
+          definition: 'Eyepiece lens you look through. Usually 10x magnification.',
+          example: 'Also called eyepiece. Fixed at 10x typically.',
+          visual: '👁️',
+          remember: 'Ocular = eye lens, usually 10x'
+        },
+        {
+          term: 'Microscope Parts: Coarse Focus',
+          definition: 'Large knob for rough focusing. Moves stage up/down significantly.',
+          example: 'Use ONLY on low power (4x). Never on high power!',
+          visual: '🔄',
+          remember: 'Coarse = big movements, LOW power only'
+        },
+        {
+          term: 'Microscope Parts: Fine Focus',
+          definition: 'Small knob for precise focusing. Small adjustments.',
+          example: 'Use on all powers, especially high power (40x+).',
+          visual: '⚙️',
+          remember: 'Fine = small adjustments, all powers'
+        },
+        {
+          term: 'Microscope Parts: Stage Clips',
+          definition: 'Hold the slide in place on the stage.',
+          example: 'Prevent slide from moving during viewing.',
+          visual: '📎',
+          remember: 'Clips = hold slide steady'
+        },
+        {
+          term: 'Microscope Parts: Stage Adjustment',
+          definition: 'Knobs that move stage left/right and forward/backward.',
+          example: 'Center the specimen in field of view.',
+          visual: '↔️',
+          remember: 'Move stage to center specimen'
+        },
+        {
+          term: 'Microscope Parts: Arm',
+          definition: 'Curved support connecting base to body. Use to carry microscope.',
+          example: 'Always carry by arm + base (two hands).',
+          visual: '💪',
+          remember: 'Arm = handle for carrying'
+        },
+        {
+          term: 'Microscope Parts: Light Source',
+          definition: 'Illuminates specimen from below. Built-in lamp or mirror.',
+          example: 'Brightness can usually be adjusted.',
+          visual: '💡',
+          remember: 'Light = illuminates from bottom'
+        },
+        {
+          term: 'Photosynthesizing Cells',
+          definition: 'Cells with chloroplasts that can make their own food from light.',
+          example: 'Plant cells, algae, some bacteria (cyanobacteria). Look for green chloroplasts.',
+          visual: '🌱',
+          remember: 'Chloroplasts = photosynthesis = green'
+        },
+        {
+          term: 'Non-Photosynthesizing Cells',
+          definition: 'Cells without chloroplasts. Cannot make own food.',
+          example: 'Animal cells, fungi, most bacteria. No green chloroplasts visible.',
+          visual: '🐾',
+          remember: 'No chloroplasts = no photosynthesis'
+        },
       ]
     },
   ];
@@ -687,6 +940,60 @@ function BioQuiz3App() {
       highlight: 'Green oval structures with internal stacks',
       visual: '🌿',
       remember: 'Makes glucose from sunlight',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Vacuole',
+      definition: 'Large storage sac in plant cells. Stores water, nutrients, and waste.',
+      image: cellImages.plant,
+      highlight: 'Large central bubble-like structure taking up most of cell',
+      visual: '💧',
+      remember: 'Big in plants, provides structure and pressure',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Endoplasmic Reticulum',
+      definition: 'Network of folded membranes. Rough ER (with ribosomes) makes proteins. Smooth ER makes lipids.',
+      image: cellImages.animal,
+      highlight: 'Network of interconnected membranes near nucleus',
+      visual: '🔀',
+      remember: 'ER = membrane highway. Rough = bumpy, Smooth = smooth',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Golgi Apparatus',
+      definition: 'Stack of flattened membrane sacs. Packages and ships proteins and lipids.',
+      image: cellImages.animal,
+      highlight: 'Stacked pancake-like structures',
+      visual: '📦',
+      remember: 'Golgi = post office, packages and ships',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Flagella/Cilia',
+      definition: 'Hair-like projections for movement. Flagella are long and few. Cilia are short and many.',
+      image: cellImages.prokaryotic,
+      highlight: 'Whip-like extensions from cell surface',
+      visual: '🌊',
+      remember: 'Flagella = long whip. Cilia = short hairs',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Prokaryotic Cell',
+      definition: 'Simple cell with NO nucleus. DNA floats freely in cytoplasm. Bacteria and archaea.',
+      image: cellImages.prokaryotic,
+      highlight: 'Small, simple cell with no membrane-bound organelles',
+      visual: '🔵',
+      remember: 'NO nucleus, NO organelles, small and simple',
+      category: 'Cell Identification'
+    },
+    {
+      term: 'Identify: Eukaryotic Cell',
+      definition: 'Complex cell WITH nucleus and membrane-bound organelles. Animals, plants, fungi.',
+      image: cellImages.eukaryotic,
+      highlight: 'Large complex cell with nucleus and organelles',
+      visual: '🟣',
+      remember: 'HAS nucleus, HAS organelles, large and complex',
       category: 'Cell Identification'
     },
   ];
@@ -965,6 +1272,184 @@ function BioQuiz3App() {
       color: 'card-gradient-rose',
       hint: 'Long & few vs short & many'
     },
+
+    // Additional Experimental Design Questions
+    {
+      question: 'Why do scientists use control groups in experiments?',
+      answer: 'Control groups provide a BASELINE for comparison. They don\'t receive the treatment being tested, so you can see if your independent variable actually causes change. Without a control, you can\'t prove cause and effect.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Comparison baseline'
+    },
+    {
+      question: 'What makes a hypothesis testable? Give an example of a non-testable hypothesis.',
+      answer: 'Testable = can be supported or rejected with measurable data. Example of NON-testable: "Plants are better than animals" (opinion, not measurable). Testable version: "Plants grow faster with nitrogen fertilizer."',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Must be measurable'
+    },
+    {
+      question: 'An experiment has 3 trials with results: 12cm, 45cm, 13cm. What should you do and why?',
+      answer: 'REPEAT the experiment! The 45cm is an outlier suggesting an error. Multiple trials help identify mistakes and increase reliability. Report the issue and collect more data.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Check for errors'
+    },
+    {
+      question: 'What is the difference between accuracy and precision in measurements?',
+      answer: 'Accuracy = how close to the TRUE value. Precision = how close measurements are to EACH OTHER (consistency). Example: hitting the bullseye = accurate. Hitting same spot repeatedly = precise.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'True value vs consistency'
+    },
+    {
+      question: 'Design a simple experiment to test if plants need sunlight to grow.',
+      answer: 'IV: Light exposure (light vs dark). DV: Plant growth (height in cm). Control variables: same plant species, soil, water, temperature, pot size. Hypothesis: If plants receive sunlight, then they will grow taller because they need light for photosynthesis.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Identify IV, DV, controls'
+    },
+    {
+      question: 'What is random sampling and why is it important?',
+      answer: 'Random sampling means selecting subjects by chance (not choosing specific ones). This REDUCES BIAS and makes results more representative of the whole population. Example: picking random students instead of just your friends.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Reduces bias'
+    },
+    {
+      question: 'What is the difference between a positive and negative control?',
+      answer: 'Positive control = you EXPECT a result (proves your test works). Negative control = you expect NO result (proves nothing else is causing change). Both validate your experimental setup.',
+      category: 'Experimental Design',
+      color: 'card-gradient-blue',
+      hint: 'Expected result vs no result'
+    },
+
+    // Additional Data Analysis Questions
+    {
+      question: 'When should you use a pie chart versus a bar graph?',
+      answer: 'Pie chart = showing parts of a WHOLE (percentages totaling 100%). Example: % of each blood type. Bar graph = comparing different categories or groups. Example: comparing plant heights in different conditions.',
+      category: 'Data Analysis',
+      color: 'card-gradient-success',
+      hint: 'Parts of whole vs comparing groups'
+    },
+
+    // Additional Atomic Structure Questions
+    {
+      question: 'What is the mass number and how is it calculated?',
+      answer: 'Mass number = total number of protons + neutrons. It\'s written as a superscript before element symbol. Example: Carbon-12 has mass number 12 (6 protons + 6 neutrons).',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Protons + neutrons'
+    },
+    {
+      question: 'An ion has 17 protons, 18 neutrons, and 18 electrons. What is it?',
+      answer: 'Chlorine ion (Cl⁻). 17 protons = chlorine element. More electrons (18) than protons (17) = negative charge. Mass number = 17+18 = 35, so it\'s Cl-35.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Count protons, compare to electrons'
+    },
+    {
+      question: 'Why are electrons important in chemistry even though they have almost no mass?',
+      answer: 'Electrons determine CHEMICAL BEHAVIOR! They participate in bonding, determine reactivity, and control how atoms interact. Valence electrons (outermost) are especially important for forming bonds.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Bonding and reactions'
+    },
+    {
+      question: 'What is electronegativity and which element is most electronegative?',
+      answer: 'Electronegativity = how strongly an atom attracts electrons in a bond. Fluorine (F) is most electronegative - it\'s the electron "bully". This creates polar bonds when F bonds with other atoms.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Electron attraction strength'
+    },
+    {
+      question: 'Compare O-16 and O-18. How are they similar and different?',
+      answer: 'Similar: Both oxygen (8 protons, 8 electrons), same chemical properties. Different: O-16 has 8 neutrons, O-18 has 10 neutrons. Different masses but same element - they\'re isotopes.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Same element, different neutrons'
+    },
+    {
+      question: 'Why do atoms form ions?',
+      answer: 'To achieve a STABLE electron configuration (usually 8 valence electrons = octet rule). Metals LOSE electrons to form positive ions. Nonmetals GAIN electrons to form negative ions. Example: Na loses 1e⁻ → Na⁺.',
+      category: 'Atomic Structure',
+      color: 'card-gradient-purple',
+      hint: 'Seeking stability'
+    },
+
+    // Additional Water & Polarity Questions
+    {
+      question: 'Explain why water has a high specific heat capacity and why this matters for life.',
+      answer: 'Hydrogen bonds resist temperature changes, so water heats/cools SLOWLY. This stabilizes body temperature and climate. Oceans moderate Earth\'s temperature. Your body stays ~37°C despite environment changes.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Resists temperature change'
+    },
+    {
+      question: 'What is cohesion versus adhesion? Give an example of each.',
+      answer: 'Cohesion = water molecules stick to EACH OTHER (hydrogen bonds). Example: water droplets form beads. Adhesion = water sticks to OTHER surfaces. Example: water climbs up paper towel or plant stems.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Water to water vs water to other'
+    },
+    {
+      question: 'Why can water dissolve ionic compounds like salt?',
+      answer: 'Water is POLAR (δ⁺ and δ⁻ ends). Positive end attracts negative ions (Cl⁻), negative end attracts positive ions (Na⁺). Water molecules surround and separate the ions - this is dissolution.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Opposite charges attract'
+    },
+    {
+      question: 'What is surface tension and what causes it?',
+      answer: 'Surface tension = water surface acts like a "skin" due to cohesion (hydrogen bonds). Water molecules at surface pull together tightly. Allows insects to walk on water and droplets to form.',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Cohesion creates skin'
+    },
+    {
+      question: 'Why is ice less dense than liquid water and why does this matter?',
+      answer: 'Ice forms a crystal lattice with hydrogen bonds holding molecules in fixed positions, creating SPACE. Ice floats, insulating water below and allowing aquatic life to survive winter. If ice sank, lakes would freeze solid!',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Crystal structure has space'
+    },
+    {
+      question: 'Identify each as hydrophilic or hydrophobic: glucose, oil, salt, wax.',
+      answer: 'Glucose = hydrophilic (polar -OH groups). Oil = hydrophobic (nonpolar). Salt = hydrophilic (ionic, charged). Wax = hydrophobic (nonpolar, long hydrocarbon chains).',
+      category: 'Water & Polarity',
+      color: 'card-gradient-sky',
+      hint: 'Polar/ionic vs nonpolar'
+    },
+
+    // Additional Enzyme Questions
+    {
+      question: 'Why can one enzyme only work on one substrate?',
+      answer: 'SPECIFICITY due to shape! Active site has a unique 3D shape that only fits its specific substrate (lock and key). Like a key only fitting its lock. Wrong substrate = wrong shape = no fit.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Unique shape = unique function'
+    },
+    {
+      question: 'How does pH affect enzyme activity? Use pepsin and trypsin as examples.',
+      answer: 'Each enzyme has an OPTIMAL pH. Pepsin works best in stomach (pH 2, acidic). Trypsin works best in small intestine (pH 8, basic). Wrong pH denatures enzyme or changes active site shape.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Different locations, different pH'
+    },
+    {
+      question: 'What is enzyme saturation and when does it occur?',
+      answer: 'Saturation = all enzyme active sites are OCCUPIED. Adding more substrate won\'t increase rate because there are no free enzymes. Rate plateaus. Only way to increase: add more enzyme molecules!',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'All active sites full'
+    },
+    {
+      question: 'Compare what happens at low, optimal, and high temperatures for enzyme activity.',
+      answer: 'Low temp = slow molecular movement, fewer collisions, SLOW rate. Optimal temp (usually ~37°C for humans) = MAXIMUM rate. High temp = denaturation, enzyme loses shape, rate DROPS to zero.',
+      category: 'Enzymes',
+      color: 'card-gradient-amber',
+      hint: 'Slow, max, denatured'
+    },
   ];
 
   // Comprehensive question bank with images
@@ -1230,6 +1715,229 @@ function BioQuiz3App() {
       explanation: 'Electron microscopes can magnify up to 1,000,000x with high detail, though samples must be dead.',
       difficulty: 'medium'
     },
+
+    // Additional Experimental Design
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'Why is a control group necessary in an experiment?',
+      options: ['To save time', 'To provide a baseline for comparison', 'To reduce costs', 'To increase sample size'],
+      correct: 1,
+      explanation: 'The control group provides a baseline showing what happens without the treatment, allowing you to determine if the independent variable caused the change.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'true-false',
+      question: 'A hypothesis must be proven true to be considered scientific.',
+      correct: false,
+      explanation: 'False! A hypothesis must be TESTABLE (can be supported or rejected), not necessarily true. Science is about testing ideas, not proving them absolutely.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'An experiment has trials with results: 15, 16, 45, 14. What should you do?',
+      options: ['Use all data', 'Remove the outlier and average the rest', 'Repeat the experiment to check for errors', 'Ignore all results'],
+      correct: 2,
+      explanation: 'The 45 is an outlier suggesting possible error. Best practice is to repeat the experiment to verify if it was a mistake or a real result.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'What is the difference between accuracy and precision?',
+      options: ['They mean the same thing', 'Accuracy is closeness to true value, precision is consistency', 'Precision is closeness to true value, accuracy is consistency', 'Neither matters in experiments'],
+      correct: 1,
+      explanation: 'Accuracy = how close to the true/target value. Precision = how close repeated measurements are to each other (reproducibility).',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'What is random sampling and why is it used?',
+      options: ['Choosing your favorite subjects', 'Selecting subjects by chance to reduce bias', 'Picking the easiest subjects to measure', 'Only sampling once'],
+      correct: 1,
+      explanation: 'Random sampling selects subjects by chance, reducing bias and making results more representative of the entire population.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'In a positive control, you expect:',
+      options: ['No result', 'A known positive result', 'Random results', 'Negative results'],
+      correct: 1,
+      explanation: 'Positive control should produce a known positive result, proving your experimental system is working properly.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Experimental Design',
+      type: 'multiple-choice',
+      question: 'Which is a testable hypothesis?',
+      options: ['Plants are beautiful', 'Sunflowers are better than roses', 'Plants given fertilizer will grow taller than unfertilized plants', 'Plants have feelings'],
+      correct: 2,
+      explanation: 'A testable hypothesis must be measurable and falsifiable. Plant height can be measured and compared objectively.',
+      difficulty: 'easy'
+    },
+
+    // Additional Data Analysis
+    {
+      category: 'Data Analysis',
+      type: 'multiple-choice',
+      question: 'When should you use a pie chart?',
+      options: ['Showing change over time', 'Comparing categories', 'Showing parts of a whole (percentages)', 'Showing correlation'],
+      correct: 2,
+      explanation: 'Pie charts are best for showing how parts make up a whole, typically with percentages that total 100%.',
+      difficulty: 'easy'
+    },
+
+    // Additional Atomic Structure
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'What is the mass number of an atom?',
+      options: ['Number of protons', 'Number of electrons', 'Protons + neutrons', 'Protons + electrons'],
+      correct: 2,
+      explanation: 'Mass number = protons + neutrons. These are in the nucleus and account for virtually all the atom\'s mass.',
+      difficulty: 'easy'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'An atom has 17 protons and 18 electrons. What is its charge?',
+      options: ['Neutral (0)', 'Positive (+1)', 'Negative (-1)', 'Negative (-2)'],
+      correct: 2,
+      explanation: 'More electrons (18) than protons (17) means it has a -1 charge. This is a chloride ion (Cl⁻).',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'Which subatomic particle is most important for chemical bonding?',
+      options: ['Protons', 'Neutrons', 'Electrons', 'All are equally important'],
+      correct: 2,
+      explanation: 'Electrons, especially valence electrons, participate in chemical bonding and determine an atom\'s reactivity.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'Which element is the most electronegative?',
+      options: ['Oxygen', 'Hydrogen', 'Fluorine', 'Carbon'],
+      correct: 2,
+      explanation: 'Fluorine is the most electronegative element - it attracts electrons most strongly in chemical bonds.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'true-false',
+      question: 'Isotopes of an element have different numbers of protons.',
+      correct: false,
+      explanation: 'False! Isotopes have the SAME number of protons (same element) but DIFFERENT numbers of neutrons.',
+      difficulty: 'easy'
+    },
+    {
+      category: 'Atomic Structure',
+      type: 'multiple-choice',
+      question: 'Why do atoms form ions?',
+      options: ['To become heavier', 'To achieve a stable electron configuration', 'To change elements', 'To increase mass number'],
+      correct: 1,
+      explanation: 'Atoms form ions to achieve stable electron configurations, usually 8 valence electrons (octet rule).',
+      difficulty: 'medium'
+    },
+
+    // Additional Water & Polarity
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'Why does water have a high specific heat capacity?',
+      options: ['It\'s a small molecule', 'Hydrogen bonds resist temperature changes', 'It has oxygen', 'It\'s liquid at room temperature'],
+      correct: 1,
+      explanation: 'Hydrogen bonds between water molecules require a lot of energy to break, so water resists temperature changes.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'What is cohesion in water?',
+      options: ['Water sticking to other surfaces', 'Water molecules sticking to each other', 'Water dissolving substances', 'Water evaporating'],
+      correct: 1,
+      explanation: 'Cohesion is water molecules sticking to EACH OTHER via hydrogen bonds. Adhesion is water sticking to other surfaces.',
+      difficulty: 'easy'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'Why can water dissolve salt (NaCl)?',
+      options: ['Water is nonpolar', 'Water\'s polar nature attracts and separates ions', 'Salt is hydrophobic', 'Water is acidic'],
+      correct: 1,
+      explanation: 'Water\'s polar nature (δ⁺ and δ⁻) allows it to attract and surround ions, pulling them apart and dissolving the salt.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'What causes surface tension in water?',
+      options: ['Covalent bonds', 'Cohesion from hydrogen bonds', 'Ionic bonds', 'Van der Waals forces'],
+      correct: 1,
+      explanation: 'Cohesion (water molecules sticking together via hydrogen bonds) creates surface tension, making the surface act like a skin.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'true-false',
+      question: 'Ice is more dense than liquid water.',
+      correct: false,
+      explanation: 'False! Ice is LESS dense than liquid water due to its crystal lattice structure with spaces. This is why ice floats.',
+      difficulty: 'easy'
+    },
+    {
+      category: 'Water & Polarity',
+      type: 'multiple-choice',
+      question: 'Which substance is hydrophilic?',
+      options: ['Oil', 'Wax', 'Glucose', 'Butter'],
+      correct: 2,
+      explanation: 'Glucose is hydrophilic (water-loving) because it has polar -OH groups. Oil, wax, and butter are hydrophobic (nonpolar).',
+      difficulty: 'easy'
+    },
+
+    // Additional Enzymes
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'Why is enzyme specificity described as "lock and key"?',
+      options: ['Enzymes are made of metal', 'Active site shape only fits specific substrate', 'Enzymes can open anything', 'Substrates are all the same'],
+      correct: 1,
+      explanation: 'The active site (lock) has a specific 3D shape that only fits its specific substrate (key). Wrong substrate won\'t fit.',
+      difficulty: 'easy'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'Pepsin works best at pH 2, trypsin at pH 8. This shows enzymes have:',
+      options: ['The same optimal conditions', 'Different optimal pH values', 'No pH preferences', 'Random activity patterns'],
+      correct: 1,
+      explanation: 'Different enzymes have different optimal pH values based on where they function. Pepsin works in acidic stomach, trypsin in basic intestine.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'What is enzyme saturation?',
+      options: ['Enzyme is too wet', 'All active sites are occupied', 'Enzyme is denatured', 'Enzyme is at optimal pH'],
+      correct: 1,
+      explanation: 'Saturation occurs when all enzyme active sites are full. Adding more substrate won\'t increase rate until more enzyme is added.',
+      difficulty: 'medium'
+    },
+    {
+      category: 'Enzymes',
+      type: 'multiple-choice',
+      question: 'At very high temperatures, enzyme activity:',
+      options: ['Increases steadily', 'Stays the same', 'Drops to zero due to denaturation', 'Doubles'],
+      correct: 2,
+      explanation: 'High temperatures denature enzymes - they lose their shape and can\'t function. The active site changes and substrate can\'t bind.',
+      difficulty: 'medium'
+    },
   ];
 
   // Comparison tables data
@@ -1289,6 +1997,27 @@ function BioQuiz3App() {
         ['Living samples?', '✅ Yes', '❌ No (must be dead)'],
         ['Cost', '💰 Affordable', '💰💰💰 Very expensive'],
         ['Can see', 'Cells, bacteria', 'Viruses, organelles, molecules'],
+      ]
+    },
+    proteinstructure: {
+      title: 'Protein Structure Levels',
+      headers: ['Level', 'Description', 'Bonds/Forces', 'Example'],
+      rows: [
+        ['Primary (1°)', 'Linear amino acid sequence', 'Peptide bonds', 'Gly-Ala-Val-Ser...'],
+        ['Secondary (2°)', 'Local folding: α-helix or β-sheet', 'Hydrogen bonds', 'Hair (helix), silk (sheet)'],
+        ['Tertiary (3°)', 'Overall 3D shape', 'R group interactions', 'Folded enzyme with active site'],
+        ['Quaternary (4°)', 'Multiple chains together', 'Same as tertiary', 'Hemoglobin (4 subunits)'],
+      ]
+    },
+    inhibitors: {
+      title: 'Competitive vs Noncompetitive Inhibitors',
+      headers: ['Feature', 'Competitive', 'Noncompetitive'],
+      rows: [
+        ['Binds to', 'Active site', 'Allosteric site'],
+        ['Shape', 'Similar to substrate', 'Different from substrate'],
+        ['Effect', 'Blocks substrate binding', 'Changes enzyme shape'],
+        ['Can overcome?', '✅ Add more substrate', '❌ Cannot overcome'],
+        ['Diagram key', 'Competes for same spot', 'Binds elsewhere, distorts enzyme'],
       ]
     },
   };
@@ -1368,32 +2097,20 @@ function BioQuiz3App() {
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="stat-card">
-            <div className="stat-icon">❓</div>
-            <div className="stat-value">{questionFlashcards.length + cellIdentificationCards.length}</div>
-            <div className="stat-label">Question Cards</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">📖</div>
-            <div className="stat-value">{topicCategories.reduce((sum, cat) => sum + cat.concepts.length, 0)}</div>
-            <div className="stat-label">Definitions</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">📝</div>
-            <div className="stat-value">{questionBank.length}</div>
-            <div className="stat-label">Practice Questions</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">🗺️</div>
-            <div className="stat-value">7</div>
-            <div className="stat-label">Topics</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">🎯</div>
-            <div className="stat-value">{mistakeBank.length}</div>
-            <div className="stat-label">Mistakes Tracked</div>
+        {/* Topics Covered */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-white mb-6 flex items-center">
+            <span className="mr-3">📚</span>
+            Topics Covered
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {topicCategories.map((topic, index) => (
+              <div key={index} className={`${topic.color} p-4 rounded-xl backdrop-blur-lg border border-white/10`}>
+                <div className="text-4xl mb-2">{topic.icon}</div>
+                <h3 className="text-lg font-bold text-white mb-1">{topic.name}</h3>
+                <p className="text-white/70 text-sm">{topic.concepts.length} concepts covered</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -2016,7 +2733,6 @@ function BioQuiz3App() {
 
   // Compare & Contrast Mode
   const CompareMode = () => {
-    const [selectedComparison, setSelectedComparison] = useState('dnarna');
     const comparison = comparisons[selectedComparison];
 
     return (

@@ -480,6 +480,18 @@
             const [modelLoading, setModelLoading] = useState(false);
             const [isExpanded, setIsExpanded] = useState(false);
 
+            // Wait for library to be available with timeout
+            const waitForLibrary = async (maxAttempts = 20) => {
+                for (let i = 0; i < maxAttempts; i++) {
+                    if (typeof window.qna !== 'undefined' && typeof window.tf !== 'undefined') {
+                        return true;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+                console.error("Failed to load required libraries: window.qna and/or window.tf are not available after all attempts.");
+                return false;
+            };
+
             // Load model on first use
             const loadModel = async () => {
                 if (model || modelLoading) return;
@@ -488,10 +500,14 @@
                 setError(null);
                 try {
                     console.log('Loading TensorFlow.js QnA model...');
-                    // Check if qna is available
-                    if (typeof window.qna === 'undefined') {
-                        throw new Error('QnA library not loaded. Please refresh the page.');
+
+                    // Wait for libraries to load
+                    const librariesLoaded = await waitForLibrary();
+                    if (!librariesLoaded) {
+                        throw new Error('QnA library failed to load. Please refresh the page.');
                     }
+
+                    console.log('Libraries detected, loading QnA model...');
                     const loadedModel = await window.qna.load();
                     setModel(loadedModel);
                     console.log('QnA model loaded successfully');

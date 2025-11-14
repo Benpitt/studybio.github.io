@@ -58,10 +58,9 @@
             display:flex;
             align-items:center;
             justify-content:center;
-            padding:20vh 5vw 12vh;
+            padding:15vh 5vw 10vh;
             position:relative;
             overflow:hidden;
-            text-align:center;
         }
 
         .apex-content{
@@ -69,6 +68,123 @@
             margin:0 auto;
             position:relative;
             z-index:10;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:80px;
+            align-items:center;
+        }
+
+        .hero-text{
+            text-align:left;
+        }
+
+        .hero-visual{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            perspective:2000px;
+            position:relative;
+        }
+
+        /* 3D Floating Cards Stack */
+        .floating-cards{
+            position:relative;
+            width:100%;
+            max-width:500px;
+            height:400px;
+        }
+
+        .floating-card{
+            position:absolute;
+            width:100%;
+            background:linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            border:1px solid rgba(255,255,255,0.15);
+            border-radius:24px;
+            padding:32px;
+            box-shadow:0 40px 100px rgba(0,0,0,0.6);
+            backdrop-filter:blur(20px);
+            transform-style:preserve-3d;
+        }
+
+        .floating-card:nth-child(1){
+            z-index:3;
+            animation:float1 6s ease-in-out infinite;
+            background:linear-gradient(135deg, rgba(124,58,237,0.2), rgba(168,85,247,0.1));
+            border-color:rgba(124,58,237,0.4);
+        }
+
+        .floating-card:nth-child(2){
+            z-index:2;
+            animation:float2 6s ease-in-out infinite;
+            background:linear-gradient(135deg, rgba(236,72,153,0.2), rgba(245,158,11,0.1));
+            border-color:rgba(236,72,153,0.4);
+            animation-delay:-2s;
+        }
+
+        .floating-card:nth-child(3){
+            z-index:1;
+            animation:float3 6s ease-in-out infinite;
+            background:linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.1));
+            border-color:rgba(99,102,241,0.4);
+            animation-delay:-4s;
+        }
+
+        @keyframes float1{
+            0%, 100%{
+                transform:translateY(0) translateX(0) rotateY(-5deg) rotateX(5deg);
+            }
+            50%{
+                transform:translateY(-20px) translateX(10px) rotateY(5deg) rotateX(-3deg);
+            }
+        }
+
+        @keyframes float2{
+            0%, 100%{
+                transform:translateY(40px) translateX(-20px) rotateY(8deg) rotateX(-5deg) scale(0.95);
+            }
+            50%{
+                transform:translateY(20px) translateX(-30px) rotateY(-8deg) rotateX(3deg) scale(0.95);
+            }
+        }
+
+        @keyframes float3{
+            0%, 100%{
+                transform:translateY(80px) translateX(-40px) rotateY(-12deg) rotateX(8deg) scale(0.9);
+            }
+            50%{
+                transform:translateY(60px) translateX(-50px) rotateY(12deg) rotateX(-5deg) scale(0.9);
+            }
+        }
+
+        .card-icon{
+            font-size:3rem;
+            margin-bottom:16px;
+            display:block;
+        }
+
+        .card-label{
+            font-size:0.85rem;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:0.05em;
+            margin-bottom:8px;
+            opacity:0.7;
+        }
+
+        .card-title{
+            font-size:1.4rem;
+            font-weight:800;
+            margin-bottom:12px;
+            color:white;
+        }
+
+        .card-value{
+            font-size:2.5rem;
+            font-weight:900;
+            background:linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            background-clip:text;
         }
 
         .apex-eyebrow{
@@ -681,27 +797,96 @@
         /* Enhanced Scroll indicator */
         .scroll-indicator{
             position:absolute;
-            bottom:40px;
+            bottom:60px;
             left:50%;
             transform:translateX(-50%);
-            font-size:2rem;
-            animation:bounce 2s infinite, fadeInUp 1.2s ease-out 1s backwards;
-            opacity:0.6;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:12px;
             cursor:pointer;
-            transition:all 0.3s;
-            filter:drop-shadow(0 4px 12px rgba(124,58,237,0.4));
+            animation:fadeInUp 1.2s ease-out 1.5s backwards;
+            opacity:0.7;
+            transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .scroll-indicator:hover{
             opacity:1;
-            transform:translateX(-50%) scale(1.2);
-            filter:drop-shadow(0 6px 20px rgba(124,58,237,0.6));
+            transform:translateX(-50%) translateY(5px);
         }
 
-        @keyframes bounce{
-            0%, 100%{transform:translateX(-50%) translateY(0)}
-            50%{transform:translateX(-50%) translateY(10px)}
+        .scroll-indicator:hover .scroll-icon{
+            transform:translateY(8px);
+            box-shadow:0 0 30px rgba(124,58,237,0.8);
         }
+
+        .scroll-text{
+            font-size:0.85rem;
+            font-weight:600;
+            color:#cbd5e1;
+            text-transform:uppercase;
+            letter-spacing:0.1em;
+        }
+
+        .scroll-icon{
+            width:32px;
+            height:52px;
+            border:2px solid rgba(168,85,247,0.6);
+            border-radius:999px;
+            position:relative;
+            box-shadow:0 0 20px rgba(124,58,237,0.4);
+            transition:all 0.4s;
+        }
+
+        .scroll-icon::before{
+            content:'';
+            position:absolute;
+            top:8px;
+            left:50%;
+            transform:translateX(-50%);
+            width:6px;
+            height:10px;
+            background:linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius:999px;
+            animation:scrollDot 2s ease-in-out infinite;
+            box-shadow:0 0 10px rgba(168,85,247,0.8);
+        }
+
+        @keyframes scrollDot{
+            0%{
+                top:8px;
+                opacity:1;
+            }
+            50%{
+                top:28px;
+                opacity:0.5;
+            }
+            100%{
+                top:8px;
+                opacity:1;
+            }
+        }
+
+        @media (max-width:1100px){
+            .apex-content{
+                grid-template-columns:1fr;
+                gap:60px;
+                text-align:center;
+            }
+
+            .hero-text{
+                text-align:center;
+            }
+
+            .hero-visual{
+                order:-1;
+            }
+
+            .floating-cards{
+                max-width:400px;
+                height:350px;
+                margin:0 auto;
+            }
 
         /* Enhanced Typewriter effect */
         #typewriter-text{
@@ -958,38 +1143,75 @@
             <!-- Hero Section -->
             <section class="apex-hero">
                 <div class="apex-content">
-                    <div class="apex-eyebrow">AI-Powered Learning Platform</div>
-                    <h1 class="apex-headline">Built for <span id="typewriter-text"></span><span class="typewriter-cursor"></span></h1>
-                    <p class="apex-subhead">
-                        From visual thinkers to auditory learners. From late-night crammers to structured planners.
-                        We adapt to your style. We learn how you learn. And we help you master anything, faster.
-                    </p>
+                    <div class="hero-text">
+                        <div class="apex-eyebrow">AI-Powered Learning Platform</div>
+                        <h1 class="apex-headline">Built for <span id="typewriter-text"></span><span class="typewriter-cursor"></span></h1>
+                        <p class="apex-subhead">
+                            Smart flashcards that predict when you'll forget. Adaptive quizzes that match your skill level. AI that turns your notes into study materials.
+                        </p>
 
-                    <div id="hero-auth-section">
-                        <div id="hero-auth-buttons">
-                            <div id="hero-google-signin-container" class="apex-cta">
-                                <button id="hero-google-signin-btn" class="btn-apex-primary">Start Learning for Free</button>
-                                <button class="btn-apex-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See how it works</button>
+                        <div id="hero-auth-section">
+                            <div id="hero-auth-buttons">
+                                <div id="hero-google-signin-container" class="apex-cta">
+                                    <button id="hero-google-signin-btn" class="btn-apex-primary">Start Learning for Free</button>
+                                    <button class="btn-apex-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See how it works</button>
+                                </div>
+
+                                <div id="hero-enter-container" class="hidden apex-cta" style="margin-top:0">
+                                    <button id="hero-enter-btn" class="btn-apex-primary">Welcome back — Enter</button>
+                                </div>
                             </div>
 
-                            <div id="hero-enter-container" class="hidden apex-cta" style="margin-top:0">
-                                <button id="hero-enter-btn" class="btn-apex-primary">Welcome back — Enter</button>
+                            <div id="hero-loading" class="hidden" style="margin-top:24px">
+                                <div style="display:inline-block;width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,0.08);border-top-color:white;animation:spin 1s linear infinite"></div>
                             </div>
-                        </div>
-
-                        <div id="hero-loading" class="hidden" style="margin-top:24px">
-                            <div style="display:inline-block;width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,0.08);border-top-color:white;animation:spin 1s linear infinite"></div>
                         </div>
                     </div>
 
-                    <!-- AI Features Carousel -->
-                    <div id="features" style="margin-top:120px;">
-                        <div style="text-align: center; margin-bottom: 60px;">
-                            <div class="showcase-eyebrow" style="font-size: 1.1rem;">Powered by Advanced ML Algorithms</div>
-                            <h2 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; margin-top: 16px; color: white;">
-                                Intelligence that learns <em>you</em>.
-                            </h2>
+                    <div class="hero-visual">
+                        <div class="floating-cards">
+                            <div class="floating-card">
+                                <span class="card-icon">🧠</span>
+                                <div class="card-label">Knowledge Tracking</div>
+                                <div class="card-title">Binary Search</div>
+                                <div class="card-value">92%</div>
+                                <div style="margin-top:16px; height:8px; background:rgba(255,255,255,0.1); border-radius:999px; overflow:hidden;">
+                                    <div style="width:92%; height:100%; background:linear-gradient(90deg, #7c3aed, #a855f7); border-radius:999px;"></div>
+                                </div>
+                            </div>
+                            <div class="floating-card">
+                                <span class="card-icon">📊</span>
+                                <div class="card-label">Adaptive Testing</div>
+                                <div class="card-title">SAT Practice</div>
+                                <div class="card-value">2,017</div>
+                                <div style="margin-top:12px; color:#cbd5e1; font-size:0.9rem;">calibrated questions</div>
+                            </div>
+                            <div class="floating-card">
+                                <span class="card-icon">⚡</span>
+                                <div class="card-label">Study Streak</div>
+                                <div class="card-title">Daily Progress</div>
+                                <div class="card-value">15 days</div>
+                                <div style="margin-top:12px; color:#cbd5e1; font-size:0.9rem;">and counting</div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="scroll-indicator" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+                    <span class="scroll-text">Scroll</span>
+                    <div class="scroll-icon"></div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" style="padding: 10vh 5vw; position: relative;">
+                <div style="max-width: 1400px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 60px;">
+                        <div class="showcase-eyebrow" style="font-size: 1.1rem;">Powered by Advanced ML Algorithms</div>
+                        <h2 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; margin-top: 16px; color: white;">
+                            Intelligence that learns <em>you</em>.
+                        </h2>
+                    </div>
 
                         <div class="carousel-container">
                             <div class="carousel-track">
@@ -1172,10 +1394,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="scroll-indicator" onclick="document.getElementById('social-proof').scrollIntoView({behavior:'smooth'})">
-                    ↓
                 </div>
             </section>
 

@@ -40,16 +40,11 @@
     <link rel="stylesheet" href="button-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Import maps for React and Three.js -->
+    <!-- Import map for Three.js -->
     <script type="importmap">
     {
       "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom": "https://esm.sh/react-dom@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "three": "https://esm.sh/three@0.159.0",
-        "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.15.12",
-        "@react-three/drei": "https://esm.sh/@react-three/drei@9.92.7"
+        "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js"
       }
     }
     </script>
@@ -497,17 +492,16 @@
     </div>
 
     <script type="module">
-        // Mount React Knowledge Sphere
-        import React from 'react';
-        import { createRoot } from 'react-dom/client';
-        import KnowledgeSphere from './knowledge-sphere.js';
+        // Initialize 3D Knowledge Sphere (Vanilla Three.js)
+        import { initKnowledgeSphere } from './knowledge-sphere-vanilla.js';
 
-        const sphereRoot = document.getElementById('knowledge-sphere-root');
-        if (sphereRoot) {
-            const root = createRoot(sphereRoot);
-            root.render(React.createElement(KnowledgeSphere, {
-                style: { width: '400px', height: '400px', margin: '0 auto' }
-            }));
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initKnowledgeSphere('knowledge-sphere-root');
+            });
+        } else {
+            initKnowledgeSphere('knowledge-sphere-root');
         }
     </script>
 

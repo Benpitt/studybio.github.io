@@ -1819,79 +1819,81 @@
                 const difficulty = cardDifficulty[card.id] || 'medium';
 
                 return (
-                    <div className="min-h-screen">
-                        <Navigation />
-                        <Breadcrumb items={[
-                            { label: 'Dashboard', href: 'dashboard' },
-                            { label: 'My Flashcards' }
-                        ]} />
-                        <div className="pt-20 p-6">
-                            <div className="max-w-4xl mx-auto">
-                                <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
+                    <>
+                        <div className="min-h-screen">
+                            <Navigation />
+                            <Breadcrumb items={[
+                                { label: 'Dashboard', href: 'dashboard' },
+                                { label: 'My Flashcards' }
+                            ]} />
+                            <div className="pt-20 p-6">
+                                <div className="max-w-4xl mx-auto">
+                                    <button onClick={() => setMode('decks')} className="text-white/80 hover:text-white mb-6">← Back</button>
 
-                                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white">
-                                    <div className="flex justify-between items-center">
-                                        <span>Card {currentCard + 1} / {shuffledCards.length}</span>
-                                        <span>Difficulty: {difficulty === 'hard' ? '🔴' : difficulty === 'medium' ? '🟡' : '🟢'} {difficulty}</span>
-                                    </div>
-                                </div>
-
-                                <div className={`flip-card ${showAnswer ? 'flipped' : ''}`}>
-                                    <div className="flip-card-inner relative" style={{minHeight: '400px'}}>
-                                        {!showAnswer ? (
-                                            <div className="flip-card-front absolute w-full h-full">
-                                                <div onClick={() => setShowAnswer(true)} className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                                    <div className="w-full">
-                                                        <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
-                                                        <div className="text-3xl font-bold text-center">{card.question}</div>
-                                                        {card.imageUrl && (
-                                                            <img src={card.imageUrl} alt="Visual aid" className="flashcard-image" />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flip-card-back absolute w-full h-full">
-                                                <div onClick={() => setShowAnswer(false)} className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
-                                                    <div className="w-full">
-                                                        <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
-                                                        <div className="text-2xl text-center">{card.answer}</div>
-                                                        {card.imageUrl && (
-                                                            <img src={card.imageUrl} alt="Visual aid" className="flashcard-image" />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {showAnswer && (
-                                    <div className="mt-6 space-y-3">
-                                        <div className="text-center text-white mb-4">How well did you know this?</div>
-                                        <div className="grid grid-cols-3 gap-4">
-                                            <button onClick={() => { markDifficulty(card.id, 'hard'); addToMistakes(card); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
-                                                    className="bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl font-bold">
-                                                🔴 Hard
-                                            </button>
-                                            <button onClick={() => { markDifficulty(card.id, 'medium'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
-                                                    className="bg-yellow-500 hover:bg-yellow-600 text-white py-4 rounded-xl font-bold">
-                                                🟡 Medium
-                                            </button>
-                                            <button onClick={() => { markDifficulty(card.id, 'easy'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
-                                                    className="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold">
-                                                🟢 Easy
-                                            </button>
+                                    <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-white">
+                                        <div className="flex justify-between items-center">
+                                            <span>Card {currentCard + 1} / {shuffledCards.length}</span>
+                                            <span>Difficulty: {difficulty === 'hard' ? '🔴' : difficulty === 'medium' ? '🟡' : '🟢'} {difficulty}</span>
                                         </div>
                                     </div>
-                                )}
+
+                                    <div className={`flip-card ${showAnswer ? 'flipped' : ''}`}>
+                                        <div className="flip-card-inner relative" style={{minHeight: '400px'}}>
+                                            {!showAnswer ? (
+                                                <div className="flip-card-front absolute w-full h-full">
+                                                    <div onClick={() => setShowAnswer(true)} className="card-gradient-blue rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                                        <div className="w-full">
+                                                            <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Question</div>
+                                                            <div className="text-3xl font-bold text-center">{card.question}</div>
+                                                            {card.imageUrl && (
+                                                                <img src={card.imageUrl} alt="Visual aid" className="flashcard-image" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flip-card-back absolute w-full h-full">
+                                                    <div onClick={() => setShowAnswer(false)} className="card-gradient-success rounded-3xl p-12 text-white shadow-2xl cursor-pointer h-full flex items-center justify-center">
+                                                        <div className="w-full">
+                                                            <div className="text-sm uppercase tracking-wider mb-4 opacity-70">Answer</div>
+                                                            <div className="text-2xl text-center">{card.answer}</div>
+                                                            {card.imageUrl && (
+                                                                <img src={card.imageUrl} alt="Visual aid" className="flashcard-image" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {showAnswer && (
+                                        <div className="mt-6 space-y-3">
+                                            <div className="text-center text-white mb-4">How well did you know this?</div>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <button onClick={() => { markDifficulty(card.id, 'hard'); addToMistakes(card); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
+                                                        className="bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl font-bold">
+                                                    🔴 Hard
+                                                </button>
+                                                <button onClick={() => { markDifficulty(card.id, 'medium'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
+                                                        className="bg-yellow-500 hover:bg-yellow-600 text-white py-4 rounded-xl font-bold">
+                                                    🟡 Medium
+                                                </button>
+                                                <button onClick={() => { markDifficulty(card.id, 'easy'); setCurrentCard(currentCard + 1); setShowAnswer(false); }}
+                                                        className="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold">
+                                                    🟢 Easy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <QnAWidget
-                        context={`Question: ${card.question}\n\nAnswer: ${card.answer}`}
-                        placeholder="Ask a question about this flashcard..."
-                    />
+                        <QnAWidget
+                            context={`Question: ${card.question}\n\nAnswer: ${card.answer}`}
+                            placeholder="Ask a question about this flashcard..."
+                        />
+                    </>
                 );
             }
 

@@ -886,7 +886,8 @@ function BioQuiz3App() {
       highlight: 'The outermost thick green layer surrounding the entire cell',
       visual: '🧱',
       remember: 'Outside the membrane, NOT in animal cells',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Cell Membrane',
@@ -895,7 +896,8 @@ function BioQuiz3App() {
       highlight: 'The thin boundary layer around the cell',
       visual: '🎭',
       remember: 'ALL cells have a membrane',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Nucleus',
@@ -904,7 +906,8 @@ function BioQuiz3App() {
       highlight: 'The large purple/blue circular structure in the center',
       visual: '🧠',
       remember: 'The control center with DNA',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Ribosomes',
@@ -913,7 +916,8 @@ function BioQuiz3App() {
       highlight: 'Small dots scattered throughout cytoplasm',
       visual: '⚙️',
       remember: 'Smallest organelles - protein makers',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Cytoplasm',
@@ -922,7 +926,8 @@ function BioQuiz3App() {
       highlight: 'The background fluid/gel around all organelles',
       visual: '💧',
       remember: 'The jelly everything floats in',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Mitochondria',
@@ -931,7 +936,8 @@ function BioQuiz3App() {
       highlight: 'Bean-shaped structures with wavy inner membranes',
       visual: '⚡',
       remember: 'Has inner folds called cristae',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Chloroplast',
@@ -940,7 +946,8 @@ function BioQuiz3App() {
       highlight: 'Green oval structures with internal stacks',
       visual: '🌿',
       remember: 'Makes glucose from sunlight',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Vacuole',
@@ -949,7 +956,8 @@ function BioQuiz3App() {
       highlight: 'Large central bubble-like structure taking up most of cell',
       visual: '💧',
       remember: 'Big in plants, provides structure and pressure',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Endoplasmic Reticulum',
@@ -958,7 +966,8 @@ function BioQuiz3App() {
       highlight: 'Network of interconnected membranes near nucleus',
       visual: '🔀',
       remember: 'ER = membrane highway. Rough = bumpy, Smooth = smooth',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Golgi Apparatus',
@@ -967,7 +976,8 @@ function BioQuiz3App() {
       highlight: 'Stacked pancake-like structures',
       visual: '📦',
       remember: 'Golgi = post office, packages and ships',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Flagella/Cilia',
@@ -976,7 +986,8 @@ function BioQuiz3App() {
       highlight: 'Whip-like extensions from cell surface',
       visual: '🌊',
       remember: 'Flagella = long whip. Cilia = short hairs',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Prokaryotic Cell',
@@ -985,7 +996,8 @@ function BioQuiz3App() {
       highlight: 'Small, simple cell with no membrane-bound organelles',
       visual: '🔵',
       remember: 'NO nucleus, NO organelles, small and simple',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
     {
       term: 'Identify: Eukaryotic Cell',
@@ -994,7 +1006,8 @@ function BioQuiz3App() {
       highlight: 'Large complex cell with nucleus and organelles',
       visual: '🟣',
       remember: 'HAS nucleus, HAS organelles, large and complex',
-      category: 'Cell Identification'
+      category: 'Cell Identification',
+      color: 'card-gradient-rose'
     },
   ];
 
@@ -2435,12 +2448,24 @@ function BioQuiz3App() {
                     <>
                       <div className="badge badge-purple mb-4">{card.category}</div>
                       <div className="bg-white rounded-2xl p-6 mb-4 w-full max-w-md">
-                        <img
-                          src={card.image}
-                          alt="Cell diagram for identification"
-                          className="w-full h-auto"
-                          style={{maxHeight: '300px', objectFit: 'contain'}}
-                        />
+                        {!imageErrors[card.term] ? (
+                          <img
+                            src={card.image}
+                            alt="Cell diagram for identification"
+                            className="w-full h-auto"
+                            style={{maxHeight: '300px', objectFit: 'contain'}}
+                            onError={(e) => {
+                              console.error('Failed to load image:', card.image);
+                              setImageErrors({...imageErrors, [card.term]: true});
+                            }}
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center p-8 bg-purple-500/10 border-2 border-dashed border-purple-500/30 rounded-xl" style={{minHeight: '300px'}}>
+                            <div className="text-8xl mb-4">{card.visual}</div>
+                            <p className="text-white/70 text-center">Diagram placeholder</p>
+                            <p className="text-white/50 text-xs mt-2">Image failed to load</p>
+                          </div>
+                        )}
                       </div>
                       <h2 className="text-3xl font-bold text-white text-center mb-2">{card.term}</h2>
                       <p className="text-white/70 text-center text-sm mb-2">{card.highlight}</p>

@@ -488,6 +488,7 @@
                     }
                     await new Promise(resolve => setTimeout(resolve, 300));
                 }
+                console.error("Failed to load required libraries: window.qna and/or window.tf are not available after all attempts.");
                 return false;
             };
 

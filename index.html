@@ -40,14 +40,6 @@
     <link rel="stylesheet" href="button-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Import map for Three.js -->
-    <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js"
-      }
-    }
-    </script>
     <style>
         :root{
             --bg:#0a0a1a;
@@ -76,7 +68,7 @@
 
         .hero-content{
             max-width:900px;
-            margin:0 auto 60px;
+            margin:0 auto;
             position:relative;
             z-index:10;
         }
@@ -120,9 +112,9 @@
         .hero-subtitle{
             font-size:clamp(1.1rem, 2vw, 1.5rem);
             color:#cbd5e1;
-            max-width:600px;
-            margin:0 auto 48px;
-            line-height:1.5;
+            max-width:650px;
+            margin:0 auto 60px;
+            line-height:1.6;
             font-weight:400;
             animation:fadeInUp 1s ease-out 0.4s backwards;
         }
@@ -134,19 +126,18 @@
 
         .hero-cta{
             animation:fadeInUp 1s ease-out 0.6s backwards;
-            margin-bottom:60px;
         }
 
         .btn-primary{
             background:linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
             color:white;
-            padding:24px 64px;
+            padding:26px 72px;
             border-radius:16px;
             font-weight:700;
-            font-size:1.3rem;
+            font-size:1.35rem;
             border:none;
             cursor:pointer;
-            box-shadow: 0 20px 50px rgba(124,58,237,0.4);
+            box-shadow: 0 20px 60px rgba(124,58,237,0.5), 0 0 0 1px rgba(255,255,255,0.1) inset;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position:relative;
             overflow:hidden;
@@ -164,10 +155,17 @@
 
         .btn-primary:hover::before{opacity:1;}
         .btn-primary:hover{
-            transform:translateY(-3px) scale(1.02);
-            box-shadow: 0 30px 70px rgba(124,58,237,0.6), 0 0 40px rgba(124,58,237,0.4);
+            transform:translateY(-4px) scale(1.03);
+            box-shadow: 0 35px 80px rgba(124,58,237,0.7), 0 0 50px rgba(124,58,237,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset;
         }
         .btn-primary:active{transform:translateY(-1px) scale(0.98);}
+
+        .cta-note{
+            margin-top:20px;
+            font-size:0.95rem;
+            color:var(--muted);
+            font-weight:500;
+        }
 
         /* Typewriter */
         #typewriter-text{
@@ -193,24 +191,6 @@
         @keyframes blink{
             0%, 50%{opacity:1}
             51%, 100%{opacity:0}
-        }
-
-        /* 3D Knowledge Sphere Container */
-        #knowledge-sphere-root {
-            width: 400px;
-            height: 400px;
-            margin: 0 auto;
-            animation: fadeInScale 1.2s ease-out 0.8s backwards;
-        }
-
-        .knowledge-sphere-container {
-            width: 100%;
-            height: 100%;
-        }
-
-        .knowledge-sphere-container canvas {
-            width: 100% !important;
-            height: 100% !important;
         }
 
         /* Scroll indicator */
@@ -351,20 +331,12 @@
                 gap:60px;
                 text-align:center;
             }
-            #knowledge-sphere-root{
-                width:320px;
-                height:320px;
-            }
         }
 
         @media (max-width:640px){
             .btn-primary{
                 padding:20px 48px;
                 font-size:1.1rem;
-            }
-            #knowledge-sphere-root{
-                width:280px;
-                height:280px;
             }
         }
     </style>
@@ -396,25 +368,23 @@
                     <p class="hero-subtitle">
                         Smart flashcards that predict when you'll forget. Adaptive quizzes that match your skill level. Learning that feels effortless.
                     </p>
-                </div>
 
-                <!-- 3D Knowledge Sphere -->
-                <div id="knowledge-sphere-root"></div>
+                    <!-- CTA -->
+                    <div class="hero-cta">
+                        <div id="hero-auth-buttons">
+                            <div id="hero-google-signin-container">
+                                <button id="hero-google-signin-btn" class="btn-primary">Start Learning for Free</button>
+                                <p class="cta-note">No credit card required • Sign in with Google</p>
+                            </div>
 
-                <!-- CTA -->
-                <div class="hero-cta">
-                    <div id="hero-auth-buttons">
-                        <div id="hero-google-signin-container">
-                            <button id="hero-google-signin-btn" class="btn-primary">Start Learning for Free</button>
+                            <div id="hero-enter-container" class="hidden">
+                                <button id="hero-enter-btn" class="btn-primary">Welcome back — Enter</button>
+                            </div>
                         </div>
 
-                        <div id="hero-enter-container" class="hidden">
-                            <button id="hero-enter-btn" class="btn-primary">Welcome back — Enter</button>
+                        <div id="hero-loading" class="hidden" style="margin-top:24px">
+                            <div style="display:inline-block;width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,0.08);border-top-color:white;animation:spin 1s linear infinite"></div>
                         </div>
-                    </div>
-
-                    <div id="hero-loading" class="hidden" style="margin-top:24px">
-                        <div style="display:inline-block;width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,0.08);border-top-color:white;animation:spin 1s linear infinite"></div>
                     </div>
                 </div>
 
@@ -490,20 +460,6 @@
             </footer>
         </div>
     </div>
-
-    <script type="module">
-        // Initialize 3D Knowledge Sphere (Vanilla Three.js)
-        import { initKnowledgeSphere } from './knowledge-sphere-vanilla.js';
-
-        // Wait for DOM to be ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                initKnowledgeSphere('knowledge-sphere-root');
-            });
-        } else {
-            initKnowledgeSphere('knowledge-sphere-root');
-        }
-    </script>
 
     <script>
         // Typewriter effect

@@ -9,6 +9,10 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna@1.4.0/dist/qna.min.js"></script>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -465,6 +469,154 @@
             }, [mode]);
 
             return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
+        }
+
+        function QnAWidget({ context, placeholder = "Ask a question about this content..." }) {
+            const [question, setQuestion] = useState('');
+            const [answer, setAnswer] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+            const [model, setModel] = useState(null);
+            const [modelLoading, setModelLoading] = useState(false);
+            const [isExpanded, setIsExpanded] = useState(false);
+
+            // Load model on first use
+            const loadModel = async () => {
+                if (model || modelLoading) return;
+
+                setModelLoading(true);
+                setError(null);
+                try {
+                    console.log('Loading TensorFlow.js QnA model...');
+                    const loadedModel = await qna.load();
+                    setModel(loadedModel);
+                    console.log('QnA model loaded successfully');
+                } catch (err) {
+                    console.error('Error loading QnA model:', err);
+                    setError('Failed to load AI model. Please refresh the page.');
+                } finally {
+                    setModelLoading(false);
+                }
+            };
+
+            const handleAskQuestion = async () => {
+                if (!question.trim() || !context) return;
+
+                // Load model if not loaded
+                if (!model) {
+                    await loadModel();
+                    return; // User will need to click again after model loads
+                }
+
+                setLoading(true);
+                setError(null);
+                setAnswer(null);
+
+                try {
+                    const answers = await model.findAnswers(question, context);
+                    if (answers && answers.length > 0) {
+                        setAnswer(answers[0]);
+                    } else {
+                        setAnswer({ text: 'I couldn\'t find an answer to that question in the content.', score: 0 });
+                    }
+                } catch (err) {
+                    console.error('Error finding answer:', err);
+                    setError('Failed to process your question. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAskQuestion();
+                }
+            };
+
+            return (
+                <div className="mt-6 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl p-4 border border-purple-200">
+                    <button
+                        onClick={() => {
+                            setIsExpanded(!isExpanded);
+                            if (!isExpanded && !model && !modelLoading) {
+                                loadModel();
+                            }
+                        }}
+                        className="w-full flex items-center justify-between text-gray-900 font-semibold mb-2"
+                    >
+                        <div className="flex items-center space-x-2">
+                            <span className="text-2xl">🤖</span>
+                            <span>AI Question Assistant</span>
+                        </div>
+                        <svg
+                            className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    {isExpanded && (
+                        <div className="mt-3 space-y-3">
+                            {modelLoading && (
+                                <div className="text-gray-700 text-sm text-center py-2">
+                                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600 mb-2"></div>
+                                    <p>Loading AI model (this may take a moment)...</p>
+                                </div>
+                            )}
+
+                            {!modelLoading && (
+                                <>
+                                    <div className="flex space-x-2">
+                                        <input
+                                            type="text"
+                                            value={question}
+                                            onChange={(e) => setQuestion(e.target.value)}
+                                            onKeyPress={handleKeyPress}
+                                            placeholder={placeholder}
+                                            disabled={loading || !model}
+                                            className="flex-1 px-4 py-2 rounded-lg bg-white text-gray-900 placeholder-gray-500 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                        />
+                                        <button
+                                            onClick={handleAskQuestion}
+                                            disabled={loading || !question.trim() || !model}
+                                            className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                        >
+                                            {loading ? '...' : 'Ask'}
+                                        </button>
+                                    </div>
+
+                                    {error && (
+                                        <div className="p-3 bg-red-100 border border-red-300 rounded-lg text-red-800 text-sm">
+                                            {error}
+                                        </div>
+                                    )}
+
+                                    {answer && (
+                                        <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                                            <div className="flex items-start space-x-2">
+                                                <span className="text-lg">💡</span>
+                                                <div className="flex-1">
+                                                    <p className="text-gray-900 font-medium mb-1">Answer:</p>
+                                                    <p className="text-gray-700">{answer.text}</p>
+                                                    {answer.score > 0 && (
+                                                        <p className="text-xs text-gray-500 mt-2">
+                                                            Confidence: {Math.round(answer.score * 100)}%
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
         }
 
         function HomeScreen({ onNavigate, questionsLoaded }) {
@@ -1569,6 +1721,11 @@
                                             <MathText text={explanation || 'No explanation available.'} className="text-blue-800" />
                                         </div>
                                     )}
+
+                                    <QnAWidget
+                                        context={`Question: ${questionText}\n\n${choices ? 'Answer Choices:\n' + choices.map(c => `${c.letter}) ${c.content}`).join('\n') + '\n\n' : ''}Correct Answer: ${correctAnswer}${explanation ? '\n\nExplanation: ' + explanation : ''}`}
+                                        placeholder="Ask a question about this SAT question..."
+                                    />
                                 </div>
                             </div>
 

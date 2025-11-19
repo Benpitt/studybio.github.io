@@ -1916,7 +1916,7 @@
                                     <div className="bg-white rounded-3xl p-12">
                                         <div className="text-center mb-8">
                                             <div className="text-8xl mb-6">{percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : '📚'}</div>
-                                            <h2 className="text-5xl font-bold mb-4">Score: {percentage}%</h2>
+                                            <h2 className="text-5xl font-bold mb-4 text-gray-900">Score: {percentage}%</h2>
                                             <p className="text-2xl text-gray-600 mb-4">{correct} / {testQuestions.length} correct</p>
                                         </div>
 
@@ -1928,7 +1928,7 @@
                                                         const userAns = testAnswers[q.id];
                                                         return (
                                                             <div key={q.id} className="p-6 rounded-xl bg-red-50 border-2 border-red-200">
-                                                                <div className="font-bold text-lg mb-3">{q.question}</div>
+                                                                <div className="font-bold text-lg mb-3 text-gray-900">{q.question}</div>
                                                                 <div className="space-y-2">
                                                                     {q.choices.map((choice, cIdx) => (
                                                                         <div key={cIdx} className={`p-3 rounded-lg ${
@@ -2319,7 +2319,7 @@
                                     <div className="space-y-4">
                                         {mistakeBank.map(card => (
                                             <div key={card.id} className="bg-white rounded-xl p-6">
-                                                <div className="font-bold text-xl mb-2">{card.question}</div>
+                                                <div className="font-bold text-xl mb-2 text-gray-900">{card.question}</div>
                                                 <div className="text-gray-600">{card.answer}</div>
                                             </div>
                                         ))}

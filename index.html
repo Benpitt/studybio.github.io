@@ -102,6 +102,10 @@
             -webkit-text-fill-color:transparent;
             background-clip:text;
             animation:fadeInScale 1s ease-out 0.2s backwards;
+            min-height: 2.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         @keyframes fadeInScale{
@@ -117,6 +121,7 @@
             line-height:1.6;
             font-weight:400;
             animation:fadeInUp 1s ease-out 0.4s backwards;
+            min-height: 4.8em;
         }
 
         @keyframes fadeInUp{
@@ -174,6 +179,9 @@
             -webkit-text-fill-color:transparent;
             background-clip:text;
             filter: drop-shadow(0 0 20px rgba(168,85,247,0.5));
+            display: inline-block;
+            min-width: 200px;
+            text-align: left;
         }
 
         .typewriter-cursor{
@@ -343,7 +351,7 @@
 </head>
 <body class="overflow-x-hidden">
 
-    <div class="min-h-screen bg-animated-gradient relative overflow-hidden">
+    <div class="min-h-screen relative overflow-hidden" style="background: linear-gradient(-45deg, #0a0a1a, #1e1b4b, #312e81, #4c1d95, #581c87, #6b21a8); background-size: 400% 400%;">
         <!-- Glowing orbs background -->
         <div class="glow-orb" style="width: 600px; height: 600px; background: #7c3aed; top: 10%; right: 10%;"></div>
         <div class="glow-orb" style="width: 500px; height: 500px; background: #4c1d95; bottom: 20%; left: 10%; animation-delay: 2s;"></div>
@@ -571,7 +579,5 @@
         });
     </script>
 
-    <!-- Dynamic Gradient System -->
-    <script type="module" src="dynamic-gradient.js"></script>
 </body>
 </html>
